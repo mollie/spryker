@@ -1,0 +1,16 @@
+version: '3'
+services:
+  php:
+    image: spryker/php:8.2
+    working_dir: /data
+    volumes:
+      - ./:/data:delegated
+    command: sleep infinity
+    tty: true
+    stdin_open: true
+
+  composer:
+    image: composer:latest
+    command: install -o --ignore-platform-reqs
+    volumes:
+      - .:/app:delegated

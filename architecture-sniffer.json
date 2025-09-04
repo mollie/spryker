@@ -1,0 +1,8 @@
+{
+  "paths": [
+    "src"
+  ],
+  "exclude": [
+  ],
+  "ruleset": "spryker"
+}

@@ -1,0 +1,65 @@
+{
+  "name": "mollie/spryker-payment",
+  "description": "Spryker module for the Mollie payment provider.",
+  "type": "library",
+  "license": "MIT",
+  "autoload": {
+    "psr-4": {
+      "Mollie\\": "src/Mollie"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "MollieTest\\": "tests/MollieTest/"
+    }
+  },
+  "authors": [
+    {
+      "name": "Domagoj Križanec",
+      "email": "domagoj.krizanec@kps.com"
+    }
+  ],
+  "require": {
+    "php": ">=8.1",
+    "spryker/kernel": "^3.79.0",
+    "spryker-shop/shop-application": "^1.15.1",
+    "spryker-shop/shop-application-extension": "^1.2.0",
+    "mollie/mollie-api-php": "^3.4.0"
+  },
+  "require-dev": {
+    "spryker/application": "^3.33",
+    "spryker/console": "^4.16",
+    "spryker/code-sniffer": "dev-master",
+    "spryker-sdk/phpstan-spryker": "^1.0@dev",
+    "codeception/codeception": "^5.3",
+    "codeception/module-phpbrowser": "^3.0",
+    "codeception/module-asserts": "^3.0",
+    "spryker/git-hook": "dev-master",
+    "spryker/testify": "^3.50",
+    "spryker/project-architecture-sniffer": "0.2.1",
+    "ext-dom": "*"
+  },
+  "config": {
+    "allow-plugins": {
+      "dealerdirect/phpcodesniffer-composer-installer": true
+    }
+  },
+  "scripts": {
+    "post-install-cmd": [
+      "GitHook\\Composer\\Scripts\\HookInstaller::installSprykerHooks",
+      "GitHook\\Composer\\Scripts\\HookInstaller::installProjectHooks"
+    ],
+    "post-update-cmd": [
+      "GitHook\\Composer\\Scripts\\HookInstaller::installSprykerHooks",
+      "GitHook\\Composer\\Scripts\\HookInstaller::installProjectHooks"
+    ],
+    "phpstan": [
+      "php -d memory_limit=-1 vendor/bin/phpstan analyze"
+    ],
+    "phpstan-setup": "vendor/bin/console dev:ide-auto-completion:generate",
+    "prefer-mid": [
+      "COMPOSER_MEMORY_LIMIT=-1 composer require twig/twig:\"^2.9.0\""
+    ]
+  },
+  "minimum-stability": "dev"
+}

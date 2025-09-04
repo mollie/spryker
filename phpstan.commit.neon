@@ -1,0 +1,31 @@
+includes:
+    - vendor/spryker-sdk/phpstan-spryker/extension.neon
+    - vendor/phpstan/phpstan/conf/bleedingEdge.neon
+
+parameters:
+    level: 6
+    paths:
+        - src/
+
+    excludePaths:
+        - '%rootDir%/../../../src/Generated/*'
+        - '%rootDir%/../../../src/Orm/*'
+
+    bootstrapFiles:
+        - '%rootDir%/../../../phpstan-bootstrap.php'
+
+    ignoreErrors:
+        - '#Call to an undefined method .+Criteria::.+\(\).#'
+        - '#Call to an undefined method .+DataSetStepBrokerAwareInterface::.+\(\).#'
+        - '#Return type \(array\<string, array\<string\>\>\) of method Pyz\\Zed\\Propel\\PropelConfig::getWhitelistForAllowedAttributeValueChanges\(\) should be compatible with return type \(array\<string\>\).#'
+
+    reportUnmatchedIgnoredErrors: false
+
+    dynamicConstantNames:
+        - APPLICATION
+        - APPLICATION_ENV
+        - APPLICATION_STORE
+        - APPLICATION_CODE_BUCKET
+
+    parallel:
+        maximumNumberOfProcesses: 4

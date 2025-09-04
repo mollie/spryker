@@ -1,0 +1,25 @@
+namespace: MollieTest
+
+include:
+  - tests/MollieTest/*/*
+
+support_namespace: Support
+
+paths:
+  tests: tests/tests
+  output: tests/tests/_output
+  data: tests/tests/Support/Data
+  support: tests/tests/Support
+  envs: tests/tests/_envs
+
+actor_suffix: Tester
+
+extensions:
+  enabled:
+    - Codeception\Extension\RunFailed
+
+params:
+  - tests/tests/default.yml
+  - env
+
+bootstrap: bootstrap.php

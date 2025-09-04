@@ -1,0 +1,25 @@
+# General
+/vendor/
+/.env
+/.env.local
+/.env.*
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# PHP / Cache
+/.php_cs.cache
+/.php-cs-fixer.cache
+/.phpunit.result.cache
+/var/
+/cache/
+/tmp/
+
+# Logs
+/logs/
+*.log
+
+# Node (if present in consuming projects)
+/node_modules/
