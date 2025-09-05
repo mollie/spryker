@@ -32,9 +32,6 @@
     </rule>
 
     <!-- Define your own sniffs here -->
-
-    <rule ref="SlevomatCodingStandard.TypeHints.DeclareStrictTypes"/>
-
     <rule ref="Spryker.Internal.SprykerDisallowFunctions">
         <properties>
             <!-- We want to prevent 8.3+ functions to break 8.2 compatibility -->

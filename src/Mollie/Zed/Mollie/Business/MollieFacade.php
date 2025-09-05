@@ -1,13 +1,18 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Mollie\Zed\Mollie\Business;
 
-use Spyryker\Zed\Module\Business\AbstractFacade;
+use Spryker\Zed\Kernel\Business\AbstractFacade;
 
 class MollieFacade extends AbstractFacade implements MollieFacadeInterface
 {
-    public function testPayment(){
-
+    /**
+     * @return void
+     */
+    public function testPayment(): void
+    {
+        $test = 1;
     }
 }
