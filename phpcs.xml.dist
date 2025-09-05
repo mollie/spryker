@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<ruleset name="BM Code Style">
+    <rule ref="PSR12"/>
+
+    <!-- Override sniff definition-->
+    <rule ref="Generic.Files.LineLength">
+        <properties>
+            <property name="lineLimit" value="180"/>
+            <property name="absoluteLineLimit" value="0"/>
+        </properties>
+    </rule>
+
+    <!-- Report formatting -->
+    <arg name="report" value="full"/>
+    <arg name="report-width" value="180"/>
+
+    <!-- Excluded vendor directory and js files-->``
+    <exclude-pattern>vendor/*</exclude-pattern>
+    <exclude-pattern>**/*.js</exclude-pattern>
+
+    <!-- Directories to scan -->
+    <file>src</file>
+</ruleset>

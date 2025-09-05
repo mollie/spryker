@@ -6,5 +6,4 @@ use Codeception\Test\Unit;
 
 class MollieFacadeTest extends Unit
 {
-
 }
