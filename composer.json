@@ -36,7 +36,7 @@
     "codeception/module-asserts": "^3.0",
     "spryker/git-hook": "dev-master",
     "spryker/testify": "^3.50",
-    "spryker/project-architecture-sniffer": "0.2.1",
+    "spryker/project-architecture-sniffer": "dev-main",
     "ext-dom": "*"
   },
   "config": {

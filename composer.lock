@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "22f950b1382fed137b916158f8e7ed9c",
+    "content-hash": "ff7fe71212c8aeebf94840106cdc5ef0",
     "packages": [
         {
             "name": "brick/math",
@@ -13033,7 +13033,7 @@
         },
         {
             "name": "spryker/project-architecture-sniffer",
-            "version": "0.2.1",
+            "version": "dev-main",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spryker/project-architecture-sniffer.git",
@@ -13056,6 +13056,7 @@
                 "spryker/code-sniffer": "*",
                 "symfony/var-dumper": "^4.0"
             },
+            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
@@ -13797,7 +13798,8 @@
     "stability-flags": {
         "spryker-sdk/phpstan-spryker": 20,
         "spryker/code-sniffer": 20,
-        "spryker/git-hook": 20
+        "spryker/git-hook": 20,
+        "spryker/project-architecture-sniffer": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,
