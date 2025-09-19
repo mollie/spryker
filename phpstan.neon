@@ -6,6 +6,7 @@ parameters:
     level: 6
     paths:
         - src/
+        - tests/
 
     excludePaths:
         - '%rootDir%/../../../src/Generated/*'
