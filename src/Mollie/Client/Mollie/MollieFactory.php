@@ -4,28 +4,28 @@ declare(strict_types=1);
 
 namespace Mollie\Client\Mollie;
 
-use Mollie\Client\Mollie\Api\AvailablePaymentMethodsApi;
-use Mollie\Client\Mollie\Mapper\ApiResponseMapper;
-use Mollie\Client\Mollie\Mapper\ApiResponseMapperInterface;
+use Mollie\Api\MollieApiClient;
+use Mollie\Client\Mollie\Api\ApiCallInterface;
+use Mollie\Client\Mollie\Api\PaymentMethods\AvailablePaymentMethodsApi;
 use Spryker\Client\Kernel\AbstractFactory;
 
 class MollieFactory extends AbstractFactory
 {
     /**
-     * @return \Mollie\Client\Mollie\Api\AvailablePaymentMethodsApi
+     * @return \Mollie\Client\Mollie\Api\PaymentMethods\AvailablePaymentMethodsApi
      */
-    public function createAvailablePaymentMethodsApi(): AvailablePaymentMethodsApi
+    public function createAvailablePaymentMethodsApi(): ApiCallInterface
     {
         return new AvailablePaymentMethodsApi(
-            $this->createApiResponseMapper(),
+            $this->createMollieApiClient(),
         );
     }
 
     /**
-     * @return \Mollie\Client\Mollie\Mapper\ApiResponseMapperInterface
+     * @return \Mollie\Api\MollieApiClient
      */
-    public function createApiResponseMapper(): ApiResponseMapperInterface
+    public function createMollieApiClient(): MollieApiClient
     {
-        return new ApiResponseMapper();
+        return new MollieApiClient();
     }
 }

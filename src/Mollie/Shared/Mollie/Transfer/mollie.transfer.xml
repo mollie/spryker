@@ -22,4 +22,16 @@
         <property name="methods" type="MolliePaymentMethod[]"/>
     </transfer>
 
+     <transfer name="MollieApiRequest">
+        <property name="body" type="array"/>
+    </transfer>
+
+   <transfer name="MollieApiResponse">
+        <property name="isSuccessful" type="bool"/>
+        <property name="payload" type="array"/>
+        <property name="code" type="int"/>
+        <property name="message" type="string"/>
+        <property name="timestamp" type="string"/>
+    </transfer>
+
 </transfers>
