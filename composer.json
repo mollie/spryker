@@ -39,7 +39,8 @@
     "spryker/testify": "^3.50",
     "spryker/project-architecture-sniffer": "dev-main",
     "ext-dom": "*",
-    "spryker/cart-extension": "^4.3"
+    "spryker/cart-extension": "^4.3",
+    "fond-of-codeception/spryker": "dev-master"
   },
   "config": {
     "allow-plugins": {
