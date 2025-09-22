@@ -21,3 +21,10 @@ extensions:
 params:
   - tests/default.yml
   - env
+
+modules:
+  enabled:
+    - \FondOfCodeception\Module\Spryker
+  config:
+    \FondOfCodeception\Module\Spryker:
+        generate_transfer: true
