@@ -3,6 +3,8 @@
 /.env
 /.env.local
 /.env.*
+/src/Generated
+/src/Orm
 
 # IDE
 .idea/
@@ -20,6 +22,8 @@
 # Logs
 /logs/
 *.log
+/tests/MollieTest/*/*/_output/*
+/tests/MollieTest/*/*/_support/_generated/*
 
 # Node (if present in consuming projects)
 /node_modules/
