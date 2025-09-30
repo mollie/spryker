@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "995471c0a4a0ae2f9ba3bf1a6a74e7e2",
+    "content-hash": "88d916c023c045780c9f4c9cba6a58a7",
     "packages": [
         {
             "name": "brick/math",
@@ -1585,22 +1585,21 @@
         },
         {
             "name": "psr/log",
-            "version": "dev-master",
+            "version": "3.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-fig/log.git",
-                "reference": "f16e1d5863e37f8d8c2a01719f5b34baa2b714d3"
+                "reference": "fe5ea303b0887d5caefd3d431c3e61ad47037001"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-fig/log/zipball/f16e1d5863e37f8d8c2a01719f5b34baa2b714d3",
-                "reference": "f16e1d5863e37f8d8c2a01719f5b34baa2b714d3",
+                "url": "https://api.github.com/repos/php-fig/log/zipball/fe5ea303b0887d5caefd3d431c3e61ad47037001",
+                "reference": "fe5ea303b0887d5caefd3d431c3e61ad47037001",
                 "shasum": ""
             },
             "require": {
                 "php": ">=8.0.0"
             },
-            "default-branch": true,
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -1630,9 +1629,9 @@
                 "psr-3"
             ],
             "support": {
-                "source": "https://github.com/php-fig/log/tree/3.0.2"
+                "source": "https://github.com/php-fig/log/tree/3.0.0"
             },
-            "time": "2024-09-11T13:17:53+00:00"
+            "time": "2021-07-14T16:46:02+00:00"
         },
         {
             "name": "ralouphie/getallheaders",
@@ -1760,12 +1759,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/ramsey/uuid.git",
-                "reference": "6c074f9ab24235adc68de71ad209799d835f172c"
+                "reference": "7ccc0b6be5e995489b7624b1b9a582dc579f22ff"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ramsey/uuid/zipball/6c074f9ab24235adc68de71ad209799d835f172c",
-                "reference": "6c074f9ab24235adc68de71ad209799d835f172c",
+                "url": "https://api.github.com/repos/ramsey/uuid/zipball/7ccc0b6be5e995489b7624b1b9a582dc579f22ff",
+                "reference": "7ccc0b6be5e995489b7624b1b9a582dc579f22ff",
                 "shasum": ""
             },
             "require": {
@@ -1831,7 +1830,7 @@
                 "issues": "https://github.com/ramsey/uuid/issues",
                 "source": "https://github.com/ramsey/uuid/tree/4.x"
             },
-            "time": "2025-09-22T21:07:56+00:00"
+            "time": "2025-09-30T02:45:36+00:00"
         },
         {
             "name": "spryker-shop/shop-application",
@@ -5740,12 +5739,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/form.git",
-                "reference": "b40cdbe70be9274ea807ef61da7d0f8d1c70dc51"
+                "reference": "46c4e963995bd4f941507fbc6d344fbbb307df68"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/form/zipball/b40cdbe70be9274ea807ef61da7d0f8d1c70dc51",
-                "reference": "b40cdbe70be9274ea807ef61da7d0f8d1c70dc51",
+                "url": "https://api.github.com/repos/symfony/form/zipball/46c4e963995bd4f941507fbc6d344fbbb307df68",
+                "reference": "46c4e963995bd4f941507fbc6d344fbbb307df68",
                 "shasum": ""
             },
             "require": {
@@ -5833,7 +5832,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-09-20T07:40:41+00:00"
+            "time": "2025-09-29T09:04:15+00:00"
         },
         {
             "name": "symfony/http-client",
@@ -9017,12 +9016,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/var-dumper.git",
-                "reference": "b44731c5dda060422f4f3c1c8aaa168c5340960f"
+                "reference": "0c9272cc57ad469bbcb3f881f2c9d0b1295d477d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/var-dumper/zipball/b44731c5dda060422f4f3c1c8aaa168c5340960f",
-                "reference": "b44731c5dda060422f4f3c1c8aaa168c5340960f",
+                "url": "https://api.github.com/repos/symfony/var-dumper/zipball/0c9272cc57ad469bbcb3f881f2c9d0b1295d477d",
+                "reference": "0c9272cc57ad469bbcb3f881f2c9d0b1295d477d",
                 "shasum": ""
             },
             "require": {
@@ -9096,7 +9095,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-09-27T09:05:58+00:00"
+            "time": "2025-09-29T13:00:59+00:00"
         },
         {
             "name": "symfony/yaml",
@@ -9180,12 +9179,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/twigphp/Twig.git",
-                "reference": "8832f6327cbde1cdf49650e8e2eee2d58e33884c"
+                "reference": "a895a3f00d015159caf4759a4ee12c2fa4ebb432"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/twigphp/Twig/zipball/8832f6327cbde1cdf49650e8e2eee2d58e33884c",
-                "reference": "8832f6327cbde1cdf49650e8e2eee2d58e33884c",
+                "url": "https://api.github.com/repos/twigphp/Twig/zipball/a895a3f00d015159caf4759a4ee12c2fa4ebb432",
+                "reference": "a895a3f00d015159caf4759a4ee12c2fa4ebb432",
                 "shasum": ""
             },
             "require": {
@@ -9252,7 +9251,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-08-25T19:44:53+00:00"
+            "time": "2025-09-25T10:20:18+00:00"
         },
         {
             "name": "voku/anti-xss",
@@ -11236,15 +11235,10 @@
         {
             "name": "phpstan/phpstan",
             "version": "1.12.x-dev",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/phpstan/phpstan-phar-composer-source.git",
-                "reference": "git1"
-            },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/e3713dc228071a692f73dc0359db03acc55c2616",
-                "reference": "e3713dc228071a692f73dc0359db03acc55c2616",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/2770dcdf5078d0b0d53f94317e06affe88419aa8",
+                "reference": "2770dcdf5078d0b0d53f94317e06affe88419aa8",
                 "shasum": ""
             },
             "require": {
@@ -11289,7 +11283,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-09-24T15:46:58+00:00"
+            "time": "2025-09-30T10:16:31+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",
@@ -13567,12 +13561,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/PHPCSStandards/PHP_CodeSniffer.git",
-                "reference": "91fbbd54f66dc1bd40f0e7e4271be5c4ca9df955"
+                "reference": "63b78c49263a84007cd2fb131b83d63cf3b4e65d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PHPCSStandards/PHP_CodeSniffer/zipball/91fbbd54f66dc1bd40f0e7e4271be5c4ca9df955",
-                "reference": "91fbbd54f66dc1bd40f0e7e4271be5c4ca9df955",
+                "url": "https://api.github.com/repos/PHPCSStandards/PHP_CodeSniffer/zipball/63b78c49263a84007cd2fb131b83d63cf3b4e65d",
+                "reference": "63b78c49263a84007cd2fb131b83d63cf3b4e65d",
                 "shasum": ""
             },
             "require": {
@@ -13638,7 +13632,7 @@
                     "type": "thanks_dev"
                 }
             ],
-            "time": "2025-09-19T23:00:16+00:00"
+            "time": "2025-09-30T00:00:15+00:00"
         },
         {
             "name": "staabm/side-effects-detector",
@@ -13840,12 +13834,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/dependency-injection.git",
-                "reference": "0587fdea12f41402bdf39af26a9fb31b235567e0"
+                "reference": "08f859f4731fbccb25d19a1d33ad3c129dcfaa99"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/dependency-injection/zipball/0587fdea12f41402bdf39af26a9fb31b235567e0",
-                "reference": "0587fdea12f41402bdf39af26a9fb31b235567e0",
+                "url": "https://api.github.com/repos/symfony/dependency-injection/zipball/08f859f4731fbccb25d19a1d33ad3c129dcfaa99",
+                "reference": "08f859f4731fbccb25d19a1d33ad3c129dcfaa99",
                 "shasum": ""
             },
             "require": {
@@ -13916,7 +13910,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-09-21T07:58:28+00:00"
+            "time": "2025-09-29T17:22:48+00:00"
         },
         {
             "name": "symfony/dom-crawler",

@@ -25,7 +25,8 @@
     "spryker-shop/shop-application": "^1.15.1",
     "spryker-shop/shop-application-extension": "^1.2.0",
     "mollie/mollie-api-php": "^3.4.0",
-    "spryker/step-engine": "^3.7"
+    "spryker/step-engine": "^3.7",
+    "psr/log": "3.0.0"
   },
   "require-dev": {
     "spryker/application": "^3.33",
