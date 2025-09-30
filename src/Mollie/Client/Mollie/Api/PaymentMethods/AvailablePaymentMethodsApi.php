@@ -9,6 +9,7 @@ use Generated\Shared\Transfer\MollieAvailablePaymentMethodCollectionTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodTransfer;
 use Mollie\Api\Exceptions\ApiException;
 use Mollie\Client\Mollie\Api\AbstractApiCall;
+use Mollie\Client\Mollie\Api\Exception\AvailablePaymentMethodsApiException;
 use Spryker\Shared\Kernel\Transfer\AbstractTransfer;
 use Spryker\Shared\Log\LoggerTrait;
 
@@ -19,7 +20,7 @@ class AvailablePaymentMethodsApi extends AbstractApiCall
     /**
      * @param array<string, mixed> $query
      *
-     * @throws \Mollie\Api\Exceptions\ApiException
+     * @throws \Mollie\Client\Mollie\Api\Exception\AvailablePaymentMethodsApiException
      *
      * @return \Generated\Shared\Transfer\MollieApiResponseTransfer
      */
@@ -35,8 +36,7 @@ class AvailablePaymentMethodsApi extends AbstractApiCall
 
             return $mollieApiResponseTransfer;
         } catch (ApiException $requestException) {
-            throw new ApiException(
-                $requestException->getResponse(),
+            throw new AvailablePaymentMethodsApiException(
                 $requestException->getMessage(),
                 $requestException->getCode(),
             );
@@ -46,7 +46,7 @@ class AvailablePaymentMethodsApi extends AbstractApiCall
     /**
      * @param \Generated\Shared\Transfer\MollieApiResponseTransfer $mollieApiResponseTransfer
      *
-     * @return \Spryker\Shared\Kernel\Transfer\AbstractTransfer
+     * @return \Generated\Shared\Transfer\MollieAvailablePaymentMethodCollectionTransfer
      */
     protected function formatApiResponse(MollieApiResponseTransfer $mollieApiResponseTransfer): AbstractTransfer
     {

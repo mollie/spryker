@@ -11,7 +11,6 @@ use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @method \Mollie\Yves\Mollie\MollieFactory getFactory()
- * /
  */
 class MollieCreditCardPaymentHandlerPlugin extends AbstractPlugin implements StepHandlerPluginInterface
 {
