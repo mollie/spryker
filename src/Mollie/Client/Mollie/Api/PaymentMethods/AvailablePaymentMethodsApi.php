@@ -11,9 +11,12 @@ use Mollie\Api\Exceptions\ApiException;
 use Mollie\Client\Mollie\Api\AbstractApiCall;
 use Mollie\Client\Mollie\Api\Exception\AvailablePaymentMethodsApiException;
 use Spryker\Shared\Kernel\Transfer\AbstractTransfer;
+use Spryker\Shared\Log\LoggerTrait;
 
 class AvailablePaymentMethodsApi extends AbstractApiCall
 {
+    use LoggerTrait;
+
     /**
      * @param array<string, mixed> $query
      *
@@ -33,6 +36,13 @@ class AvailablePaymentMethodsApi extends AbstractApiCall
 
             return $mollieApiResponseTransfer;
         } catch (ApiException $requestException) {
+            $logException = sprintf(
+                'Error calling available api payment methods with message: %s',
+                $requestException->getMessage(),
+            );
+
+            $this->getLogger()->error($logException);
+
             throw new AvailablePaymentMethodsApiException(
                 $requestException->getMessage(),
                 $requestException->getCode(),
