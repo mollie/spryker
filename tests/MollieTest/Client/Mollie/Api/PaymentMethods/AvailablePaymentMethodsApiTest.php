@@ -14,79 +14,14 @@ use Mollie\Client\Mollie\Api\PaymentMethods\AvailablePaymentMethodsApi;
 use Mollie\Client\Mollie\MollieClient;
 use Mollie\Client\Mollie\MollieClientInterface;
 use Mollie\Client\Mollie\MollieFactory;
+use MollieTest\Client\Mollie\MollieApiClientTester;
 
 class AvailablePaymentMethodsApiTest extends Unit
 {
     /**
-     * @var array
+     * @var \MollieTest\Client\Mollie\MollieApiClientTester
      */
-    public const MOLLIE_MOCKED_PAYMENT_METHOD_RESPONSE_PAYLOAD = [
-       'count' => 2,
-        '_embedded' => [
-            'methods' => [
-                [
-                    'resource' => 'method',
-                    'id' => 'ideal',
-                    'description' => 'iDEAL',
-                    'minimumAmount' => [
-                        'value' => '0.01',
-                        'currency' => 'EUR',
-                    ],
-                    'maximumAmount' => [
-                        'value' => '50000.00',
-                        'currency' => 'EUR',
-                    ],
-                    'image' => [
-                        'size1x' => 'https://mollie.com/external/icons/payment-methods/ideal.png',
-                        'size2x' => 'https://mollie.com/external/icons/payment-methods/ideal%402x.png',
-                        'svg' => 'https://mollie.com/external/icons/payment-methods/ideal.svg',
-                    ],
-                    'status' => 'activated',
-                    '_links' => [
-                        'self' => [
-                            'href' => '...',
-                            'type' => 'application/hal+json',
-                        ],
-                    ],
-                ],
-                [
-                    'resource' => 'method',
-                    'id' => 'creditcard',
-                    'description' => 'Credit card',
-                    'minimumAmount' => [
-                        'value' => '0.01',
-                        'currency' => 'EUR',
-                    ],
-                    'maximumAmount' => [
-                        'value' => '2000.00',
-                        'currency' => 'EUR',
-                    ],
-                    'image' => [
-                        'size1x' => 'https://mollie.com/external/icons/payment-methods/creditcard.png',
-                        'size2x' => 'https://mollie.com/external/icons/payment-methods/creditcard%402x.png',
-                        'svg' => 'https://mollie.com/external/icons/payment-methods/creditcard.svg',
-                    ],
-                    'status' => 'activated',
-                    '_links' => [
-                        'self' => [
-                            'href' => '...',
-                            'type' => 'application/hal+json',
-                        ],
-                    ],
-                ],
-            ],
-        ],
-        '_links' => [
-            'self' => [
-                'href' => '...',
-                'type' => 'application/hal+json',
-            ],
-            'documentation' => [
-                'href' => '...',
-                'type' => 'text/html',
-            ],
-        ],
-    ];
+    protected MollieApiClientTester $tester;
 
  /**
   * @return \Mollie\Api\Fake\MockMollieClient
@@ -95,7 +30,7 @@ class AvailablePaymentMethodsApiTest extends Unit
     {
         $client = MollieApiClient::fake([
             GetEnabledMethodsRequest::class => new MockResponse(
-                static::MOLLIE_MOCKED_PAYMENT_METHOD_RESPONSE_PAYLOAD,
+                $this->tester->getMollieMockedPaymentMethodResponsePayload(),
             ),
         ]);
 
@@ -120,11 +55,9 @@ class AvailablePaymentMethodsApiTest extends Unit
      */
     protected function createFactory(): MollieFactory
     {
-        $builder = $this->getMockBuilder(MollieFactory::class)->getMock();
-        $builder->method('createAvailablePaymentMethodsApi')
-            ->willReturn($this->createAvailablePaymentMethodApiMock());
+        $mockFactory = $this->tester->mockFactoryMethod('createAvailablePaymentMethodsApi', $this->createAvailablePaymentMethodApiMock());
 
-        return $builder;
+        return $mockFactory;
     }
 
     /**

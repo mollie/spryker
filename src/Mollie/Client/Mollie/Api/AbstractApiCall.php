@@ -23,7 +23,7 @@ abstract class AbstractApiCall implements ApiCallInterface
      *
      * @return \Generated\Shared\Transfer\MollieApiResponseTransfer
      */
-    abstract protected function getApiResponse(array $query): MollieApiResponseTransfer;
+    abstract protected function call(array $query): MollieApiResponseTransfer;
 
     /**
      * @param \Generated\Shared\Transfer\MollieApiResponseTransfer $mollieApiResponseTransfer
@@ -40,7 +40,7 @@ abstract class AbstractApiCall implements ApiCallInterface
     public function execute(?MollieApiRequestTransfer $mollieApiRequestTransfer = null): AbstractTransfer
     {
         $query = $this->buildQuery($mollieApiRequestTransfer);
-        $mollieResponseApiTransfer = $this->getApiResponse($query);
+        $mollieResponseApiTransfer = $this->call($query);
 
         return $this->formatApiResponse($mollieResponseApiTransfer);
     }

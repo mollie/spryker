@@ -11,12 +11,9 @@ use Mollie\Api\Exceptions\ApiException;
 use Mollie\Client\Mollie\Api\AbstractApiCall;
 use Mollie\Client\Mollie\Api\Exception\AvailablePaymentMethodsApiException;
 use Spryker\Shared\Kernel\Transfer\AbstractTransfer;
-use Spryker\Shared\Log\LoggerTrait;
 
 class AvailablePaymentMethodsApi extends AbstractApiCall
 {
-    use LoggerTrait;
-
     /**
      * @param array<string, mixed> $query
      *
@@ -24,7 +21,7 @@ class AvailablePaymentMethodsApi extends AbstractApiCall
      *
      * @return \Generated\Shared\Transfer\MollieApiResponseTransfer
      */
-    protected function getApiResponse(array $query): MollieApiResponseTransfer
+    protected function call(array $query): MollieApiResponseTransfer
     {
         try {
             $methods = $this->mollieApiClient->methods->allEnabled($query, true);
