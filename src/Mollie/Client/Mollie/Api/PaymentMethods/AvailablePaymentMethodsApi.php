@@ -47,7 +47,7 @@ class AvailablePaymentMethodsApi extends AbstractApiCall
      */
     protected function formatApiResponse(MollieApiResponseTransfer $mollieApiResponseTransfer): AbstractTransfer
     {
-        $mollieAvailablePaymentMethodCollectionTransfer = new MollieAvailablePaymentMethodCollectionTransfer();
+        $mollieAvailablePaymentMethodCollection = new MollieAvailablePaymentMethodCollectionTransfer();
         foreach ($mollieApiResponseTransfer->getPayload() as $method) {
             $molliePaymentMethodTransfer = new MolliePaymentMethodTransfer();
 
@@ -56,9 +56,9 @@ class AvailablePaymentMethodsApi extends AbstractApiCall
                 ->setDescription($method->description)
                 ->setMinimumAmount($method->minimumAmount->value);
 
-            $mollieAvailablePaymentMethodCollectionTransfer->addMethods($molliePaymentMethodTransfer);
+            $mollieAvailablePaymentMethodCollection->addMethods($molliePaymentMethodTransfer);
         }
 
-        return $mollieAvailablePaymentMethodCollectionTransfer;
+        return $mollieAvailablePaymentMethodCollection;
     }
 }
