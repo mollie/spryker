@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Mollie\Client\Mollie\Api\Exception;
 
 use Exception;
