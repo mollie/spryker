@@ -6,6 +6,7 @@ parameters:
     level: 6
     paths:
         - src/
+        - tests/
 
     excludePaths:
         - '%rootDir%/../../../src/Generated/*'
@@ -20,6 +21,8 @@ parameters:
         - '#Call to an undefined method .+DataSetStepBrokerAwareInterface::addAfterImportHook\(\).#'
         - '#Parameter \#1 \$rawCatalogSearchResultFormatterPlugin of class .+CurrencyAwareSuggestionByTypeResultFormatter constructor expects .+ResultFormatterPluginInterface, .+SuggestionByTypeResultFormatterPlugin given.#'
         - '#Method .+CheckoutPageDependencyProvider::.+\(\) return type has no value type specified in iterable type .+FormInterface.#'
+        - '#.+Generated\\Shared\\Transfer.+#'
+        - '#Method .+ has invalid return type.+#'
 
     reportUnmatchedIgnoredErrors: false
 

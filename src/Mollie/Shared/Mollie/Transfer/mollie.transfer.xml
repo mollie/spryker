@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<transfers xmlns="spryker:transfer-01" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="spryker:transfer-01 http://static.spryker.com/transfer-01.xsd">
+
+    <transfer name="MolliePayment">
+    </transfer>
+
+     <transfer name="Payment">
+         <property name="molliePaymentCreditCard" type="MolliePayment"/>
+     </transfer>
+
+    <transfer name="MolliePaymentMethod">
+        <property name="id" type="string" />
+        <property name="description" type="string" />
+        <property name="minimumAmount" type="int" />
+        <property name="image" type="string" />
+        <property name="issuers" type="array" />
+        <property name="pricing" type="array" />
+        <property name="status" type="string" />
+    </transfer>
+
+    <transfer name="MollieAvailablePaymentMethodCollection">
+        <property name="methods" type="MolliePaymentMethod[]"/>
+    </transfer>
+
+     <transfer name="MollieApiRequest">
+        <property name="body" type="array"/>
+    </transfer>
+
+   <transfer name="MollieApiResponse">
+        <property name="isSuccessful" type="bool"/>
+        <property name="payload" type="array"/>
+        <property name="code" type="int"/>
+        <property name="message" type="string"/>
+        <property name="timestamp" type="string"/>
+    </transfer>
+
+</transfers>
