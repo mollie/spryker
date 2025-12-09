@@ -32,8 +32,8 @@ jobs:
 
       -   name: Run tests
           run: |
-            docker-compose exec php  vendor/bin/codecept build -v
-            docker-compose exec php  vendor/bin/codecept run -v
+            docker-compose exec php  vendor/bin/codecept -c ./codeception.yml build -v
+            docker-compose exec php  vendor/bin/codecept run --quiet --fail-fast --no-exit
           working-directory: ./  # Change this to your project's directory
 
       -   name: Stop and remove containers

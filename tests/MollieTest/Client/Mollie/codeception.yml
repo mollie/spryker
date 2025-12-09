@@ -1,0 +1,20 @@
+namespace: MollieTest\Client\Mollie
+
+paths:
+    tests: .
+    data: ../../../_data
+    support: _support
+    log: ../../../_output
+    output: ../../../_output
+
+suites:
+    Client:
+        path: .
+        actor: MollieApiClientTester
+        modules:
+            enabled:
+                - Asserts
+                - \SprykerTest\Shared\Testify\Helper\Environment
+                - \SprykerTest\Client\Testify\Helper\FactoryHelper
+                - \SprykerTest\Shared\Testify\Helper\LocatorHelper:
+                    projectNamespaces: ['Mollie']

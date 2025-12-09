@@ -3,6 +3,8 @@
 /.env
 /.env.local
 /.env.*
+/src/Generated
+/src/Orm
 
 # IDE
 .idea/
