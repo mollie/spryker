@@ -1,11 +1,9 @@
 <?php
 
-declare(strict_types=1);
-
-namespace Mollie\Zed\Mollie;
+namespace Mollie\Glue\Mollie;
 
 use Mollie\Shared\Mollie\MollieConstants;
-use Spryker\Zed\Kernel\AbstractBundleConfig;
+use Spryker\Glue\Kernel\AbstractBundleConfig;
 
 class MollieConfig extends AbstractBundleConfig
 {

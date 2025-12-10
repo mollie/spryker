@@ -19,5 +19,7 @@ suites:
       enabled:
         - Asserts
         - \SprykerTest\Shared\Testify\Helper\Environment
+        - \SprykerTest\Shared\Testify\Helper\ConfigHelper
         - \SprykerTest\Shared\Testify\Helper\LocatorHelper:
             projectNamespaces: ['Mollie']
+        - \MollieTest\Zed\Mollie\Helper\MollieFacadeHelper
