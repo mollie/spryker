@@ -11,7 +11,7 @@ class MollieFacadeHelper extends Module
      *
      * @return bool
      */
-    public function checkIfMollieApiKeyExists(string|null $apiKey): bool
+    public function checkIfMollieApiKeyExists(string $apiKey): bool
     {
         if (!$apiKey) {
             return false;
