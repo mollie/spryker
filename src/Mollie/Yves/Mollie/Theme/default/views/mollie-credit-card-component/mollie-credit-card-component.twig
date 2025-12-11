@@ -1,5 +1,13 @@
-{% extends template('widget') %}
+{% extends model('template') %}
+
+{% define data = {
+    form: form
+} %}
 
 {% block body %}
-  {% include molecule('mollie-credit-card-component', 'Mollie') %}
+  {% include molecule('mollie-credit-card-component', 'Mollie') with {
+        data: {
+            form: data.form
+        }
+    } only %}
 {% endblock %}

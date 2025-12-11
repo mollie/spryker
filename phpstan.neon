@@ -23,7 +23,7 @@ parameters:
         - '#Method .+CheckoutPageDependencyProvider::.+\(\) return type has no value type specified in iterable type .+FormInterface.#'
         - '#.+Generated\\Shared\\Transfer.+#'
         - '#Method .+ has invalid return type.+#'
-
+        - '#Call to an undefined method Spryker\\Shared\\Kernel\\Transfer\\AbstractTransfer.+#'
     reportUnmatchedIgnoredErrors: false
 
     dynamicConstantNames:

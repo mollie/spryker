@@ -18,6 +18,7 @@ parameters:
     ignoreErrors:
         - '#Call to an undefined method .+Criteria::.+\(\).#'
         - '#Call to an undefined method .+DataSetStepBrokerAwareInterface::.+\(\).#'
+        - '#Call to an undefined method .+DataSetStepBrokerAwareInterface::.+\(\).#'
         - '#Return type \(array\<string, array\<string\>\>\) of method Pyz\\Zed\\Propel\\PropelConfig::getWhitelistForAllowedAttributeValueChanges\(\) should be compatible with return type \(array\<string\>\).#'
         - '#.+Generated\\Shared\\Transfer.+#'
         - '#Method .+ has invalid return type.+#'

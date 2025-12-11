@@ -5,63 +5,44 @@
     tag: 'mollie-credit-card-component',
 } %}
 
+{% define data = {
+    form: required,
+    src: 'https://js.mollie.com/v1/mollie.js',
+} %}
+
+
+{% define attributes = {
+    'form-selector': '[name="paymentForm"]',
+    'selected-payment-method': '[name="paymentForm[paymentSelection]"]:checked',
+    'locale': app.locale,
+} %}
+
 {% block body %}
-      <script src="https://js.mollie.com/v1/mollie.js"></script>
-
-      <div class="wrapper">
-      <form method="post" class="form" id="mcForm">
-        <div class="form-fields">
-          <div class="row">
-            <div class="form-group form-group--card-holder">
-              <label class="label" for="card-holder">Name</label>
-              <div id="card-holder"></div>
-              <div
-                id="card-holder-error"
-                class="field-error"
-                role="alert"
-              ></div>
-            </div>
-          </div>
-
-          <div class="row">
-            <div class="form-group form-group--card-number">
-              <label class="label" for="card-number">Card number</label>
-              <div id="card-number"></div>
-              <div
-                id="card-number-error"
-                class="field-error"
-                role="alert"
-              ></div>
-            </div>
-          </div>
-
-          <div class="row">
-            <div class="form-group form-group--expiry-date">
-              <label class="label" for="expiry-date">Expiry date</label>
-              <div id="expiry-date"></div>
-              <div
-                id="expiry-date-error"
-                class="field-error"
-                role="alert"
-              ></div>
-            </div>
-
-            <div class="form-group form-group--verification-code">
-              <label class="label" for="verification-code">CVC</label>
-              <div id="verification-code"></div>
-              <div
-                id="verification-code-error"
-                class="field-error"
-                role="alert"
-              ></div>
-            </div>
-          </div>
+    {% include molecule('script-loader') with {
+        attributes: {
+            src: data.src
+        }
+    } only %}
+    <div class="{{ config.name }}__wrapper">
+        <div class="{{ config.name }}__wrapper--form-group">
+            <label class="{{ config.name }}__wrapper--label" for="card-holder">Name</label>
+            <div id="card-holder"></div>
+            <div id="card-holder-error" class="{{ config.name }}__wrapper--field-error"></div>
         </div>
-
-        <button id="submit-button" class="submit-button" type="submit">
-            Submit
-        </button>
-        <div id="form-error" class="field-error" role="alert"></div>
-      </form>
+        <div class="{{ config.name }}__wrapper--form-group">
+            <label class="{{ config.name }}__wrapper--label" for="card-number">Card number</label>
+            <div id="card-number"></div>
+            <div id="card-number-error" class="{{ config.name }}__wrapper--field-error"></div>
+        </div>
+        <div class="{{ config.name }}__wrapper--form-group">
+            <label class="{{ config.name }}__wrapper--label" for="expiry-date">Expiry date</label>
+            <div id="expiry-date"></div>
+            <div id="expiry-date-error" class="{{ config.name }}__wrapper--field-error"></div>
+        </div>
+        <div class="{{ config.name }}__wrapper--form-group">
+            <label class="{{ config.name }}__wrapper--label" for="verification-code">CVC</label>
+            <div id="verification-code"></div>
+            <div id="verification-code-error" class="{{ config.name }}__wrapper--field-error"></div>
+        </div>
     </div>
 {% endblock %}
