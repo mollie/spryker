@@ -5,24 +5,24 @@ declare(strict_types = 1);
 
 namespace Mollie\Yves\Mollie\Handler;
 
+use Generated\Shared\Transfer\QuoteTransfer;
 use Mollie\Yves\Mollie\MollieConfig;
-use Spryker\Shared\Kernel\Transfer\AbstractTransfer;
 
 class MolliePaymentCreditCardHandler implements MolliePaymentCreditCardHandlerInterface
 {
-    /**
-     * @param \Generated\Shared\Transfer\AbstractTransfer $dataTransfer
-     *
-     * @return \Generated\Shared\Transfer\AbstractTransfer
-     */
-    public function addPaymentToQuote(AbstractTransfer $dataTransfer): AbstractTransfer
+     /**
+      * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
+      *
+      * @return \Generated\Shared\Transfer\QuoteTransfer
+      */
+    public function addPaymentToQuote(QuoteTransfer $quoteTransfer): QuoteTransfer
     {
-        $paymentTransfer = $dataTransfer->getPayment();
+        $paymentTransfer = $quoteTransfer->getPayment();
 
         $paymentTransfer
             ->setPaymentProvider(MollieConfig::PROVIDER_NAME)
             ->setPaymentMethod(MollieConfig::MOLLIE_PAYMENT_CREDIT_CARD);
 
-        return $dataTransfer;
+        return $quoteTransfer;
     }
 }
