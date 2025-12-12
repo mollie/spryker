@@ -14,8 +14,6 @@ interface MollieOptions {
   testmode?: boolean;
 }
 
-
-
 interface MollieInstance {
   createComponent(type: string, options?: any): any;
   createToken(): Promise<any>;
@@ -34,14 +32,16 @@ export default class MollieCreditCardComponent extends Component {
     protected form: HTMLFormElement;
     protected settings: HTMLInputElement;
     protected cardToken: HTMLInputElement;
+    protected errorOutput: HTMLDivElement;
 
     protected readyCallback(): void {}
 
     protected init(): void {
-        this.settings = document.querySelector('.settings');
-        this.cardToken = document.querySelector('.card-token');
-        this.scriptLoader = <ScriptLoader>this.querySelector('script-loader');
-        this.form = document.querySelector(this.formSelector);
+        this.settings = <HTMLInputElement>document.querySelector(this.settingsClass);
+        this.cardToken = <HTMLInputElement>document.querySelector(this.cardTokenClass);
+        this.scriptLoader = <ScriptLoader>this.querySelector(this.scriptLoaderTag);
+        this.errorOutput = <HTMLDivElement>this.querySelector(this.errorTokenOutputClass);
+        this.form = <HTMLFormElement>document.querySelector(this.formSelector);
 
         this.mapEvents();
     }
@@ -52,9 +52,17 @@ export default class MollieCreditCardComponent extends Component {
         this.form.addEventListener('submit', (event: Event) => this.onSubmit(event));
     }
 
+    protected onScriptLoad(): void
+    {
+        this.initMollieInstance();
+        this.initComponents();
+        this.initErrorElements();
+        this.mapComponentEvents();
+    }
+
     protected initMollieInstance(): void
     {
-        this.mollie = window.Mollie(this.profileId, { locale: this.locale, testmode: this.testMode });
+        this.mollie = window.Mollie(this.profileId,  { locale: this.locale, testmode: this.testMode });
     }
 
     protected initComponents(): void
@@ -73,14 +81,6 @@ export default class MollieCreditCardComponent extends Component {
 
     }
 
-    protected mapComponentEvents(): void
-    {
-        this.cardHolder.addEventListener('change', (event: Event) => this.onChangeCardHolder(event));
-        this.cardNumber.addEventListener('change', (event: Event) => this.onChangeCardNumber(event));
-        this.expiryDate.addEventListener('change', (event: Event) => this.onChangeExpiryDate(event));
-        this.verificationCode.addEventListener('change', (event: Event) => this.onChangeVerificationCode(event));
-    }
-
     protected initErrorElements(): void
     {
         this.cardHolderError = document.querySelector('#card-holder-error');
@@ -89,12 +89,12 @@ export default class MollieCreditCardComponent extends Component {
         this.verificationCodeError = document.querySelector('#verification-code-error');
     }
 
-    protected onScriptLoad(): void
+    protected mapComponentEvents(): void
     {
-        this.initMollieInstance();
-        this.initComponents();
-        this.initErrorElements();
-        this.mapComponentEvents();
+        this.cardHolder.addEventListener('change', (event: Event) => this.onChangeCardHolder(event));
+        this.cardNumber.addEventListener('change', (event: Event) => this.onChangeCardNumber(event));
+        this.expiryDate.addEventListener('change', (event: Event) => this.onChangeExpiryDate(event));
+        this.verificationCode.addEventListener('change', (event: Event) => this.onChangeVerificationCode(event));
     }
 
     protected onChangeCardHolder(event: Event): void
@@ -144,13 +144,12 @@ export default class MollieCreditCardComponent extends Component {
              const { token, error } = result;
 
              if (error) {
+                 this.errorOutput.textContent = error.message;
                  return;
              }
 
-
              this.cardToken.setAttribute('value', token);
              this.form.submit();
-
         });
     }
 
@@ -160,6 +159,24 @@ export default class MollieCreditCardComponent extends Component {
         return currentPaymentMethodInput?.value
             ? currentPaymentMethodInput.value === MOLLIE_CREDIT_CARD_PAYMENT_METHOD_IDENTIFIER
             : null;
+    }
+
+    protected get settingsClass(): string {
+        return '.settings';
+    }
+
+    protected get cardTokenClass(): string {
+        return '.card-token';
+    }
+
+    protected get errorTokenOutputClass(): string
+    {
+        return '.error-token-output';
+    }
+
+    protected get scriptLoaderTag(): string
+    {
+        return 'script-loader';
     }
 
     protected get formSelector(): string {
