@@ -153,7 +153,7 @@ export default class MollieCreditCardComponent extends Component {
         });
     }
 
-     get isCurrentPaymentMethod(): boolean | null {
+    protected get isCurrentPaymentMethod(): boolean | null {
         const currentPaymentMethodInput = <HTMLInputElement>document.querySelector(this.selectedPaymentMethod);
 
         return currentPaymentMethodInput?.value

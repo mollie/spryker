@@ -21,14 +21,13 @@
 
             .mollie-component {
                 background: $setting-color-white;
-                box-shadow: rem(0) rem(1) rem(0) rgba(0, 0, 0, 0.1), rem(0) rem(2) rem(4) rgba(0, 0, 0, 0.1),
-                rem(0) rem(4) rem(8) rgba(0, 0, 0, 0.05);
-                border-radius: rem(4);
-                padding: rem(6);
-                border: rem(1) solid transparent;
-                transition: 0.15s border-color cubic-bezier(0.4, 0, 0.2, 1);
+                border: rem(1) solid $setting-color-gray-1;
+                padding: rem(14) rem(20) rem(13);
                 font-weight: fw(medium);
 
+                iframe {
+                    margin: 0;
+                }
             }
         }
         @content;

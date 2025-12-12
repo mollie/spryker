@@ -23,10 +23,6 @@ class MolliePaymentCreditCardHandler implements MolliePaymentCreditCardHandlerIn
             ->setPaymentProvider(MollieConfig::PROVIDER_NAME)
             ->setPaymentMethod(MollieConfig::MOLLIE_PAYMENT_CREDIT_CARD);
 
-        if (!$dataTransfer->getPayments()->offSetExists($paymentTransfer->getPaymentMethod())) {
-            $dataTransfer->getPayments()->offsetSet($paymentTransfer->getPaymentMethod(), $paymentTransfer);
-        }
-
         return $dataTransfer;
     }
 }
