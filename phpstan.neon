@@ -23,6 +23,7 @@ parameters:
         - '#Method .+CheckoutPageDependencyProvider::.+\(\) return type has no value type specified in iterable type .+FormInterface.#'
         - '#.+Generated\\Shared\\Transfer.+#'
         - '#Method .+ has invalid return type.+#'
+
     reportUnmatchedIgnoredErrors: false
 
     dynamicConstantNames:
