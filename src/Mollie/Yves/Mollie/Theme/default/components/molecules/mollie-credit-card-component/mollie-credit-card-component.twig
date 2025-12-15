@@ -24,25 +24,25 @@
         }
     } only %}
     <div class="{{ config.name }}__wrapper">
-        <div class="{{ config.name }}__wrapper--form-group">
-            <label class="{{ config.name }}__wrapper--label">{{ 'mollie.checkout.payment.credit.card.holder' | trans }}</label>
+        <div class="{{ config.name }}__form-group">
+            <label class="{{ config.name }}__label">{{ 'mollie.checkout.payment.credit.card.holder' | trans }}</label>
             <div id="card-holder"></div>
-            <div id="card-holder-error" class="{{ config.name }}__wrapper--field-error"></div>
+            <div id="card-holder-error" class="{{ config.name }}__field-error"></div>
         </div>
-        <div class="{{ config.name }}__wrapper--form-group">
-            <label class="{{ config.name }}__wrapper--label">{{ 'mollie.checkout.payment.credit.card.number' | trans }}</label>
+        <div class="{{ config.name }}__form-group">
+            <label class="{{ config.name }}__label">{{ 'mollie.checkout.payment.credit.card.number' | trans }}</label>
             <div id="card-number"></div>
-            <div id="card-number-error" class="{{ config.name }}__wrapper--field-error"></div>
+            <div id="card-number-error" class="{{ config.name }}__field-error"></div>
         </div>
-        <div class="{{ config.name }}__wrapper--form-group">
-            <label class="{{ config.name }}__wrapper--label">{{ 'mollie.checkout.payment.credit.card.expiry.date' | trans }}</label>
+        <div class="{{ config.name }}__form-group">
+            <label class="{{ config.name }}__label">{{ 'mollie.checkout.payment.credit.card.expiry.date' | trans }}</label>
             <div id="expiry-date"></div>
-            <div id="expiry-date-error" class="{{ config.name }}__wrapper--field-error"></div>
+            <div id="expiry-date-error" class="{{ config.name }}__field-error"></div>
         </div>
-        <div class="{{ config.name }}__wrapper--form-group">
-            <label class="{{ config.name }}__wrapper--label">{{ 'mollie.checkout.payment.credit.card.verification.code' | trans }}</label>
+        <div class="{{ config.name }}__form-group">
+            <label class="{{ config.name }}__label">{{ 'mollie.checkout.payment.credit.card.verification.code' | trans }}</label>
             <div id="verification-code"></div>
-            <div id="verification-code-error" class="{{ config.name }}__wrapper--field-error"></div>
+            <div id="verification-code-error" class="{{ config.name }}__field-error"></div>
         </div>
         <div class="text-alert error-token-output"></div>
     </div>

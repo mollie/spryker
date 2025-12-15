@@ -1,23 +1,24 @@
 @mixin mollie-credit-card-component($name: '.mollie-credit-card-component') {
     #{$name} {
+
+        &__form-group {
+            margin-bottom: rem(12);
+        }
+
+         &__label {
+            display: block;
+            font-weight: fw(medium);
+            margin-bottom: rem(4);
+        }
+
+        &__field-error {
+            font-weight: fw(medium);
+            font-size: rem(12);
+            margin-top: rem(2);
+            color: helper-color-light(map-get($setting-color-actions, 'alert'), 10);
+        }
+
         &__wrapper {
-
-            &--form-group {
-                margin-bottom: rem(12);
-            }
-
-            &--label {
-                display: block;
-                font-weight: fw(medium);
-                margin-bottom: rem(4);
-            }
-
-            &--field-error {
-                font-weight: fw(medium);
-                font-size: rem(12);
-                margin-top: rem(2);
-                color: helper-color-light(map-get($setting-color-actions, 'alert'), 10);
-            }
 
             .mollie-component {
                 background: $setting-color-white;
