@@ -1,14 +1,10 @@
 @mixin mollie-credit-card-component($name: '.mollie-credit-card-component') {
     #{$name} {
 
+        padding: rem(0) rem(10) rem(16);
+
         &__form-group {
             margin-bottom: rem(12);
-        }
-
-         &__label {
-            display: block;
-            font-weight: fw(medium);
-            margin-bottom: rem(4);
         }
 
         &__field-error {
