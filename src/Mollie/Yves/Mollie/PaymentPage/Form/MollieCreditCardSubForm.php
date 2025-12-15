@@ -56,7 +56,7 @@ class MollieCreditCardSubForm extends AbstractSubFormType implements SubFormInte
             'attr' => [
                  'class' => 'settings',
                  'data-profile-id' => $this->getConfig()->getProfileId(),
-                 'data-test-mode' => $this->getConfig()->getTestMode(),
+                 'data-test-mode' => $this->getConfig()->isTestMode() ? 'true' : 'false',
             ],
         ]);
     }

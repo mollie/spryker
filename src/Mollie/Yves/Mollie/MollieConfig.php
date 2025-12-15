@@ -30,7 +30,7 @@ class MollieConfig extends AbstractBundleConfig
     /**
      * @return bool
      */
-    public function getTestMode(): bool
+    public function isTestMode(): bool
     {
         return $this->get(MollieConstants::MOLLIE)[MollieConstants::MOLLIE_TEST_MODE];
     }
