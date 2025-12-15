@@ -28,9 +28,4 @@ interface MollieConstants
      * @var string
      */
     public const MOLLIE_TEST_MODE = 'MOLLIE:TEST_MODE';
-
-    /**
-     * @var string
-     */
-    public const MOLLIE_SCRIPT_SOURCE = 'MOLLIE_SCRIPT_SOURCE';
 }
