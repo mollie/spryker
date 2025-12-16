@@ -1,0 +1,49 @@
+{% extends model('component') %}
+
+{% define config = {
+    name: 'mollie-credit-card-component',
+    tag: 'mollie-credit-card-component',
+} %}
+
+{% define data = {
+    form: required,
+    src: 'https://js.mollie.com/v1/mollie.js',
+} %}
+
+
+{% define attributes = {
+    'form-selector': '[name="paymentForm"]',
+    'selected-payment-method': '[name="paymentForm[paymentSelection]"]:checked',
+    'locale': app.locale,
+} %}
+
+{% block body %}
+    {% include molecule('script-loader') with {
+        attributes: {
+            src: data.src
+        }
+    } only %}
+    <div class="{{ config.name }}__wrapper">
+        <div class="{{ config.name }}__form-group">
+            <label class="label label--required">{{ 'mollie.checkout.payment.credit.card.holder' | trans }}</label>
+            <div id="card-holder"></div>
+            <div id="card-holder-error" class="{{ config.name }}__field-error"></div>
+        </div>
+        <div class="{{ config.name }}__form-group">
+            <label class="label label--required">{{ 'mollie.checkout.payment.credit.card.number' | trans }}</label>
+            <div id="card-number"></div>
+            <div id="card-number-error" class="{{ config.name }}__field-error"></div>
+        </div>
+        <div class="{{ config.name }}__form-group">
+            <label class="label label--required">{{ 'mollie.checkout.payment.credit.card.expiry.date' | trans }}</label>
+            <div id="expiry-date"></div>
+            <div id="expiry-date-error" class="{{ config.name }}__field-error"></div>
+        </div>
+        <div class="{{ config.name }}__form-group">
+            <label class="label label--required">{{ 'mollie.checkout.payment.credit.card.verification.code' | trans }}</label>
+            <div id="verification-code"></div>
+            <div id="verification-code-error" class="{{ config.name }}__field-error"></div>
+        </div>
+        <div class="text-alert error-token-output"></div>
+    </div>
+{% endblock %}

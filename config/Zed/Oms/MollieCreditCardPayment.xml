@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<statemachine
+        xmlns="http://static.spryker.com"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://static.spryker.com http://static.spryker.com/oms-01.xsd">
+
+    <process name="MollieCreditCardPayment" main="true">
+        <states>
+            <state name="new" reserved="true"/>
+            <state name="invalid" reserved="true"/>
+            <state name="pending" reserved="true"/>
+            <state name="paid" reserved="true"/>
+            <state name="cancelled" />
+        </states>
+
+        <transitions>
+            <transition happy="true">
+                <source>new</source>
+                <target>pending</target>
+            </transition>
+
+            <transition happy="true">
+                <source>pending</source>
+                <target>paid</target>
+            </transition>
+
+
+            <transition happy="true">
+                <source>pending</source>
+                <target>cancelled</target>
+            </transition>
+
+            <transition>
+                <source>new</source>
+                <target>invalid</target>
+            </transition>
+        </transitions>
+
+    </process>
+</statemachine>
