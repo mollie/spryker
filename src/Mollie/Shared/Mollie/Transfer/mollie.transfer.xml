@@ -1,11 +1,12 @@
 <?xml version="1.0"?>
 <transfers xmlns="spryker:transfer-01" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="spryker:transfer-01 http://static.spryker.com/transfer-01.xsd">
 
-    <transfer name="MolliePayment">
+    <transfer name="MollieCreditCardPayment">
+        <property name="cardToken" type="string" />
     </transfer>
 
      <transfer name="Payment">
-         <property name="molliePaymentCreditCard" type="MolliePayment"/>
+         <property name="mollieCreditCardPayment" type="MollieCreditCardPayment"/>
      </transfer>
 
     <transfer name="MolliePaymentMethod">
