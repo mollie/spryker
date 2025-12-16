@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<ruleset name="ZfMarketplace">
+<ruleset name="Mollie">
     <description>
         Spryker Coding Standard for Mollie Payment Package.
 

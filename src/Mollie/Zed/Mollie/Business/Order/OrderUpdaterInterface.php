@@ -1,22 +1,13 @@
 <?php
 
-declare(strict_types=1);
-
-namespace Mollie\Zed\Mollie\Business;
+namespace Mollie\Zed\Mollie\Business\Order;
 
 use Generated\Shared\Transfer\OrderCollectionRequestTransfer;
 use Generated\Shared\Transfer\OrderCollectionResponseTransfer;
 
-interface MollieFacadeInterface
+interface OrderUpdaterInterface
 {
     /**
-     * Specification:
-     * - Updates payment status in database based on Mollie payment data
-     * - Triggers appropriate OMS state machine event
-     * - Returns processing result
-     *
-     * @api
-     *
      * @param \Generated\Shared\Transfer\OrderCollectionRequestTransfer $updateOrderCollectionRequestTransfer
      *
      * @return \Generated\Shared\Transfer\OrderCollectionResponseTransfer

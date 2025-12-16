@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Mollie\Client\Mollie;
 
+use Generated\Shared\Transfer\MollieApiRequestTransfer;
 use Generated\Shared\Transfer\MollieAvailablePaymentMethodCollectionTransfer;
+use Generated\Shared\Transfer\OrderCollectionRequestTransfer;
 use Spryker\Client\Kernel\AbstractClient;
 
 /**
@@ -25,5 +27,18 @@ class MollieClient extends AbstractClient implements MollieClientInterface
         $mollieAvailablePaymentMethodCollectionTransfer = $this->getFactory()->createAvailablePaymentMethodsApi()->execute();
 
         return $mollieAvailablePaymentMethodCollectionTransfer;
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MollieApiRequestTransfer $mollieApiRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\OrderCollectionRequestTransfer
+     */
+    public function getPaymentById(MollieApiRequestTransfer $mollieApiRequestTransfer): OrderCollectionRequestTransfer
+    {
+        /** @var \Generated\Shared\Transfer\OrderCollectionRequestTransfer $updateOrderCollectionTransfer */
+        $updateOrderCollectionTransfer = $this->getFactory()->createGetPaymentByIdApi()->execute($mollieApiRequestTransfer);
+
+        return $updateOrderCollectionTransfer;
     }
 }

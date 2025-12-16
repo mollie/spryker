@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<ruleset name="Standalone ruleset">
+    <rule ref="vendor/spryker/project-architecture-sniffer/src/ruleset.xml">
+        <exclude name="ProjectNoBridgeRule"/>
+    </rule>
+</ruleset>

@@ -7,6 +7,7 @@ namespace Mollie\Client\Mollie;
 use Mollie\Api\MollieApiClient;
 use Mollie\Client\Mollie\Api\ApiCallInterface;
 use Mollie\Client\Mollie\Api\PaymentMethods\AvailablePaymentMethodsApi;
+use Mollie\Client\Mollie\Api\PaymentMethods\GetPaymentById;
 use Spryker\Client\Kernel\AbstractFactory;
 
 class MollieFactory extends AbstractFactory
@@ -17,6 +18,16 @@ class MollieFactory extends AbstractFactory
     public function createAvailablePaymentMethodsApi(): ApiCallInterface
     {
         return new AvailablePaymentMethodsApi(
+            $this->createMollieApiClient(),
+        );
+    }
+
+    /**
+     * @return \Mollie\Client\Mollie\Api\PaymentMethods\GetPaymentById
+     */
+    public function createGetPaymentByIdApi(): ApiCallInterface
+    {
+        return new GetPaymentById(
             $this->createMollieApiClient(),
         );
     }
