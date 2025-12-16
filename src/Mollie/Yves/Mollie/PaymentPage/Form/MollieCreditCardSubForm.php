@@ -6,7 +6,7 @@ declare(strict_types = 1);
 namespace Mollie\Yves\Mollie\PaymentPage\Form;
 
 use Generated\Shared\Transfer\MollieCreditCardPaymentTransfer;
-use Mollie\Yves\Mollie\MollieConfig;
+use Mollie\Shared\Mollie\MollieConfig;
 use Spryker\Yves\StepEngine\Dependency\Form\AbstractSubFormType;
 use Spryker\Yves\StepEngine\Dependency\Form\SubFormInterface;
 use Spryker\Yves\StepEngine\Dependency\Form\SubFormProviderNameInterface;

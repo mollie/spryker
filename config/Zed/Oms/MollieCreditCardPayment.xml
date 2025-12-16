@@ -7,34 +7,88 @@
     <process name="MollieCreditCardPayment" main="true">
         <states>
             <state name="new" reserved="true"/>
-            <state name="invalid" reserved="true"/>
-            <state name="pending" reserved="true"/>
-            <state name="paid" reserved="true"/>
-            <state name="cancelled" />
+            <state name="pending" reserved="true" display="oms.state.payment-pending"/>
+            <state name="authorized" reserved="true"/>
+            <state name="paid" reserved="true" />
+
+            <state name="canceled" />
+            <state name="expired" />
+            <state name="failed"/>
         </states>
 
         <transitions>
             <transition happy="true">
                 <source>new</source>
                 <target>pending</target>
+                <event>start payment</event>
             </transition>
 
             <transition happy="true">
+                <source>pending</source>
+                <target>authorized</target>
+                <event>authorize payment</event>
+            </transition>
+
+            <transition happy="true">
+                <source>authorized</source>
+                <target>paid</target>
+                <event>capture payment</event>
+            </transition>
+
+             <transition happy="true">
                 <source>pending</source>
                 <target>paid</target>
+                <event>payment paid</event>
             </transition>
 
-
-            <transition happy="true">
+             <transition>
                 <source>pending</source>
-                <target>cancelled</target>
+                <target>failed</target>
+                <event>payment failed</event>
             </transition>
 
             <transition>
-                <source>new</source>
-                <target>invalid</target>
+                <source>pending</source>
+                <target>canceled</target>
+                <event>cancel payment</event>
+            </transition>
+
+            <transition>
+                <source>pending</source>
+                <target>expired</target>
+                <event>payment expired</event>
+            </transition>
+
+            <transition>
+                <source>authorized</source>
+                <target>canceled</target>
+                <event>authorization canceled</event>
+            </transition>
+
+             <transition>
+                <source>authorized</source>
+                <target>expired</target>
+                <event>authorization expired</event>
+            </transition>
+
+             <transition>
+                <source>authorized</source>
+                <target>failed</target>
+                <event>authorization failed</event>
             </transition>
         </transitions>
 
+        <events>
+            <event name="start payment" onEnter="true" />
+            <event name="authorize payment"/>
+            <event name="capture payment"/>
+            <event name="payment paid"/>
+            <event name="cancel payment"/>
+            <event name="payment expired"/>
+            <event name="payment failed"/>
+            <event name="authorization canceled"/>
+            <event name="authorization expired"/>
+            <event name="authorization failed"/>
+        </events>
     </process>
 </statemachine>
