@@ -3,9 +3,7 @@
 namespace MollieTest\Zed\Mollie\Business\Facade;
 
 use Codeception\Test\Unit;
-use MollieTest\Zed\Mollie\Business\MollieFacadeTest;
 use MollieTest\Zed\Mollie\FacadeBusinessTester;
-use MollieTest\Zed\Mollie\Helper\MollieFacadeHelper;
 
 class GetMollieApiKeyTest extends Unit
 {
@@ -15,46 +13,21 @@ class GetMollieApiKeyTest extends Unit
     protected FacadeBusinessTester $tester;
 
     /**
-     * @var \MollieTest\Zed\Mollie\Business\MollieFacadeTest
-     */
-    protected MollieFacadeTest $mollieFacadeTest;
-
-    /**
-     * @var \MollieTest\Zed\Mollie\Helper\MollieFacadeHelper
-     */
-    protected MollieFacadeHelper $mollieFacadeHelper;
-
-    /**
      * @return void
      */
     public function testApiKeyExists(): void
     {
         // Arrange
-        $this->tester->mockConfigMethod('getMollieApiKey', 'test12345');
-
-        $mollieApiKey = $this->tester->getModuleConfig('Mollie')->getMollieApiKey();
-
-        // Act
-        $mollieApiKeyExists = $this->tester->checkIfMollieApiKeyExists($mollieApiKey);
-
-        // Assert
-        $this->assertTrue($mollieApiKeyExists);
-    }
-
-    /**
-     * @return void
-     */
-    public function testApiKeyDoesNotExists(): void
-    {
-        // Arrange
-        $this->tester->mockConfigMethod('getMollieApiKey', '');
-
-        $mollieApiKey = $this->tester->getModuleConfig('Mollie')->getMollieApiKey();
+        /**
+         * @var \Mollie\Zed\Mollie\MollieConfig $mollieConfig
+         */
+        $mollieConfig = $this->tester->getModuleConfig('Mollie');
 
         // Act
-        $mollieApiKeyExists = $this->tester->checkIfMollieApiKeyExists($mollieApiKey);
+        $mollieApiKey = $mollieConfig->getMollieApiKey();
 
         // Assert
-        $this->assertFalse($mollieApiKeyExists);
+        $this->assertNotNull($mollieApiKey);
+        $this->assertNotEmpty($mollieApiKey);
     }
 }

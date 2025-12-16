@@ -10,11 +10,11 @@ use Spryker\Zed\Kernel\AbstractBundleConfig;
 class MollieConfig extends AbstractBundleConfig
 {
     /**
-     * @return string
+     * @return string|null
      */
-    public function getMollieApiKey(): string
+    public function getMollieApiKey(): string|null
     {
-        return MollieConstants::MOLLIE_API_KEY;
+        return $this->get(MollieConstants::MOLLIE)[MollieConstants::MOLLIE_API_KEY];
     }
 
     /**
@@ -22,6 +22,6 @@ class MollieConfig extends AbstractBundleConfig
      */
     public function getMollieTestModeEnabled(): string
     {
-        return MollieConstants::MOLLIE_TEST_MODE;
+        return $this->get(MollieConstants::MOLLIE)[MollieConstants::MOLLIE_TEST_MODE];
     }
 }

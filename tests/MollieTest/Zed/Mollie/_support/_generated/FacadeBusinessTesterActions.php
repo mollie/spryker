@@ -1952,12 +1952,12 @@ trait FacadeBusinessTesterActions
     /**
      * [!] Method is generated. Documentation taken from corresponding module.
      *
-     * @param string|null $apiKey
+     * @param string $apiKey
      *
      * @return bool
      * @see \MollieTest\Zed\Mollie\Helper\MollieFacadeHelper::checkIfMollieApiKeyExists()
      */
-    public function checkIfMollieApiKeyExists(?string $apiKey): bool {
+    public function checkIfMollieApiKeyExists(string $apiKey): bool {
         return $this->getScenario()->runStep(new \Codeception\Step\Action('checkIfMollieApiKeyExists', func_get_args()));
     }
 }
