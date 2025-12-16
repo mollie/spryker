@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Mollie\Yves\Mollie;
 
+use Mollie\Shared\Mollie\MollieConstants;
 use Spryker\Yves\Kernel\AbstractBundleConfig;
 
 class MollieConfig extends AbstractBundleConfig
@@ -16,36 +17,21 @@ class MollieConfig extends AbstractBundleConfig
     /**
      * @var string
      */
-    public const PAYMENT_METHOD_INVOICE = 'molliePayment';
-
-    /**
-     * @var string
-     */
     public const MOLLIE_PAYMENT_CREDIT_CARD = 'mollieCreditCardPayment';
-
-    /**
-     * @var string
-     */
-    public const MOLLIE_PROFILE_ID = 'profileId';
-
-    /**
-     * @var string
-     */
-    public const MOLLIE_TEST_MODE = 'mollieTestMode';
 
     /**
      * @return string
      */
-    public function getMollieProfileId(): string
+    public function getProfileId(): string
     {
-        return $this->get(static::MOLLIE_PROFILE_ID);
+        return $this->get(MollieConstants::MOLLIE)[MollieConstants::MOLLIE_PROFILE_ID];
     }
 
     /**
      * @return bool
      */
-    public function isMollieTestMode(): bool
+    public function isTestMode(): bool
     {
-        return $this->get(static::MOLLIE_TEST_MODE);
+        return $this->get(MollieConstants::MOLLIE)[MollieConstants::MOLLIE_TEST_MODE];
     }
 }
