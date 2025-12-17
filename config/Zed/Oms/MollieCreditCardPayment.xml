@@ -7,34 +7,29 @@
     <process name="MollieCreditCardPayment" main="true">
         <states>
             <state name="new" reserved="true"/>
-            <state name="invalid" reserved="true"/>
-            <state name="pending" reserved="true"/>
-            <state name="paid" reserved="true"/>
-            <state name="cancelled" />
         </states>
 
         <transitions>
             <transition happy="true">
                 <source>new</source>
-                <target>pending</target>
-            </transition>
-
-            <transition happy="true">
-                <source>pending</source>
-                <target>paid</target>
-            </transition>
-
-
-            <transition happy="true">
-                <source>pending</source>
-                <target>cancelled</target>
-            </transition>
-
-            <transition>
-                <source>new</source>
-                <target>invalid</target>
+                <target>payment pending</target>
+                <event>start payment</event>
             </transition>
         </transitions>
 
+        <events>
+            <event name="start payment" onEnter="true" />
+        </events>
+
+        <subprocesses>
+            <process>Payment</process>
+            <process>Fulfillment</process>
+            <process>Refund</process>
+        </subprocesses>
+
     </process>
+    <process name="Payment" file="Subprocess/Payment.xml"/>
+    <process name="Fulfillment" file="Subprocess/Fulfillment.xml"/>
+    <process name="Refund" file="Subprocess/Refund.xml"/>
+
 </statemachine>
