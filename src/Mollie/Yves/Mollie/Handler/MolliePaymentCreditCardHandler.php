@@ -6,7 +6,7 @@ declare(strict_types = 1);
 namespace Mollie\Yves\Mollie\Handler;
 
 use Generated\Shared\Transfer\QuoteTransfer;
-use Mollie\Yves\Mollie\MollieConfig;
+use Mollie\Shared\Mollie\MollieConfig;
 
 class MolliePaymentCreditCardHandler implements MolliePaymentCreditCardHandlerInterface
 {
