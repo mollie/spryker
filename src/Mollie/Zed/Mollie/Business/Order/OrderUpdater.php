@@ -32,6 +32,8 @@ class OrderUpdater implements OrderUpdaterInterface
      */
     public function updateOrderCollection(OrderCollectionRequestTransfer $updateOrderCollectionRequestTransfer): OrderCollectionResponseTransfer
     {
+        $orderItems = $this->repository->getOrderItemsByPaymentId($updateOrderCollectionRequestTransfer->getId());
+
         return new OrderCollectionResponseTransfer();
     }
 }

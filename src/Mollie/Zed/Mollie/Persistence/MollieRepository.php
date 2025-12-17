@@ -8,4 +8,13 @@ use Spryker\Zed\Kernel\Persistence\AbstractRepository;
 
 class MollieRepository extends AbstractRepository implements MollieRepositoryInterface
 {
+    /**
+     * @param string $paymentId
+     *
+     * @return array<int, mixed>
+     */
+    public function getOrderItemsByPaymentId(string $paymentId): array
+    {
+        return [];
+    }
 }
