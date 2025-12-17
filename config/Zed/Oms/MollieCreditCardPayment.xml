@@ -22,12 +22,14 @@
         </events>
 
         <subprocesses>
-            <process>MolliePayment</process>
-            <process>MollieAuthorization</process>
+            <process>Payment</process>
+            <process>Fulfillment</process>
+            <process>Refund</process>
         </subprocesses>
 
     </process>
-    <process name="MolliePayment" file="Subprocess/MolliePayment"/>
-    <process name="MollieAuthorization" file="Subprocess/MollieAuthorization"/>
+    <process name="Payment" file="Subprocess/Payment.xml"/>
+    <process name="Fulfillment" file="Subprocess/Fulfillment.xml"/>
+    <process name="Refund" file="Subprocess/Refund.xml"/>
 
 </statemachine>

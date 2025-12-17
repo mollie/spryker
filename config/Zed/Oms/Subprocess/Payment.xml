@@ -4,11 +4,10 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://static.spryker.com http://static.spryker.com/oms-01.xsd">
 
-    <process name="MolliePayment">
+    <process name="Payment">
         <states>
             <state name="payment pending" reserved="true" display="oms.state.payment-pending"/>
             <state name="paid" reserved="true" display="oms.state.paid"/>
-
             <state name="canceled" display="oms.state.canceled"/>
             <state name="expired" display="oms.state.expired"/>
             <state name="failed" display="oms.state.failed"/>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<statemachine
+        xmlns="http://static.spryker.com"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://static.spryker.com http://static.spryker.com/oms-01.xsd">
+
+    <process name="Fulfillment">
+        <states>
+            <state name="ready for shipment" reserved="true" display="oms.state.ready-for-shipment"/>
+            <state name="shipped" display="oms.state.shipped"/>
+            <state name="delivered" display="oms.state.delivered"/>
+        </states>
+
+        <transitions>
+            <transition happy="true">
+                <source>paid</source>
+                <target>ready for shipment</target>
+                <event>ready for shipment</event>
+            </transition>
+
+            <transition happy="true">
+                <source>ready for shipment</source>
+                <target>shipped</target>
+                <event>ship order</event>
+            </transition>
+
+            <transition happy="true">
+                <source>shipped</source>
+                <target>delivered</target>
+                <event>confirm delivery</event>
+            </transition>
+
+        </transitions>
+
+        <events>
+            <event name="ready for shipment" onEnter="true"/>
+            <event name="ship order" onEnter="true" />
+            <event name="confirm delivery" onEnter="true"/>
+        </events>
+    </process>
+
+</statemachine>
