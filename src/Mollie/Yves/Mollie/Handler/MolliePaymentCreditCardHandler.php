@@ -19,11 +19,6 @@ class MolliePaymentCreditCardHandler implements MolliePaymentCreditCardHandlerIn
     {
         $paymentTransfer = $quoteTransfer->getPayment();
 
-        //test
-        if (!$paymentTransfer->getMollieCreditCardPayment()->getCardToken()) {
-            $paymentTransfer->setPaymentSelection(null);
-        }
-
         $paymentTransfer
             ->setPaymentProvider(MollieConfig::PROVIDER_NAME)
             ->setPaymentMethod(MollieConfig::MOLLIE_PAYMENT_CREDIT_CARD);
