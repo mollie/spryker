@@ -1,4 +1,4 @@
-<?php  //[STAMP] 018fd74db0590299d0bf5bce0f5bf1bc
+<?php  //[STAMP] 7f41007b57db9dd29628301c107b347b
 // phpcs:ignoreFile
 namespace MollieTest\Zed\Mollie\_generated;
 
@@ -1946,18 +1946,5 @@ trait FacadeBusinessTesterActions
      */
     public function getFacade(): \Spryker\Zed\Kernel\Business\AbstractFacade {
         return $this->getScenario()->runStep(new \Codeception\Step\Action('getFacade', func_get_args()));
-    }
-
- 
-    /**
-     * [!] Method is generated. Documentation taken from corresponding module.
-     *
-     * @param string $apiKey
-     *
-     * @return bool
-     * @see \MollieTest\Zed\Mollie\Helper\MollieFacadeHelper::checkIfMollieApiKeyExists()
-     */
-    public function checkIfMollieApiKeyExists(string $apiKey): bool {
-        return $this->getScenario()->runStep(new \Codeception\Step\Action('checkIfMollieApiKeyExists', func_get_args()));
     }
 }

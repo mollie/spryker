@@ -19,9 +19,9 @@ class GetMollieApiKeyTest extends Unit
     {
         // Arrange
         /**
-         * @var \Mollie\Zed\Mollie\MollieConfig $mollieConfig
+         * @var \Mollie\Shared\Mollie\MollieConfig $mollieConfig
          */
-        $mollieConfig = $this->tester->getModuleConfig('Mollie');
+        $mollieConfig = $this->tester->getSharedModuleConfig('Mollie');
 
         // Act
         $mollieApiKey = $mollieConfig->getMollieApiKey();

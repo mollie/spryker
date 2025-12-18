@@ -22,4 +22,3 @@ suites:
         - \SprykerTest\Shared\Testify\Helper\ConfigHelper
         - \SprykerTest\Shared\Testify\Helper\LocatorHelper:
             projectNamespaces: ['Mollie']
-        - \MollieTest\Zed\Mollie\Helper\MollieFacadeHelper
