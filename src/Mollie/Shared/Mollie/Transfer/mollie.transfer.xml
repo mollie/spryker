@@ -5,9 +5,9 @@
         <property name="cardToken" type="string" />
     </transfer>
 
-     <transfer name="Payment">
-         <property name="mollieCreditCardPayment" type="MollieCreditCardPayment"/>
-     </transfer>
+    <transfer name="Payment">
+        <property name="mollieCreditCardPayment" type="MollieCreditCardPayment"/>
+    </transfer>
 
     <transfer name="MolliePaymentMethod">
         <property name="id" type="string" />
@@ -23,16 +23,34 @@
         <property name="methods" type="MolliePaymentMethod[]"/>
     </transfer>
 
-     <transfer name="MollieApiRequest">
+    <transfer name="MollieApiRequest">
         <property name="body" type="array"/>
     </transfer>
 
-   <transfer name="MollieApiResponse">
+    <transfer name="MollieApiResponse">
         <property name="isSuccessful" type="bool"/>
         <property name="payload" type="array"/>
         <property name="code" type="int"/>
         <property name="message" type="string"/>
         <property name="timestamp" type="string"/>
+    </transfer>
+
+    <transfer name="MollieCreatePayment">
+        <property name="idPaymentMollie" type="int" />
+        <property name="fkSalesOrder" type="int" />
+        <property name="transactionId" type="string" />
+        <property name="status" type="string" />
+        <property name="isCancelable" type="bool" />
+        <property name="description" type="string" />
+        <property name="sequenceType" type="string" />
+        <property name="metadata" type="array" />
+        <property name="expiresAt" type="DateTime" />
+        <property name="createdAt" type="DateTime" />
+        <property name="updatedAt" type="DateTime" />
+    </transfer>
+
+    <transfer name="Payment">
+        <property name="mollieCreatePayment" type="MollieCreatePayment" />
     </transfer>
 
 </transfers>
