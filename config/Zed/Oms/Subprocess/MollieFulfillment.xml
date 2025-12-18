@@ -4,7 +4,7 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://static.spryker.com http://static.spryker.com/oms-01.xsd">
 
-    <process name="Fulfillment">
+    <process name="MollieFulfillment">
         <states>
             <state name="ready for shipment" reserved="true" display="oms.state.ready-for-shipment"/>
             <state name="shipped" display="oms.state.shipped"/>
