@@ -4,7 +4,7 @@
     <table name="spy_payment_mollie" phpName="SpyPaymentMollie">
         <column name="id_payment_mollie" required="true" type="INTEGER" autoIncrement="true" primaryKey="true"/>
         <column name="fk_sales_order" required="true" type="INTEGER"/>
-        <column name="transaction_id" type="VARCHAR" size="255"/>
+        <column name="transaction_id" required="true" type="VARCHAR" size="255"/>
         <column name="status" required="true" type="VARCHAR" size="64"/>
         <column name="is_cancelable" type="BOOLEAN" />
 
