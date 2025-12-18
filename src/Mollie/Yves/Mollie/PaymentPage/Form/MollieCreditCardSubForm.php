@@ -6,12 +6,15 @@ declare(strict_types = 1);
 namespace Mollie\Yves\Mollie\PaymentPage\Form;
 
 use Generated\Shared\Transfer\MollieCreditCardPaymentTransfer;
-use Mollie\Yves\Mollie\MollieConfig;
+use Mollie\Shared\Mollie\MollieConfig;
 use Spryker\Yves\StepEngine\Dependency\Form\AbstractSubFormType;
 use Spryker\Yves\StepEngine\Dependency\Form\SubFormInterface;
 use Spryker\Yves\StepEngine\Dependency\Form\SubFormProviderNameInterface;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormError;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
@@ -23,6 +26,11 @@ class MollieCreditCardSubForm extends AbstractSubFormType implements SubFormInte
   * @var string
   */
     protected const PAYMENT_METHOD = 'creditCard';
+
+    /**
+     * @var string
+     */
+    protected const CARD_TOKEN = 'cardToken';
 
  /**
   * @param \Symfony\Component\OptionsResolver\OptionsResolver $resolver
@@ -58,7 +66,29 @@ class MollieCreditCardSubForm extends AbstractSubFormType implements SubFormInte
                  'data-profile-id' => $this->getConfig()->getProfileId(),
                  'data-test-mode' => $this->getConfig()->isTestMode() ? 'true' : 'false',
             ],
-        ]);
+        ])
+        ->addEventListener(
+            FormEvents::POST_SUBMIT,
+            [$this, 'onPostSubmit'],
+        );
+    }
+
+    /**
+     * @param \Symfony\Component\Form\FormEvent $event
+     *
+     * @return void
+     */
+    public function onPostSubmit(FormEvent $event): void
+    {
+        $form = $event->getForm();
+
+        $cardToken = $form->getData()->getCardToken();
+
+        if (!$cardToken) {
+            $form->get(static::CARD_TOKEN)->addError(
+                new FormError('mollie.checkout.payment.credit.card.missing.token'),
+            );
+        }
     }
 
     /**
