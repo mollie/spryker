@@ -5,8 +5,8 @@ namespace MollieTest\Yves\Mollie\Handler;
 use Codeception\Test\Unit;
 use Generated\Shared\Transfer\PaymentTransfer;
 use Generated\Shared\Transfer\QuoteTransfer;
+use Mollie\Shared\Mollie\MollieConfig;
 use Mollie\Yves\Mollie\Handler\MolliePaymentCreditCardHandler;
-use Mollie\Yves\Mollie\MollieConfig;
 
 class MolliePaymentCreditCardHandlerTest extends Unit
 {
