@@ -7,6 +7,16 @@
     <process name="MollieCreditCardPayment" main="true">
         <states>
             <state name="new" reserved="true"/>
+            <state name="payment pending" reserved="true" display="oms.state.payment-pending"/>
+            <state name="paid" reserved="true" display="oms.state.paid"/>
+            <state name="ready for shipment" reserved="true" display="oms.state.ready-for-shipment"/>
+            <state name="shipped" display="oms.state.shipped"/>
+            <state name="delivered" display="oms.state.delivered"/>
+            <state name="closed" display="oms.state.closed"/>
+
+            <state name="canceled" display="oms.state.canceled"/>
+            <state name="expired" display="oms.state.expired"/>
+            <state name="failed" display="oms.state.failed"/>
         </states>
 
         <transitions>
@@ -15,21 +25,87 @@
                 <target>payment pending</target>
                 <event>start payment</event>
             </transition>
+
+            <transition happy="true">
+                <source>payment pending</source>
+                <target>paid</target>
+                <event>payment paid</event>
+            </transition>
+
+            <transition happy="true">
+                <source>paid</source>
+                <target>ready for shipment</target>
+                <event>ready for shipment</event>
+            </transition>
+
+            <transition happy="true">
+                <source>ready for shipment</source>
+                <target>shipped</target>
+                <event>ship order</event>
+            </transition>
+
+            <transition happy="true">
+                <source>shipped</source>
+                <target>delivered</target>
+                <event>confirm delivery</event>
+            </transition>
+
+            <transition happy="true">
+                <source>delivered</source>
+                <target>closed</target>
+                <event>close</event>
+            </transition>
+
+            <transition>
+                <source>payment pending</source>
+                <target>failed</target>
+                <event>payment failed</event>
+            </transition>
+
+            <transition>
+                <source>payment pending</source>
+                <target>canceled</target>
+                <event>payment canceled</event>
+            </transition>
+
+            <transition>
+                <source>payment pending</source>
+                <target>expired</target>
+                <event>payment expired</event>
+            </transition>
+
+            <transition>
+                <source>failed</source>
+                <target>closed</target>
+                <event>close</event>
+            </transition>
+
+            <transition>
+                <source>canceled</source>
+                <target>closed</target>
+                <event>close</event>
+            </transition>
+
+            <transition>
+                <source>expired</source>
+                <target>closed</target>
+                <event>close</event>
+            </transition>
+
         </transitions>
 
         <events>
             <event name="start payment" onEnter="true" />
+            <event name="payment paid"/>
+            <event name="payment canceled"/>
+            <event name="payment expired"/>
+            <event name="payment failed"/>
+            <event name="ready for shipment" onEnter="true"/>
+            <event name="ship order" onEnter="true" />
+            <event name="confirm delivery" onEnter="true"/>
+            <event name="close" timeout="5 days"/>
         </events>
 
-        <subprocesses>
-            <process>Payment</process>
-            <process>Fulfillment</process>
-            <process>Refund</process>
-        </subprocesses>
-
     </process>
-    <process name="Payment" file="Subprocess/Payment.xml"/>
-    <process name="Fulfillment" file="Subprocess/Fulfillment.xml"/>
-    <process name="Refund" file="Subprocess/Refund.xml"/>
 
 </statemachine>
