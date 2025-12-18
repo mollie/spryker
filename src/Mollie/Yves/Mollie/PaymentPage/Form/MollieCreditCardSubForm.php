@@ -32,11 +32,6 @@ class MollieCreditCardSubForm extends AbstractSubFormType implements SubFormInte
      */
     protected const CARD_TOKEN = 'cardToken';
 
-    /**
-     * @var string
-     */
-    protected const PAYMENT_ERROR_MESSAGE = 'Payment token is missing. Please complete the payment form.';
-
  /**
   * @param \Symfony\Component\OptionsResolver\OptionsResolver $resolver
   *
@@ -91,7 +86,7 @@ class MollieCreditCardSubForm extends AbstractSubFormType implements SubFormInte
 
         if (!$cardToken) {
             $form->get(static::CARD_TOKEN)->addError(
-                new FormError(static::PAYMENT_ERROR_MESSAGE),
+                new FormError('mollie.checkout.payment.credit.card.missing.token'),
             );
         }
     }
