@@ -10,6 +10,9 @@ use Mollie\Client\Mollie\Api\PaymentMethods\AvailablePaymentMethodsApi;
 use Mollie\Client\Mollie\Api\PaymentMethods\GetPaymentById;
 use Spryker\Client\Kernel\AbstractFactory;
 
+/**
+ * @method \Mollie\Client\Mollie\MollieConfig getConfig()
+ */
 class MollieFactory extends AbstractFactory
 {
     /**
@@ -19,6 +22,7 @@ class MollieFactory extends AbstractFactory
     {
         return new AvailablePaymentMethodsApi(
             $this->createMollieApiClient(),
+            $this->getConfig(),
         );
     }
 
@@ -29,6 +33,7 @@ class MollieFactory extends AbstractFactory
     {
         return new GetPaymentById(
             $this->createMollieApiClient(),
+            $this->getConfig(),
         );
     }
 

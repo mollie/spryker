@@ -8,15 +8,19 @@ use Generated\Shared\Transfer\MollieApiRequestTransfer;
 use Generated\Shared\Transfer\MollieApiResponseTransfer;
 use Mollie\Api\Http\Request;
 use Mollie\Api\MollieApiClient;
+use Mollie\Client\Mollie\MollieConfig;
 use Spryker\Shared\Kernel\Transfer\AbstractTransfer;
 
 abstract class AbstractApiCall implements ApiCallInterface
 {
     /**
      * @param \Mollie\Api\MollieApiClient $mollieApiClient
+     * @param \Mollie\Client\Mollie\MollieConfig $mollieConfig
      */
-    public function __construct(protected MollieApiClient $mollieApiClient)
-    {
+    public function __construct(
+        protected MollieApiClient $mollieApiClient,
+        protected MollieConfig $mollieConfig,
+    ) {
     }
 
     /**
@@ -34,8 +38,6 @@ abstract class AbstractApiCall implements ApiCallInterface
     abstract protected function formatApiResponse(MollieApiResponseTransfer $mollieApiResponseTransfer): AbstractTransfer;
 
     /**
-     * @ MOLSPRY-22 --> Contains implementation of fetching api key for mollie
-     *
      * @param \Generated\Shared\Transfer\MollieApiRequestTransfer|null $mollieApiRequestTransfer
      *
      * @return \Spryker\Shared\Kernel\Transfer\AbstractTransfer
@@ -43,7 +45,7 @@ abstract class AbstractApiCall implements ApiCallInterface
     public function execute(?MollieApiRequestTransfer $mollieApiRequestTransfer = null): AbstractTransfer
     {
         $request = $this->buildRequest($mollieApiRequestTransfer);
-        $this->mollieApiClient->setApiKey('test_4g2NwDFgMmHG8yTnueaMmse2Vkta9t');
+        $this->mollieApiClient->setApiKey($this->mollieConfig->getMollieApiKey());
         $mollieResponseApiTransfer = $this->send($request);
 
         return $this->formatApiResponse($mollieResponseApiTransfer);
