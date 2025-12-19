@@ -1,4 +1,4 @@
-<?php  //[STAMP] 3372984fec18f8c48ef0ac2583955903
+<?php  //[STAMP] 727aa09086a5dcbbd0b33a732649ed3a
 // phpcs:ignoreFile
 namespace MollieTest\Client\Mollie\_generated;
 
@@ -1812,6 +1812,121 @@ trait MollieApiClientTesterActions
     /**
      * [!] Method is generated. Documentation taken from corresponding module.
      *
+     * @param string $key
+     * @param array|string|float|int|bool $value
+     *
+     * @return void
+     * @see \SprykerTest\Shared\Testify\Helper\LocatorHelper::setConfig()
+     */
+    public function setConfig(string $key, $value): void {
+        $this->getScenario()->runStep(new \Codeception\Step\Action('setConfig', func_get_args()));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * @param string $key
+     * @param array|string|float|int|bool $value
+     *
+     * @return void
+     * @see \SprykerTest\Shared\Testify\Helper\ConfigHelper::mockEnvironmentConfig()
+     */
+    public function mockEnvironmentConfig(string $key, $value): void {
+        $this->getScenario()->runStep(new \Codeception\Step\Action('mockEnvironmentConfig', func_get_args()));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * @param string $methodName
+     * @param mixed $return
+     * @param string|null $moduleName
+     * @param string|null $applicationName
+     *
+     * @throws \Exception
+     *
+     * @return \Spryker\Shared\Kernel\AbstractBundleConfig|null
+     * @see \SprykerTest\Shared\Testify\Helper\ConfigHelper::mockConfigMethod()
+     */
+    public function mockConfigMethod(string $methodName, $return, ?string $moduleName = NULL, ?string $applicationName = NULL): ?\Spryker\Shared\Kernel\AbstractBundleConfig {
+        return $this->getScenario()->runStep(new \Codeception\Step\Action('mockConfigMethod', func_get_args()));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * @param string $methodName
+     * @param mixed $return
+     * @param string|null $moduleName
+     *
+     * @throws \Exception
+     *
+     * @return \Spryker\Shared\Kernel\AbstractSharedConfig|null
+     * @see \SprykerTest\Shared\Testify\Helper\ConfigHelper::mockSharedConfigMethod()
+     */
+    public function mockSharedConfigMethod(string $methodName, $return, ?string $moduleName = NULL): ?\Spryker\Shared\Kernel\AbstractSharedConfig {
+        return $this->getScenario()->runStep(new \Codeception\Step\Action('mockSharedConfigMethod', func_get_args()));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * @param string|null $moduleName
+     *
+     * @return \Spryker\Shared\Kernel\AbstractBundleConfig
+     * @see \SprykerTest\Shared\Testify\Helper\ConfigHelper::getModuleConfig()
+     */
+    public function getModuleConfig(?string $moduleName = NULL): \Spryker\Shared\Kernel\AbstractBundleConfig {
+        return $this->getScenario()->runStep(new \Codeception\Step\Action('getModuleConfig', func_get_args()));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * @param string|null $moduleName
+     *
+     * @return \Spryker\Shared\Kernel\AbstractSharedConfig|null
+     * @see \SprykerTest\Shared\Testify\Helper\ConfigHelper::getSharedModuleConfig()
+     */
+    public function getSharedModuleConfig(?string $moduleName = NULL): ?\Spryker\Shared\Kernel\AbstractSharedConfig {
+        return $this->getScenario()->runStep(new \Codeception\Step\Action('getSharedModuleConfig', func_get_args()));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * @param string $moduleName
+     *
+     * @return bool
+     * @see \SprykerTest\Shared\Testify\Helper\ConfigHelper::configExists()
+     */
+    public function configExists(string $moduleName): bool {
+        return $this->getScenario()->runStep(new \Codeception\Step\Action('configExists', func_get_args()));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * @param string $key
+     *
+     * @return void
+     * @see \SprykerTest\Shared\Testify\Helper\ConfigHelper::removeConfig()
+     */
+    public function removeConfig(string $key): void {
+        $this->getScenario()->runStep(new \Codeception\Step\Action('removeConfig', func_get_args()));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
      * Sets a class instance into the Locator cache to ensure the mocked instance is returned when
      * `$locator->moduleName()->type()` is used.
      *
@@ -1826,20 +1941,6 @@ trait MollieApiClientTesterActions
      */
     public function addToLocatorCache(string $cacheKey, $classInstance): void {
         $this->getScenario()->runStep(new \Codeception\Step\Action('addToLocatorCache', func_get_args()));
-    }
-
- 
-    /**
-     * [!] Method is generated. Documentation taken from corresponding module.
-     *
-     * @param string $key
-     * @param array|string|float|int|bool $value
-     *
-     * @return void
-     * @see \SprykerTest\Shared\Testify\Helper\LocatorHelper::setConfig()
-     */
-    public function setConfig(string $key, $value): void {
-        $this->getScenario()->runStep(new \Codeception\Step\Action('setConfig', func_get_args()));
     }
 
  
