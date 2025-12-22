@@ -23,6 +23,9 @@ parameters:
         - '#Method .+CheckoutPageDependencyProvider::.+\(\) return type has no value type specified in iterable type .+FormInterface.#'
         - '#.+Generated\\Shared\\Transfer.+#'
         - '#Method .+ has invalid return type.+#'
+        - '#Call to method .* on an unknown class Generated\\Client\\Ide\\AutoCompletion#'
+        - '#Call to method .* on an unknown class Generated\\Yves\\Ide\\AutoCompletion#'
+        - '#Call to method .* on an unknown class Generated\\Zed\\Ide\\AutoCompletion#'
 
     reportUnmatchedIgnoredErrors: false
 

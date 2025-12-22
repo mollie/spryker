@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Mollie\Zed\Mollie\Business;
+namespace Mollie\Zed\Mollie\Business\Handler;
 
 use Generated\Shared\Transfer\CheckoutResponseTransfer;
 use Generated\Shared\Transfer\QuoteTransfer;
 
-interface MollieFacadeInterface
+interface MolliePaymentHandlerInterface
 {
     /**
      * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer

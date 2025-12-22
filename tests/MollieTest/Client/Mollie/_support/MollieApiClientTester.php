@@ -30,7 +30,7 @@ class MollieApiClientTester extends Actor
      * @var array
      */
     protected const MOLLIE_MOCKED_PAYMENT_METHOD_RESPONSE_PAYLOAD = [
-       'count' => 2,
+        'count' => 2,
         '_embedded' => [
             'methods' => [
                 [
@@ -103,5 +103,58 @@ class MollieApiClientTester extends Actor
     public function getMollieMockedPaymentMethodResponsePayload(): array
     {
         return static::MOLLIE_MOCKED_PAYMENT_METHOD_RESPONSE_PAYLOAD;
+    }
+
+    /**
+     * @var array
+     */
+    protected const MOLLIE_MOCKED_CREATE_PAYMENT_RESPONSE_PAYLOAD = [
+        '{
+          "resource": "payment",
+          "id": "tr_5B8cwPMGnU6qLbRvo7qEZo",
+          "mode": "live",
+          "amount": {
+            "value": "10.00",
+            "currency": "EUR"
+          },
+          "description": "Order #12345",
+          "sequenceType": "oneoff",
+          "redirectUrl": "https://webshop.example.org/order/12345/",
+          "webhookUrl": "https://webshop.example.org/payments/webhook/",
+          "metadata": {
+            "order_id": 12345
+          },
+          "profileId": "pfl_QkEhN94Ba",
+          "status": "open",
+          "isCancelable": false,
+          "createdAt": "2024-03-20T09:13:37+00:00",
+          "expiresAt": "2024-03-20T09:28:37+00:00",
+          "_links": {
+            "self": {
+              "href": "...",
+              "type": "application/hal+json"
+            },
+            "checkout": {
+              "href": "https://www.mollie.com/checkout/select-method/7UhSN1zuXS",
+              "type": "text/html"
+            },
+            "dashboard": {
+              "href": "https://www.mollie.com/dashboard/org_12345678/payments/tr_5B8cwPMGnU6qLbRvo7qEZo",
+              "type": "text/html"
+            },
+            "documentation": {
+              "href": "...",
+              "type": "text/html"
+            }
+          }
+        }',
+    ];
+
+    /**
+     * @return array<string>
+     */
+    public function getMollieMockedCreatePaymentResponsePayload(): array
+    {
+        return static::MOLLIE_MOCKED_CREATE_PAYMENT_RESPONSE_PAYLOAD;
     }
 }

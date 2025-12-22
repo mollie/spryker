@@ -28,4 +28,19 @@ interface MollieConstants
      * @var string
      */
     public const MOLLIE_TEST_MODE = 'MOLLIE:TEST_MODE';
+
+    /**
+     * @var string
+     */
+    public const MOLLIE_REDIRECT_URL = 'MOLLIE:MOLLIE_REDIRECT_URL';
+
+    /**
+     * @var string
+     */
+    public const MOLLIE_WEBHOOK_URL = 'MOLLIE:MOLLIE_WEBHOOK_URL';
+
+    /**
+     * @var string
+     */
+    public const MOLLIE_OMS_TO_PAYMENT_METHOD_MAPPING = 'MOLLIE:MOLLIE_OMS_TO_PAYMENT_METHOD_MAPPING';
 }
