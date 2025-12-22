@@ -35,7 +35,7 @@ class WebhookProcessor implements WebhookProcessorInterface
 
         if (!isset($data['id'])) {
             return $glueResponseTransfer
-                ->setHttpStatus(Response::HTTP_BAD_REQUEST)
+                ->setHttpStatus(Response::HTTP_OK)
                 ->setContent('Missing payment ID');
         }
 
@@ -46,15 +46,8 @@ class WebhookProcessor implements WebhookProcessorInterface
 
         $this->mollieFacade->updateOrderCollection($updateOrderCollectionRequestTransfer);
 
-        if ($updateOrderCollectionRequestTransfer->getIsSuccess()) {
-            return $glueResponseTransfer
-                ->setHttpStatus(Response::HTTP_OK)
-                ->setContent('OK');
-        }
-
-        // getMessage ne postoji, stavi message
         return $glueResponseTransfer
-            ->setHttpStatus(Response::HTTP_INTERNAL_SERVER_ERROR)
-            ->setContent($updateOrderCollectionRequestTransfer->getMessage() ?? 'Processing failed');
+            ->setHttpStatus(Response::HTTP_OK)
+            ->setContent('OK');
     }
 }

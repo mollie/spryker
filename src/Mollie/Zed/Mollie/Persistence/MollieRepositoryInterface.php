@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace Mollie\Zed\Mollie\Persistence;
 
+use Propel\Runtime\Collection\ObjectCollection;
+
 interface MollieRepositoryInterface
 {
     /**
      * @param string $paymentId
      *
-     * @return array<int, mixed>
+     * @return \Propel\Runtime\Collection\ObjectCollection
      */
-    public function getOrderItemsByPaymentId(string $paymentId): array;
+    public function getOrderItemsByPaymentId(string $paymentId): ObjectCollection;
 }
