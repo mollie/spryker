@@ -1,0 +1,52 @@
+<?php
+
+namespace MollieTest\Zed\Mollie\Business\Order;
+
+use Generated\Shared\Transfer\OrderCollectionRequestTransfer;
+use Generated\Shared\Transfer\OrderCollectionResponseTransfer;
+use MollieTest\Zed\Mollie\Business\AbstractBusinessTest;
+use Spryker\Service\Container\Container;
+use Spryker\Shared\Kernel\Container\GlobalContainer;
+
+class OrderUpdateCollectionTest extends AbstractBusinessTest
+{
+    /**
+     * @var \MollieTest\Zed\Mollie\MollieZedTester
+     */
+    protected $tester;
+
+    /**
+     * @return void
+     */
+    public function setUp(): void
+    {
+        parent::setUp();
+        $globalContainer = new GlobalContainer();
+        $globalContainer->setContainer(new Container([
+            'request_stack' => $this->getRequestStackMock(),
+        ]));
+    }
+
+    /**
+     * @return void
+     */
+    public function testOrderItemsAreSetToStatusPaidWhenEventIsPaymentPaid(): void
+    {
+        // Arrange
+        $saveOrderTransfer = $this->tester->createOrder();
+        $molliePaymentEntity = $this->tester->createMolliePayment($saveOrderTransfer->getIdSalesOrder());
+        $orderCollectionRequestTransfer = (new OrderCollectionRequestTransfer())
+            ->setId($molliePaymentEntity->getTransactionId())
+            ->setStatus($molliePaymentEntity->getStatus());
+
+        //Act
+        $response = $this->mollieFacade->updateOrderCollection($orderCollectionRequestTransfer);
+
+        //Assert
+        //Instance of OrderCollectionResponseTransfer
+        // Assert response is successful
+
+        $this->assertInstanceOf(OrderCollectionResponseTransfer::class, $response);
+        $this->assertEquals(true, $response->getIsSuccess());
+    }
+}

@@ -25,6 +25,7 @@ parameters:
         - '#Method .+ has invalid return type.+#'
         - '#Call to method .+ on an unknown class Generated\\.+\\Ide\\AutoCompletion\.#'
         - '#Call to .+ on an unknown class Orm\\.+\\.+\\Persistence\\.+#'
+        - 'Instantiated class Orm\\.+\\.+\\Persistence\\.+# not found'
 
     reportUnmatchedIgnoredErrors: false
 

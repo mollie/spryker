@@ -19,6 +19,16 @@
         <property name="status" type="string" />
     </transfer>
 
+    <transfer name="OrderCollectionRequest">
+        <property name="id" type="string" />
+        <property name="status" type="string" />
+    </transfer>
+
+    <transfer name="OrderCollectionResponse">
+        <property name="id" type="string" />
+        <property name="isSuccess" type="string" />
+    </transfer>
+
     <transfer name="MollieAvailablePaymentMethodCollection">
         <property name="methods" type="MolliePaymentMethod[]"/>
     </transfer>

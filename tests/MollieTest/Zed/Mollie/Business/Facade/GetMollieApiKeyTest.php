@@ -3,14 +3,14 @@
 namespace MollieTest\Zed\Mollie\Business\Facade;
 
 use Codeception\Test\Unit;
-use MollieTest\Zed\Mollie\FacadeBusinessTester;
+use MollieTest\Zed\Mollie\MollieZedTester;
 
 class GetMollieApiKeyTest extends Unit
 {
     /**
-     * @var \MollieTest\Zed\Mollie\FacadeBusinessTester
+     * @var \MollieTest\Zed\Mollie\MollieZedTester
      */
-    protected FacadeBusinessTester $tester;
+    protected MollieZedTester $tester;
 
     /**
      * @return void
