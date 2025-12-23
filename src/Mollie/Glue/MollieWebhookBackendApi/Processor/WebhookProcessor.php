@@ -31,7 +31,7 @@ class WebhookProcessor implements WebhookProcessorInterface
         $glueResponseTransfer = new GlueResponseTransfer();
 
         $content = $glueRequestTransfer->getContent();
-        $data = json_decode($content, true);
+        $data = json_decode($content, true); // use utilencoding service here
 
         if (!isset($data['id'])) {
             return $glueResponseTransfer
