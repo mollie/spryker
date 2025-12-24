@@ -49,6 +49,12 @@ class WebhookProcessor implements WebhookProcessorInterface
 
         $molliePaymentApiResponseTransfer = $this->mollieClient->getPaymentByTransactionId($mollieApiRequestTransfer);
 
+        if (!$molliePaymentApiResponseTransfer->getIsSuccessful()) {
+            return $glueResponseTransfer
+                ->setHttpStatus(Response::HTTP_OK)
+                ->setContent($molliePaymentApiResponseTransfer->getMessage());
+        }
+
         $orderCollectionRequestTransfer = $this->createOrderCollectionRequestTransfer($molliePaymentApiResponseTransfer);
 
         $this->mollieFacade->updateOrderCollection($orderCollectionRequestTransfer);
@@ -67,12 +73,10 @@ class WebhookProcessor implements WebhookProcessorInterface
         MolliePaymentApiResponseTransfer $molliePaymentApiResponseTransfer,
     ): OrderCollectionRequestTransfer {
         $orderCollectionRequestTransfer = new OrderCollectionRequestTransfer();
-        if ($molliePaymentApiResponseTransfer->getIsSuccessful()) {
-            $molliePaymentTransfer = $molliePaymentApiResponseTransfer->getMolliePayment();
-            $orderCollectionRequestTransfer
-                ->setId($molliePaymentTransfer->getId())
-                ->setStatus($molliePaymentTransfer->getStatus());
-        }
+        $molliePaymentTransfer = $molliePaymentApiResponseTransfer->getMolliePayment();
+        $orderCollectionRequestTransfer
+            ->setId($molliePaymentTransfer->getId())
+            ->setStatus($molliePaymentTransfer->getStatus());
 
         return $orderCollectionRequestTransfer;
     }
