@@ -5,9 +5,9 @@ declare(strict_types = 1);
 
 namespace Mollie\Client\Mollie\Api;
 
-use Exception;
 use Generated\Shared\Transfer\MollieApiRequestTransfer;
 use Generated\Shared\Transfer\MollieApiResponseTransfer;
+use Mollie\Api\Exceptions\ApiException;
 use Mollie\Api\Http\Request;
 use Mollie\Api\Http\Response as MollieApiHttpResponse;
 use Mollie\Api\MollieApiClient;
@@ -51,27 +51,24 @@ abstract class AbstractApiCall implements ApiCallInterface
      */
     public function execute(?MollieApiRequestTransfer $mollieApiRequestTransfer = null): AbstractTransfer
     {
+        $mollieApiResponseTransfer = new MollieApiResponseTransfer();
+
         try {
             $this->mollieApiClient->setApiKey($this->mollieConfig->getMollieApiKey());
             $request = $this->buildRequest($mollieApiRequestTransfer);
 
             $result = $this->mollieApiClient->send($request);
-
             $response = $result->getResponse();
-            $payload = $this->formatApiResponse($response);
 
-            if ($response->status() >= Response::HTTP_BAD_REQUEST) {
-                $mollieApiResponseTransfer = $this->createErrorResponse($payload);
-
-                return $this->mapApiResponse($mollieApiResponseTransfer);
+            if ($response->status() === Response::HTTP_OK || $response->status() === Response::HTTP_CREATED) {
+                $payload = $this->formatApiResponse($response);
+                $mollieApiResponseTransfer = $this->createSuccessResponse($payload);
             }
-        } catch (Exception $e) {
-            $mollieApiResponseTransfer = $this->createExceptionResponse(($e->getMessage()));
-
-            return $this->mapApiResponse($mollieApiResponseTransfer);
+        } catch (ApiException $exception) {
+            $response = $exception->getResponse();
+            $payload = $this->formatApiResponse($response);
+            $mollieApiResponseTransfer = $this->createErrorResponse($payload);
         }
-
-        $mollieApiResponseTransfer = $this->createSuccessResponse($payload);
 
         return $this->mapApiResponse($mollieApiResponseTransfer);
     }
@@ -114,21 +111,6 @@ abstract class AbstractApiCall implements ApiCallInterface
         $mollieResponseApiResponseTransfer
             ->setIsSuccessful(false)
             ->setMessage($payload['detail'] ?? '');
-
-        return $mollieResponseApiResponseTransfer;
-    }
-
-    /**
-     * @param string $message
-     *
-     * @return \Generated\Shared\Transfer\MollieApiResponseTransfer
-     */
-    protected function createExceptionResponse(string $message): MollieApiResponseTransfer
-    {
-        $mollieResponseApiResponseTransfer = new MollieApiResponseTransfer();
-        $mollieResponseApiResponseTransfer
-            ->setIsSuccessful(false)
-            ->setMessage($message);
 
         return $mollieResponseApiResponseTransfer;
     }
