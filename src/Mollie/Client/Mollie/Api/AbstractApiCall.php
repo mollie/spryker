@@ -85,7 +85,7 @@ abstract class AbstractApiCall implements ApiCallInterface
     {
         $psrResponse = $response->getPsrResponse();
 
-        return $this->utilEncodingService->decodeJson($psrResponse->getBody()->getContents(), true);
+        return $this->utilEncodingService->decodeJson($psrResponse->getBody()->getContents());
     }
 
     /**
