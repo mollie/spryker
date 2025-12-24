@@ -9,6 +9,7 @@ use Generated\Shared\Transfer\MollieApiRequestTransfer;
 use Generated\Shared\Transfer\MollieApiResponseTransfer;
 use Mollie\Api\Http\Request;
 use Mollie\Api\MollieApiClient;
+use Mollie\Client\Mollie\Dependency\Service\MollieToUtilEncodingServiceInterface;
 use Mollie\Client\Mollie\MollieConfig;
 use Spryker\Shared\Kernel\Transfer\AbstractTransfer;
 
@@ -17,19 +18,14 @@ abstract class AbstractApiCall implements ApiCallInterface
     /**
      * @param \Mollie\Api\MollieApiClient $mollieApiClient
      * @param \Mollie\Client\Mollie\MollieConfig $mollieConfig
+     * @param \Mollie\Client\Mollie\Dependency\Service\MollieToUtilEncodingServiceInterface $utilEncodingService
      */
     public function __construct(
         protected MollieApiClient $mollieApiClient,
         protected MollieConfig $mollieConfig,
+        protected MollieToUtilEncodingServiceInterface $utilEncodingService,
     ) {
     }
-
-    /**
-     * @param \Mollie\Api\Http\Request $request
-     *
-     * @return \Generated\Shared\Transfer\MollieApiResponseTransfer
-     */
-    //abstract protected function send(Request $request): MollieApiResponseTransfer;
 
     /**
      * @param \Generated\Shared\Transfer\MollieApiResponseTransfer $mollieApiResponseTransfer
@@ -57,15 +53,13 @@ abstract class AbstractApiCall implements ApiCallInterface
             }
 
             $mollieResponseApiTransfer
-                ->setPayload(json_decode($result->getResponse()->getPsrResponse()->getBody()->getContents(), true))
+                ->setPayload($this->utilEncodingService->decodeJson($result->getResponse()->getPsrResponse()->getBody()->getContents()))
                 ->setIsSuccessful(true);
         } catch (Exception $e) {
             $mollieResponseApiTransfer
                 ->setMessage($e->getMessage())
                 ->setIsSuccessful(false);
         }
-
-        //$mollieResponseApiTransfer = $this->send($request);
 
         return $this->formatApiResponse($mollieResponseApiTransfer);
     }
