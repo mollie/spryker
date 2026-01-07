@@ -23,6 +23,11 @@ class MollieRouteProviderPlugin extends AbstractPlugin implements RouteProviderP
         return $routeCollection;
     }
 
+    /**
+     * @param \Symfony\Component\Routing\RouteCollection $routeCollection
+     *
+     * @return \Symfony\Component\Routing\RouteCollection
+     */
     protected function addWebhookRoute(RouteCollection $routeCollection): RouteCollection
     {
          $route = (new Route('/mollie/webhook'))
