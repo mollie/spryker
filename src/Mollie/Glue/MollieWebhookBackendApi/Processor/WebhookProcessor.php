@@ -12,6 +12,7 @@ use Generated\Shared\Transfer\MolliePaymentApiResponseTransfer;
 use Generated\Shared\Transfer\OrderCollectionRequestTransfer;
 use Mollie\Glue\MollieWebhookBackendApi\Dependency\Client\MollieWebhookBackendApiToMollieClientInterface;
 use Mollie\Glue\MollieWebhookBackendApi\Dependency\Facade\MollieWebhookBackendApiToMollieFacadeInterface;
+use Mollie\Glue\MollieWebhookBackendApi\Dependency\Service\MollieWebhookBackendApiToUtilEncodingServiceInterface;
 use Symfony\Component\HttpFoundation\Response;
 
 class WebhookProcessor implements WebhookProcessorInterface
@@ -19,10 +20,12 @@ class WebhookProcessor implements WebhookProcessorInterface
     /**
      * @param \Mollie\Glue\MollieWebhookBackendApi\Dependency\Client\MollieWebhookBackendApiToMollieClientInterface $mollieClient
      * @param \Mollie\Glue\MollieWebhookBackendApi\Dependency\Facade\MollieWebhookBackendApiToMollieFacadeInterface $mollieFacade
+     * @param \Mollie\Glue\MollieWebhookBackendApi\Dependency\Service\MollieWebhookBackendApiToUtilEncodingServiceInterface $utilEncodingService
      */
     public function __construct(
         protected MollieWebhookBackendApiToMollieClientInterface $mollieClient,
         protected MollieWebhookBackendApiToMollieFacadeInterface $mollieFacade,
+        protected MollieWebhookBackendApiToUtilEncodingServiceInterface $utilEncodingService,
     ) {
     }
 
@@ -36,7 +39,7 @@ class WebhookProcessor implements WebhookProcessorInterface
         $glueResponseTransfer = new GlueResponseTransfer();
 
         $content = $glueRequestTransfer->getContent();
-        $data = json_decode($content, true); // use utilencoding service here
+        $data = $this->utilEncodingService->decodeJson($content);
 
         if (!isset($data['id'])) {
             return $glueResponseTransfer

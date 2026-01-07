@@ -100,4 +100,9 @@ interface MollieConstants
      * @var string
      */
     public const MOLLIE_OMS_TO_PAYMENT_METHOD_MAPPING = 'MOLLIE:MOLLIE_OMS_TO_PAYMENT_METHOD_MAPPING';
+
+    /**
+     * @var string
+     */
+    public const SUCCESS_MESSAGE = 'success';
 }

@@ -19,7 +19,6 @@ class MolleOmsStatusMapper implements MolleOmsStatusMapperInterface
      */
     protected const STATUS_TO_EVENT_MAP = [
         MollieConfig::PAID => MollieStateMachineEvents::OMS_MOLLIE_PAYMENT_PAID,
-//        MollieConfig::AUTHORIZED => MollieStateMachineEvents::OMS_MOLLIE_PAYMENT_CLOSE,
         MollieConfig::CANCELED => MollieStateMachineEvents::OMS_MOLLIE_PAYMENT_CANCELED,
         MollieConfig::EXPIRED => MollieStateMachineEvents::OMS_MOLLIE_PAYMENT_EXPIRED,
         MollieConfig::FAILED => MollieStateMachineEvents::OMS_MOLLIE_PAYMENT_FAILED,
