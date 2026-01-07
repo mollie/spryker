@@ -19,10 +19,17 @@ class MollieRepository extends AbstractRepository implements MollieRepositoryInt
      */
     public function getOrderItemsByPaymentId(string $paymentId): ObjectCollection
     {
-        $spyPaymentMollie = $this->getFactory()
+        $spyPaymentMollieCollection = $this->getFactory()
             ->createSpyPaymentMollieQuery()
-            ->findByTransactionId($paymentId);
+            ->filterByTransactionId($paymentId)
+            ->joinWithSpySalesOrder()
+            ->useSpySalesOrderQuery()
+            ->joinWithItem()
+            ->endUse()
+            ->find();
 
-        return $spyPaymentMollie;
+        return $this->getFactory()
+            ->createMollieOrderItemMapper()
+            ->extractOrderItemsFromSpyPaymentMollieEntity($spyPaymentMollieCollection);
     }
 }

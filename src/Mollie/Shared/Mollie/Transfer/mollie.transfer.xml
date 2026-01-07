@@ -19,6 +19,47 @@
         <property name="status" type="string" />
     </transfer>
 
+    <transfer name="MolliePaymentApiResponse">
+        <property name="isSuccessful" type="bool"/>
+        <property name="message" type="string"/>
+        <property name="molliePayment" type="MolliePayment"/>
+    </transfer>
+
+    <transfer name="MolliePayment">
+        <property name="resource" type="string"/>
+        <property name="id" type="string"/>
+        <property name="mode" type="string"/>
+        <property name="amount" type="MollieAmount"/>
+        <property name="description" type="string"/>
+        <property name="sequenceType" type="string"/>
+        <property name="redirectUrl" type="string"/>
+        <property name="webhookUrl" type="string"/>
+        <property name="metadata" type="array" singular="metadata"/>
+        <property name="profileId" type="string"/>
+        <property name="status" type="string"/>
+        <property name="isCancelable" type="bool"/>
+        <property name="createdAt" type="string"/>
+        <property name="expiresAt" type="string"/>
+        <property name="links" type="MollieLinks"/>
+    </transfer>
+
+    <transfer name="MollieAmount">
+        <property name="value" type="string"/>
+        <property name="currency" type="string"/>
+    </transfer>
+
+    <transfer name="MollieLinks">
+        <property name="self" type="MollieLink"/>
+        <property name="checkout" type="MollieLink"/>
+        <property name="dashboard" type="MollieLink"/>
+        <property name="documentation" type="MollieLink"/>
+    </transfer>
+
+    <transfer name="MollieLink">
+        <property name="href" type="string"/>
+        <property name="type" type="string"/>
+    </transfer>
+
     <transfer name="OrderCollectionRequest">
         <property name="id" type="string" />
         <property name="status" type="string" />

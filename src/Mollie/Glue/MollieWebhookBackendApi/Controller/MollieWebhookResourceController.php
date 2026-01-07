@@ -18,7 +18,7 @@ class MollieWebhookResourceController extends AbstractBackendApiController
      *                 "Calling endpoint which returns payment info and updates OMS with new status."
      *             ],
      *             "responseAttributesClassName": "Generated\\Shared\\Transfer\\MollieApiResponseTransfer",
-     *             "requestAttributesClassName": !"Generated\\Shared\\Transfer\\MollieApiRequestTransfer",
+     *             "requestAttributesClassName": "Generated\\Shared\\Transfer\\MollieApiRequestTransfer",
      *             "responses": {
      *                 "400": "Bad request",
      *                 "200": "OK"

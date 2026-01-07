@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouteCollection;
 
-class MollieWebhookRouteProviderPlugin extends AbstractPlugin implements RouteProviderPluginInterface
+class MollieRouteProviderPlugin extends AbstractPlugin implements RouteProviderPluginInterface
 {
     /**
      * @param \Symfony\Component\Routing\RouteCollection $routeCollection
@@ -18,7 +18,19 @@ class MollieWebhookRouteProviderPlugin extends AbstractPlugin implements RoutePr
      */
     public function addRoutes(RouteCollection $routeCollection): RouteCollection
     {
-        $route = (new Route('/mollie/webhook'))
+        $routeCollection = $this->addWebhookRoute($routeCollection);
+
+        return $routeCollection;
+    }
+
+    /**
+     * @param \Symfony\Component\Routing\RouteCollection $routeCollection
+     *
+     * @return \Symfony\Component\Routing\RouteCollection
+     */
+    protected function addWebhookRoute(RouteCollection $routeCollection): RouteCollection
+    {
+         $route = (new Route('/mollie/webhook'))
             ->setDefaults([
                 '_controller' => [MollieWebhookResourceController::class, 'postWebhookAction'],
                 '_resourceName' => 'MollieWebhook',

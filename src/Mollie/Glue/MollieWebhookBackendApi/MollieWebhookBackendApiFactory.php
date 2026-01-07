@@ -4,6 +4,7 @@ namespace Mollie\Glue\MollieWebhookBackendApi;
 
 use Mollie\Glue\MollieWebhookBackendApi\Dependency\Client\MollieWebhookBackendApiToMollieClientInterface;
 use Mollie\Glue\MollieWebhookBackendApi\Dependency\Facade\MollieWebhookBackendApiToMollieFacadeInterface;
+use Mollie\Glue\MollieWebhookBackendApi\Dependency\Service\MollieWebhookBackendApiToUtilEncodingServiceInterface;
 use Mollie\Glue\MollieWebhookBackendApi\Processor\WebhookProcessor;
 use Mollie\Glue\MollieWebhookBackendApi\Processor\WebhookProcessorInterface;
 use Spryker\Glue\Kernel\Backend\AbstractBackendApiFactory;
@@ -18,6 +19,7 @@ class MollieWebhookBackendApiFactory extends AbstractBackendApiFactory
         return new WebhookProcessor(
             $this->getMollieClient(),
             $this->getMollieFacade(),
+            $this->getUtilEncodingService(),
         );
     }
 
@@ -35,5 +37,13 @@ class MollieWebhookBackendApiFactory extends AbstractBackendApiFactory
     public function getMollieFacade(): MollieWebhookBackendApiToMollieFacadeInterface
     {
         return $this->getProvidedDependency(MollieWebhookBackendApiDependencyProvider::FACADE_MOLLIE);
+    }
+
+    /**
+     * @return \Mollie\Glue\MollieWebhookBackendApi\Dependency\Service\MollieWebhookBackendApiToUtilEncodingServiceInterface
+     */
+    public function getUtilEncodingService(): MollieWebhookBackendApiToUtilEncodingServiceInterface
+    {
+        return $this->getProvidedDependency(MollieWebhookBackendApiDependencyProvider::SERVICE_UTIL_ENCODING);
     }
 }
