@@ -12,6 +12,7 @@ use Generated\Shared\Transfer\MolliePaymentTransfer;
 use Mollie\Api\Http\Request;
 use Mollie\Api\Http\Requests\GetPaymentRequest;
 use Mollie\Client\Mollie\Api\AbstractApiCall;
+use Mollie\Shared\Mollie\MollieConstants;
 use Spryker\Shared\Kernel\Transfer\AbstractTransfer;
 use Spryker\Shared\Log\LoggerTrait;
 
@@ -28,7 +29,7 @@ class GetPaymentByTransactionIdApi extends AbstractApiCall
     {
         $molliePaymentApiResponseTransfer = (new MolliePaymentApiResponseTransfer())
             ->setIsSuccessful($mollieApiResponseTransfer->getIsSuccessful())
-            ->setMessage($mollieApiResponseTransfer->getMessage());
+            ->setMessage(MollieConstants::SUCCESS_MESSAGE);
 
         $molliePaymentTransfer = (new MolliePaymentTransfer())
             ->fromArray($mollieApiResponseTransfer->getPayload(), true);
