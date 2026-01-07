@@ -32,7 +32,7 @@ jobs:
 
       -   name: Execute code sniffer
           run: |
-            docker-compose exec php vendor/bin/phpcs --standard=vendor/spryker/code-sniffer/Spryker/ruleset.xml ./src -v
+            docker-compose exec php vendor/bin/phpcs --standard=phpcs.xml ./src -v
           working-directory: ./
 
       -   name: Execute phpstan
