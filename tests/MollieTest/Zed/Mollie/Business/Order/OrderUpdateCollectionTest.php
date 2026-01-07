@@ -30,7 +30,7 @@ class OrderUpdateCollectionTest extends AbstractBusinessTest
     /**
      * @return void
      */
-    public function testOrderItemsAreSetToStatusPaidWhenEventIsPaymentPaid(): void
+    public function testUpdateOrderCollectionSuccessfullyUpdatesOrder(): void
     {
         // Arrange
         $saveOrderTransfer = $this->tester->createOrder();
@@ -43,9 +43,6 @@ class OrderUpdateCollectionTest extends AbstractBusinessTest
         $response = $this->mollieFacade->updateOrderCollection($orderCollectionRequestTransfer);
 
         //Assert
-        //Instance of OrderCollectionResponseTransfer
-        // Assert response is successful
-
         $this->assertInstanceOf(OrderCollectionResponseTransfer::class, $response);
         $this->assertEquals(true, $response->getIsSuccess());
     }
