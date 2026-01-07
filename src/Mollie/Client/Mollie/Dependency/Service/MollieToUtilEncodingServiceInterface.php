@@ -1,15 +1,23 @@
 <?php
 
+
+declare(strict_types = 1);
+
 namespace Mollie\Client\Mollie\Dependency\Service;
 
 interface MollieToUtilEncodingServiceInterface
 {
     /**
-     * @param string $jsonValue
-     * @param int|null $depth
-     * @param int|null $options
+     * @param array<string, string> $value
      *
-     * @return array<mixed>|null
+     * @return string|null
      */
-    public function decodeJson(string $jsonValue, ?int $depth = null, ?int $options = null): ?array;
+    public function encodeJson(array $value): ?string;
+
+     /**
+      * @param string $jsonValue
+      *
+      * @return array<string, string>|null
+      */
+    public function decodeJson(string $jsonValue): ?array;
 }

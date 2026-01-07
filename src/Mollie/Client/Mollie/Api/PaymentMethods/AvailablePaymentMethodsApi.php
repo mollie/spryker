@@ -60,7 +60,7 @@ class AvailablePaymentMethodsApi extends AbstractApiCall
      *
      * @return \Generated\Shared\Transfer\MollieAvailablePaymentMethodCollectionTransfer
      */
-    protected function formatApiResponse(MollieApiResponseTransfer $mollieApiResponseTransfer): AbstractTransfer
+    protected function mapApiResponse(MollieApiResponseTransfer $mollieApiResponseTransfer): AbstractTransfer
     {
         $mollieAvailablePaymentMethodCollectionTransfer = new MollieAvailablePaymentMethodCollectionTransfer();
         foreach ($mollieApiResponseTransfer->getPayload() as $method) {

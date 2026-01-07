@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Mollie\Client\Mollie\Dependency\Service;
 
 class MollieToUtilEncodingServiceBridge implements MollieToUtilEncodingServiceInterface
@@ -9,24 +11,31 @@ class MollieToUtilEncodingServiceBridge implements MollieToUtilEncodingServiceIn
      */
     protected $utilEncodingService;
 
-    /**
-     * @param \Spryker\Service\UtilEncoding\UtilEncodingServiceInterface $utilEncodingService
-     */
+ /**
+  * @param \Spryker\Service\UtilEncoding\UtilEncodingServiceInterface $utilEncodingService
+  */
     public function __construct($utilEncodingService)
     {
         $this->utilEncodingService = $utilEncodingService;
     }
 
     /**
-     * @param string $jsonValue
-     * @param int|null $depth
-     * @param int|null $options
+     * @param array<string, string> $value
      *
-     * @return array<mixed>|null
+     * @return string|null
      */
-    public function decodeJson(string $jsonValue, ?int $depth = null, ?int $options = null): ?array
+    public function encodeJson(array $value): ?string
     {
-        /** @phpstan-var array<mixed>|null */
-        return $this->utilEncodingService->decodeJson($jsonValue, true, $depth, $options);
+        return $this->utilEncodingService->encodeJson($value);
+    }
+
+    /**
+     * @param string $jsonValue
+     *
+     * @return array<string, string>|null
+     */
+    public function decodeJson(string $jsonValue): ?array
+    {
+        return $this->utilEncodingService->decodeJson($jsonValue, true);
     }
 }
