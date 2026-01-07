@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Mollie\Client\Mollie;
 
+use Generated\Shared\Transfer\MollieApiRequestTransfer;
 use Generated\Shared\Transfer\MollieAvailablePaymentMethodCollectionTransfer;
+use Generated\Shared\Transfer\MolliePaymentApiResponseTransfer;
 
 interface MollieClientInterface
 {
@@ -17,4 +19,16 @@ interface MollieClientInterface
      * @return \Generated\Shared\Transfer\MollieAvailablePaymentMethodCollectionTransfer
      */
     public function getAvailablePaymentMethods(): MollieAvailablePaymentMethodCollectionTransfer;
+
+    /**
+     * Specification:
+     * - Gets payment by transaction id from Mollie
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\MollieApiRequestTransfer $mollieApiRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\MolliePaymentApiResponseTransfer
+     */
+    public function getPaymentByTransactionId(MollieApiRequestTransfer $mollieApiRequestTransfer): MolliePaymentApiResponseTransfer;
 }

@@ -21,6 +21,7 @@ parameters:
         - '#Return type \(array\<string, array\<string\>\>\) of method Pyz\\Zed\\Propel\\PropelConfig::getWhitelistForAllowedAttributeValueChanges\(\) should be compatible with return type \(array\<string\>\).#'
         - '#.+Generated\\Shared\\Transfer.+#'
         - '#Method .+ has invalid return type.+#'
+        - '#Call to .+ on an unknown class Orm\\.+\\.+\\Persistence\\.+#'
 
     reportUnmatchedIgnoredErrors: false
 
