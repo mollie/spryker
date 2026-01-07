@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Mollie\Client\Mollie;
 
-use Mollie\Client\Mollie\Dependency\MollieToStorageClientBridge;
-use Mollie\Client\Mollie\Dependency\MollieToStorageClientInterface;
+use Mollie\Client\Mollie\Dependency\MollieToUtilEncodingServiceBridge;
+use Mollie\Client\Mollie\Dependency\MollieToUtilEncodingServiceInterface;
 use Spryker\Client\Kernel\AbstractDependencyProvider;
 use Spryker\Client\Kernel\Container;
 
@@ -14,7 +14,7 @@ class MollieDependencyProvider extends AbstractDependencyProvider
     /**
      * @var string
      */
-    public const CLIENT_STORAGE = 'CLIENT_STORAGE';
+    public const SERVICE_UTIL_ENCODING = 'SERVICE_UTIL_ENCODING';
 
     /**
      * @param \Spryker\Client\Kernel\Container $container
@@ -24,7 +24,7 @@ class MollieDependencyProvider extends AbstractDependencyProvider
     public function provideServiceLayerDependencies(Container $container): Container
     {
         $container = parent::provideServiceLayerDependencies($container);
-        $container = $this->addStorageClient($container);
+        $container = $this->addUtiLEncodingService($container);
 
         return $container;
     }
@@ -34,11 +34,11 @@ class MollieDependencyProvider extends AbstractDependencyProvider
      *
      * @return \Spryker\Client\Kernel\Container
      */
-    protected function addStorageClient(Container $container): Container
+    protected function addUtiLEncodingService(Container $container): Container
     {
-        $container->set(static::CLIENT_STORAGE, function (Container $container): MollieToStorageClientInterface {
-            return new MollieToStorageClientBridge(
-                $container->getLocator()->storage()->client(),
+        $container->set(static::SERVICE_UTIL_ENCODING, function (Container $container): MollieToUtilEncodingServiceInterface {
+            return new MollieToUtilEncodingServiceBridge(
+                $container->getLocator()->utilEncoding()->service(),
             );
         });
 

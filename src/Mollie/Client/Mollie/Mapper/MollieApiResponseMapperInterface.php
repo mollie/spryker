@@ -9,11 +9,11 @@ use Spryker\Shared\Kernel\Transfer\AbstractTransfer;
 interface MollieApiResponseMapperInterface
 {
     /**
-     * @param array<string, mixed> $payload
+     * @param string $payload
      *
      * @return \Spryker\Shared\Kernel\Transfer\AbstractTransfer
      */
-    public function mapPayloadToResponseTransfer(array $payload): AbstractTransfer;
+    public function mapPayloadToResponseTransfer(string $payload): AbstractTransfer;
 
     /**
      * @param mixed $data

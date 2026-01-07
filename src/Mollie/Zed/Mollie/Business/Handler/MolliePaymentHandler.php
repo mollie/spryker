@@ -7,19 +7,22 @@ namespace Mollie\Zed\Mollie\Business\Handler;
 use Exception;
 use Generated\Shared\Transfer\CheckoutResponseTransfer;
 use Generated\Shared\Transfer\MollieApiRequestTransfer;
-use Generated\Shared\Transfer\MolliePaymentTransfer;
 use Generated\Shared\Transfer\QuoteTransfer;
 use Mollie\Client\Mollie\MollieClientInterface;
-use Mollie\Client\Mollie\MollieConfig;
+use Mollie\Shared\Mollie\MollieConfig as MollieMollieConfig;
 use Mollie\Zed\Mollie\Business\Exception\MolliePaymentException;
+use Mollie\Zed\Mollie\Dependency\MollieToStorageClientInterface;
+use Mollie\Zed\Mollie\MollieConfig;
 
 class MolliePaymentHandler implements MolliePaymentHandlerInterface
 {
     /**
      * @param \Mollie\Client\Mollie\MollieClientInterface $mollieClient
+     * @param \Mollie\Zed\Mollie\Dependency\MollieToStorageClientInterface $storageClient
      */
     public function __construct(
         protected MollieClientInterface $mollieClient,
+        protected MollieToStorageClientInterface $storageClient,
     ) {
     }
 
@@ -39,8 +42,7 @@ class MolliePaymentHandler implements MolliePaymentHandlerInterface
                 ->setQuote($quoteTransfer);
 
             $molliePaymentTransfer = $this->mollieClient->createPayment($mollieApiRequestTransfer);
-
-            $quoteTransfer = $this->addPaymentDataToQuote($quoteTransfer, $molliePaymentTransfer);
+            $this->savePaymentIdToStorage($molliePaymentTransfer->getId(), $checkoutResponseTransfer->getSaveOrderOrFail()->getOrderReference());
         } catch (Exception $e) {
             throw new MolliePaymentException(
                 'Mollie payment could not be created. ' . $e->getMessage(),
@@ -56,16 +58,14 @@ class MolliePaymentHandler implements MolliePaymentHandlerInterface
     }
 
     /**
-     * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
-     * @param \Generated\Shared\Transfer\MolliePaymentTransfer $molliePaymentTransfer
+     * @param string $paymentId
+     * @param string $orderReference
      *
-     * @return \Generated\Shared\Transfer\QuoteTransfer
+     * @return void
      */
-    protected function addPaymentDataToQuote(QuoteTransfer &$quoteTransfer, MolliePaymentTransfer $molliePaymentTransfer): QuoteTransfer
+    protected function savePaymentIdToStorage(string $paymentId, string $orderReference): void
     {
-        $paymentId = $molliePaymentTransfer->getId();
-        $quoteTransfer->setMolliePaymentId($paymentId);
-
-        return $quoteTransfer;
+        $key = sprintf('%s:%s', MollieMollieConfig::MOLLIE_STORAGE_KEY_PREFIX, $orderReference);
+        $this->storageClient->set($key, $paymentId, MollieMollieConfig::MOLLIE_STORAGE_TTL);
     }
 }

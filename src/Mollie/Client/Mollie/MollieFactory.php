@@ -9,11 +9,9 @@ use Mollie\Client\Mollie\Api\ApiCallInterface;
 use Mollie\Client\Mollie\Api\Payment\CreatePaymentApi;
 use Mollie\Client\Mollie\Api\Payment\GetPaymentApi;
 use Mollie\Client\Mollie\Api\PaymentMethods\AvailablePaymentMethodsApi;
-use Mollie\Client\Mollie\Dependency\MollieToStorageClientInterface;
+use Mollie\Client\Mollie\Dependency\MollieToUtilEncodingServiceInterface;
 use Mollie\Client\Mollie\Mapper\MollieApiResponseMapperInterface;
 use Mollie\Client\Mollie\Mapper\Payment\PaymentMapper;
-use Mollie\Client\Mollie\Storage\MolliePaymentStorageSaver;
-use Mollie\Client\Mollie\Storage\MolliePaymentStorageSaverInterface;
 use Spryker\Client\Kernel\AbstractFactory;
 
 /**
@@ -47,7 +45,7 @@ class MollieFactory extends AbstractFactory
         return new CreatePaymentApi(
             $this->createMollieApiClient(),
             $this->createPaymentMapper(),
-            $this->createMolliePaymentStorageSaver(),
+            $this->getUtilEncodingService(),
             $this->getConfig(),
         );
     }
@@ -69,24 +67,16 @@ class MollieFactory extends AbstractFactory
      */
     protected function createPaymentMapper(): MollieApiResponseMapperInterface
     {
-        return new PaymentMapper();
-    }
-
-    /**
-     * @return \Mollie\Client\Mollie\Dependency\MollieToStorageClientInterface
-     */
-    protected function createStorageClient(): MollieToStorageClientInterface
-    {
-        return $this->getProvidedDependency(MollieDependencyProvider::CLIENT_STORAGE);
-    }
-
-    /**
-     * @return \Mollie\Client\Mollie\Storage\MolliePaymentStorageSaverInterface
-     */
-    protected function createMolliePaymentStorageSaver(): MolliePaymentStorageSaverInterface
-    {
-        return new MolliePaymentStorageSaver(
-            $this->createStorageClient(),
+        return new PaymentMapper(
+            $this->getUtilEncodingService(),
         );
+    }
+
+    /**
+     * @return \Mollie\Client\Mollie\Dependency\MollieToUtilEncodingServiceInterface
+     */
+    protected function getUtilEncodingService(): MollieToUtilEncodingServiceInterface
+    {
+        return $this->getProvidedDependency(MollieDependencyProvider::SERVICE_UTIL_ENCODING);
     }
 }

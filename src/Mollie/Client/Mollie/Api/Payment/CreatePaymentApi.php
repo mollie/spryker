@@ -15,9 +15,9 @@ use Mollie\Api\Http\Requests\CreatePaymentRequest;
 use Mollie\Api\MollieApiClient;
 use Mollie\Client\Mollie\Api\AbstractApiCall;
 use Mollie\Client\Mollie\Api\Exception\CreatePaymentApiException;
+use Mollie\Client\Mollie\Dependency\MollieToUtilEncodingServiceInterface;
 use Mollie\Client\Mollie\Mapper\MollieApiResponseMapperInterface;
 use Mollie\Client\Mollie\MollieConfig;
-use Mollie\Client\Mollie\Storage\MolliePaymentStorageSaverInterface;
 use Spryker\Shared\Kernel\Transfer\AbstractTransfer;
 use Spryker\Shared\Log\LoggerTrait;
 
@@ -28,13 +28,13 @@ class CreatePaymentApi extends AbstractApiCall
     /**
      * @param \Mollie\Api\MollieApiClient $mollieApiClient
      * @param \Mollie\Client\Mollie\Mapper\MollieApiResponseMapperInterface $paymentMapper
-     * @param \Mollie\Client\Mollie\Storage\MolliePaymentStorageSaverInterface $storageSaver
+     * @param \Mollie\Client\Mollie\Dependency\MollieToUtilEncodingServiceInterface $utilEncodingService
      * @param \Mollie\Client\Mollie\MollieConfig $config
      */
     public function __construct(
         MollieApiClient $mollieApiClient,
         protected MollieApiResponseMapperInterface $paymentMapper,
-        protected MolliePaymentStorageSaverInterface $storageSaver,
+        protected MollieToUtilEncodingServiceInterface $utilEncodingService,
         protected MollieConfig $config,
     ) {
         parent::__construct($mollieApiClient);
@@ -56,9 +56,7 @@ class CreatePaymentApi extends AbstractApiCall
             $mollieApiResponseTransfer = new MollieApiResponseTransfer();
             $mollieApiResponseTransfer
                 ->setIsSuccessful(true)
-                ->setPayload($this->paymentMapper->mapDataToArray($payment));
-
-            $this->savePaymentIdToStorage($mollieApiResponseTransfer->getPayload());
+                ->setPayload($payment->getResponse()->getPsrResponse()->getBody()->getContents());
 
             return $mollieApiResponseTransfer;
         } catch (ApiException | MollieException $requestException) {
@@ -158,20 +156,5 @@ class CreatePaymentApi extends AbstractApiCall
     protected function addMetadata(CheckoutResponseTransfer $checkoutResponseTransfer): array
     {
         return [MollieConfig::REQUEST_PARAMETER_CREATE_PAYMENT_ORDER_REFERENCE => $checkoutResponseTransfer->getSaveOrderOrFail()->getOrderReference()];
-    }
-
-    /**
-     * @param array<string, mixed> $payload
-     *
-     * @return void
-     */
-    protected function savePaymentIdToStorage(array $payload): void
-    {
-        $orderReference = $payload[MollieConfig::RESPONSE_PARAMETER_CREATE_PAYMENT_METADATA][MollieConfig::REQUEST_PARAMETER_CREATE_PAYMENT_ORDER_REFERENCE] ?? null;
-        $paymentId = $payload['id'] ?? null;
-        if (!$orderReference || !$paymentId) {
-            return;
-        }
-        $this->storageSaver->savePaymentIdKey($orderReference, $paymentId);
     }
 }

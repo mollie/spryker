@@ -51,7 +51,7 @@ class GetPaymentApi extends AbstractApiCall
             $mollieApiResponseTransfer = new MollieApiResponseTransfer();
             $mollieApiResponseTransfer
                 ->setIsSuccessful(true)
-                ->setPayload($this->paymentMapper->mapDataToArray($payment));
+                ->setPayload($payment->getResponse()->getPsrResponse()->getBody()->getContents());
 
             return $mollieApiResponseTransfer;
         } catch (ApiException | MollieException $exception) {

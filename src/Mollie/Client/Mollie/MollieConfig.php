@@ -45,6 +45,11 @@ class MollieConfig extends AbstractBundleConfig
     public const RESPONSE_PARAMETER_CREATE_PAYMENT_METADATA = 'metadata';
 
     /**
+     * @var string
+     */
+    public const RESPONSE_PARAMETER_CREATE_PAYMENT_ID = 'id';
+
+    /**
      * @return string
      */
     public function getMollieRedirectUrl(): string
