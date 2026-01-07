@@ -42,7 +42,7 @@ jobs:
 
       -   name: Execute project architecture sniffer
           run: |
-            docker-compose exec php  vendor/bin/phpmd src/Mollie/ text vendor/spryker/project-architecture-sniffer/src/ruleset.xml --minimumpriority 4
+            docker-compose exec php  vendor/bin/phpmd src/Mollie/ text phpmd-standalone-ruleset.xml --minimumpriority 4
           working-directory: ./
 
 
