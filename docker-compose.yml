@@ -1,7 +1,7 @@
 version: '3'
 services:
   php:
-    image: spryker/php:8.2
+    image: spryker/php:8.3
     working_dir: /data
     volumes:
       - ./:/data:delegated
