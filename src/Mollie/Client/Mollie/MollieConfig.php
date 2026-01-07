@@ -7,6 +7,9 @@ namespace Mollie\Client\Mollie;
 use Mollie\Shared\Mollie\MollieConstants;
 use Spryker\Client\Kernel\AbstractBundleConfig;
 
+/**
+ * @method \Mollie\Shared\Mollie\MollieConfig getSharedConfig()()
+ */
 class MollieConfig extends AbstractBundleConfig
 {
     /**
@@ -66,14 +69,6 @@ class MollieConfig extends AbstractBundleConfig
     }
 
     /**
-     * @return string
-     */
-    public function getMollieApiKey(): string
-    {
-        return $this->get(MollieConstants::MOLLIE)[MollieConstants::MOLLIE_API_KEY];
-    }
-
-    /**
      * @return array<string, string>
      */
     public function getMollieOmsToPaymentMethodMapping(): array
@@ -91,5 +86,13 @@ class MollieConfig extends AbstractBundleConfig
         $mapping = $this->getMollieOmsToPaymentMethodMapping();
 
         return $mapping[$paymentMethodKey] ?? null;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getMollieApiKey(): string|null
+    {
+        return $this->getSharedConfig()->getMollieApiKey();
     }
 }

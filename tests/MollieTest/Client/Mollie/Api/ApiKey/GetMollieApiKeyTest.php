@@ -1,16 +1,16 @@
 <?php
 
-namespace MollieTest\Zed\Mollie\Business\Facade;
+namespace MollieTest\Client\Mollie\Api\ApiKey;
 
 use Codeception\Test\Unit;
-use MollieTest\Zed\Mollie\FacadeBusinessTester;
+use MollieTest\Client\Mollie\MollieApiClientTester;
 
 class GetMollieApiKeyTest extends Unit
 {
     /**
-     * @var \MollieTest\Zed\Mollie\FacadeBusinessTester
+     * @var \MollieTest\Client\Mollie\MollieApiClientTester
      */
-    protected FacadeBusinessTester $tester;
+    protected MollieApiClientTester $tester;
 
     /**
      * @return void

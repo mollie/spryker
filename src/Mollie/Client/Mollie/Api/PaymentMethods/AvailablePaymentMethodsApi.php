@@ -60,7 +60,7 @@ class AvailablePaymentMethodsApi extends AbstractApiCall
      *
      * @return \Generated\Shared\Transfer\MollieAvailablePaymentMethodCollectionTransfer
      */
-    protected function formatApiResponse(MollieApiResponseTransfer $mollieApiResponseTransfer): AbstractTransfer
+    protected function mapApiResponse(MollieApiResponseTransfer $mollieApiResponseTransfer): AbstractTransfer
     {
         $mollieAvailablePaymentMethodCollectionTransfer = new MollieAvailablePaymentMethodCollectionTransfer();
         foreach ($mollieApiResponseTransfer->getPayload() as $method) {
@@ -85,7 +85,8 @@ class AvailablePaymentMethodsApi extends AbstractApiCall
     protected function buildRequest(?MollieApiRequestTransfer $mollieApiRequestTransfer = null): ?Request
     {
         return new GetEnabledMethodsRequest(
-            resource: MethodQuery::RESOURCE_PAYMENTS,
+            'oneOff',
+            MethodQuery::RESOURCE_PAYMENTS,
         );
     }
 }

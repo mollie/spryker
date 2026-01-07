@@ -6,7 +6,7 @@ namespace Mollie\Client\Mollie;
 
 use Generated\Shared\Transfer\MollieApiRequestTransfer;
 use Generated\Shared\Transfer\MollieAvailablePaymentMethodCollectionTransfer;
-use Generated\Shared\Transfer\MolliePaymentTransfer;
+use Generated\Shared\Transfer\MolliePaymentApiResponseTransfer;
 use Spryker\Client\Kernel\AbstractClient;
 
 /**
@@ -30,6 +30,19 @@ class MollieClient extends AbstractClient implements MollieClientInterface
     }
 
     /**
+     * @param \Generated\Shared\Transfer\MollieApiRequestTransfer $mollieApiRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\MolliePaymentApiResponseTransfer
+     */
+    public function getPaymentByTransactionId(MollieApiRequestTransfer $mollieApiRequestTransfer): MolliePaymentApiResponseTransfer
+    {
+        /** @var \Generated\Shared\Transfer\MolliePaymentApiResponseTransfer $molliePaymentApiResponseTransfer */
+        $molliePaymentApiResponseTransfer = $this->getFactory()->createGetPaymentByTransactionIdApi()->execute($mollieApiRequestTransfer);
+
+        return $molliePaymentApiResponseTransfer;
+    }
+
+    /**
      * Specification:
      * - Creates a payment in Mollie system
      *
@@ -37,25 +50,10 @@ class MollieClient extends AbstractClient implements MollieClientInterface
      *
      * @param \Generated\Shared\Transfer\MollieApiRequestTransfer $mollieApiRequestTransfer
      *
-     * @return \Generated\Shared\Transfer\MolliePaymentTransfer
+     * @return \Generated\Shared\Transfer\MolliePaymentApiResponseTransfer
      */
-    public function createPayment(MollieApiRequestTransfer $mollieApiRequestTransfer): MolliePaymentTransfer
+    public function createPayment(MollieApiRequestTransfer $mollieApiRequestTransfer): MolliePaymentApiResponseTransfer
     {
         return $this->getFactory()->createCreatePaymentApi()->execute($mollieApiRequestTransfer);
-    }
-
-    /**
-     * Specification:
-     * - Gets payment from Mollie system
-     *
-     * @api
-     *
-     * @param \Generated\Shared\Transfer\MollieApiRequestTransfer $mollieApiRequestTransfer
-     *
-     * @return \Generated\Shared\Transfer\MolliePaymentTransfer
-     */
-    public function getPayment(MollieApiRequestTransfer $mollieApiRequestTransfer): MolliePaymentTransfer
-    {
-        return $this->getFactory()->createGetPaymentApi()->execute($mollieApiRequestTransfer);
     }
 }

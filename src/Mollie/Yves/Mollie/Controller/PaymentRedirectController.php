@@ -30,7 +30,7 @@ class PaymentRedirectController extends AbstractMollieController
         $mollieApiRequestTransfer = new MollieApiRequestTransfer();
         $mollieApiRequestTransfer->setPaymentId($paymentId);
 
-        $payment = $this->getFactory()->getMollieApiClient()->getPayment($mollieApiRequestTransfer);
+        $payment = $this->getFactory()->getMollieApiClient()->getPaymentByTransactionId($mollieApiRequestTransfer);
 
         if (in_array($payment->getStatus(), MollieConfigShared::MOLLIE_PAYMENT_STATUS_FAILED, true)) {
             $this->addErrorMessage(sprintf($this->getFactory()->getConfig()->getPaymentFailedMessage(), $payment->getStatus()));

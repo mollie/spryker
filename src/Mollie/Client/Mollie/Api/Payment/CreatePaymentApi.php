@@ -7,16 +7,13 @@ namespace Mollie\Client\Mollie\Api\Payment;
 use Generated\Shared\Transfer\CheckoutResponseTransfer;
 use Generated\Shared\Transfer\MollieApiRequestTransfer;
 use Generated\Shared\Transfer\MollieApiResponseTransfer;
-use Mollie\Api\Exceptions\ApiException;
-use Mollie\Api\Exceptions\MollieException;
+use Generated\Shared\Transfer\MolliePaymentApiResponseTransfer;
+use Generated\Shared\Transfer\MolliePaymentTransfer;
+use Mollie\Api\Http\Data\Metadata;
 use Mollie\Api\Http\Data\Money;
 use Mollie\Api\Http\Request;
 use Mollie\Api\Http\Requests\CreatePaymentRequest;
-use Mollie\Api\MollieApiClient;
 use Mollie\Client\Mollie\Api\AbstractApiCall;
-use Mollie\Client\Mollie\Api\Exception\CreatePaymentApiException;
-use Mollie\Client\Mollie\Dependency\MollieToUtilEncodingServiceInterface;
-use Mollie\Client\Mollie\Mapper\MollieApiResponseMapperInterface;
 use Mollie\Client\Mollie\MollieConfig;
 use Spryker\Shared\Kernel\Transfer\AbstractTransfer;
 use Spryker\Shared\Log\LoggerTrait;
@@ -24,68 +21,6 @@ use Spryker\Shared\Log\LoggerTrait;
 class CreatePaymentApi extends AbstractApiCall
 {
     use LoggerTrait;
-
-    /**
-     * @param \Mollie\Api\MollieApiClient $mollieApiClient
-     * @param \Mollie\Client\Mollie\Mapper\MollieApiResponseMapperInterface $paymentMapper
-     * @param \Mollie\Client\Mollie\Dependency\MollieToUtilEncodingServiceInterface $utilEncodingService
-     * @param \Mollie\Client\Mollie\MollieConfig $config
-     */
-    public function __construct(
-        MollieApiClient $mollieApiClient,
-        protected MollieApiResponseMapperInterface $paymentMapper,
-        protected MollieToUtilEncodingServiceInterface $utilEncodingService,
-        protected MollieConfig $config,
-    ) {
-        parent::__construct($mollieApiClient);
-    }
-
-    /**
-     * @param \Mollie\Api\Http\Request $request
-     *
-     * @throws \Mollie\Client\Mollie\Api\Exception\CreatePaymentApiException
-     *
-     * @return \Generated\Shared\Transfer\MollieApiResponseTransfer
-     */
-    protected function send(Request $request): MollieApiResponseTransfer
-    {
-        try {
-            $this->mollieApiClient->setApiKey($this->config->getMollieApiKey());
-            $payment = $this->mollieApiClient->send($request);
-
-            $mollieApiResponseTransfer = new MollieApiResponseTransfer();
-            $mollieApiResponseTransfer
-                ->setIsSuccessful(true)
-                ->setPayload($payment->getResponse()->getPsrResponse()->getBody()->getContents());
-
-            return $mollieApiResponseTransfer;
-        } catch (ApiException | MollieException $requestException) {
-            $logException = sprintf(
-                'Error calling create payment api with message: %s',
-                $requestException->getMessage(),
-            );
-
-            $this->getLogger()->error($logException);
-
-            throw new CreatePaymentApiException(
-                $requestException->getMessage(),
-                $requestException->getCode(),
-            );
-        }
-    }
-
-    /**
-     * @param \Generated\Shared\Transfer\MollieApiResponseTransfer $mollieApiResponseTransfer
-     *
-     * @return \Spryker\Shared\Kernel\Transfer\AbstractTransfer
-     */
-    protected function formatApiResponse(MollieApiResponseTransfer $mollieApiResponseTransfer): AbstractTransfer
-    {
-        /** @var \Generated\Shared\Transfer\MolliePaymentTransfer $molliePaymentTransfer */
-        $molliePaymentTransfer = $this->paymentMapper->mapPayloadToResponseTransfer($mollieApiResponseTransfer->getPayload());
-
-        return $molliePaymentTransfer;
-    }
 
     /**
      * @param \Generated\Shared\Transfer\MollieApiRequestTransfer|null $mollieApiRequestTransfer
@@ -105,8 +40,8 @@ class CreatePaymentApi extends AbstractApiCall
                 value: $this->convertAmountToString($paymentTransfer->getAmount()),
             ),
             redirectUrl: $this->getRedirectUrl($checkoutResponseTransfer->getSaveOrderOrFail()->getOrderReference()),
-            //webhookUrl: $this->config->getMollieWebhookUrl(),
-            method: $this->config->getMolliePaymentMethod($paymentTransfer->getPaymentMethod()),
+            //webhookUrl: $this->mollieConfig->getMollieWebhookUrl(),
+            method: $this->mollieConfig->getMolliePaymentMethod($paymentTransfer->getPaymentMethod()),
             metadata: $this->addMetadata($checkoutResponseTransfer),
             additional: $this->addAdditionalParameters($mollieApiRequestTransfer),
         );
@@ -145,16 +80,38 @@ class CreatePaymentApi extends AbstractApiCall
      */
     protected function getRedirectUrl(string $orderReference): string
     {
-        return $this->config->getMollieRedirectUrl() . '?orderReference=' . $orderReference;
+        return $this->mollieConfig->getMollieRedirectUrl() . '?orderReference=' . $orderReference;
     }
 
     /**
      * @param \Generated\Shared\Transfer\CheckoutResponseTransfer $checkoutResponseTransfer
      *
-     * @return array<string, mixed>
+     * @return \Mollie\Api\Http\Data\Metadata
      */
-    protected function addMetadata(CheckoutResponseTransfer $checkoutResponseTransfer): array
+    protected function addMetadata(CheckoutResponseTransfer $checkoutResponseTransfer): Metadata
     {
-        return [MollieConfig::REQUEST_PARAMETER_CREATE_PAYMENT_ORDER_REFERENCE => $checkoutResponseTransfer->getSaveOrderOrFail()->getOrderReference()];
+        return new Metadata([MollieConfig::REQUEST_PARAMETER_CREATE_PAYMENT_ORDER_REFERENCE => $checkoutResponseTransfer->getSaveOrderOrFail()->getOrderReference()]);
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MollieApiResponseTransfer $mollieApiResponseTransfer
+     *
+     * @return \Spryker\Shared\Kernel\Transfer\AbstractTransfer
+     */
+    protected function mapApiResponse(MollieApiResponseTransfer $mollieApiResponseTransfer): AbstractTransfer
+    {
+        $molliePaymentApiResponseTransfer = (new MolliePaymentApiResponseTransfer())
+        ->setIsSuccessful($mollieApiResponseTransfer->getIsSuccessful())
+        ->setMessage($mollieApiResponseTransfer->getMessage());
+
+        $molliePaymentTransfer = new MolliePaymentTransfer();
+        $molliePaymentTransfer->fromArray($mollieApiResponseTransfer->getPayload(), true);
+        $molliePaymentTransfer
+            ->setLinks($mollieApiResponseTransfer->getPayload()[MollieConfig::RESPONSE_PARAMETER_CREATE_PAYMENT_LINKS] ?? null)
+            ->setEmbedded($mollieApiResponseTransfer->getPayload()[MollieConfig::RESPONSE_PARAMETER_CREATE_PAYMENT_EMBEDDED] ?? null);
+
+        $molliePaymentApiResponseTransfer->setMolliePayment($molliePaymentTransfer);
+
+        return $molliePaymentApiResponseTransfer;
     }
 }

@@ -11,6 +11,31 @@ class MollieConfig extends AbstractBundleConfig
     /**
      * @var string
      */
+    public const PAID = 'paid';
+
+    /**
+     * @var string
+     */
+    public const AUTHORIZED = 'authorized';
+
+    /**
+     * @var string
+     */
+    public const EXPIRED = 'expired';
+
+    /**
+     * @var string
+     */
+    public const FAILED = 'failed';
+
+    /**
+     * @var string
+     */
+    public const CANCELED = 'canceled';
+
+    /**
+     * @var string
+     */
     public const RESPONSE_PARAMETER_CREATE_PAYMENT_LINKS_CHECKOUT = 'checkout';
 
     /**
