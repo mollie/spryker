@@ -90,4 +90,9 @@ interface MollieConstants
      * @var string
      */
     public const OMS_EVENT_PAYMENT_AUTHORIZED = 'payment_authorized';
+
+    /**
+     * @var string
+     */
+    public const SUCCESS_MESSAGE = 'success';
 }
