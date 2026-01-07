@@ -1,5 +1,5 @@
 # Mollie Spryker Payment Module (Standalone)
-[![Static Code Analysis](https://github.com/xiphias-vz/mollie-init-package/actions/workflows/static-code-analysis.yml/badge.svg?branch=main)](https://github.com/xiphias-vz/mollie-init-package/actions/workflows/static-code-analysis.yml)
+[![Static Code Analysis](https://github.com/mollie/spryker/actions/workflows/static-code-analysis.yml/badge.svg?branch=main)](https://github.com/mollie/spryker/actions/workflows/static-code-analysis.yml)
 
 A standalone Spryker-convention module under the `Mollie` namespace for integrating the [Mollie PHP API client](https://github.com/mollie/mollie-api-php). This repository provides an initial, convention-compliant scaffold for Business, Communication, Persistence, and Client layers and prepares you for further development inside a Spryker (SCOS) environment.
 
