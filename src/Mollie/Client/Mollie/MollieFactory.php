@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace Mollie\Client\Mollie;
 
+use Mollie\Api\Contracts\IdempotencyKeyGeneratorContract;
 use Mollie\Api\MollieApiClient;
 use Mollie\Client\Mollie\Api\ApiCallInterface;
+use Mollie\Client\Mollie\Api\IdempotencyKeyGenerator\IdempotencyKeyGenerator;
 use Mollie\Client\Mollie\Api\Payment\CreatePaymentApi;
 use Mollie\Client\Mollie\Api\PaymentMethods\AvailablePaymentMethodsApi;
 use Mollie\Client\Mollie\Api\PaymentMethods\GetPaymentByTransactionIdApi;
@@ -46,7 +48,7 @@ class MollieFactory extends AbstractFactory
      */
     public function createMollieApiClient(): MollieApiClient
     {
-        return new MollieApiClient();
+        return new MollieApiClient(null, null, $this->createIdempotencyKeyGenerator());
     }
 
     /**
@@ -67,5 +69,13 @@ class MollieFactory extends AbstractFactory
             $this->getConfig(),
             $this->getUtilEncodingService(),
         );
+    }
+
+    /**
+     * @return \Mollie\Api\Contracts\IdempotencyKeyGeneratorContract
+     */
+    public function createIdempotencyKeyGenerator(): IdempotencyKeyGeneratorContract
+    {
+        return new IdempotencyKeyGenerator();
     }
 }

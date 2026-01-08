@@ -86,11 +86,15 @@ class CreatePaymentApi extends AbstractApiCall
     /**
      * @param \Generated\Shared\Transfer\CheckoutResponseTransfer $checkoutResponseTransfer
      *
-     * @return \Mollie\Api\Http\Data\Metadata
+     * @return \Mollie\Api\Http\Data\Metadata|array<string>
      */
-    protected function addMetadata(CheckoutResponseTransfer $checkoutResponseTransfer): Metadata
+    protected function addMetadata(CheckoutResponseTransfer $checkoutResponseTransfer): array|Metadata
     {
-        return new Metadata([MollieConfig::REQUEST_PARAMETER_CREATE_PAYMENT_ORDER_REFERENCE => $checkoutResponseTransfer->getSaveOrderOrFail()->getOrderReference()]);
+        if (class_exists(Metadata::class)) {
+            return new Metadata([MollieConfig::REQUEST_PARAMETER_CREATE_PAYMENT_ORDER_REFERENCE => $checkoutResponseTransfer->getSaveOrderOrFail()->getOrderReference()]);
+        }
+
+        return [MollieConfig::REQUEST_PARAMETER_CREATE_PAYMENT_ORDER_REFERENCE => $checkoutResponseTransfer->getSaveOrderOrFail()->getOrderReference()];
     }
 
     /**

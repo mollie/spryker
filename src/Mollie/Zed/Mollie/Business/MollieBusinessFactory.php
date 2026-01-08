@@ -11,6 +11,8 @@ use Mollie\Zed\Mollie\Business\Mapper\Oms\MolleOmsStatusMapper;
 use Mollie\Zed\Mollie\Business\Mapper\Oms\MolleOmsStatusMapperInterface;
 use Mollie\Zed\Mollie\Business\Order\OrderUpdater;
 use Mollie\Zed\Mollie\Business\Order\OrderUpdaterInterface;
+use Mollie\Zed\Mollie\Business\Writer\MolliePaymentWriter;
+use Mollie\Zed\Mollie\Business\Writer\MolliePaymentWriterInterface;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToOmsInterface;
 use Mollie\Zed\Mollie\Dependency\MollieToStorageClientInterface;
 use Mollie\Zed\Mollie\MollieDependencyProvider;
@@ -80,6 +82,7 @@ class MollieBusinessFactory extends AbstractBusinessFactory
         return new MolliePaymentHandler(
             $this->getMollieClient(),
             $this->getStorageClient(),
+            $this->createMolliePaymentWriter(),
         );
     }
 
@@ -89,5 +92,13 @@ class MollieBusinessFactory extends AbstractBusinessFactory
     public function getStorageClient(): MollieToStorageClientInterface
     {
         return $this->getProvidedDependency(MollieDependencyProvider::CLIENT_STORAGE);
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Business\Writer\MolliePaymentWriterInterface
+     */
+    public function createMolliePaymentWriter(): MolliePaymentWriterInterface
+    {
+        return new MolliePaymentWriter($this->getEntityManager());
     }
 }
