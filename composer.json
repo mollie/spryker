@@ -31,6 +31,8 @@
   "require-dev": {
     "spryker/application": "^3.33",
     "spryker/console": "^4.16",
+    "spryker/glue-backend-api-application": "^1.7.0",
+    "spryker/oms": "^11.50",
     "spryker/code-sniffer": "dev-master",
     "spryker-sdk/phpstan-spryker": "^1.0@dev",
     "codeception/codeception": "^5.3",

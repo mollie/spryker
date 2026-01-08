@@ -1,12 +1,13 @@
 <?xml version="1.0"?>
 <transfers xmlns="spryker:transfer-01" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="spryker:transfer-01 http://static.spryker.com/transfer-01.xsd">
 
-    <transfer name="MolliePayment">
+    <transfer name="MollieCreditCardPayment">
+        <property name="cardToken" type="string" />
     </transfer>
 
-     <transfer name="Payment">
-         <property name="molliePaymentCreditCard" type="MolliePayment"/>
-     </transfer>
+    <transfer name="Payment">
+        <property name="mollieCreditCardPayment" type="MollieCreditCardPayment"/>
+    </transfer>
 
     <transfer name="MolliePaymentMethod">
         <property name="id" type="string" />
@@ -18,20 +19,79 @@
         <property name="status" type="string" />
     </transfer>
 
+    <transfer name="MolliePaymentApiResponse">
+        <property name="isSuccessful" type="bool"/>
+        <property name="message" type="string"/>
+        <property name="molliePayment" type="MolliePayment"/>
+    </transfer>
+
+    <transfer name="MolliePayment">
+        <property name="resource" type="string"/>
+        <property name="id" type="string"/>
+        <property name="mode" type="string"/>
+        <property name="amount" type="MollieAmount"/>
+        <property name="description" type="string"/>
+        <property name="sequenceType" type="string"/>
+        <property name="redirectUrl" type="string"/>
+        <property name="webhookUrl" type="string"/>
+        <property name="metadata" type="array" singular="metadata"/>
+        <property name="profileId" type="string"/>
+        <property name="status" type="string"/>
+        <property name="isCancelable" type="bool"/>
+        <property name="createdAt" type="string"/>
+        <property name="expiresAt" type="string"/>
+        <property name="links" type="MollieLinks"/>
+    </transfer>
+
+    <transfer name="MollieAmount">
+        <property name="value" type="string"/>
+        <property name="currency" type="string"/>
+    </transfer>
+
+    <transfer name="MollieLinks">
+        <property name="self" type="MollieLink"/>
+        <property name="checkout" type="MollieLink"/>
+        <property name="dashboard" type="MollieLink"/>
+        <property name="documentation" type="MollieLink"/>
+    </transfer>
+
+    <transfer name="MollieLink">
+        <property name="href" type="string"/>
+        <property name="type" type="string"/>
+    </transfer>
+
     <transfer name="MollieAvailablePaymentMethodCollection">
         <property name="methods" type="MolliePaymentMethod[]"/>
     </transfer>
 
-     <transfer name="MollieApiRequest">
+    <transfer name="MollieApiRequest">
         <property name="body" type="array"/>
     </transfer>
 
-   <transfer name="MollieApiResponse">
+    <transfer name="MollieApiResponse">
         <property name="isSuccessful" type="bool"/>
         <property name="payload" type="array"/>
         <property name="code" type="int"/>
         <property name="message" type="string"/>
         <property name="timestamp" type="string"/>
+    </transfer>
+
+    <transfer name="MollieCreatePayment">
+        <property name="idPaymentMollie" type="int" />
+        <property name="fkSalesOrder" type="int" />
+        <property name="transactionId" type="string" />
+        <property name="status" type="string" />
+        <property name="isCancelable" type="bool" />
+        <property name="description" type="string" />
+        <property name="sequenceType" type="string" />
+        <property name="metadata" type="array" />
+        <property name="expiresAt" type="DateTime" />
+        <property name="createdAt" type="DateTime" />
+        <property name="updatedAt" type="DateTime" />
+    </transfer>
+
+    <transfer name="Payment">
+        <property name="mollieCreatePayment" type="MollieCreatePayment" />
     </transfer>
 
 </transfers>

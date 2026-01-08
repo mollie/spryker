@@ -4,20 +4,24 @@ declare(strict_types=1);
 
 namespace Mollie\Yves\Mollie;
 
-class MollieConfig
+use Mollie\Shared\Mollie\MollieConstants;
+use Spryker\Yves\Kernel\AbstractBundleConfig;
+
+class MollieConfig extends AbstractBundleConfig
 {
     /**
-     * @var string
+     * @return string
      */
-    public const PROVIDER_NAME = 'MolliePayment';
+    public function getProfileId(): string
+    {
+        return $this->get(MollieConstants::MOLLIE)[MollieConstants::MOLLIE_PROFILE_ID];
+    }
 
     /**
-     * @var string
+     * @return bool
      */
-    public const PAYMENT_METHOD_INVOICE = 'molliePayment';
-
-    /**
-     * @var string
-     */
-    public const MOLLIE_PAYMENT_CREDIT_CARD = 'molliePaymentCreditCard';
+    public function isTestMode(): bool
+    {
+        return $this->get(MollieConstants::MOLLIE)[MollieConstants::MOLLIE_TEST_MODE];
+    }
 }

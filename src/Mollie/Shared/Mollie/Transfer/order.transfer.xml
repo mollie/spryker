@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<transfers xmlns="spryker:transfer-01" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="spryker:transfer-01 http://static.spryker.com/transfer-01.xsd">
+
+    <transfer name="OrderCollectionRequest">
+        <property name="id" type="string" />
+        <property name="status" type="string" />
+        <property name="paidAt" type="string" />
+        <property name="isSuccess" type="bool" />
+    </transfer>
+
+    <transfer name="OrderCollectionResponse">
+        <property name="id" type="string" />
+        <property name="status" type="string" />
+        <property name="paidAt" type="string" />
+        <property name="isSuccess" type="bool" />
+    </transfer>
+</transfers>
