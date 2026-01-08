@@ -1822,7 +1822,7 @@ trait MollieApiClientTesterActions
         $this->getScenario()->runStep(new \Codeception\Step\Action('setConfig', func_get_args()));
     }
 
-
+ 
     /**
      * [!] Method is generated. Documentation taken from corresponding module.
      *
@@ -1836,7 +1836,7 @@ trait MollieApiClientTesterActions
         $this->getScenario()->runStep(new \Codeception\Step\Action('mockEnvironmentConfig', func_get_args()));
     }
 
-
+ 
     /**
      * [!] Method is generated. Documentation taken from corresponding module.
      *
@@ -1854,7 +1854,7 @@ trait MollieApiClientTesterActions
         return $this->getScenario()->runStep(new \Codeception\Step\Action('mockConfigMethod', func_get_args()));
     }
 
-
+ 
     /**
      * [!] Method is generated. Documentation taken from corresponding module.
      *
@@ -1871,7 +1871,7 @@ trait MollieApiClientTesterActions
         return $this->getScenario()->runStep(new \Codeception\Step\Action('mockSharedConfigMethod', func_get_args()));
     }
 
-
+ 
     /**
      * [!] Method is generated. Documentation taken from corresponding module.
      *
@@ -1884,7 +1884,7 @@ trait MollieApiClientTesterActions
         return $this->getScenario()->runStep(new \Codeception\Step\Action('getModuleConfig', func_get_args()));
     }
 
-
+ 
     /**
      * [!] Method is generated. Documentation taken from corresponding module.
      *
@@ -1897,7 +1897,7 @@ trait MollieApiClientTesterActions
         return $this->getScenario()->runStep(new \Codeception\Step\Action('getSharedModuleConfig', func_get_args()));
     }
 
-
+ 
     /**
      * [!] Method is generated. Documentation taken from corresponding module.
      *
@@ -1910,7 +1910,7 @@ trait MollieApiClientTesterActions
         return $this->getScenario()->runStep(new \Codeception\Step\Action('configExists', func_get_args()));
     }
 
-
+ 
     /**
      * [!] Method is generated. Documentation taken from corresponding module.
      *
@@ -1923,7 +1923,7 @@ trait MollieApiClientTesterActions
         $this->getScenario()->runStep(new \Codeception\Step\Action('removeConfig', func_get_args()));
     }
 
-
+ 
     /**
      * [!] Method is generated. Documentation taken from corresponding module.
      *
@@ -1943,7 +1943,7 @@ trait MollieApiClientTesterActions
         $this->getScenario()->runStep(new \Codeception\Step\Action('addToLocatorCache', func_get_args()));
     }
 
-
+ 
     /**
      * [!] Method is generated. Documentation taken from corresponding module.
      *
