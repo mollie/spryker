@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Mollie\Zed\Mollie\Business\Order;
 
 use Generated\Shared\Transfer\OrderCollectionRequestTransfer;
@@ -35,7 +37,13 @@ class OrderUpdater implements OrderUpdaterInterface
      */
     public function updateOrderCollection(OrderCollectionRequestTransfer $updateOrderCollectionRequestTransfer): OrderCollectionResponseTransfer
     {
+        $orderCollectionResponseTransfer = new OrderCollectionResponseTransfer();
+
         $orderItems = $this->repository->getOrderItemsByPaymentId($updateOrderCollectionRequestTransfer->getId());
+
+        if (!$orderItems) {
+            return $orderCollectionResponseTransfer;
+        }
 
         $this->entityManager->updateMolliePaymentWithStatus($updateOrderCollectionRequestTransfer);
 
@@ -43,6 +51,6 @@ class OrderUpdater implements OrderUpdaterInterface
 
         $this->omsFacade->triggerEvent($omsEvent, $orderItems, []);
 
-        return new OrderCollectionResponseTransfer();
+        return $orderCollectionResponseTransfer;
     }
 }

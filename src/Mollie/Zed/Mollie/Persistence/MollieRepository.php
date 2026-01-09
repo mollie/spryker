@@ -15,17 +15,17 @@ class MollieRepository extends AbstractRepository implements MollieRepositoryInt
     /**
      * @param string $paymentId
      *
-     * @return \Propel\Runtime\Collection\ObjectCollection
+     * @return \Propel\Runtime\Collection\ObjectCollection|null
      */
-    public function getOrderItemsByPaymentId(string $paymentId): ObjectCollection
+    public function getOrderItemsByPaymentId(string $paymentId): ObjectCollection|null
     {
         $spyPaymentMollieCollection = $this->getFactory()
             ->createSpyPaymentMollieQuery()
             ->filterByTransactionId($paymentId)
             ->joinWithSpySalesOrder()
-            ->useSpySalesOrderQuery()
-            ->joinWithItem()
-            ->endUse()
+                ->useSpySalesOrderQuery()
+                    ->joinWithItem()
+                ->endUse()
             ->find();
 
         return $this->getFactory()
