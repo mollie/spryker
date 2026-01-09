@@ -14,14 +14,32 @@ use Generated\Shared\Transfer\MolliePaymentTransfer;
 use Mollie\Api\Http\Data\Money;
 use Mollie\Api\Http\Request;
 use Mollie\Api\Http\Requests\CreatePaymentRequest;
+use Mollie\Api\MollieApiClient;
 use Mollie\Client\Mollie\Api\AbstractApiCall;
+use Mollie\Client\Mollie\Dependency\Service\MollieToUtilEncodingServiceInterface;
 use Mollie\Client\Mollie\MollieConfig;
+use Mollie\Service\Mollie\MollieServiceInterface;
 use Spryker\Shared\Kernel\Transfer\AbstractTransfer;
 use Spryker\Shared\Log\LoggerTrait;
 
 class CreatePaymentApi extends AbstractApiCall
 {
     use LoggerTrait;
+
+    /**
+     * @param \Mollie\Api\MollieApiClient $mollieApiClient
+     * @param \Mollie\Client\Mollie\MollieConfig $mollieConfig
+     * @param \Mollie\Client\Mollie\Dependency\Service\MollieToUtilEncodingServiceInterface $utilEncodingService
+     * @param \Mollie\Service\Mollie\MollieServiceInterface $mollieService
+     */
+    public function __construct(
+        MollieApiClient $mollieApiClient,
+        MollieConfig $mollieConfig,
+        MollieToUtilEncodingServiceInterface $utilEncodingService,
+        protected MollieServiceInterface $mollieService,
+    ) {
+        parent::__construct($mollieApiClient, $mollieConfig, $utilEncodingService);
+    }
 
     /**
      * @param \Generated\Shared\Transfer\MollieApiRequestTransfer|null $mollieApiRequestTransfer
@@ -78,7 +96,8 @@ class CreatePaymentApi extends AbstractApiCall
      */
     protected function convertAmountToString(int $amount): string
     {
-        return bcdiv((string)$amount, '100', 2);
+        return (string)$this->mollieService->convertIntegerToDecimal($amount);
+        //return bcdiv((string)$amount, '100', 2);
     }
 
     /**

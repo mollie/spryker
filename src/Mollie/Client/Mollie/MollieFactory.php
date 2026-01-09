@@ -12,6 +12,7 @@ use Mollie\Client\Mollie\Api\Payment\CreatePaymentApi;
 use Mollie\Client\Mollie\Api\PaymentMethods\AvailablePaymentMethodsApi;
 use Mollie\Client\Mollie\Api\PaymentMethods\GetPaymentByTransactionIdApi;
 use Mollie\Client\Mollie\Dependency\Service\MollieToUtilEncodingServiceInterface;
+use Mollie\Service\Mollie\MollieServiceInterface;
 use Spryker\Client\Kernel\AbstractFactory;
 
 /**
@@ -68,6 +69,7 @@ class MollieFactory extends AbstractFactory
             $this->createMollieApiClient(),
             $this->getConfig(),
             $this->getUtilEncodingService(),
+            $this->getMollieService(),
         );
     }
 
@@ -77,5 +79,13 @@ class MollieFactory extends AbstractFactory
     public function createIdempotencyKeyGenerator(): IdempotencyKeyGeneratorContract
     {
         return new DefaultIdempotencyKeyGenerator();
+    }
+
+    /**
+     * @return \Mollie\Service\Mollie\MollieServiceInterface
+     */
+    public function getMollieService(): MollieServiceInterface
+    {
+        return $this->getProvidedDependency(MollieDependencyProvider::MOLLIE_SERVICE);
     }
 }

@@ -7,6 +7,7 @@ namespace Mollie\Client\Mollie;
 
 use Mollie\Client\Mollie\Dependency\Service\MollieToUtilEncodingServiceBridge;
 use Mollie\Client\Mollie\Dependency\Service\MollieToUtilEncodingServiceInterface;
+use Mollie\Service\Mollie\MollieServiceInterface;
 use Spryker\Client\Kernel\AbstractDependencyProvider;
 use Spryker\Client\Kernel\Container;
 
@@ -18,6 +19,11 @@ class MollieDependencyProvider extends AbstractDependencyProvider
     public const UTIL_ENCODING_SERVICE = 'UTIL_ENCODING_SERVICE';
 
     /**
+     * @var string
+     */
+    public const MOLLIE_SERVICE = 'MOLLIE_SERVICE';
+
+    /**
      * @param \Spryker\Client\Kernel\Container $container
      *
      * @return \Spryker\Client\Kernel\Container
@@ -26,6 +32,7 @@ class MollieDependencyProvider extends AbstractDependencyProvider
     {
         $container = parent::provideServiceLayerDependencies($container);
         $container = $this->addUtilEncodingService($container);
+        $container = $this->addMollieService($container);
 
         return $container;
     }
@@ -41,6 +48,20 @@ class MollieDependencyProvider extends AbstractDependencyProvider
             return new MollieToUtilEncodingServiceBridge(
                 $container->getLocator()->utilEncoding()->service(),
             );
+        });
+
+        return $container;
+    }
+
+    /**
+     * @param \Spryker\Client\Kernel\Container $container
+     *
+     * @return \Spryker\Client\Kernel\Container
+     */
+    protected function addMollieService(Container $container): Container
+    {
+        $container->set(static::MOLLIE_SERVICE, function (Container $container): MollieServiceInterface {
+            return $container->getLocator()->mollie()->service();
         });
 
         return $container;
