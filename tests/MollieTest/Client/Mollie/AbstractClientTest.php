@@ -48,11 +48,11 @@ abstract class AbstractClientTest extends Unit
         return $mollieFactoryMock;
     }
 
- /**
-  * @param \Mollie\Client\Mollie\MollieFactory|null $mollieFactory
-  *
-  * @return \Mollie\Client\Mollie\MollieClientInterface
-  */
+    /**
+     * @param \Mollie\Client\Mollie\MollieFactory|null $mollieFactory
+     *
+     * @return \Mollie\Client\Mollie\MollieClientInterface
+     */
     public function createClientMock(?MockObject $mollieFactory = null): MollieClientInterface
     {
         if (!$mollieFactory) {

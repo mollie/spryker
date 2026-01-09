@@ -5,7 +5,7 @@ declare(strict_types = 1);
 
 namespace MollieTest\Client\Mollie\Api\Payment;
 
-use Generated\Shared\Transfer\MollieAvailablePaymentMethodsApiResponseTransfer;
+use ArrayObject;
 use Mollie\Api\Fake\MockMollieClient;
 use Mollie\Api\Fake\MockResponse;
 use Mollie\Api\Http\Requests\GetEnabledMethodsRequest;
@@ -26,10 +26,28 @@ class AvailablePaymentMethodsApiTest extends AbstractClientTest
     public function testGetAvailablePaymentMethodsApi(): void
     {
         $client = $this->createClient();
-        $response = $client->getAvailablePaymentMethods();
+        $mollieAvailablePaymentMethodsApiResponseTransfer = $client->getAvailablePaymentMethods();
+        $methods = $mollieAvailablePaymentMethodsApiResponseTransfer->getCollection()->getMethods();
+        $methodIds = $this->getMethodIds($methods);
 
-        $this->assertInstanceOf(MollieAvailablePaymentMethodsApiResponseTransfer::class, $response);
-        $this->assertTrue($response->getIsSuccessful());
+        $this->assertNotEmpty($methods);
+        $this->assertContains('ideal', $methodIds);
+        $this->assertContains('creditcard', $methodIds);
+    }
+
+    /**
+     * @param \ArrayObject $methods
+     *
+     * @return array
+     */
+    protected function getMethodIds(ArrayObject $methods): array
+    {
+        $methodIds = [];
+        foreach ($methods as $method) {
+            $methodIds[] = $method->getId();
+        }
+
+        return $methodIds;
     }
 
     /**

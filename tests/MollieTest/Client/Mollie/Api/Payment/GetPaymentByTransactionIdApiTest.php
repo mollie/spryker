@@ -1,12 +1,10 @@
 <?php
 
-
 declare(strict_types = 1);
 
 namespace MollieTest\Client\Mollie\Api\Payment;
 
 use Generated\Shared\Transfer\MollieApiRequestTransfer;
-use Generated\Shared\Transfer\MolliePaymentApiResponseTransfer;
 use Mollie\Api\Fake\MockMollieClient;
 use Mollie\Api\Fake\MockResponse;
 use Mollie\Api\Http\Requests\GetPaymentRequest;
@@ -31,10 +29,12 @@ class GetPaymentByTransactionIdApiTest extends AbstractClientTest
 
         $client = $this->createClient();
 
-        $response = $client->getPaymentByTransactionId($mollieApiRequestTransfer);
+        $molliePaymentApiResponseTransfer = $client->getPaymentByTransactionId($mollieApiRequestTransfer);
+        $molliePaymentTransfer = $molliePaymentApiResponseTransfer->getMolliePayment();
 
-        $this->assertInstanceOf(MolliePaymentApiResponseTransfer::class, $response);
-        $this->assertEquals(true, $response->getIsSuccessful());
+        $this->assertEquals('payment', $molliePaymentTransfer->getResource());
+        $this->assertEquals('tr_IUDAHSMGnU6qLbRaksas', $molliePaymentTransfer->getId());
+        $this->assertEquals('open', $molliePaymentTransfer->getStatus());
     }
 
     /**
