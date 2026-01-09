@@ -68,22 +68,22 @@
     <transfer name="MollieApiRequest">
         <property name="quote" type="Quote"/>
         <property name="checkoutResponse" type="CheckoutResponse"/>
-        <property name="paymentId" type="string"/>
+        <property name="body" type="array"/>
     </transfer>
 
     <transfer name="MollieApiResponse">
         <property name="isSuccessful" type="bool"/>
-        <property name="payload" type="string"/>
+        <property name="payload" type="array"/>
         <property name="code" type="int"/>
         <property name="message" type="string"/>
         <property name="timestamp" type="string"/>
     </transfer>
 
-    <transfer name="MolliePayment">
+    <transfer name="MollieCreatePaymentApiResponse">
         <property name="resource" type="string"/>
         <property name="id" type="string"/>
         <property name="mode" type="string"/>
-        <property name="amount" type="array"/>
+        <property name="amount" type="MollieAmount"/>
         <property name="settlementAmount" type="string"/>
         <property name="amountRefunded" type="string"/>
         <property name="amountRemaining" type="string"/>
@@ -101,7 +101,7 @@
         <property name="billingEmail" type="string"/>
         <property name="profileId" type="string"/>
         <property name="sequenceType" type="string"/>
-        <property name="redirectUrl" type="[]"/>
+        <property name="redirectUrl" type="string"/>
         <property name="cancelUrl" type="string"/>
         <property name="webhookUrl" type="string"/>
         <property name="mandateId" type="bool"/>
@@ -114,9 +114,9 @@
         <property name="metadata" type="array"/>
         <property name="details" type="string"/>
         <property name="restrictPaymentMethodsToCountry" type="string"/>
-        <property name="links" type="array"/>
+        <property name="links" type="MollieLinks"/>
         <property name="embedded" type="string"/>
-        <property name="isCancelable" type="string"/>
+        <property name="isCancelable" type="bool"/>
         <property name="amountCaptured" type="string"/>
         <property name="captureMode" type="string"/>
         <property name="captureDelay" type="string"/>
@@ -141,5 +141,8 @@
         <property name="molliePaymentId" type="string"/>
     </transfer>
 
+    <transfer name="Payment">
+        <property name="mollieCreatePayment" type="MollieCreatePayment" />
+    </transfer>
 
 </transfers>

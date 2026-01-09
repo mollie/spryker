@@ -19,12 +19,12 @@ class MollieConfig extends AbstractSharedConfig
     /**
      * @var string
      */
-    public const MOLLIE_STORAGE_KEY_PREFIX = 'mollie:payment';
+    public const MOLLIE_PAYMENT_TRANSACTION_STORAGE_KEY_PREFIX = 'mollie:payment';
 
     /**
      * @var int
      */
-    public const MOLLIE_STORAGE_TTL = 300;
+    public const MOLLIE_PAYMENT_TRANSACTION_STORAGE_TTL = 300;
 
     /**
      * @var array<string>

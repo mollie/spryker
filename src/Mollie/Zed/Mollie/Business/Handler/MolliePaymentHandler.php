@@ -5,14 +5,13 @@ declare(strict_types=1);
 namespace Mollie\Zed\Mollie\Business\Handler;
 
 use ArrayObject;
-use Exception;
 use Generated\Shared\Transfer\CheckoutErrorTransfer;
 use Generated\Shared\Transfer\CheckoutResponseTransfer;
 use Generated\Shared\Transfer\MollieApiRequestTransfer;
+use Generated\Shared\Transfer\MolliePaymentApiResponseTransfer;
 use Generated\Shared\Transfer\QuoteTransfer;
 use Mollie\Client\Mollie\MollieClientInterface;
 use Mollie\Shared\Mollie\MollieConfig as MollieMollieConfig;
-use Mollie\Zed\Mollie\Business\Exception\MolliePaymentException;
 use Mollie\Zed\Mollie\Business\Writer\MolliePaymentWriterInterface;
 use Mollie\Zed\Mollie\Dependency\MollieToStorageClientInterface;
 use Mollie\Zed\Mollie\MollieConfig;
@@ -43,43 +42,46 @@ class MolliePaymentHandler implements MolliePaymentHandlerInterface
      * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
      * @param \Generated\Shared\Transfer\CheckoutResponseTransfer $checkoutResponseTransfer
      *
-     * @throws \Mollie\Zed\Mollie\Business\Exception\MolliePaymentException
-     *
      * @return \Generated\Shared\Transfer\CheckoutResponseTransfer
      */
     public function createPayment(QuoteTransfer $quoteTransfer, CheckoutResponseTransfer $checkoutResponseTransfer): CheckoutResponseTransfer
     {
-        try {
-            $mollieApiRequestTransfer = (new MollieApiRequestTransfer())
-                ->setCheckoutResponse($checkoutResponseTransfer)
-                ->setQuote($quoteTransfer);
+        $mollieApiRequestTransfer = (new MollieApiRequestTransfer())
+            ->setCheckoutResponse($checkoutResponseTransfer)
+            ->setQuote($quoteTransfer);
 
-            $molliePaymentApiResponseTransfer = $this->mollieClient->createPayment($mollieApiRequestTransfer);
+        $molliePaymentApiResponseTransfer = $this->mollieClient->createPayment($mollieApiRequestTransfer);
 
-            if (!$molliePaymentApiResponseTransfer->getIsSuccessful()) {
-                $this->getLogger()->error($molliePaymentApiResponseTransfer->getMessage());
-                $errors = $this->createErrorMessages();
-                $checkoutResponseTransfer
-                    ->setErrors($errors)
-                    ->setIsSuccess(false);
+        if (!$molliePaymentApiResponseTransfer->getIsSuccessful()) {
+            $this->getLogger()->error($molliePaymentApiResponseTransfer->getMessage());
+            $errors = $this->createErrorMessages();
+            $checkoutResponseTransfer
+                ->setErrors($errors)
+                ->setIsSuccess(false);
 
-                return $checkoutResponseTransfer;
-            }
-
-            $this->savePaymentIdToStorage($molliePaymentApiResponseTransfer->getMolliePayment()->getId(), $checkoutResponseTransfer->getSaveOrderOrFail()->getOrderReference());
-            $this->molliePaymentWriter->addMolliePaymentData($checkoutResponseTransfer->getSaveOrder()->getIdSalesOrder(), $molliePaymentApiResponseTransfer->getMolliePayment());
-        } catch (Exception $e) {
-            throw new MolliePaymentException(
-                'Mollie payment could not be created. ' . $e->getMessage(),
-                0,
-                $e,
-            );
+            return $checkoutResponseTransfer;
         }
+
+        $this->savePaymentIdToStorage($molliePaymentApiResponseTransfer->getMolliePayment()->getId(), $checkoutResponseTransfer->getSaveOrderOrFail()->getOrderReference());
+        $this->molliePaymentWriter->addMolliePaymentData($checkoutResponseTransfer->getSaveOrder()->getIdSalesOrder(), $molliePaymentApiResponseTransfer->getMolliePayment());
+        $redirectUrl = $this->getRedirectUrl($molliePaymentApiResponseTransfer);
 
         return $checkoutResponseTransfer
             ->setIsSuccess(true)
             ->setIsExternalRedirect(true)
-            ->setRedirectUrl($molliePaymentApiResponseTransfer->getMolliePayment()->getLinks()[MollieConfig::RESPONSE_PARAMETER_CREATE_PAYMENT_LINKS_CHECKOUT][MollieConfig::RESPONSE_PARAMETER_CREATE_PAYMENT_LINKS_HREF] ?? null);
+            ->setRedirectUrl($redirectUrl);
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MolliePaymentApiResponseTransfer $molliePaymentApiResponseTransfer
+     *
+     * @return string|null
+     */
+    protected function getRedirectUrl(MolliePaymentApiResponseTransfer $molliePaymentApiResponseTransfer): ?string
+    {
+        return $molliePaymentApiResponseTransfer
+            ->getMolliePayment()
+            ->getLinks()[MollieConfig::RESPONSE_PARAMETER_CREATE_PAYMENT_LINKS_CHECKOUT][MollieConfig::RESPONSE_PARAMETER_CREATE_PAYMENT_LINKS_HREF] ?? null;
     }
 
     /**
@@ -90,8 +92,8 @@ class MolliePaymentHandler implements MolliePaymentHandlerInterface
      */
     protected function savePaymentIdToStorage(string $paymentId, string $orderReference): void
     {
-        $key = sprintf('%s:%s', MollieMollieConfig::MOLLIE_STORAGE_KEY_PREFIX, $orderReference);
-        $this->storageClient->set($key, $paymentId, MollieMollieConfig::MOLLIE_STORAGE_TTL);
+        $key = sprintf('%s:%s', MollieMollieConfig::MOLLIE_PAYMENT_TRANSACTION_STORAGE_KEY_PREFIX, $orderReference);
+        $this->storageClient->set($key, $paymentId, MollieMollieConfig::MOLLIE_PAYMENT_TRANSACTION_STORAGE_TTL);
     }
 
     /**

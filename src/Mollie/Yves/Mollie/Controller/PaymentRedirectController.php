@@ -20,7 +20,7 @@ class PaymentRedirectController extends AbstractMollieController
     public function paymentRedirectAction(Request $request): RedirectResponse
     {
         $orderReference = $request->query->get($this->getFactory()->getConfig()->getOrderReferenceQueryParamName());
-        $key = sprintf('%s:%s', MollieConfigShared::MOLLIE_STORAGE_KEY_PREFIX, $orderReference);
+        $key = sprintf('%s:%s', MollieConfigShared::MOLLIE_PAYMENT_TRANSACTION_STORAGE_KEY_PREFIX, $orderReference);
         $paymentId = $this->getFactory()->getStorageClient()->get($key);
 
         if (!$paymentId) {
@@ -33,7 +33,7 @@ class PaymentRedirectController extends AbstractMollieController
         $molliePaymentApiResponseTransfer = $this->getFactory()->getMollieApiClient()->getPaymentByTransactionId($mollieApiRequestTransfer);
         $payment = $molliePaymentApiResponseTransfer->getMolliePayment();
 
-        if (in_array($payment->getStatus(), MollieConfigShared::MOLLIE_PAYMENT_STATUS_FAILED, true)) {
+        if (!$molliePaymentApiResponseTransfer->getIsSuccessful() || in_array($payment->getStatus(), MollieConfigShared::MOLLIE_PAYMENT_STATUS_FAILED, true)) {
             $this->addErrorMessage(sprintf($this->getFactory()->getConfig()->getPaymentFailedMessage(), $payment->getStatus()));
 
             return $this->redirectResponseInternal(CheckoutPageRouteProviderPlugin::ROUTE_NAME_CHECKOUT_ERROR);

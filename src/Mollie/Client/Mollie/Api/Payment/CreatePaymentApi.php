@@ -7,6 +7,8 @@ namespace Mollie\Client\Mollie\Api\Payment;
 use Generated\Shared\Transfer\CheckoutResponseTransfer;
 use Generated\Shared\Transfer\MollieApiRequestTransfer;
 use Generated\Shared\Transfer\MollieApiResponseTransfer;
+use Generated\Shared\Transfer\MollieCreatePaymentApiResponseTransfer;
+use Generated\Shared\Transfer\MollieLinksTransfer;
 use Generated\Shared\Transfer\MolliePaymentApiResponseTransfer;
 use Generated\Shared\Transfer\MolliePaymentTransfer;
 use Mollie\Api\Http\Data\Metadata;
@@ -33,17 +35,24 @@ class CreatePaymentApi extends AbstractApiCall
         $quoteTransfer = $mollieApiRequestTransfer->getQuote();
         $paymentTransfer = $quoteTransfer->getPayment();
 
+        $value = $this->convertAmountToString($paymentTransfer->getAmount());
+        $amount = new Money(
+            currency: $quoteTransfer->getCurrency()->getCode(),
+            value: $value,
+        );
+        $redirectUrl = $this->getRedirectUrl($checkoutResponseTransfer->getSaveOrderOrFail()->getOrderReference());
+        $method = $this->mollieConfig->getMolliePaymentMethod($paymentTransfer->getPaymentMethod());
+        $metadata = $this->addMetadata($checkoutResponseTransfer);
+        $additionalParameters = $this->addAdditionalParameters($mollieApiRequestTransfer);
+
         return new CreatePaymentRequest(
             description: $checkoutResponseTransfer->getSaveOrderOrFail()->getOrderReference(),
-            amount: new Money(
-                currency: $quoteTransfer->getCurrency()->getCode(),
-                value: $this->convertAmountToString($paymentTransfer->getAmount()),
-            ),
-            redirectUrl: $this->getRedirectUrl($checkoutResponseTransfer->getSaveOrderOrFail()->getOrderReference()),
+            amount: $amount,
+            redirectUrl: $redirectUrl,
             //webhookUrl: $this->mollieConfig->getMollieWebhookUrl(),
-            method: $this->mollieConfig->getMolliePaymentMethod($paymentTransfer->getPaymentMethod()),
-            metadata: $this->addMetadata($checkoutResponseTransfer),
-            additional: $this->addAdditionalParameters($mollieApiRequestTransfer),
+            method: $method,
+            metadata: $metadata,
+            additional: $additionalParameters,
         );
     }
 
@@ -108,11 +117,19 @@ class CreatePaymentApi extends AbstractApiCall
         ->setIsSuccessful($mollieApiResponseTransfer->getIsSuccessful())
         ->setMessage($mollieApiResponseTransfer->getMessage());
 
-        $molliePaymentTransfer = new MolliePaymentTransfer();
-        $molliePaymentTransfer->fromArray($mollieApiResponseTransfer->getPayload(), true);
-        $molliePaymentTransfer
-            ->setLinks($mollieApiResponseTransfer->getPayload()[MollieConfig::RESPONSE_PARAMETER_CREATE_PAYMENT_LINKS] ?? null)
+        $mollieCreatePaymentApiResponseTransfer = new MollieCreatePaymentApiResponseTransfer();
+        $mollieCreatePaymentApiResponseTransfer->fromArray($mollieApiResponseTransfer->getPayload(), true);
+
+        $links = $mollieApiResponseTransfer->getPayload()[MollieConfig::RESPONSE_PARAMETER_CREATE_PAYMENT_LINKS] ?? null;
+        $mollieLinksTransfer = new MollieLinksTransfer();
+        $mollieLinksTransfer->fromArray($links, true);
+
+        $mollieCreatePaymentApiResponseTransfer
+            ->setLinks($mollieLinksTransfer)
             ->setEmbedded($mollieApiResponseTransfer->getPayload()[MollieConfig::RESPONSE_PARAMETER_CREATE_PAYMENT_EMBEDDED] ?? null);
+
+        $molliePaymentTransfer = new MolliePaymentTransfer();
+        $molliePaymentTransfer->fromArray($mollieCreatePaymentApiResponseTransfer->toArray(), true);
 
         $molliePaymentApiResponseTransfer->setMolliePayment($molliePaymentTransfer);
 
