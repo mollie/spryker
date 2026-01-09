@@ -54,6 +54,6 @@ class MollieClient extends AbstractClient implements MollieClientInterface
      */
     public function createPayment(MollieApiRequestTransfer $mollieApiRequestTransfer): MolliePaymentApiResponseTransfer
     {
-        return $this->getFactory()->createCreatePaymentApi()->execute($mollieApiRequestTransfer);
+        return $this->getFactory()->createPaymentApi()->execute($mollieApiRequestTransfer);
     }
 }

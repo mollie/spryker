@@ -11,7 +11,6 @@ use Generated\Shared\Transfer\MollieCreatePaymentApiResponseTransfer;
 use Generated\Shared\Transfer\MollieLinksTransfer;
 use Generated\Shared\Transfer\MolliePaymentApiResponseTransfer;
 use Generated\Shared\Transfer\MolliePaymentTransfer;
-use Mollie\Api\Http\Data\Metadata;
 use Mollie\Api\Http\Data\Money;
 use Mollie\Api\Http\Request;
 use Mollie\Api\Http\Requests\CreatePaymentRequest;
@@ -95,14 +94,10 @@ class CreatePaymentApi extends AbstractApiCall
     /**
      * @param \Generated\Shared\Transfer\CheckoutResponseTransfer $checkoutResponseTransfer
      *
-     * @return \Mollie\Api\Http\Data\Metadata|array<string>
+     * @return array<string>
      */
-    protected function addMetadata(CheckoutResponseTransfer $checkoutResponseTransfer): array|Metadata
+    protected function addMetadata(CheckoutResponseTransfer $checkoutResponseTransfer): array
     {
-        if (class_exists(Metadata::class)) {
-            return new Metadata([MollieConfig::REQUEST_PARAMETER_CREATE_PAYMENT_ORDER_REFERENCE => $checkoutResponseTransfer->getSaveOrderOrFail()->getOrderReference()]);
-        }
-
         return [MollieConfig::REQUEST_PARAMETER_CREATE_PAYMENT_ORDER_REFERENCE => $checkoutResponseTransfer->getSaveOrderOrFail()->getOrderReference()];
     }
 
