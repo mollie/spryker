@@ -7,6 +7,7 @@
 
     <transfer name="Payment">
         <property name="mollieCreditCardPayment" type="MollieCreditCardPayment"/>
+        <property name="mollieCreatePayment" type="MollieCreatePayment" />
     </transfer>
 
     <transfer name="MolliePaymentMethod">
@@ -60,6 +61,22 @@
         <property name="type" type="string"/>
     </transfer>
 
+    <transfer name="OrderCollectionRequest">
+        <property name="id" type="string" />
+        <property name="status" type="string" />
+    </transfer>
+
+    <transfer name="OrderCollectionResponse">
+        <property name="id" type="string" />
+        <property name="isSuccess" type="bool" />
+    </transfer>
+
+    <transfer name="MollieAvailablePaymentMethodsApiResponse">
+        <property name="isSuccessful" type="bool"/>
+        <property name="message" type="string"/>
+        <property name="collection" type="MollieAvailablePaymentMethodCollection"/>
+    </transfer>
+
     <transfer name="MollieAvailablePaymentMethodCollection">
         <property name="methods" type="MolliePaymentMethod[]"/>
     </transfer>
@@ -90,8 +107,5 @@
         <property name="updatedAt" type="DateTime" />
     </transfer>
 
-    <transfer name="Payment">
-        <property name="mollieCreatePayment" type="MollieCreatePayment" />
-    </transfer>
 
 </transfers>

@@ -3,7 +3,7 @@
 
 declare(strict_types = 1);
 
-namespace Mollie\Client\Mollie\Api\PaymentMethods;
+namespace Mollie\Client\Mollie\Api\Payment;
 
 use Generated\Shared\Transfer\MollieApiRequestTransfer;
 use Generated\Shared\Transfer\MollieApiResponseTransfer;
