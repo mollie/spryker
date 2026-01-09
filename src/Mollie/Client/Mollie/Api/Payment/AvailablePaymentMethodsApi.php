@@ -20,6 +20,14 @@ class AvailablePaymentMethodsApi extends AbstractApiCall
 {
     use LoggerTrait;
 
+    protected const string METHODS_WRAPPER_KEY = '_embedded';
+
+    protected const string METHODS_KEY = 'methods';
+
+    protected const string METHOD_ID_KEY = 'id';
+
+    protected const string METHOD_DESCRIPTION_KEY = 'description';
+
     /**
      * @param \Generated\Shared\Transfer\MollieApiResponseTransfer $mollieApiResponseTransfer
      *
@@ -33,13 +41,13 @@ class AvailablePaymentMethodsApi extends AbstractApiCall
             ->setMessage($mollieApiResponseTransfer->getMessage());
 
         $mollieAvailablePaymentMethodCollectionTransfer = new MollieAvailablePaymentMethodCollectionTransfer();
-        $methods = $mollieApiResponseTransfer->getPayload()['_embedded']['methods'] ?? [];
+        $methods = $mollieApiResponseTransfer->getPayload()[static::METHODS_WRAPPER_KEY][static::METHODS_KEY] ?? [];
         foreach ($methods as $method) {
             $molliePaymentMethodTransfer = new MolliePaymentMethodTransfer();
 
             $molliePaymentMethodTransfer
-                ->setId($method['id'])
-                ->setDescription($method['description']);
+                ->setId($method[static::METHOD_ID_KEY])
+                ->setDescription($method[static::METHOD_DESCRIPTION_KEY]);
 
             $mollieAvailablePaymentMethodCollectionTransfer->addMethods($molliePaymentMethodTransfer);
         }
