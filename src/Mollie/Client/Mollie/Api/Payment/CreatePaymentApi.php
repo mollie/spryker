@@ -97,7 +97,6 @@ class CreatePaymentApi extends AbstractApiCall
     protected function convertAmountToString(int $amount): string
     {
         return (string)$this->mollieService->convertIntegerToDecimal($amount);
-        //return bcdiv((string)$amount, '100', 2);
     }
 
     /**
