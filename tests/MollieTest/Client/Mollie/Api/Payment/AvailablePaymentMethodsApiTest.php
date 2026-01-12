@@ -6,6 +6,7 @@ declare(strict_types = 1);
 namespace MollieTest\Client\Mollie\Api\Payment;
 
 use ArrayObject;
+use Generated\Shared\Transfer\MollieApiRequestTransfer;
 use Mollie\Api\Fake\MockMollieClient;
 use Mollie\Api\Fake\MockResponse;
 use Mollie\Api\Http\Requests\GetEnabledMethodsRequest;
@@ -25,8 +26,10 @@ class AvailablePaymentMethodsApiTest extends AbstractClientTest
      */
     public function testGetAvailablePaymentMethodsApi(): void
     {
+        $mollieApiRequestTransfer = new MollieApiRequestTransfer();
+
         $client = $this->createClient();
-        $mollieAvailablePaymentMethodsApiResponseTransfer = $client->getAvailablePaymentMethods();
+        $mollieAvailablePaymentMethodsApiResponseTransfer = $client->getAvailablePaymentMethods($mollieApiRequestTransfer);
         $methods = $mollieAvailablePaymentMethodsApiResponseTransfer->getCollection()->getMethods();
         $methodIds = $this->getMethodIds($methods);
 
