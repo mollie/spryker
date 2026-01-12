@@ -1,88 +1,67 @@
-name: Codeception Tests
+name: Module Functional Tests
 
 on:
   push:
-    branches: [master]
+    branches:
+      - main
   pull_request:
 
 env:
-  PROGRESS_TYPE: plain
-  SPRYKER_PLATFORM_IMAGE: spryker/php:8.2
   APPLICATION_STORE: DE
   APPLICATION_ENV: ci.mysql
   SPRYKER_CURRENT_REGION: EU
+  PROGRESS_TYPE: plain
+  SPRYKER_PLATFORM_IMAGE: spryker/php:8.4
+  DYNAMIC_STORE_MODE: true
   COMPOSER_IGNORE_CHROMEDRIVER: 1
 
 jobs:
-  tests:
+  module-tests:
+    name: Run Module Tests
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 45
 
     steps:
-      - name: Checkout package
+      # 1️⃣ Checkout your code
+      - name: Checkout code
         uses: actions/checkout@v4
+
+      # 2️⃣ Install Composer dependencies
+      - uses: ramsey/composer-install@v3
         with:
-          path: package
+          composer-options: "-q --ignore-platform-reqs --optimize-autoloader --no-interaction --prefer-install=auto"
 
-      - name: Read package name
-        id: package
-        run: |
-          echo "name=$(php -r "echo json_decode(file_get_contents('package/composer.json'), true)['name'];")" >> $GITHUB_OUTPUT
-
-      - name: Cache Composer
-        uses: actions/cache@v4
-        with:
-          path: ~/.composer/cache
-          key: composer-${{ hashFiles('**/composer.lock') }}
-
-      - name: Configure system limits
+      # 3️⃣ Configure sysctl limits for Docker
+      - name: Configure sysctl limits
         run: |
           sudo sysctl -w vm.swappiness=10
           sudo sysctl -w fs.file-max=262144
           sudo sysctl -w vm.max_map_count=262144
           ulimit -n 65536
 
-      - name: Bootstrap Spryker project
+      # 4️⃣ Start Spryker Docker environment
+      - name: Start Spryker environment
         run: |
-          git clone --depth 1 https://github.com/spryker/docker-sdk.git docker
-          mkdir demoshop
-          cd demoshop
-          ../docker/sdk boot deploy.ci.api.mariadb.robot.yml
-          ../docker/sdk up -t
-          ../docker/sdk cli composer dump-autoload -o -a
+          git clone --depth 1 https://github.com/spryker/docker-sdk.git ./docker
+          docker/sdk boot deploy.ci.functional.mariadb.yml -a --apcu
+          docker/sdk up -t
 
-      - name: Install package
+      # 5️⃣ Prepare Spryker database and transfers
+      - name: Prepare Spryker for Module Tests
         run: |
-          cd demoshop
-          ../docker/sdk cli composer config repositories.package path ../package
-          ../docker/sdk cli composer require ${{ steps.package.outputs.name }}:* --dev
+          docker/sdk testing console transfer:generate
+          docker/sdk testing console propel:schema:copy
+          docker/sdk testing console propel:model:build
+          docker/sdk testing console transfer:entity:generate
+          docker/sdk testing console setup:db
 
-      - name: Install robotframework-suite-tests
+      # 6️⃣ Run your module Codeception tests
+      - name: Run Module Functional Tests
         run: |
-          cd demoshop
-          VERSION=$(php -r "echo json_decode(file_get_contents('../package/composer.json'), true)['require-dev']['spryker/robotframework-suite-tests'] ?? 'dev-master';")
-          ../docker/sdk cli composer require spryker/robotframework-suite-tests:$VERSION --dev --no-interaction
+            docker/sdk testing codecept run -c codeception.yml -vv
 
-      - name: Build Codeception
-        run: |
-          cd demoshop
-          ../docker/sdk cli vendor/bin/codecept build \
-            -c vendor/${{ steps.package.outputs.name }}/codeception.yml
-
-      - name: Run Codeception tests
-        run: |
-          cd demoshop
-          ../docker/sdk testing codecept run \
-            -c vendor/${{ steps.package.outputs.name }}/codeception.yml -vvv
-
-      - name: Show logs on failure
-        if: failure()
-        run: |
-          cd demoshop
-          ../docker/sdk logs | tail -200
-
-      - name: Cleanup
+      # 7️⃣ Cleanup Docker containers
+      - name: Cleanup Docker
         if: always()
         run: |
-          cd demoshop
-          ../docker/sdk down -v
+          docker/sdk down -v
