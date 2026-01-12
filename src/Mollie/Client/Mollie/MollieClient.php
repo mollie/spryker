@@ -19,12 +19,14 @@ class MollieClient extends AbstractClient implements MollieClientInterface
      *
      * @api
      *
+     * @param \Generated\Shared\Transfer\MollieApiRequestTransfer $mollieApiRequestTransfer
+     *
      * @return \Generated\Shared\Transfer\MollieAvailablePaymentMethodsApiResponseTransfer
      */
-    public function getAvailablePaymentMethods(): MollieAvailablePaymentMethodsApiResponseTransfer
+    public function getAvailablePaymentMethods(MollieApiRequestTransfer $mollieApiRequestTransfer): MollieAvailablePaymentMethodsApiResponseTransfer
     {
           /** @var \Generated\Shared\Transfer\MollieAvailablePaymentMethodsApiResponseTransfer $mollieAvailablePaymentMethodsApiResponseTransfer */
-        $mollieAvailablePaymentMethodsApiResponseTransfer = $this->getFactory()->createAvailablePaymentMethodsApi()->execute();
+        $mollieAvailablePaymentMethodsApiResponseTransfer = $this->getFactory()->createAvailablePaymentMethodsApi()->execute($mollieApiRequestTransfer);
 
         return $mollieAvailablePaymentMethodsApiResponseTransfer;
     }

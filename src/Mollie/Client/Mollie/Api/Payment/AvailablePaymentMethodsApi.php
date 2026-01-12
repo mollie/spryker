@@ -24,10 +24,6 @@ class AvailablePaymentMethodsApi extends AbstractApiCall
 
     protected const string METHODS_KEY = 'methods';
 
-    protected const string METHOD_ID_KEY = 'id';
-
-    protected const string METHOD_DESCRIPTION_KEY = 'description';
-
     /**
      * @param \Generated\Shared\Transfer\MollieApiResponseTransfer $mollieApiResponseTransfer
      *
@@ -45,9 +41,7 @@ class AvailablePaymentMethodsApi extends AbstractApiCall
         foreach ($methods as $method) {
             $molliePaymentMethodTransfer = new MolliePaymentMethodTransfer();
 
-            $molliePaymentMethodTransfer
-                ->setId($method[static::METHOD_ID_KEY])
-                ->setDescription($method[static::METHOD_DESCRIPTION_KEY]);
+            $molliePaymentMethodTransfer->fromArray($method, true);
 
             $mollieAvailablePaymentMethodCollectionTransfer->addMethods($molliePaymentMethodTransfer);
         }

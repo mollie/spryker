@@ -14,8 +14,10 @@
     <transfer name="MolliePaymentMethod">
         <property name="id" type="string"/>
         <property name="description" type="string"/>
-        <property name="minimumAmount" type="int"/>
-        <property name="image" type="string"/>
+        <property name="locale" type="string"/>
+        <property name="minimumAmount" type="array"/>
+        <property name="maximumAmount" type="array"/>
+        <property name="image" type="array"/>
         <property name="issuers" type="array"/>
         <property name="pricing" type="array"/>
         <property name="status" type="string"/>

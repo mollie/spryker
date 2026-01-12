@@ -16,9 +16,11 @@ interface MollieClientInterface
      *
      * @api
      *
+     * @param \Generated\Shared\Transfer\MollieApiRequestTransfer $mollieApiRequestTransfer
+     *
      * @return \Generated\Shared\Transfer\MollieAvailablePaymentMethodsApiResponseTransfer
      */
-    public function getAvailablePaymentMethods(): MollieAvailablePaymentMethodsApiResponseTransfer;
+    public function getAvailablePaymentMethods(MollieApiRequestTransfer $mollieApiRequestTransfer): MollieAvailablePaymentMethodsApiResponseTransfer;
 
     /**
      * Specification:
