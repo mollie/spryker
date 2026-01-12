@@ -1948,7 +1948,7 @@ trait MollieZedTesterActions
         return $this->getScenario()->runStep(new \Codeception\Step\Action('getFacade', func_get_args()));
     }
 
- 
+
     /**
      * [!] Method is generated. Documentation taken from corresponding module.
      *
@@ -1959,7 +1959,7 @@ trait MollieZedTesterActions
         $this->getScenario()->runStep(new \Codeception\Step\Action('clearFactoryContainerCache', func_get_args()));
     }
 
- 
+
     /**
      * [!] Method is generated. Documentation taken from corresponding module.
      *
@@ -1974,7 +1974,7 @@ trait MollieZedTesterActions
         $this->getScenario()->runStep(new \Codeception\Step\Action('setDependency', func_get_args()));
     }
 
- 
+
     /**
      * [!] Method is generated. Documentation taken from corresponding module.
      *
@@ -1987,7 +1987,7 @@ trait MollieZedTesterActions
         $this->getScenario()->runStep(new \Codeception\Step\Action('addCleanup', func_get_args()));
     }
 
- 
+
     /**
      * [!] Method is generated. Documentation taken from corresponding module.
      *
@@ -2002,7 +2002,7 @@ trait MollieZedTesterActions
         return $this->getScenario()->runStep(new \Codeception\Step\Action('haveOrder', func_get_args()));
     }
 
- 
+
     /**
      * [!] Method is generated. Documentation taken from corresponding module.
      *
@@ -2017,7 +2017,7 @@ trait MollieZedTesterActions
         return $this->getScenario()->runStep(new \Codeception\Step\Action('haveOrderFromQuote', func_get_args()));
     }
 
- 
+
     /**
      * [!] Method is generated. Documentation taken from corresponding module.
      *
@@ -2030,7 +2030,7 @@ trait MollieZedTesterActions
         return $this->getScenario()->runStep(new \Codeception\Step\Action('haveSalesOrderAddress', func_get_args()));
     }
 
- 
+
     /**
      * [!] Method is generated. Documentation taken from corresponding module.
      *
@@ -2045,7 +2045,7 @@ trait MollieZedTesterActions
         return $this->getScenario()->runStep(new \Codeception\Step\Action('haveOrderUsingPreparedQuoteTransfer', func_get_args()));
     }
 
- 
+
     /**
      * [!] Method is generated. Documentation taken from corresponding module.
      *
@@ -2056,7 +2056,7 @@ trait MollieZedTesterActions
         $this->getScenario()->runStep(new \Codeception\Step\Action('cleanStaticProperty', func_get_args()));
     }
 
- 
+
     /**
      * [!] Method is generated. Documentation taken from corresponding module.
      *
@@ -2069,7 +2069,7 @@ trait MollieZedTesterActions
         return $this->getScenario()->runStep(new \Codeception\Step\Action('haveSalesExpense', func_get_args()));
     }
 
- 
+
     /**
      * [!] Method is generated. Documentation taken from corresponding module.
      *
@@ -2082,7 +2082,7 @@ trait MollieZedTesterActions
         $this->getScenario()->runStep(new \Codeception\Step\Action('disableProcessCache', func_get_args()));
     }
 
- 
+
     /**
      * [!] Method is generated. Documentation taken from corresponding module.
      *
@@ -2096,7 +2096,7 @@ trait MollieZedTesterActions
         $this->getScenario()->runStep(new \Codeception\Step\Action('addCommand', func_get_args()));
     }
 
- 
+
     /**
      * [!] Method is generated. Documentation taken from corresponding module.
      *
@@ -2110,7 +2110,7 @@ trait MollieZedTesterActions
         $this->getScenario()->runStep(new \Codeception\Step\Action('addCondition', func_get_args()));
     }
 
- 
+
     /**
      * [!] Method is generated. Documentation taken from corresponding module.
      *
@@ -2123,7 +2123,7 @@ trait MollieZedTesterActions
         $this->getScenario()->runStep(new \Codeception\Step\Action('triggerEventForNewOrderItems', func_get_args()));
     }
 
- 
+
     /**
      * [!] Method is generated. Documentation taken from corresponding module.
      *
@@ -2137,7 +2137,7 @@ trait MollieZedTesterActions
         $this->getScenario()->runStep(new \Codeception\Step\Action('moveItemAfterTimeOut', func_get_args()));
     }
 
- 
+
     /**
      * [!] Method is generated. Documentation taken from corresponding module.
      *
@@ -2151,7 +2151,7 @@ trait MollieZedTesterActions
         $this->getScenario()->runStep(new \Codeception\Step\Action('setItemState', func_get_args()));
     }
 
- 
+
     /**
      * [!] Method is generated. Documentation taken from corresponding module.
      *
@@ -2164,7 +2164,7 @@ trait MollieZedTesterActions
         return $this->getScenario()->runStep(new \Codeception\Step\Action('haveOmsOrderItemState', func_get_args()));
     }
 
- 
+
     /**
      * [!] Method is generated. Documentation taken from corresponding module.
      *
@@ -2175,7 +2175,7 @@ trait MollieZedTesterActions
         $this->getScenario()->runStep(new \Codeception\Step\Action('checkCondition', func_get_args()));
     }
 
- 
+
     /**
      * [!] Method is generated. Documentation taken from corresponding module.
      *
@@ -2186,7 +2186,7 @@ trait MollieZedTesterActions
         $this->getScenario()->runStep(new \Codeception\Step\Action('checkTimeout', func_get_args()));
     }
 
- 
+
     /**
      * [!] Method is generated. Documentation taken from corresponding module.
      *
@@ -2197,7 +2197,7 @@ trait MollieZedTesterActions
         $this->getScenario()->runStep(new \Codeception\Step\Action('clearLocks', func_get_args()));
     }
 
- 
+
     /**
      * [!] Method is generated. Documentation taken from corresponding module.
      *
@@ -2211,7 +2211,7 @@ trait MollieZedTesterActions
         $this->getScenario()->runStep(new \Codeception\Step\Action('configureTestStateMachine', func_get_args()));
     }
 
- 
+
     /**
      * [!] Method is generated. Documentation taken from corresponding module.
      *
@@ -2224,7 +2224,7 @@ trait MollieZedTesterActions
         return $this->getScenario()->runStep(new \Codeception\Step\Action('haveOmsProductReservation', func_get_args()));
     }
 
- 
+
     /**
      * [!] Method is generated. Documentation taken from corresponding module.
      *
@@ -2237,7 +2237,7 @@ trait MollieZedTesterActions
         return $this->getScenario()->runStep(new \Codeception\Step\Action('haveOmsOrderItemStateEntity', func_get_args()));
     }
 
- 
+
     /**
      * [!] Method is generated. Documentation taken from corresponding module.
      *
@@ -2250,7 +2250,7 @@ trait MollieZedTesterActions
         return $this->getScenario()->runStep(new \Codeception\Step\Action('getOmsEventTriggerResponseTransfer', func_get_args()));
     }
 
- 
+
     /**
      * [!] Method is generated. Documentation taken from corresponding module.
      *

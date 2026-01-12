@@ -41,4 +41,19 @@ class MollieClient extends AbstractClient implements MollieClientInterface
 
         return $molliePaymentApiResponseTransfer;
     }
+
+    /**
+     * Specification:
+     * - Creates a payment in Mollie system
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\MollieApiRequestTransfer $mollieApiRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\MolliePaymentApiResponseTransfer
+     */
+    public function createPayment(MollieApiRequestTransfer $mollieApiRequestTransfer): MolliePaymentApiResponseTransfer
+    {
+        return $this->getFactory()->createPaymentApi()->execute($mollieApiRequestTransfer);
+    }
 }

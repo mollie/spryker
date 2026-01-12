@@ -24,9 +24,13 @@
     "spryker/kernel": "^3.79.0",
     "spryker-shop/shop-application": "^1.15.1",
     "spryker-shop/shop-application-extension": "^1.2.0",
-    "mollie/mollie-api-php": "^3.4.0",
+    "mollie/mollie-api-php": "^3.7.0",
     "spryker/step-engine": "^3.7",
-    "psr/log": "3.0.2"
+    "psr/log": "3.0.2",
+    "spryker-shop/checkout-page": "^3.39",
+    "spryker/cart-extension": "^4.3",
+    "spryker/checkout-extension": "^1.5",
+    "spryker/router": "^1.23"
   },
   "require-dev": {
     "spryker/application": "^3.33",
@@ -41,8 +45,7 @@
     "spryker/git-hook": "dev-master",
     "spryker/testify": "^3.50",
     "spryker/project-architecture-sniffer": "dev-main",
-    "ext-dom": "*",
-    "spryker/cart-extension": "^4.3"
+    "ext-dom": "*"
   },
   "config": {
     "allow-plugins": {

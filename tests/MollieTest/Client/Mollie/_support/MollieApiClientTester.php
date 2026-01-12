@@ -30,7 +30,7 @@ class MollieApiClientTester extends Actor
      * @var array
      */
     protected const MOLLIE_MOCKED_PAYMENT_METHOD_RESPONSE_PAYLOAD = [
-       'count' => 2,
+        'count' => 2,
         '_embedded' => [
             'methods' => [
                 [
