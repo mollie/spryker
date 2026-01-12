@@ -7,7 +7,6 @@ namespace Mollie\Client\Mollie\Api\Payment;
 use Generated\Shared\Transfer\CheckoutResponseTransfer;
 use Generated\Shared\Transfer\MollieApiRequestTransfer;
 use Generated\Shared\Transfer\MollieApiResponseTransfer;
-use Generated\Shared\Transfer\MollieCreatePaymentApiResponseTransfer;
 use Generated\Shared\Transfer\MollieLinksTransfer;
 use Generated\Shared\Transfer\MolliePaymentApiResponseTransfer;
 use Generated\Shared\Transfer\MolliePaymentTransfer;
@@ -58,6 +57,7 @@ class CreatePaymentApi extends AbstractApiCall
             value: $value,
         );
         $redirectUrl = $this->getRedirectUrl($checkoutResponseTransfer->getSaveOrderOrFail()->getOrderReference());
+        $webhookUrl = $this->mollieConfig->getMollieWebhookUrl();
         $method = $this->mollieConfig->getMolliePaymentMethod($paymentTransfer->getPaymentMethod());
         $metadata = $this->addMetadata($checkoutResponseTransfer);
         $additionalParameters = $this->addAdditionalParameters($mollieApiRequestTransfer);
@@ -66,7 +66,7 @@ class CreatePaymentApi extends AbstractApiCall
             description: $checkoutResponseTransfer->getSaveOrderOrFail()->getOrderReference(),
             amount: $amount,
             redirectUrl: $redirectUrl,
-            //webhookUrl: $this->mollieConfig->getMollieWebhookUrl(),
+            webhookUrl: $webhookUrl,
             method: $method,
             metadata: $metadata,
             additional: $additionalParameters,
@@ -130,19 +130,14 @@ class CreatePaymentApi extends AbstractApiCall
         ->setIsSuccessful($mollieApiResponseTransfer->getIsSuccessful())
         ->setMessage($mollieApiResponseTransfer->getMessage());
 
-        $mollieCreatePaymentApiResponseTransfer = new MollieCreatePaymentApiResponseTransfer();
-        $mollieCreatePaymentApiResponseTransfer->fromArray($mollieApiResponseTransfer->getPayload(), true);
+        $molliePaymentTransfer = new MolliePaymentTransfer();
+        $molliePaymentTransfer->fromArray($mollieApiResponseTransfer->getPayload(), true);
 
         $links = $mollieApiResponseTransfer->getPayload()[MollieConfig::RESPONSE_PARAMETER_CREATE_PAYMENT_LINKS] ?? null;
         $mollieLinksTransfer = new MollieLinksTransfer();
         $mollieLinksTransfer->fromArray($links, true);
-
-        $mollieCreatePaymentApiResponseTransfer
-            ->setLinks($mollieLinksTransfer)
-            ->setEmbedded($mollieApiResponseTransfer->getPayload()[MollieConfig::RESPONSE_PARAMETER_CREATE_PAYMENT_EMBEDDED] ?? null);
-
-        $molliePaymentTransfer = new MolliePaymentTransfer();
-        $molliePaymentTransfer->fromArray($mollieCreatePaymentApiResponseTransfer->toArray(), true);
+        $molliePaymentTransfer
+            ->setLinks($mollieLinksTransfer);
 
         $molliePaymentApiResponseTransfer->setMolliePayment($molliePaymentTransfer);
 
