@@ -11,7 +11,7 @@ interface MollieRepositoryInterface
     /**
      * @param string $paymentId
      *
-     * @return \Propel\Runtime\Collection\ObjectCollection
+     * @return \Propel\Runtime\Collection\ObjectCollection|null
      */
-    public function getOrderItemsByPaymentId(string $paymentId): ObjectCollection;
+    public function getOrderItemsByPaymentId(string $paymentId): ObjectCollection|null;
 }
