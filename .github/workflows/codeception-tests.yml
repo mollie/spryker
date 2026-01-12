@@ -12,55 +12,120 @@ env:
   APPLICATION_STORE: DE
   APPLICATION_ENV: ci.mysql
   SPRYKER_CURRENT_REGION: EU
+  COMPOSER_IGNORE_CHROMEDRIVER: 1
 
 jobs:
-  ci:
+  tests:
     runs-on: ubuntu-latest
+    timeout-minutes: 60
 
     steps:
-      - name: Checkout code
+      - name: Checkout package code
         uses: actions/checkout@v4
+        with:
+          path: package
 
-      - name: Configure sysctl limits
+      - name: Clone Spryker B2B Marketplace Demo Shop
+        run: |
+          git clone --depth 1 https://github.com/spryker-shop/b2b-demo-marketplace.git demoshop
+          cd demoshop
+          ls -la
+
+      - name: Get package name from composer.json
+        id: package-info
+        run: |
+          cd package
+          PACKAGE_NAME=$(php -r "echo json_decode(file_get_contents('composer.json'), true)['name'];")
+          echo "Package name: $PACKAGE_NAME"
+          echo "name=$PACKAGE_NAME" >> $GITHUB_OUTPUT
+
+      - name: Add package as local composer repository
+        run: |
+          cd demoshop
+          composer config repositories.local-package '{"type": "path", "url": "../package", "options": {"symlink": false}}'
+          composer config --list repositories
+
+      - name: Require package in demoshop
+        run: |
+          cd demoshop
+          composer require ${{ steps.package-info.outputs.name }}:@dev --no-update --no-scripts --ignore-platform-reqs
+          composer update ${{ steps.package-info.outputs.name }} --prefer-source --no-scripts --ignore-platform-reqs --with-all-dependencies
+
+      - name: Verify package is installed
+        run: |
+          cd demoshop
+          ls -la vendor/${{ steps.package-info.outputs.name }}/
+
+      - name: Configure system limits
         run: |
           sudo sysctl -w vm.swappiness=10
           sudo sysctl -w fs.file-max=262144
           sudo sysctl -w vm.max_map_count=262144
+          ulimit -n 65536
 
       - name: Install Spryker Docker SDK
         run: |
+          cd demoshop
           git clone --depth 1 https://github.com/spryker/docker-sdk.git ./docker
+          ls -la docker/
+
+      - name: Check deploy file exists
+        run: |
+          cd demoshop
+          ls -la deploy*.yml
+          cat deploy.ci.functional.mariadb.yml | head -20
 
       - name: Boot Spryker environment
         run: |
+          cd demoshop
           docker/sdk boot deploy.ci.functional.mariadb.yml
           docker/sdk up -t
+        timeout-minutes: 20
 
-      - name: Generate transfers and Propel models
+      - name: Wait for services to be ready
         run: |
+          cd demoshop
+          sleep 30
+          docker/sdk cli php -v
+
+      - name: Generate Spryker code
+        run: |
+          cd demoshop
           docker/sdk cli vendor/bin/console transfer:generate
+          docker/sdk cli vendor/bin/console transfer:databuilder:generate
           docker/sdk cli vendor/bin/console propel:schema:copy
           docker/sdk cli vendor/bin/console propel:model:build
           docker/sdk cli vendor/bin/console transfer:entity:generate
 
       - name: Dump autoload
         run: |
+          cd demoshop
           docker/sdk cli composer dump-autoload -o -a --apcu
+
+      - name: Check package location in container
+        run: |
+          cd demoshop
+          docker/sdk cli ls -la vendor/${{ steps.package-info.outputs.name }}/
+          docker/sdk cli cat vendor/${{ steps.package-info.outputs.name }}/codeception.yml | head -10
 
       - name: Build Codeception
         run: |
-          docker/sdk cli vendor/bin/codecept build -c ./codeception.yml -v
+          cd demoshop
+          docker/sdk cli vendor/bin/codecept build -c vendor/${{ steps.package-info.outputs.name }}/codeception.yml -v
 
-      - name: Run tests
+      - name: Run package tests
         run: |
-          docker/sdk testing codecept run -c ./codeception.yml
+          cd demoshop
+          docker/sdk testing codecept run -c vendor/${{ steps.package-info.outputs.name }}/codeception.yml -vvv
 
-      - name: Output logs on failure
+      - name: Show logs on failure
         if: failure()
         run: |
-          docker/sdk logs
+          cd demoshop
+          docker/sdk logs | tail -100
 
-      - name: Stop and remove containers
+      - name: Cleanup containers
         if: always()
         run: |
-          docker/sdk down
+          cd demoshop
+          docker/sdk down -v
