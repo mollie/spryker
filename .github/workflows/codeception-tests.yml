@@ -1,67 +1,50 @@
-name: Module Functional Tests
+name: Codeception Tests
 
 on:
   push:
     branches:
-      - main
+      - main  # Change this to your main branch name
   pull_request:
 
-env:
-  APPLICATION_STORE: DE
-  APPLICATION_ENV: ci.mysql
-  SPRYKER_CURRENT_REGION: EU
-  PROGRESS_TYPE: plain
-  SPRYKER_PLATFORM_IMAGE: spryker/php:8.4
-  DYNAMIC_STORE_MODE: true
-  COMPOSER_IGNORE_CHROMEDRIVER: 1
-
 jobs:
-  module-tests:
-    name: Run Module Tests
+  ci:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
 
     steps:
-      # 1️⃣ Checkout your code
-      - name: Checkout code
-        uses: actions/checkout@v4
+      -   name: Checkout code
+          uses: actions/checkout@v4
 
-      # 2️⃣ Install Composer dependencies
-      - uses: ramsey/composer-install@v3
-        with:
-          composer-options: "-q --ignore-platform-reqs --optimize-autoloader --no-interaction --prefer-install=auto"
+      -   name: Set up Docker Compose
+          run: |
+            sudo curl -L "https://github.com/docker/compose/releases/download/v2.39.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+            sudo chmod +x /usr/local/bin/docker-compose
+          if: runner.os == 'Linux'
 
-      # 3️⃣ Configure sysctl limits for Docker
-      - name: Configure sysctl limits
-        run: |
-          sudo sysctl -w vm.swappiness=10
-          sudo sysctl -w fs.file-max=262144
-          sudo sysctl -w vm.max_map_count=262144
-          ulimit -n 65536
+      -   name: Build and run containers
+          run: |
+            docker-compose -f docker-compose.yml up php --detach --wait --wait-timeout 30
+          working-directory: ./  # Change this to your project's directory
 
-      # 4️⃣ Start Spryker Docker environment
-      - name: Start Spryker environment
+      -   name: Installing composer dependencies
+          run: |
+            docker-compose exec php composer install
+          working-directory: ./  # Change this to your project's directory
+
+      - name: Install Project
         run: |
           git clone --depth 1 https://github.com/spryker/docker-sdk.git ./docker
-          docker/sdk boot deploy.ci.functional.mariadb.yml -a --apcu
+          docker/sdk boot deploy.ci.api.mariadb.robot.yml
+          #sudo bash -c "echo '127.0.0.1 backend-api.eu.spryker.local backend-api.us.spryker.local backend-gateway.eu.spryker.local backend-gateway.us.spryker.local backoffice.eu.spryker.local backoffice.us.spryker.local glue-backend.eu.spryker.local glue-backend.us.spryker.local glue-storefront.eu.spryker.local glue-storefront.us.spryker.local glue.eu.spryker.local glue.us.spryker.local mail.spryker.local mp.eu.spryker.local mp.us.spryker.local queue.spryker.local spryker.local swagger.spryker.local yves.eu.spryker.local yves.us.spryker.local' >> /etc/hosts"
           docker/sdk up -t
+          docker/sdk cli composer dump-autoload -o -a --apcu
 
-      # 5️⃣ Prepare Spryker database and transfers
-      - name: Prepare Spryker for Module Tests
-        run: |
-          docker/sdk testing console transfer:generate
-          docker/sdk testing console propel:schema:copy
-          docker/sdk testing console propel:model:build
-          docker/sdk testing console transfer:entity:generate
-          docker/sdk testing console setup:db
+      -   name: Run tests
+          run: |
+            docker-compose exec php  vendor/bin/codecept -c ./codeception.yml build -v
+            docker-compose exec php  vendor/bin/codecept run
+          working-directory: ./  # Change this to your project's directory
 
-      # 6️⃣ Run your module Codeception tests
-      - name: Run Module Functional Tests
-        run: |
-            docker/sdk testing codecept run -c codeception.yml -vv
-
-      # 7️⃣ Cleanup Docker containers
-      - name: Cleanup Docker
-        if: always()
-        run: |
-          docker/sdk down -v
+      -   name: Stop and remove containers
+          run: |
+            docker-compose -f docker-compose.yml down
+          working-directory: ./  # Change this to your project's directory
