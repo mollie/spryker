@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Mollie\Client\Mollie\Api\Exception;
+namespace Mollie\Zed\Mollie\Business\Exception;
 
 use Exception;
 use Throwable;
 
-class GetPaymentByIdException extends Exception
+class MolliePaymentException extends Exception
 {
     /**
      * @param string $message

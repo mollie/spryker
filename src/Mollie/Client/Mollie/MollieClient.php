@@ -5,7 +5,7 @@ declare(strict_types = 1);
 namespace Mollie\Client\Mollie;
 
 use Generated\Shared\Transfer\MollieApiRequestTransfer;
-use Generated\Shared\Transfer\MollieAvailablePaymentMethodCollectionTransfer;
+use Generated\Shared\Transfer\MollieAvailablePaymentMethodsApiResponseTransfer;
 use Generated\Shared\Transfer\MolliePaymentApiResponseTransfer;
 use Spryker\Client\Kernel\AbstractClient;
 
@@ -19,14 +19,14 @@ class MollieClient extends AbstractClient implements MollieClientInterface
      *
      * @api
      *
-     * @return \Generated\Shared\Transfer\MollieAvailablePaymentMethodCollectionTransfer
+     * @return \Generated\Shared\Transfer\MollieAvailablePaymentMethodsApiResponseTransfer
      */
-    public function getAvailablePaymentMethods(): MollieAvailablePaymentMethodCollectionTransfer
+    public function getAvailablePaymentMethods(): MollieAvailablePaymentMethodsApiResponseTransfer
     {
-          /** @var \Generated\Shared\Transfer\MollieAvailablePaymentMethodCollectionTransfer $mollieAvailablePaymentMethodCollectionTransfer */
-        $mollieAvailablePaymentMethodCollectionTransfer = $this->getFactory()->createAvailablePaymentMethodsApi()->execute();
+          /** @var \Generated\Shared\Transfer\MollieAvailablePaymentMethodsApiResponseTransfer $mollieAvailablePaymentMethodsApiResponseTransfer */
+        $mollieAvailablePaymentMethodsApiResponseTransfer = $this->getFactory()->createAvailablePaymentMethodsApi()->execute();
 
-        return $mollieAvailablePaymentMethodCollectionTransfer;
+        return $mollieAvailablePaymentMethodsApiResponseTransfer;
     }
 
     /**
@@ -40,5 +40,20 @@ class MollieClient extends AbstractClient implements MollieClientInterface
         $molliePaymentApiResponseTransfer = $this->getFactory()->createGetPaymentByTransactionIdApi()->execute($mollieApiRequestTransfer);
 
         return $molliePaymentApiResponseTransfer;
+    }
+
+    /**
+     * Specification:
+     * - Creates a payment in Mollie system
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\MollieApiRequestTransfer $mollieApiRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\MolliePaymentApiResponseTransfer
+     */
+    public function createPayment(MollieApiRequestTransfer $mollieApiRequestTransfer): MolliePaymentApiResponseTransfer
+    {
+        return $this->getFactory()->createPaymentApi()->execute($mollieApiRequestTransfer);
     }
 }

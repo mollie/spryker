@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Mollie\Zed\Mollie\Persistence;
 
+use Mollie\Zed\Mollie\Dependency\Service\MollieToUtilEncodingServiceInterface;
+use Mollie\Zed\Mollie\MollieDependencyProvider;
 use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MollieOrderItemMapper;
 use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MollieOrderItemMapperInterface;
 use Orm\Zed\Mollie\Persistence\SpyPaymentMollieQuery;
@@ -25,5 +27,13 @@ class MolliePersistenceFactory extends AbstractPersistenceFactory
     public function createSpyPaymentMollieQuery(): SpyPaymentMollieQuery
     {
         return SpyPaymentMollieQuery::create();
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Dependency\Service\MollieToUtilEncodingServiceInterface
+     */
+    public function getUtilEncodingService(): MollieToUtilEncodingServiceInterface
+    {
+        return $this->getProvidedDependency(MollieDependencyProvider::SERVICE_UTIL_ENCODING);
     }
 }

@@ -32,4 +32,14 @@ class MollieConfig extends AbstractBundleConfig
      * @var string
      */
     public const CANCELED = 'canceled';
+
+    /**
+     * @var string
+     */
+    public const RESPONSE_PARAMETER_CREATE_PAYMENT_LINKS_CHECKOUT = 'checkout';
+
+    /**
+     * @var string
+     */
+    public const RESPONSE_PARAMETER_CREATE_PAYMENT_LINKS_HREF = 'href';
 }

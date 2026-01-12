@@ -14,11 +14,17 @@ coverage:
 suites:
   Business:
     path: .
-    actor: FacadeBusinessTester
+    actor: MollieZedTester
     modules:
       enabled:
         - Asserts
         - \SprykerTest\Shared\Testify\Helper\Environment
         - \SprykerTest\Shared\Testify\Helper\ConfigHelper
+        - \SprykerTest\Shared\Config\Helper\ConfigInit
+        - \SprykerTest\Shared\Propel\Helper\TransactionHelper
         - \SprykerTest\Shared\Testify\Helper\LocatorHelper:
             projectNamespaces: ['Mollie']
+        - \SprykerTest\Shared\Testify\Helper\DependencyHelper
+        - \SprykerTest\Shared\Testify\Helper\DataCleanupHelper
+        - \SprykerTest\Shared\Sales\Helper\SalesDataHelper
+        - \SprykerTest\Zed\Oms\Helper\OmsHelper

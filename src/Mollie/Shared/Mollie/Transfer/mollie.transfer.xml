@@ -1,22 +1,24 @@
 <?xml version="1.0"?>
-<transfers xmlns="spryker:transfer-01" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="spryker:transfer-01 http://static.spryker.com/transfer-01.xsd">
+<transfers xmlns="spryker:transfer-01" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="spryker:transfer-01 http://static.spryker.com/transfer-01.xsd">
 
     <transfer name="MollieCreditCardPayment">
-        <property name="cardToken" type="string" />
+        <property name="cardToken" type="string"/>
     </transfer>
 
     <transfer name="Payment">
         <property name="mollieCreditCardPayment" type="MollieCreditCardPayment"/>
+        <property name="mollieCreatePayment" type="MollieCreatePayment" />
     </transfer>
 
     <transfer name="MolliePaymentMethod">
-        <property name="id" type="string" />
-        <property name="description" type="string" />
-        <property name="minimumAmount" type="int" />
-        <property name="image" type="string" />
-        <property name="issuers" type="array" />
-        <property name="pricing" type="array" />
-        <property name="status" type="string" />
+        <property name="id" type="string"/>
+        <property name="description" type="string"/>
+        <property name="minimumAmount" type="int"/>
+        <property name="image" type="string"/>
+        <property name="issuers" type="array"/>
+        <property name="pricing" type="array"/>
+        <property name="status" type="string"/>
     </transfer>
 
     <transfer name="MolliePaymentApiResponse">
@@ -60,11 +62,29 @@
         <property name="type" type="string"/>
     </transfer>
 
+    <transfer name="OrderCollectionRequest">
+        <property name="id" type="string" />
+        <property name="status" type="string" />
+    </transfer>
+
+    <transfer name="OrderCollectionResponse">
+        <property name="id" type="string" />
+        <property name="isSuccess" type="bool" />
+    </transfer>
+
+    <transfer name="MollieAvailablePaymentMethodsApiResponse">
+        <property name="isSuccessful" type="bool"/>
+        <property name="message" type="string"/>
+        <property name="collection" type="MollieAvailablePaymentMethodCollection"/>
+    </transfer>
+
     <transfer name="MollieAvailablePaymentMethodCollection">
         <property name="methods" type="MolliePaymentMethod[]"/>
     </transfer>
 
     <transfer name="MollieApiRequest">
+        <property name="quote" type="Quote"/>
+        <property name="checkoutResponse" type="CheckoutResponse"/>
         <property name="body" type="array"/>
     </transfer>
 
@@ -76,22 +96,67 @@
         <property name="timestamp" type="string"/>
     </transfer>
 
-    <transfer name="MollieCreatePayment">
-        <property name="idPaymentMollie" type="int" />
-        <property name="fkSalesOrder" type="int" />
-        <property name="transactionId" type="string" />
-        <property name="status" type="string" />
-        <property name="isCancelable" type="bool" />
-        <property name="description" type="string" />
-        <property name="sequenceType" type="string" />
-        <property name="metadata" type="array" />
-        <property name="expiresAt" type="DateTime" />
-        <property name="createdAt" type="DateTime" />
-        <property name="updatedAt" type="DateTime" />
+    <transfer name="MollieCreatePaymentApiResponse">
+        <property name="resource" type="string"/>
+        <property name="id" type="string"/>
+        <property name="mode" type="string"/>
+        <property name="amount" type="MollieAmount"/>
+        <property name="settlementAmount" type="string"/>
+        <property name="amountRefunded" type="string"/>
+        <property name="amountRemaining" type="string"/>
+        <property name="amountChargedBack" type="string"/>
+        <property name="description" type="string"/>
+        <property name="method" type="string"/>
+        <property name="status" type="string"/>
+        <property name="statusReason" type="string"/>
+        <property name="createdAt" type="string"/>
+        <property name="paidAt" type="string"/>
+        <property name="canceledAt" type="string"/>
+        <property name="expiresAt" type="string"/>
+        <property name="failedAt" type="string"/>
+        <property name="dueDate" type="string"/>
+        <property name="billingEmail" type="string"/>
+        <property name="profileId" type="string"/>
+        <property name="sequenceType" type="string"/>
+        <property name="redirectUrl" type="string"/>
+        <property name="cancelUrl" type="string"/>
+        <property name="webhookUrl" type="string"/>
+        <property name="mandateId" type="bool"/>
+        <property name="subscriptionId" type="string"/>
+        <property name="orderId" type="string"/>
+        <property name="lines" type="string"/>
+        <property name="billingAddress" type="string"/>
+        <property name="shippingAddress" type="string"/>
+        <property name="settlementId" type="string"/>
+        <property name="metadata" type="array"/>
+        <property name="details" type="string"/>
+        <property name="restrictPaymentMethodsToCountry" type="string"/>
+        <property name="links" type="MollieLinks"/>
+        <property name="embedded" type="string"/>
+        <property name="isCancelable" type="bool"/>
+        <property name="amountCaptured" type="string"/>
+        <property name="captureMode" type="string"/>
+        <property name="captureDelay" type="string"/>
+        <property name="captureBefore" type="string"/>
+        <property name="applicationFee" type="string"/>
+        <property name="routing" type="string"/>
+        <property name="authorizedAt" type="string"/>
+        <property name="expiredAt" type="string"/>
+        <property name="customerId" type="string"/>
+        <property name="countryCode" type="string"/>
     </transfer>
 
-    <transfer name="Payment">
-        <property name="mollieCreatePayment" type="MollieCreatePayment" />
+    <transfer name="Quote">
+        <property name="molliePaymentId" type="string"/>
     </transfer>
+
+    <transfer name="Order">
+        <property name="molliePaymentId" type="string"/>
+    </transfer>
+
+    <transfer name="SaveOrder">
+        <property name="molliePaymentId" type="string"/>
+    </transfer>
+
 
 </transfers>

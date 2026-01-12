@@ -2,19 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Mollie\Client\Mollie\Api\PaymentMethods;
+namespace Mollie\Client\Mollie\Api\Payment;
 
 use Generated\Shared\Transfer\MollieApiRequestTransfer;
 use Generated\Shared\Transfer\MollieApiResponseTransfer;
 use Generated\Shared\Transfer\MollieAvailablePaymentMethodCollectionTransfer;
+use Generated\Shared\Transfer\MollieAvailablePaymentMethodsApiResponseTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodTransfer;
-use Mollie\Api\Exceptions\ApiException;
-use Mollie\Api\Exceptions\MollieException;
 use Mollie\Api\Http\Request;
 use Mollie\Api\Http\Requests\GetEnabledMethodsRequest;
 use Mollie\Api\Types\MethodQuery;
 use Mollie\Client\Mollie\Api\AbstractApiCall;
-use Mollie\Client\Mollie\Api\Exception\AvailablePaymentMethodsApiException;
 use Spryker\Shared\Kernel\Transfer\AbstractTransfer;
 use Spryker\Shared\Log\LoggerTrait;
 
@@ -22,38 +20,13 @@ class AvailablePaymentMethodsApi extends AbstractApiCall
 {
     use LoggerTrait;
 
-    /**
-     * @param \Mollie\Api\Http\Request $request
-     *
-     * @throws \Mollie\Client\Mollie\Api\Exception\AvailablePaymentMethodsApiException
-     *
-     * @return \Generated\Shared\Transfer\MollieApiResponseTransfer
-     */
-    protected function send(Request $request): MollieApiResponseTransfer
-    {
-        try {
-            $methods = $this->mollieApiClient->send($request);
+    protected const string METHODS_WRAPPER_KEY = '_embedded';
 
-            $mollieApiResponseTransfer = new MollieApiResponseTransfer();
-            $mollieApiResponseTransfer
-                ->setIsSuccessful($methods->count() > 0)
-                ->setPayload($methods->getArrayCopy());
+    protected const string METHODS_KEY = 'methods';
 
-            return $mollieApiResponseTransfer;
-        } catch (ApiException | MollieException $requestException) {
-            $logException = sprintf(
-                'Error calling available api payment methods with message: %s',
-                $requestException->getMessage(),
-            );
+    protected const string METHOD_ID_KEY = 'id';
 
-            $this->getLogger()->error($logException);
-
-            throw new AvailablePaymentMethodsApiException(
-                $requestException->getMessage(),
-                $requestException->getCode(),
-            );
-        }
-    }
+    protected const string METHOD_DESCRIPTION_KEY = 'description';
 
     /**
      * @param \Generated\Shared\Transfer\MollieApiResponseTransfer $mollieApiResponseTransfer
@@ -62,19 +35,26 @@ class AvailablePaymentMethodsApi extends AbstractApiCall
      */
     protected function mapApiResponse(MollieApiResponseTransfer $mollieApiResponseTransfer): AbstractTransfer
     {
+        $mollieAvailablePaymentMethodsApiResponseTransfer = new MollieAvailablePaymentMethodsApiResponseTransfer();
+        $mollieAvailablePaymentMethodsApiResponseTransfer
+            ->setIsSuccessful($mollieApiResponseTransfer->getIsSuccessful())
+            ->setMessage($mollieApiResponseTransfer->getMessage());
+
         $mollieAvailablePaymentMethodCollectionTransfer = new MollieAvailablePaymentMethodCollectionTransfer();
-        foreach ($mollieApiResponseTransfer->getPayload() as $method) {
+        $methods = $mollieApiResponseTransfer->getPayload()[static::METHODS_WRAPPER_KEY][static::METHODS_KEY] ?? [];
+        foreach ($methods as $method) {
             $molliePaymentMethodTransfer = new MolliePaymentMethodTransfer();
 
             $molliePaymentMethodTransfer
-                ->setId($method->id)
-                ->setDescription($method->description)
-                ->setMinimumAmount($method->minimumAmount->value);
+                ->setId($method[static::METHOD_ID_KEY])
+                ->setDescription($method[static::METHOD_DESCRIPTION_KEY]);
 
             $mollieAvailablePaymentMethodCollectionTransfer->addMethods($molliePaymentMethodTransfer);
         }
 
-        return $mollieAvailablePaymentMethodCollectionTransfer;
+        $mollieAvailablePaymentMethodsApiResponseTransfer->setCollection($mollieAvailablePaymentMethodCollectionTransfer);
+
+        return $mollieAvailablePaymentMethodsApiResponseTransfer;
     }
 
     /**

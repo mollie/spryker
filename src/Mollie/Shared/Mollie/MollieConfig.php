@@ -17,6 +17,21 @@ class MollieConfig extends AbstractSharedConfig
     public const MOLLIE_PAYMENT_CREDIT_CARD = 'mollieCreditCardPayment';
 
     /**
+     * @var string
+     */
+    public const MOLLIE_PAYMENT_TRANSACTION_STORAGE_KEY_PREFIX = 'mollie:payment';
+
+    /**
+     * @var int
+     */
+    public const MOLLIE_PAYMENT_TRANSACTION_STORAGE_TTL = 300;
+
+    /**
+     * @var array<string>
+     */
+    public const MOLLIE_PAYMENT_STATUS_FAILED = ['failed', 'expired'];
+
+    /**
      * @return string|null
      */
     public function getMollieApiKey(): string|null

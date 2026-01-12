@@ -6,9 +6,11 @@ namespace Mollie\Client\Mollie;
 
 use Mollie\Api\MollieApiClient;
 use Mollie\Client\Mollie\Api\ApiCallInterface;
-use Mollie\Client\Mollie\Api\PaymentMethods\AvailablePaymentMethodsApi;
-use Mollie\Client\Mollie\Api\PaymentMethods\GetPaymentByTransactionIdApi;
+use Mollie\Client\Mollie\Api\Payment\AvailablePaymentMethodsApi;
+use Mollie\Client\Mollie\Api\Payment\CreatePaymentApi;
+use Mollie\Client\Mollie\Api\Payment\GetPaymentByTransactionIdApi;
 use Mollie\Client\Mollie\Dependency\Service\MollieToUtilEncodingServiceInterface;
+use Mollie\Service\Mollie\MollieServiceInterface;
 use Spryker\Client\Kernel\AbstractFactory;
 
 /**
@@ -17,7 +19,7 @@ use Spryker\Client\Kernel\AbstractFactory;
 class MollieFactory extends AbstractFactory
 {
     /**
-     * @return \Mollie\Client\Mollie\Api\PaymentMethods\AvailablePaymentMethodsApi
+     * @return \Mollie\Client\Mollie\Api\Payment\AvailablePaymentMethodsApi
      */
     public function createAvailablePaymentMethodsApi(): ApiCallInterface
     {
@@ -29,7 +31,7 @@ class MollieFactory extends AbstractFactory
     }
 
     /**
-     * @return \Mollie\Client\Mollie\Api\PaymentMethods\GetPaymentByTransactionIdApi
+     * @return \Mollie\Client\Mollie\Api\Payment\GetPaymentByTransactionIdApi
      */
     public function createGetPaymentByTransactionIdApi(): ApiCallInterface
     {
@@ -54,5 +56,26 @@ class MollieFactory extends AbstractFactory
     public function getUtilEncodingService(): MollieToUtilEncodingServiceInterface
     {
         return $this->getProvidedDependency(MollieDependencyProvider::UTIL_ENCODING_SERVICE);
+    }
+
+    /**
+     * @return \Mollie\Client\Mollie\Api\ApiCallInterface
+     */
+    public function createPaymentApi(): ApiCallInterface
+    {
+        return new CreatePaymentApi(
+            $this->createMollieApiClient(),
+            $this->getConfig(),
+            $this->getUtilEncodingService(),
+            $this->getMollieService(),
+        );
+    }
+
+    /**
+     * @return \Mollie\Service\Mollie\MollieServiceInterface
+     */
+    public function getMollieService(): MollieServiceInterface
+    {
+        return $this->getProvidedDependency(MollieDependencyProvider::MOLLIE_SERVICE);
     }
 }
