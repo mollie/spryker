@@ -18,6 +18,7 @@ use Mollie\Client\Mollie\Api\AbstractApiCall;
 use Mollie\Client\Mollie\Dependency\Service\MollieToUtilEncodingServiceInterface;
 use Mollie\Client\Mollie\MollieConfig;
 use Mollie\Service\Mollie\MollieServiceInterface;
+use Mollie\Shared\Mollie\MollieConfig as SharedConfig;
 use Spryker\Shared\Kernel\Transfer\AbstractTransfer;
 use Spryker\Shared\Log\LoggerTrait;
 
@@ -82,8 +83,18 @@ class CreatePaymentApi extends AbstractApiCall
     {
         $additionalData = [];
         $paymentTransfer = $mollieApiRequestTransfer->getQuote()->getPayment();
-        if ($paymentTransfer->getMollieCreditCardPayment()) {
-            $additionalData[MollieConfig::REQUEST_PARAMETER_CREATE_PAYMENT_CARD_TOKEN] = $paymentTransfer->getMollieCreditCardPayment()->getCardToken();
+        switch ($paymentTransfer->getPaymentMethod()) {
+            case SharedConfig::MOLLIE_PAYMENT_CREDIT_CARD:
+                $additionalData[MollieConfig::REQUEST_PARAMETER_CREATE_PAYMENT_CARD_TOKEN] = $paymentTransfer->getMollieCreditCardPayment()->getCardToken();
+
+                break;
+            case SharedConfig::MOLLIE_PAYMENT_PAYPAL:
+                $additionalData[MollieConfig::REQUEST_PARAMETER_CREATE_PAYMENT_PAYPAL_SESSION_ID] = $paymentTransfer->getMolliePayPalPayment()->getSessionId() ?? '';
+                $additionalData[MollieConfig::REQUEST_PARAMETER_CREATE_PAYMENT_PAYPAL_DIGITAL_GOODS] = $paymentTransfer->getMolliePayPalPayment()->getDigitalGoods() ?? false;
+
+                break;
+            default:
+                break;
         }
 
         return $additionalData;
@@ -127,13 +138,13 @@ class CreatePaymentApi extends AbstractApiCall
     protected function mapApiResponse(MollieApiResponseTransfer $mollieApiResponseTransfer): AbstractTransfer
     {
         $molliePaymentApiResponseTransfer = (new MolliePaymentApiResponseTransfer())
-        ->setIsSuccessful($mollieApiResponseTransfer->getIsSuccessful())
-        ->setMessage($mollieApiResponseTransfer->getMessage());
+            ->setIsSuccessful($mollieApiResponseTransfer->getIsSuccessful())
+            ->setMessage($mollieApiResponseTransfer->getMessage());
 
         $molliePaymentTransfer = new MolliePaymentTransfer();
         $molliePaymentTransfer->fromArray($mollieApiResponseTransfer->getPayload(), true);
 
-        $links = $mollieApiResponseTransfer->getPayload()[MollieConfig::RESPONSE_PARAMETER_CREATE_PAYMENT_LINKS] ?? null;
+        $links = $mollieApiResponseTransfer->getPayload()[MollieConfig::RESPONSE_PARAMETER_CREATE_PAYMENT_LINKS] ?? [];
         $mollieLinksTransfer = new MollieLinksTransfer();
         $mollieLinksTransfer->fromArray($links, true);
         $molliePaymentTransfer

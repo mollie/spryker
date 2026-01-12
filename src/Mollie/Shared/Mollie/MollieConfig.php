@@ -9,12 +9,17 @@ class MollieConfig extends AbstractSharedConfig
     /**
      * @var string
      */
-    public const PROVIDER_NAME = 'MollieCreditCardPayment';
+    public const PROVIDER_NAME = 'mollie';
 
     /**
      * @var string
      */
     public const MOLLIE_PAYMENT_CREDIT_CARD = 'mollieCreditCardPayment';
+
+    /**
+     * @var string
+     */
+    public const MOLLIE_PAYMENT_PAYPAL = 'molliePayPalPayment';
 
     /**
      * @var string

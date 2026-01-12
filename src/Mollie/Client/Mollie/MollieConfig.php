@@ -20,6 +20,16 @@ class MollieConfig extends AbstractBundleConfig
     /**
      * @var string
      */
+    public const REQUEST_PARAMETER_CREATE_PAYMENT_PAYPAL_SESSION_ID = 'sessionId';
+
+    /**
+     * @var string
+     */
+    public const REQUEST_PARAMETER_CREATE_PAYMENT_PAYPAL_DIGITAL_GOODS = 'digitalGoods';
+
+    /**
+     * @var string
+     */
     public const REQUEST_PARAMETER_CREATE_PAYMENT_ORDER_REFERENCE = 'orderReference';
 
     /**

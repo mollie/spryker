@@ -12,7 +12,6 @@ use Spryker\Yves\StepEngine\Dependency\Form\SubFormInterface;
 use Spryker\Yves\StepEngine\Dependency\Form\SubFormProviderNameInterface;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -84,11 +83,11 @@ class MollieCreditCardSubForm extends AbstractSubFormType implements SubFormInte
 
         $cardToken = $form->getData()->getCardToken();
 
-        if (!$cardToken) {
-            $form->get(static::CARD_TOKEN)->addError(
-                new FormError('mollie.checkout.payment.credit.card.missing.token'),
-            );
-        }
+//        if (!$cardToken) {
+//            $form->get(static::CARD_TOKEN)->addError(
+//                new FormError('mollie.checkout.payment.credit.card.missing.token'),
+//            );
+//        }
     }
 
     /**
@@ -121,5 +120,13 @@ class MollieCreditCardSubForm extends AbstractSubFormType implements SubFormInte
     public function getProviderName(): string
     {
         return MollieConfig::PROVIDER_NAME;
+    }
+
+    /**
+     * @return string
+     */
+    public function getChoiceLabelName(): string
+    {
+        return 'paypal' . '/' . 'paypal-translation';
     }
 }

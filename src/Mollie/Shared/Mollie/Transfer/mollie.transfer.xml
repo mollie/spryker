@@ -6,8 +6,15 @@
         <property name="cardToken" type="string"/>
     </transfer>
 
+    <transfer name="MolliePayPalPayment">
+        <property name="sessionId" type="string"/>
+        <property name="digitalGoods" type="bool"/>
+    </transfer>
+
     <transfer name="Payment">
         <property name="mollieCreditCardPayment" type="MollieCreditCardPayment"/>
+        <property name="mollieCreatePayment" type="MollieCreatePayment" />
+        <property name="molliePayPalPayment" type="MolliePayPalPayment"/>
     </transfer>
 
     <transfer name="MolliePaymentMethod">

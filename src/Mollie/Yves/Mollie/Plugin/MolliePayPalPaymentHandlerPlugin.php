@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\Request;
 /**
  * @method \Mollie\Yves\Mollie\MollieFactory getFactory()
  */
-class MollieCreditCardPaymentHandlerPlugin extends AbstractPlugin implements StepHandlerPluginInterface
+class MolliePayPalPaymentHandlerPlugin extends AbstractPlugin implements StepHandlerPluginInterface
 {
     /**
      * @param \Symfony\Component\HttpFoundation\Request $request
@@ -22,6 +22,6 @@ class MollieCreditCardPaymentHandlerPlugin extends AbstractPlugin implements Ste
      */
     public function addToDataClass(Request $request, AbstractTransfer $dataTransfer): AbstractTransfer
     {
-        return $this->getFactory()->createMollieCreditCardPaymentHandler()->addPaymentToQuote($dataTransfer);
+        return $this->getFactory()->createMolliePayPalPaymentHandler()->addPaymentToQuote($dataTransfer);
     }
 }
