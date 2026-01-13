@@ -35,12 +35,6 @@ jobs:
               run: |
                   git clone --depth 1 https://github.com/spryker-shop/b2b-demo-shop.git b2b-demo-shop
 
-            - name: Install Mollie Package into Demoshop
-              working-directory: b2b-demo-shop
-              run: |
-                  composer config repositories.mollie-local path ../spryker-payment
-                  composer require "mollie/spryker-payment:*" --prefer-source --no-interaction --ignore-platform-reqs --optimize-autoloader
-
             - name: Configure sysctl limits
               run: |
                   sudo sysctl -w vm.swappiness=10
