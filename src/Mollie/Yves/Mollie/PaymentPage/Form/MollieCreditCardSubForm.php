@@ -12,9 +12,8 @@ use Spryker\Yves\StepEngine\Dependency\Form\SubFormInterface;
 use Spryker\Yves\StepEngine\Dependency\Form\SubFormProviderNameInterface;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 /**
  * @method \Mollie\Yves\Mollie\MollieConfig getConfig()
@@ -54,9 +53,17 @@ class MollieCreditCardSubForm extends AbstractSubFormType implements SubFormInte
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add('cardToken', HiddenType::class, [
+            'required' => true,
              'attr' => [
                 'class' => 'card-token',
              ],
+            'constraints' => [
+                new NotBlank([
+                    'groups' => $this->getPropertyPath(),
+                    'message' => 'mollie.checkout.payment.credit.card.missing.token',
+                ]),
+            ],
+
         ])
         ->add('settings', HiddenType::class, [
             'mapped' => false,
@@ -65,29 +72,7 @@ class MollieCreditCardSubForm extends AbstractSubFormType implements SubFormInte
                  'data-profile-id' => $this->getConfig()->getProfileId(),
                  'data-test-mode' => $this->getConfig()->isTestMode() ? 'true' : 'false',
             ],
-        ])
-        ->addEventListener(
-            FormEvents::POST_SUBMIT,
-            [$this, 'onPostSubmit'],
-        );
-    }
-
-    /**
-     * @param \Symfony\Component\Form\FormEvent $event
-     *
-     * @return void
-     */
-    public function onPostSubmit(FormEvent $event): void
-    {
-        $form = $event->getForm();
-
-        $cardToken = $form->getData()->getCardToken();
-
-//        if (!$cardToken) {
-//            $form->get(static::CARD_TOKEN)->addError(
-//                new FormError('mollie.checkout.payment.credit.card.missing.token'),
-//            );
-//        }
+        ]);
     }
 
     /**
@@ -120,13 +105,5 @@ class MollieCreditCardSubForm extends AbstractSubFormType implements SubFormInte
     public function getProviderName(): string
     {
         return MollieConfig::PROVIDER_NAME;
-    }
-
-    /**
-     * @return string
-     */
-    public function getChoiceLabelName(): string
-    {
-        return 'paypal' . '/' . 'paypal-translation';
     }
 }
