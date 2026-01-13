@@ -133,7 +133,7 @@ class CreatePaymentApi extends AbstractApiCall
         $molliePaymentTransfer = new MolliePaymentTransfer();
         $molliePaymentTransfer->fromArray($mollieApiResponseTransfer->getPayload(), true);
 
-        $links = $mollieApiResponseTransfer->getPayload()[MollieConfig::RESPONSE_PARAMETER_CREATE_PAYMENT_LINKS] ?? null;
+        $links = $mollieApiResponseTransfer->getPayload()[MollieConfig::RESPONSE_PARAMETER_CREATE_PAYMENT_LINKS] ?? [];
         $mollieLinksTransfer = new MollieLinksTransfer();
         $mollieLinksTransfer->fromArray($links, true);
         $molliePaymentTransfer
