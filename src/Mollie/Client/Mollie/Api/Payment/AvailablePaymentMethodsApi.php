@@ -9,6 +9,7 @@ use Generated\Shared\Transfer\MollieApiResponseTransfer;
 use Generated\Shared\Transfer\MollieAvailablePaymentMethodCollectionTransfer;
 use Generated\Shared\Transfer\MollieAvailablePaymentMethodsApiResponseTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodTransfer;
+use Mollie\Api\Http\Data\Money;
 use Mollie\Api\Http\Request;
 use Mollie\Api\Http\Requests\GetEnabledMethodsRequest;
 use Mollie\Api\Types\MethodQuery;
@@ -27,7 +28,7 @@ class AvailablePaymentMethodsApi extends AbstractApiCall
     /**
      * @param \Generated\Shared\Transfer\MollieApiResponseTransfer $mollieApiResponseTransfer
      *
-     * @return \Generated\Shared\Transfer\MollieAvailablePaymentMethodCollectionTransfer
+     * @return \Generated\Shared\Transfer\MollieAvailablePaymentMethodsApiResponseTransfer
      */
     protected function mapApiResponse(MollieApiResponseTransfer $mollieApiResponseTransfer): AbstractTransfer
     {
@@ -58,9 +59,29 @@ class AvailablePaymentMethodsApi extends AbstractApiCall
      */
     protected function buildRequest(?MollieApiRequestTransfer $mollieApiRequestTransfer = null): ?Request
     {
+        if (!$mollieApiRequestTransfer) {
+            return new GetEnabledMethodsRequest(
+                'oneOff',
+                MethodQuery::RESOURCE_PAYMENTS,
+            );
+        }
+
+        $amount = null;
+        $queryParametersTransfer = $mollieApiRequestTransfer->getMolliePaymentMethodQueryParameters();
+        $amountTransfer = $queryParametersTransfer->getAmount();
+        if ($amountTransfer) {
+            $amount = new Money(
+                $amountTransfer->getValue(),
+                $amountTransfer->getCurrency(),
+            );
+        }
+
         return new GetEnabledMethodsRequest(
-            'oneOff',
+            $queryParametersTransfer->getSequenceType(),
             MethodQuery::RESOURCE_PAYMENTS,
+            $queryParametersTransfer->getLocale(),
+            $amount,
+            $queryParametersTransfer->getBillingCountry(),
         );
     }
 }

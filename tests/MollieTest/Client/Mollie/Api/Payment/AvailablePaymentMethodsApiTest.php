@@ -1,12 +1,13 @@
 <?php
 
-
 declare(strict_types = 1);
 
 namespace MollieTest\Client\Mollie\Api\Payment;
 
 use ArrayObject;
+use Generated\Shared\Transfer\MollieAmountTransfer;
 use Generated\Shared\Transfer\MollieApiRequestTransfer;
+use Generated\Shared\Transfer\MolliePaymentMethodQueryParametersTransfer;
 use Mollie\Api\Fake\MockMollieClient;
 use Mollie\Api\Fake\MockResponse;
 use Mollie\Api\Http\Requests\GetEnabledMethodsRequest;
@@ -26,16 +27,36 @@ class AvailablePaymentMethodsApiTest extends AbstractClientTest
      */
     public function testGetAvailablePaymentMethodsApi(): void
     {
-        $mollieApiRequestTransfer = new MollieApiRequestTransfer();
-
+        $transfer = $this->prepareTransfersForSuccessfulGetAvailablePaymentMethodsApiTest();
         $client = $this->createClient();
-        $mollieAvailablePaymentMethodsApiResponseTransfer = $client->getAvailablePaymentMethods($mollieApiRequestTransfer);
+        $mollieAvailablePaymentMethodsApiResponseTransfer = $client->getAvailablePaymentMethods($transfer);
         $methods = $mollieAvailablePaymentMethodsApiResponseTransfer->getCollection()->getMethods();
         $methodIds = $this->getMethodIds($methods);
 
         $this->assertNotEmpty($methods);
         $this->assertContains('ideal', $methodIds);
         $this->assertContains('creditcard', $methodIds);
+    }
+
+    /**
+     * @return \Generated\Shared\Transfer\MollieApiRequestTransfer
+     */
+    protected function prepareTransfersForSuccessfulGetAvailablePaymentMethodsApiTest(): MollieApiRequestTransfer
+    {
+        $transfer = new MollieApiRequestTransfer();
+        $queryTransfer = new MolliePaymentMethodQueryParametersTransfer();
+        $amountTransfer = new MollieAmountTransfer();
+
+        $currency = 'EUR';
+        $value = '111';
+        $amountTransfer->setCurrency($currency);
+        $amountTransfer->setValue($value);
+
+        $queryTransfer->setAmount($amountTransfer);
+        $queryTransfer->setSequenceType('oneOff');
+        $transfer->setMolliePaymentMethodQueryParameters($queryTransfer);
+
+        return $transfer;
     }
 
     /**
@@ -65,9 +86,9 @@ class AvailablePaymentMethodsApiTest extends AbstractClientTest
         return $this->createClientMock($mollieFactoryMock);
     }
 
-     /**
-      * @return \Mollie\Api\Fake\MockMollieClient
-      */
+    /**
+     * @return \Mollie\Api\Fake\MockMollieClient
+     */
     public function createMockApiClientForAvailablePaymentMethods(): MockMollieClient
     {
         $response = [
