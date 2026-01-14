@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\Response;
 class IndexController extends AbstractController
 {
     use LoggerTrait;
+
     /**
      * @param \Symfony\Component\HttpFoundation\Request $request
      *
