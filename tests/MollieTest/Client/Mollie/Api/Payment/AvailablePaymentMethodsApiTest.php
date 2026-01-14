@@ -27,7 +27,7 @@ class AvailablePaymentMethodsApiTest extends AbstractClientTest
      */
     public function testGetAvailablePaymentMethodsApi(): void
     {
-        $transfer = $this->prepareTransfersForSuccessfulGetAvailablePaymentMethodsApiTest();
+        $transfer = $this->createMollieApiRequestTransfer();
         $client = $this->createClient();
         $mollieAvailablePaymentMethodsApiResponseTransfer = $client->getAvailablePaymentMethods($transfer);
         $methods = $mollieAvailablePaymentMethodsApiResponseTransfer->getCollection()->getMethods();
@@ -41,7 +41,7 @@ class AvailablePaymentMethodsApiTest extends AbstractClientTest
     /**
      * @return \Generated\Shared\Transfer\MollieApiRequestTransfer
      */
-    protected function prepareTransfersForSuccessfulGetAvailablePaymentMethodsApiTest(): MollieApiRequestTransfer
+    protected function createMollieApiRequestTransfer(): MollieApiRequestTransfer
     {
         $transfer = new MollieApiRequestTransfer();
         $queryTransfer = new MolliePaymentMethodQueryParametersTransfer();
