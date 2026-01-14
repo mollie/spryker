@@ -45,14 +45,7 @@ class AvailablePaymentMethodsApiTest extends AbstractClientTest
     {
         $transfer = new MollieApiRequestTransfer();
         $queryTransfer = new MolliePaymentMethodQueryParametersTransfer();
-        $amountTransfer = new MollieAmountTransfer();
 
-        $currency = 'EUR';
-        $value = '111';
-        $amountTransfer->setCurrency($currency);
-        $amountTransfer->setValue($value);
-
-        $queryTransfer->setAmount($amountTransfer);
         $queryTransfer->setSequenceType('oneOff');
         $transfer->setMolliePaymentMethodQueryParameters($queryTransfer);
 
