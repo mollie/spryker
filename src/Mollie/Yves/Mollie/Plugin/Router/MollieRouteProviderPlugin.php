@@ -15,6 +15,11 @@ class MollieRouteProviderPlugin extends AbstractRouteProviderPlugin
     public const ROUTE_MOLLIE_PAYMENT_REDIRECT = 'checkout/payment-redirect';
 
     /**
+     * @var string
+     */
+    public const ROUTE_MOLLIE_TEST = 'mollie/test';
+
+    /**
      * @param \Spryker\Yves\Router\Route\RouteCollection $routeCollection
      *
      * @return \Spryker\Yves\Router\Route\RouteCollection
@@ -22,6 +27,7 @@ class MollieRouteProviderPlugin extends AbstractRouteProviderPlugin
     public function addRoutes(RouteCollection $routeCollection): RouteCollection
     {
         $routeCollection = $this->addPaymentStatusRoute($routeCollection);
+        $routeCollection = $this->addTestRoute($routeCollection);
 
         return $routeCollection;
     }
@@ -36,6 +42,20 @@ class MollieRouteProviderPlugin extends AbstractRouteProviderPlugin
         $route = $this->buildRoute('/checkout/payment-redirect', 'Mollie', 'PaymentRedirect', 'paymentRedirectAction');
         $route = $route->setMethods(['GET']);
         $routeCollection->add(static::ROUTE_MOLLIE_PAYMENT_REDIRECT, $route);
+
+        return $routeCollection;
+    }
+
+    /**
+     * @param \Spryker\Yves\Router\Route\RouteCollection $routeCollection
+     *
+     * @return \Spryker\Yves\Router\Route\RouteCollection
+     */
+    protected function addTestRoute(RouteCollection $routeCollection): RouteCollection
+    {
+        $route = $this->buildRoute('/mollie/test', 'Mollie', 'Index', 'testAction');
+        $route = $route->setMethods(['GET', 'POST']);
+        $routeCollection->add(static::ROUTE_MOLLIE_TEST, $route);
 
         return $routeCollection;
     }

@@ -100,7 +100,7 @@ class MollieApiClientTester extends Actor
     /**
      * @var array
      */
-    protected const MOLLIE_MOCKED_GET_PAYMENT_BY_TRANSACTION_ID = [
+    protected const MOLLIE_MOCKED_PAYMENT_TRANSACTION_RESPONSE_PAYLOAD = [
         'resource' => 'payment',
         'id' => 'tr_IUDAHSMGnU6qLbRaksas',
         'mode' => 'live',
@@ -151,8 +151,8 @@ class MollieApiClientTester extends Actor
     /**
      * @return array
      */
-    public function getPaymentByTransactionId(): array
+    public function getMollieMockedPaymentTransactionResponsePayload(): array
     {
-        return static::MOLLIE_MOCKED_GET_PAYMENT_BY_TRANSACTION_ID;
+        return static::MOLLIE_MOCKED_PAYMENT_TRANSACTION_RESPONSE_PAYLOAD;
     }
 }
