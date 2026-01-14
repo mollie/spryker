@@ -54,7 +54,7 @@ class MollieRouteProviderPlugin extends AbstractRouteProviderPlugin
     protected function addTestRoute(RouteCollection $routeCollection): RouteCollection
     {
         $route = $this->buildRoute('/mollie/test', 'Mollie', 'Index', 'testAction');
-        $route = $route->setMethods(['GET']);
+        $route = $route->setMethods(['GET', 'POST']);
         $routeCollection->add(static::ROUTE_MOLLIE_TEST, $route);
 
         return $routeCollection;
