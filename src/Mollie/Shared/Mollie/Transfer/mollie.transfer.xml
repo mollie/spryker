@@ -83,10 +83,18 @@
         <property name="methods" type="MolliePaymentMethod[]"/>
     </transfer>
 
+    <transfer name="MolliePaymentMethodQueryParameters">
+        <property name="locale" type="string"/>
+        <property name="amount" type="MollieAmount"/>
+        <property name="billingCountry" type="string"/>
+        <property name="sequenceType" type="string"/>
+    </transfer>
+
     <transfer name="MollieApiRequest">
         <property name="quote" type="Quote"/>
         <property name="checkoutResponse" type="CheckoutResponse"/>
         <property name="body" type="array"/>
+        <property name="molliePaymentMethodQueryParameters" type="MolliePaymentMethodQueryParameters" />
     </transfer>
 
     <transfer name="MollieApiResponse">

@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Mollie\Client\Mollie\Api\Payment;
 
@@ -8,7 +8,9 @@ use Generated\Shared\Transfer\MollieApiRequestTransfer;
 use Generated\Shared\Transfer\MollieApiResponseTransfer;
 use Generated\Shared\Transfer\MollieAvailablePaymentMethodCollectionTransfer;
 use Generated\Shared\Transfer\MollieAvailablePaymentMethodsApiResponseTransfer;
+use Generated\Shared\Transfer\MolliePaymentMethodQueryParametersTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodTransfer;
+use Mollie\Api\Http\Data\Money;
 use Mollie\Api\Http\Request;
 use Mollie\Api\Http\Requests\GetEnabledMethodsRequest;
 use Mollie\Api\Types\MethodQuery;
@@ -27,7 +29,7 @@ class AvailablePaymentMethodsApi extends AbstractApiCall
     /**
      * @param \Generated\Shared\Transfer\MollieApiResponseTransfer $mollieApiResponseTransfer
      *
-     * @return \Generated\Shared\Transfer\MollieAvailablePaymentMethodCollectionTransfer
+     * @return \Generated\Shared\Transfer\MollieAvailablePaymentMethodsApiResponseTransfer
      */
     protected function mapApiResponse(MollieApiResponseTransfer $mollieApiResponseTransfer): AbstractTransfer
     {
@@ -58,9 +60,40 @@ class AvailablePaymentMethodsApi extends AbstractApiCall
      */
     protected function buildRequest(?MollieApiRequestTransfer $mollieApiRequestTransfer = null): ?Request
     {
+        if (!$mollieApiRequestTransfer) {
+            return new GetEnabledMethodsRequest(
+                'oneOff',
+                MethodQuery::RESOURCE_PAYMENTS,
+            );
+        }
+
+        $queryParametersTransfer = $mollieApiRequestTransfer->getMolliePaymentMethodQueryParameters();
+        $amount = $this->getAmount($queryParametersTransfer);
+
         return new GetEnabledMethodsRequest(
-            'oneOff',
+            $queryParametersTransfer->getSequenceType(),
             MethodQuery::RESOURCE_PAYMENTS,
+            $queryParametersTransfer->getLocale(),
+            $amount,
+            $queryParametersTransfer->getBillingCountry(),
+        );
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MolliePaymentMethodQueryParametersTransfer $transfer
+     *
+     * @return \Mollie\Api\Http\Data\Money|null
+     */
+    protected function getAmount(MolliePaymentMethodQueryParametersTransfer $transfer): Money|null
+    {
+        $amountTransfer = $transfer->getAmount();
+        if (!$amountTransfer) {
+            return null;
+        }
+
+        return new Money(
+            $amountTransfer->getValue(),
+            $amountTransfer->getCurrency(),
         );
     }
 }
