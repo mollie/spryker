@@ -6,9 +6,9 @@ namespace Mollie\Client\Mollie\Api\Payment;
 
 use Generated\Shared\Transfer\MollieApiRequestTransfer;
 use Generated\Shared\Transfer\MollieApiResponseTransfer;
-use Generated\Shared\Transfer\MollieAvailablePaymentMethodCollectionTransfer;
-use Generated\Shared\Transfer\MollieAvailablePaymentMethodsApiResponseTransfer;
+use Generated\Shared\Transfer\MolliePaymentMethodCollectionTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodQueryParametersTransfer;
+use Generated\Shared\Transfer\MolliePaymentMethodsApiResponseTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodTransfer;
 use Mollie\Api\Http\Data\Money;
 use Mollie\Api\Http\Request;
@@ -18,7 +18,7 @@ use Mollie\Client\Mollie\Api\AbstractApiCall;
 use Spryker\Shared\Kernel\Transfer\AbstractTransfer;
 use Spryker\Shared\Log\LoggerTrait;
 
-class AvailablePaymentMethodsApi extends AbstractApiCall
+class GetEnabledPaymentMethodsApi extends AbstractApiCall
 {
     use LoggerTrait;
 
@@ -29,28 +29,28 @@ class AvailablePaymentMethodsApi extends AbstractApiCall
     /**
      * @param \Generated\Shared\Transfer\MollieApiResponseTransfer $mollieApiResponseTransfer
      *
-     * @return \Generated\Shared\Transfer\MollieAvailablePaymentMethodsApiResponseTransfer
+     * @return \Generated\Shared\Transfer\MolliePaymentMethodsApiResponseTransfer
      */
     protected function mapApiResponse(MollieApiResponseTransfer $mollieApiResponseTransfer): AbstractTransfer
     {
-        $mollieAvailablePaymentMethodsApiResponseTransfer = new MollieAvailablePaymentMethodsApiResponseTransfer();
-        $mollieAvailablePaymentMethodsApiResponseTransfer
+        $molliePaymentMethodsApiResponseTransfer = new MolliePaymentMethodsApiResponseTransfer();
+        $molliePaymentMethodsApiResponseTransfer
             ->setIsSuccessful($mollieApiResponseTransfer->getIsSuccessful())
             ->setMessage($mollieApiResponseTransfer->getMessage());
 
-        $mollieAvailablePaymentMethodCollectionTransfer = new MollieAvailablePaymentMethodCollectionTransfer();
+        $molliePaymentMethodCollectionTransfer = new MolliePaymentMethodCollectionTransfer();
         $methods = $mollieApiResponseTransfer->getPayload()[static::METHODS_WRAPPER_KEY][static::METHODS_KEY] ?? [];
         foreach ($methods as $method) {
             $molliePaymentMethodTransfer = new MolliePaymentMethodTransfer();
 
             $molliePaymentMethodTransfer->fromArray($method, true);
 
-            $mollieAvailablePaymentMethodCollectionTransfer->addMethods($molliePaymentMethodTransfer);
+            $molliePaymentMethodCollectionTransfer->addMethods($molliePaymentMethodTransfer);
         }
 
-        $mollieAvailablePaymentMethodsApiResponseTransfer->setCollection($mollieAvailablePaymentMethodCollectionTransfer);
+        $molliePaymentMethodsApiResponseTransfer->setCollection($molliePaymentMethodCollectionTransfer);
 
-        return $mollieAvailablePaymentMethodsApiResponseTransfer;
+        return $molliePaymentMethodsApiResponseTransfer;
     }
 
     /**
@@ -76,6 +76,10 @@ class AvailablePaymentMethodsApi extends AbstractApiCall
             $queryParametersTransfer->getLocale(),
             $amount,
             $queryParametersTransfer->getBillingCountry(),
+            $queryParametersTransfer->getIncludeWallets(),
+            $queryParametersTransfer->getOrderLineCategories(),
+            $queryParametersTransfer->getProfileId(),
+            $queryParametersTransfer->getIncludeIssuers(),
         );
     }
 

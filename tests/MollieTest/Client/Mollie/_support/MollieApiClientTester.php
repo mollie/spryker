@@ -29,7 +29,7 @@ class MollieApiClientTester extends Actor
     /**
      * @var array
      */
-    protected const MOLLIE_MOCKED_PAYMENT_METHOD_RESPONSE_PAYLOAD = [
+    protected const MOLLIE_MOCKED_ENABLED_PAYMENT_METHOD_RESPONSE_PAYLOAD = [
         'count' => 2,
         '_embedded' => [
             'methods' => [
@@ -100,6 +100,102 @@ class MollieApiClientTester extends Actor
     /**
      * @var array
      */
+    protected const MOLLIE_MOCKED_ALL_PAYMENT_METHODS_RESPONSE_PAYLOAD = [
+    '_embedded' => [
+        'methods' => [
+            [
+                'resource' => 'method',
+                'id' => 'applepay',
+                'description' => 'Apple Pay',
+                'minimumAmount' => [
+                    'value' => '0.01',
+                    'currency' => 'EUR',
+                ],
+                'maximumAmount' => [
+                    'value' => '10000.00',
+                    'currency' => 'EUR',
+                ],
+                'image' => [
+                    'size1x' => 'https://www.mollie.com/external/icons/payment-methods/applepay.png',
+                    'size2x' => 'https://www.mollie.com/external/icons/payment-methods/applepay%402x.png',
+                    'svg'    => 'https://www.mollie.com/external/icons/payment-methods/applepay.svg',
+                ],
+                'status' => null,
+                '_links' => [
+                    'self' => [
+                        'href' => 'https://api.mollie.com/v2/methods/applepay',
+                        'type' => 'application/hal+json',
+                    ],
+                ],
+            ],
+            [
+                'resource' => 'method',
+                'id' => 'googlepay',
+                'description' => 'Google Pay',
+                'minimumAmount' => [
+                    'value' => '0.01',
+                    'currency' => 'EUR',
+                ],
+                'maximumAmount' => [
+                    'value' => '10000.00',
+                    'currency' => 'EUR',
+                ],
+                'image' => [
+                    'size1x' => 'https://www.mollie.com/external/icons/payment-methods/googlepay.png',
+                    'size2x' => 'https://www.mollie.com/external/icons/payment-methods/googlepay%402x.png',
+                    'svg'    => 'https://www.mollie.com/external/icons/payment-methods/googlepay.svg',
+                ],
+                'status' => null,
+                '_links' => [
+                    'self' => [
+                        'href' => 'https://api.mollie.com/v2/methods/googlepay',
+                        'type' => 'application/hal+json',
+                    ],
+                ],
+            ],
+            [
+                'resource' => 'method',
+                'id' => 'ideal',
+                'description' => 'iDEAL',
+                'minimumAmount' => [
+                    'value' => '0.01',
+                    'currency' => 'EUR',
+                ],
+                'maximumAmount' => [
+                    'value' => '50000.00',
+                    'currency' => 'EUR',
+                ],
+                'image' => [
+                    'size1x' => 'https://www.mollie.com/external/icons/payment-methods/ideal.png',
+                    'size2x' => 'https://www.mollie.com/external/icons/payment-methods/ideal%402x.png',
+                    'svg'    => 'https://www.mollie.com/external/icons/payment-methods/ideal.svg',
+                ],
+                'status' => 'activated',
+                '_links' => [
+                    'self' => [
+                        'href' => 'https://api.mollie.com/v2/methods/ideal',
+                        'type' => 'application/hal+json',
+                    ],
+                ],
+            ],
+        ],
+    ],
+    'count' => 29,
+    '_links' => [
+        'documentation' => [
+            'href' => 'https://docs.mollie.com/reference/list-all-methods',
+            'type' => 'text/html',
+        ],
+        'self' => [
+            'href' => 'https://api.mollie.com/v2/methods/all',
+            'type' => 'application/hal+json',
+        ],
+    ],
+];
+
+    /**
+     * @var array
+     */
     protected const MOLLIE_MOCKED_GET_PAYMENT_BY_TRANSACTION_ID = [
         'resource' => 'payment',
         'id' => 'tr_IUDAHSMGnU6qLbRaksas',
@@ -143,9 +239,17 @@ class MollieApiClientTester extends Actor
     /**
      * @return array
      */
-    public function getMollieMockedPaymentMethodResponsePayload(): array
+    public function getMollieMockedEnabledPaymentMethodResponsePayload(): array
     {
-        return static::MOLLIE_MOCKED_PAYMENT_METHOD_RESPONSE_PAYLOAD;
+        return static::MOLLIE_MOCKED_ENABLED_PAYMENT_METHOD_RESPONSE_PAYLOAD;
+    }
+
+    /**
+     * @return array
+     */
+    public function getMollieMockedAllPaymentMethodResponsePayload(): array 
+    {
+        return static::MOLLIE_MOCKED_ALL_PAYMENT_METHODS_RESPONSE_PAYLOAD;
     }
 
     /**

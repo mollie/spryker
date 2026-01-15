@@ -6,8 +6,9 @@ namespace Mollie\Client\Mollie;
 
 use Mollie\Api\MollieApiClient;
 use Mollie\Client\Mollie\Api\ApiCallInterface;
-use Mollie\Client\Mollie\Api\Payment\AvailablePaymentMethodsApi;
 use Mollie\Client\Mollie\Api\Payment\CreatePaymentApi;
+use Mollie\Client\Mollie\Api\Payment\GetAllPaymentMethodsApi;
+use Mollie\Client\Mollie\Api\Payment\GetEnabledPaymentMethodsApi;
 use Mollie\Client\Mollie\Api\Payment\GetPaymentByTransactionIdApi;
 use Mollie\Client\Mollie\Dependency\Service\MollieToUtilEncodingServiceInterface;
 use Mollie\Service\Mollie\MollieServiceInterface;
@@ -19,11 +20,23 @@ use Spryker\Client\Kernel\AbstractFactory;
 class MollieFactory extends AbstractFactory
 {
     /**
-     * @return \Mollie\Client\Mollie\Api\Payment\AvailablePaymentMethodsApi
+     * @return \Mollie\Client\Mollie\Api\Payment\GetEnabledPaymentMethodsApi
      */
-    public function createAvailablePaymentMethodsApi(): ApiCallInterface
+    public function createEnabledPaymentMethodsApi(): ApiCallInterface
     {
-        return new AvailablePaymentMethodsApi(
+        return new GetEnabledPaymentMethodsApi(
+            $this->createMollieApiClient(),
+            $this->getConfig(),
+            $this->getUtilEncodingService(),
+        );
+    }
+
+    /**
+     * @return \Mollie\Client\Mollie\Api\Payment\GetAllPaymentMethodsApi
+     */
+    public function createAllPaymentMethodsApi(): ApiCallInterface
+    {
+        return new GetAllPaymentMethodsApi(
             $this->createMollieApiClient(),
             $this->getConfig(),
             $this->getUtilEncodingService(),

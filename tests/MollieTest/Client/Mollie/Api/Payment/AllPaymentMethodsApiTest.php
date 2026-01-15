@@ -10,12 +10,13 @@ use Generated\Shared\Transfer\MollieApiRequestTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodQueryParametersTransfer;
 use Mollie\Api\Fake\MockMollieClient;
 use Mollie\Api\Fake\MockResponse;
-use Mollie\Api\Http\Requests\GetEnabledMethodsRequest;
+use Mollie\Api\Http\Requests\GetAllMethodsRequest;
+use Mollie\Client\Mollie\MollieClient;
 use Mollie\Client\Mollie\MollieClientInterface;
 use MollieTest\Client\Mollie\AbstractClientTest;
 use MollieTest\Client\Mollie\MollieApiClientTester;
 
-class AvailablePaymentMethodsApiTest extends AbstractClientTest
+class AllPaymentMethodsApiTest extends AbstractClientTest
 {
     /**
      * @var \MollieTest\Client\Mollie\MollieApiClientTester
@@ -25,18 +26,23 @@ class AvailablePaymentMethodsApiTest extends AbstractClientTest
     /**
      * @return void
      */
-    public function testGetAvailablePaymentMethodsApi(): void
+    public function testGetAllPaymentMethodsApi(): void
     {
 
         $transfer = $this->createMollieApiRequestTransfer();
         $client = $this->createClient();
-        $mollieAvailablePaymentMethodsApiResponseTransfer = $client->getEnabledPaymentMethods($transfer);
+        
+        $mollieAvailablePaymentMethodsApiResponseTransfer = $client->getAllPaymentMethods($transfer);
         $methods = $mollieAvailablePaymentMethodsApiResponseTransfer->getCollection()->getMethods();
         $methodIds = $this->getMethodIds($methods);
+        $statuses = $this->getUniqueStatuses($methods);
 
         $this->assertNotEmpty($methods);
+        $this->assertContains('applepay', $methodIds);
+        $this->assertContains('googlepay', $methodIds);
         $this->assertContains('ideal', $methodIds);
-        $this->assertContains('creditcard', $methodIds);
+        $this->assertContains('activated', $statuses);
+        $this->assertContains('unactivated', $statuses);
     }
 
     /**
@@ -47,7 +53,6 @@ class AvailablePaymentMethodsApiTest extends AbstractClientTest
         $transfer = new MollieApiRequestTransfer();
         $queryTransfer = new MolliePaymentMethodQueryParametersTransfer();
 
-        $queryTransfer->setSequenceType('oneOff');
         $transfer->setMolliePaymentMethodQueryParameters($queryTransfer);
 
         return $transfer;
@@ -69,6 +74,31 @@ class AvailablePaymentMethodsApiTest extends AbstractClientTest
     }
 
     /**
+     * @param array $methods
+     *
+     * @return array
+     */
+    protected function getUniqueStatuses(ArrayObject $methods): array
+    {
+        $statuses = [];
+        foreach ($methods as $method) {
+            $status = $method->getStatus();
+            if (!$status) {
+                $status = 'unactivated';
+            }
+
+            if (isset($statuses[$status])) {
+                continue;
+            }
+
+
+            $statuses[$status] = $status;
+        }
+
+        return $statuses;
+    }
+
+    /**
      * @return \Mollie\Client\Mollie\MollieClientInterface
      */
     public function createClient(): MollieClientInterface
@@ -80,14 +110,14 @@ class AvailablePaymentMethodsApiTest extends AbstractClientTest
         return $this->createClientMock($mollieFactoryMock);
     }
 
-     /**
-      * @return \Mollie\Api\Fake\MockMollieClient
-      */
+    /**
+     * @return \Mollie\Api\Fake\MockMollieClient
+     */
     public function createMockApiClientForAvailablePaymentMethods(): MockMollieClient
     {
         $response = [
-            GetEnabledMethodsRequest::class => new MockResponse(
-                $this->tester->getMollieMockedEnabledPaymentMethodResponsePayload(),
+            GetAllMethodsRequest::class => new MockResponse(
+                $this->tester->getMollieMockedAllPaymentMethodResponsePayload(),
             ),
         ];
 
