@@ -54,7 +54,7 @@ class MolliePaymentHandler implements MolliePaymentHandlerInterface
 
         if (!$molliePaymentApiResponseTransfer->getIsSuccessful()) {
             $this->getLogger()->error($molliePaymentApiResponseTransfer->getMessage());
-            $errors = $this->createErrorMessages();
+            $errors = $this->createErrorMessages($molliePaymentApiResponseTransfer->getMessage());
             $checkoutResponseTransfer
                 ->setErrors($errors)
                 ->setIsSuccess(false);
@@ -97,12 +97,14 @@ class MolliePaymentHandler implements MolliePaymentHandlerInterface
     }
 
     /**
+     * @param string $message
+     *
      * @return \ArrayObject<int, \Generated\Shared\Transfer\CheckoutErrorTransfer>
      */
-    protected function createErrorMessages(): ArrayObject
+    protected function createErrorMessages(string $message): ArrayObject
     {
         $error = new CheckoutErrorTransfer();
-        $error->setMessage(static::DEFAULT_ERROR_MESSAGE);
+        $error->setMessage($message);
 
         $errors = new ArrayObject();
         $errors->append($error);
