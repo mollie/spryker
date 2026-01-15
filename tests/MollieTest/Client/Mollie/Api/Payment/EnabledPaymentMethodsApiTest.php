@@ -75,7 +75,7 @@ class EnabledPaymentMethodsApiTest extends AbstractClientTest
     {
         $mollieFactoryMock = $this->createMollieFactoryMock();
         $mollieFactoryMock->method('createMollieApiClient')
-            ->willReturn($this->createMockApiClientForAvailablePaymentMethods());
+            ->willReturn($this->createMockApiClientForEnabledPaymentMethods());
 
         return $this->createClientMock($mollieFactoryMock);
     }
@@ -83,7 +83,7 @@ class EnabledPaymentMethodsApiTest extends AbstractClientTest
      /**
       * @return \Mollie\Api\Fake\MockMollieClient
       */
-    public function createMockApiClientForAvailablePaymentMethods(): MockMollieClient
+    public function createMockApiClientForEnabledPaymentMethods(): MockMollieClient
     {
         $response = [
             GetEnabledMethodsRequest::class => new MockResponse(
