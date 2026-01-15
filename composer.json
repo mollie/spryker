@@ -26,7 +26,7 @@
     "spryker-shop/shop-application-extension": "^1.2.0",
     "mollie/mollie-api-php": "^3.7.0",
     "spryker/step-engine": "^3.7",
-    "psr/log": "3.0.2",
+    "psr/log": "^3.0",
     "spryker-shop/checkout-page": "^3.39",
     "spryker/cart-extension": "^4.3",
     "spryker/checkout-extension": "^1.5",
