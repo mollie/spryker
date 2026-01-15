@@ -4,14 +4,12 @@ declare(strict_types=1);
 
 namespace Mollie\Zed\Mollie\Communication;
 
-use Mollie\Zed\Mollie\Communication\Mapper\MollieCommunicationMapper;
+use Mollie\Client\Mollie\MollieClientInterface;
 use Mollie\Zed\Mollie\Communication\Table\MolliePaymentMethodsTable;
 use Mollie\Zed\Mollie\Communication\Table\TableDataProvider\MolliePaymentMethodsDataProvider;
 use Mollie\Zed\Mollie\Dependency\MollieToStorageClientInterface;
 use Mollie\Zed\Mollie\Dependency\Service\MollieToUtilEncodingServiceInterface;
 use Mollie\Zed\Mollie\MollieDependencyProvider;
-use Spryker\Service\UtilEncoding\UtilEncodingService;
-use Spryker\Service\UtilEncoding\UtilEncodingServiceInterface;
 use Spryker\Zed\Kernel\Communication\AbstractCommunicationFactory;
 
 /**
@@ -35,16 +33,8 @@ class MollieCommunicationFactory extends AbstractCommunicationFactory
     public function createMolliePaymentMethodsDataProvider()
     {
         return new MolliePaymentMethodsDataProvider(
-            $this->getFacade(),
-            $this->createMollieCommunicatioMapper(),
-            $this->getStorageClient(),
-            $this->getUtilEncodingService(),
+            $this->getMollieClient(),
         );
-    }
-
-    public function createMollieCommunicatioMapper()
-    {
-        return new MollieCommunicationMapper($this->getUtilEncodingService());
     }
 
     /**
@@ -56,10 +46,10 @@ class MollieCommunicationFactory extends AbstractCommunicationFactory
     }
 
     /**
-     * @return MollieToUtilEncodingServiceInterface
+     * @return \Mollie\Client\Mollie\MollieClientInterface
      */
-    public function getUtilEncodingService(): MollieToUtilEncodingServiceInterface
+    public function getMollieClient(): MollieClientInterface
     {
-        return $this->getProvidedDependency(MollieDependencyProvider::SERVICE_UTIL_ENCODING);
+        return $this->getProvidedDependency(MollieDependencyProvider::CLIENT_MOLLIE);
     }
 }

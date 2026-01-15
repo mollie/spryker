@@ -16,14 +16,18 @@ use Symfony\Component\HttpFoundation\Request;
 class IndexController extends AbstractController
 {
     /**
+     * @param \Symfony\Component\HttpFoundation\Request $request
+     *
      * @return array
      */
-    public function indexAction(): array
+    public function indexAction(Request $request): array
     {
+        $showOnlyEnabled = $request->query->get(MollieConstants::MOLLIE_QUERY_PARAMETER_SHOW_ONLY_ENABLED);
         $table = $this->getFactory()->createMolliePaymentMethodsTable();
 
         return $this->viewResponse([
             'mollieTable' => $table->render(),
+            MollieConstants::MOLLIE_QUERY_PARAMETER_SHOW_ONLY_ENABLED => $showOnlyEnabled,
         ]);
     }
 
@@ -40,9 +44,9 @@ class IndexController extends AbstractController
     }
 
     /**
-     * @param Request $request
+     * @param \Symfony\Component\HttpFoundation\Request $request
      *
-     * @return RedirectResponse
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
     public function clearCacheAction(Request $request): RedirectResponse
     {

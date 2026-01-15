@@ -64,7 +64,7 @@ class MollieDependencyProvider extends AbstractBundleDependencyProvider
     public function provideCommunicationLayerDependencies(Container $container)
     {
         $container = $this->addStorageClient($container);
-        $container = $this->addUtilEncodingService($container);
+        $container = $this->addMollieClient($container);
 
         return $container;
     }

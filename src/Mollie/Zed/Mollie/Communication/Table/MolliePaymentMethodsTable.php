@@ -28,6 +28,8 @@ class MolliePaymentMethodsTable extends AbstractTable
 
     protected const string IMAGE_HTML = '<img src="%s">';
 
+    protected const string STATUS_NOT_ACTIVATED = 'not activated';
+
     protected const array MOLLIE_PAYMENT_METHODS_TABLE_COLUMN_MAP = [
         MolliePaymentMethodTransfer::DESCRIPTION => 'Name',
         MolliePaymentMethodTransfer::STATUS => 'Status',
@@ -59,19 +61,27 @@ class MolliePaymentMethodsTable extends AbstractTable
         $config->setHeader(static::MOLLIE_PAYMENT_METHODS_TABLE_COLUMN_MAP);
         $this->mapRawColumns($config);
 
-        $url = Url::generate('table')->build();
-        $config->setDefaultSortField(MolliePaymentMethodTransfer::ID);
+        $queryParams = $this->generateQueryParams();
+        $url = Url::generate('table', $queryParams)->build();
         $config->setUrl($url);
-        $config->setSortable(
-            [
-                MolliePaymentMethodTransfer::STATUS,
-                MolliePaymentMethodTransfer::DESCRIPTION,
-                MolliePaymentMethodTransfer::MINIMUM_AMOUNT,
-                MolliePaymentMethodTransfer::MAXIMUM_AMOUNT,
-            ],
-        );
 
         return $config;
+    }
+
+    /**
+     * @return array
+     */
+    protected function generateQueryParams(): array
+    {
+        $queryParams = [];
+
+        $urlParams = $this->request->query->all();
+
+        foreach ($urlParams as $key => $value) {
+            $queryParams[$key] = $value;
+        }
+
+        return $queryParams;
     }
 
     /**
@@ -81,7 +91,7 @@ class MolliePaymentMethodsTable extends AbstractTable
      */
     protected function prepareData(TableConfiguration $config): array
     {
-        $responseTransfer = $this->dataProvider->getData();
+        $responseTransfer = $this->dataProvider->getData($this->request);
         $paymentMethodsCollection = $responseTransfer->getCollection();
 
         return $this->processData($paymentMethodsCollection->getMethods()->getArrayCopy());
@@ -101,17 +111,12 @@ class MolliePaymentMethodsTable extends AbstractTable
 
             $results[] = [
                 MolliePaymentMethodTransfer::DESCRIPTION => $paymentMethod->getDescription(),
-                MolliePaymentMethodTransfer::STATUS => $paymentMethod->getStatus(),
+                MolliePaymentMethodTransfer::STATUS => $paymentMethod->getStatus() ?? static::STATUS_NOT_ACTIVATED,
                 MolliePaymentMethodTransfer::MINIMUM_AMOUNT => $this->formatMinimumAmountField($paymentMethod),
                 MolliePaymentMethodTransfer::MAXIMUM_AMOUNT => $this->formatMaximumAmountField($paymentMethod),
                 MolliePaymentMethodTransfer::ISSUERS => $this->formatIssuerList($paymentMethod->getIssuers()),
                 MolliePaymentMethodTransfer::IMAGE => $this->formatImagesField($paymentMethod->getImage()),
             ];
-        }
-
-        $sortingParameters = $this->createSortingParameters($this->getOrderParameter())[0];
-        if ($sortingParameters) {
-            $results = $this->sortResults($results, $sortingParameters[static::KEY_COLUMN], $sortingParameters[static::KEY_DIRECTION]);
         }
 
         $this->filtered = count($results);
@@ -181,27 +186,6 @@ class MolliePaymentMethodsTable extends AbstractTable
      */
     protected function formatIssuerList(array $issuers): string
     {
-        $issuers = '[
-          {
-              "id": "ideal_ABNANL2A",
-            "name": "ABN AMRO",
-            "image": {
-              "size1x": "https://mollie.com/external/icons/issuers/ideal/ABNANL2A.png",
-              "size2x": "https://mollie.com/external/icons/issuers/ideal/ABNANL2A%402x.png",
-              "svg": "https://mollie.com/external/icons/issuers/ideal/ABNANL2A.svg"
-            }
-          },
-          {
-              "id": "ideal_INGBNL2A",
-            "name": "ING",
-            "image": {
-              "size1x": "https://mollie.com/external/icons/issuers/ideal/INGBNL2A.png",
-              "size2x": "https://mollie.com/external/icons/issuers/ideal/INGBNL2A%402x.png",
-              "svg": "https://mollie.com/external/icons/issuers/ideal/INGBNL2A.svg"
-            }
-          }
-        ]';
-        $issuers = json_decode($issuers, true);
         $html = '';
         foreach ($issuers as $issuer) {
             $html .= "{$issuer["name"]}, ";
@@ -240,46 +224,5 @@ class MolliePaymentMethodsTable extends AbstractTable
         }
 
         return false;
-    }
-
-    /**
-     * @param array $results
-     * @param string $columnIndex
-     * @param string $sortDirection
-     *
-     * @throws \InvalidArgumentException
-     *
-     * @return array
-     */
-    protected function sortResults(array $results, string $columnIndex, string $sortDirection): array
-    {
-        $columns = static::MOLLIE_PAYMENT_METHODS_TABLE_COLUMN_MAP;
-
-        if (is_numeric($columnIndex)) {
-            $columnIndex = (int)$columnIndex;
-        }
-
-        if (!isset(array_keys($columns)[$columnIndex])) {
-            throw new InvalidArgumentException("Invalid column index: $columnIndex");
-        }
-
-        usort($results, function ($a, $b) use ($sortDirection, $columns, $columnIndex) {
-            if (!array_key_exists(array_keys($columns)[$columnIndex], $a) || !array_key_exists(array_keys($columns)[$columnIndex], $b)) {
-                return 0;
-            }
-
-            if ($sortDirection === static::SORT_DESCENDING) {
-                /** @var array<array<int|string>> $b*/
-
-                /** @var array<array<int|string>> $a*/
-                return $b[array_keys($columns)[$columnIndex]] <=> $a[array_keys($columns)[$columnIndex]];
-            }
-            /** @var array<array<int|string>> $b*/
-
-            /** @var array<array<int|string>> $a*/
-            return $a[array_keys($columns)[$columnIndex]] <=> $b[array_keys($columns)[$columnIndex]];
-        });
-
-        return $results;
     }
 }
