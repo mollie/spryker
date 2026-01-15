@@ -1,4 +1,4 @@
-name: B2C-NORMA-CI
+name: Codeception tests
 
 on:
     pull_request:
