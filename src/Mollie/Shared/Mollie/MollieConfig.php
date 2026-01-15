@@ -29,6 +29,21 @@ class MollieConfig extends AbstractSharedConfig
     /**
      * @var string
      */
+    public const MOLLIE_PAYMENT_KLARNA_PAY_LATER = 'mollieKlarnaPayLaterPayment';
+
+    /**
+     * @var string
+     */
+    public const MOLLIE_PAYMENT_KLARNA_PAY_NOW = 'mollieKlarnaPayNowPayment';
+
+    /**
+     * @var string
+     */
+    public const MOLLIE_PAYMENT_KLARNA_SLICE_IT = 'mollieKlarnaSliceItPayment';
+
+    /**
+     * @var string
+     */
     public const MOLLIE_PAYMENT_PAYPAL = 'molliePayPalPayment';
 
     /**
