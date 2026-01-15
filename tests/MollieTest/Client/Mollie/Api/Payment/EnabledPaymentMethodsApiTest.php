@@ -15,7 +15,7 @@ use Mollie\Client\Mollie\MollieClientInterface;
 use MollieTest\Client\Mollie\AbstractClientTest;
 use MollieTest\Client\Mollie\MollieApiClientTester;
 
-class AvailablePaymentMethodsApiTest extends AbstractClientTest
+class EnabledPaymentMethodsApiTest extends AbstractClientTest
 {
     /**
      * @var \MollieTest\Client\Mollie\MollieApiClientTester
@@ -25,11 +25,12 @@ class AvailablePaymentMethodsApiTest extends AbstractClientTest
     /**
      * @return void
      */
-    public function testGetAvailablePaymentMethodsApi(): void
+    public function testGetEnabledPaymentMethodsApi(): void
     {
-        $transfer = $this->prepareTransfersForSuccessfulGetAvailablePaymentMethodsApiTest();
+
+        $transfer = $this->createMollieApiRequestTransfer();
         $client = $this->createClient();
-        $mollieAvailablePaymentMethodsApiResponseTransfer = $client->getAvailablePaymentMethods($transfer);
+        $mollieAvailablePaymentMethodsApiResponseTransfer = $client->getEnabledPaymentMethods($transfer);
         $methods = $mollieAvailablePaymentMethodsApiResponseTransfer->getCollection()->getMethods();
         $methodIds = $this->getMethodIds($methods);
 
@@ -41,7 +42,7 @@ class AvailablePaymentMethodsApiTest extends AbstractClientTest
     /**
      * @return \Generated\Shared\Transfer\MollieApiRequestTransfer
      */
-    protected function prepareTransfersForSuccessfulGetAvailablePaymentMethodsApiTest(): MollieApiRequestTransfer
+    protected function createMollieApiRequestTransfer(): MollieApiRequestTransfer
     {
         $transfer = new MollieApiRequestTransfer();
         $queryTransfer = new MolliePaymentMethodQueryParametersTransfer();
@@ -74,19 +75,19 @@ class AvailablePaymentMethodsApiTest extends AbstractClientTest
     {
         $mollieFactoryMock = $this->createMollieFactoryMock();
         $mollieFactoryMock->method('createMollieApiClient')
-            ->willReturn($this->createMockApiClientForAvailablePaymentMethods());
+            ->willReturn($this->createMockApiClientForEnabledPaymentMethods());
 
         return $this->createClientMock($mollieFactoryMock);
     }
 
-    /**
-     * @return \Mollie\Api\Fake\MockMollieClient
-     */
-    public function createMockApiClientForAvailablePaymentMethods(): MockMollieClient
+     /**
+      * @return \Mollie\Api\Fake\MockMollieClient
+      */
+    public function createMockApiClientForEnabledPaymentMethods(): MockMollieClient
     {
         $response = [
             GetEnabledMethodsRequest::class => new MockResponse(
-                $this->tester->getMollieMockedPaymentMethodResponsePayload(),
+                $this->tester->getMollieMockedEnabledPaymentMethodResponsePayload(),
             ),
         ];
 
