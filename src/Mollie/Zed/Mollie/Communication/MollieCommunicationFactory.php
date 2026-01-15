@@ -8,7 +8,6 @@ use Mollie\Client\Mollie\MollieClientInterface;
 use Mollie\Zed\Mollie\Communication\Table\MolliePaymentMethodsTable;
 use Mollie\Zed\Mollie\Communication\Table\TableDataProvider\MolliePaymentMethodsDataProvider;
 use Mollie\Zed\Mollie\Dependency\MollieToStorageClientInterface;
-use Mollie\Zed\Mollie\Dependency\Service\MollieToUtilEncodingServiceInterface;
 use Mollie\Zed\Mollie\MollieDependencyProvider;
 use Spryker\Zed\Kernel\Communication\AbstractCommunicationFactory;
 
