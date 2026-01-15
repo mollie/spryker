@@ -7,14 +7,19 @@ namespace Mollie\Zed\Mollie\Communication\Table\TableDataProvider;
 use Generated\Shared\Transfer\MollieApiRequestTransfer;
 use Generated\Shared\Transfer\MollieAvailablePaymentMethodsApiResponseTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodQueryParametersTransfer;
+use Mollie\Shared\Mollie\MollieConstants;
 use Mollie\Zed\Mollie\Business\MollieFacadeInterface;
+use Mollie\Zed\Mollie\Communication\Mapper\MollieCommunicationMapperInterface;
 use Mollie\Zed\Mollie\Dependency\MollieToStorageClientInterface;
+use Mollie\Zed\Mollie\Dependency\Service\MollieToUtilEncodingServiceInterface;
 
 class MolliePaymentMethodsDataProvider
 {
     public function __construct(
-        private MollieToStorageClientInterface $storageClient,
         private MollieFacadeInterface $mollieFacade,
+        private MollieCommunicationMapperInterface $mapper,
+        private MollieToStorageClientInterface $storageClient,
+        private MollieToUtilEncodingServiceInterface $utilEncodingService,
     ) {
     }
 
@@ -44,7 +49,7 @@ class MolliePaymentMethodsDataProvider
      */
     protected function getCachedData()
     {
-        return $this->storageClient->get('temp');
+        return $this->storageClient->get(MollieConstants::MOLLIE_AVAILABLE_METHODS_STORAGE_KEY);
     }
 
     /**
@@ -54,8 +59,14 @@ class MolliePaymentMethodsDataProvider
      */
     protected function setPaymentMethodsData(MollieAvailablePaymentMethodsApiResponseTransfer $responseTransfer): void
     {
-        $paymentMethodCollection = $responseTransfer->getCollection();
-        $encoded = json_encode($paymentMethodCollection->getMethods()->getArrayCopy());
-        $this->storageClient->set('temp', $encoded);
+            $paymentMethodCollection = $responseTransfer->getCollection();
+            $paymentMethodData = [];
+
+            foreach ($paymentMethodCollection->getMethods()->getArrayCopy() as $paymentMethodTransfer) {
+                $paymentMethodData[] = $paymentMethodTransfer->toArray(true, true);
+            }
+
+            $encodedPaymentMethodData = $this->utilEncodingService->encodeJson($paymentMethodData);
+            $this->storageClient->set(MollieConstants::MOLLIE_AVAILABLE_METHODS_STORAGE_KEY, $encodedPaymentMethodData);
     }
 }

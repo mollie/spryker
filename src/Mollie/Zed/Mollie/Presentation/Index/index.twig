@@ -1,7 +1,14 @@
 {% extends '@Gui/Layout/layout.twig' %}
 
-{% set title = 'Mollie Payment methods' | trans %}
+{% set title = 'mollie.title.payment_methods' | trans %}
 
 {% block content %}
+    <div>
+        <a class="btn btn-primary"
+           href="/mollie/index/clear-cache"
+        >
+            {{ 'mollie.button.clear_cache' | trans }}
+        </a>
+    </div>
     {{ mollieTable | raw }}
 {% endblock %}

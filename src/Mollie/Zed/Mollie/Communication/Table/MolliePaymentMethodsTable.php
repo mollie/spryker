@@ -12,26 +12,24 @@ use Spryker\Zed\Gui\Communication\Table\TableConfiguration;
 
 class MolliePaymentMethodsTable extends AbstractTable
 {
-    /**
-     * @var string
-     */
-    protected const KEY_COLUMN = 'column';
+    protected const string KEY_COLUMN = 'column';
 
-    /**
-     * @var string
-     */
-    protected const KEY_DIRECTION = 'dir';
+    protected const string KEY_DIRECTION = 'dir';
 
-    /**
-     * @var string
-     */
-    protected const SORT_DESCENDING = 'desc';
+    protected const string SORT_DESCENDING = 'desc';
 
-    /**
-     * @var array
-     */
-    protected const MOLLIE_PAYMENT_METHODS_TABLE_COLUMN_MAP = [
-        MolliePaymentMethodTransfer::ID => 'Name',
+    protected const string AMOUNT_VALUE = 'value';
+
+    protected const string MIN_VALUE_DEFAULT = '0';
+
+    protected const string MAX_VALUE_DEFAULT = 'unlimited';
+
+    protected const string AMOUNT_CURRENCY = 'currency';
+
+    protected const string IMAGE_HTML = '<img src="%s">';
+
+    protected const array MOLLIE_PAYMENT_METHODS_TABLE_COLUMN_MAP = [
+        MolliePaymentMethodTransfer::DESCRIPTION => 'Name',
         MolliePaymentMethodTransfer::STATUS => 'Status',
         MolliePaymentMethodTransfer::MINIMUM_AMOUNT => 'Minimal amount',
         MolliePaymentMethodTransfer::MAXIMUM_AMOUNT => 'Maximal amount',
@@ -39,10 +37,7 @@ class MolliePaymentMethodsTable extends AbstractTable
         MolliePaymentMethodTransfer::IMAGE => 'Images',
     ];
 
-    /**
-     * @var array
-     */
-    protected const MOLLIE_PAYMENT_METHODS_TABLE_RAW_COLUMNS = [
+    protected const array MOLLIE_PAYMENT_METHODS_TABLE_RAW_COLUMNS = [
         MolliePaymentMethodTransfer::IMAGE,
     ];
 
@@ -59,7 +54,7 @@ class MolliePaymentMethodsTable extends AbstractTable
      *
      * @return \Spryker\Zed\Gui\Communication\Table\TableConfiguration
      */
-    protected function configure(TableConfiguration $config)
+    protected function configure(TableConfiguration $config): TableConfiguration
     {
         $config->setHeader(static::MOLLIE_PAYMENT_METHODS_TABLE_COLUMN_MAP);
         $this->mapRawColumns($config);
@@ -70,7 +65,7 @@ class MolliePaymentMethodsTable extends AbstractTable
         $config->setSortable(
             [
                 MolliePaymentMethodTransfer::STATUS,
-                MolliePaymentMethodTransfer::ID,
+                MolliePaymentMethodTransfer::DESCRIPTION,
                 MolliePaymentMethodTransfer::MINIMUM_AMOUNT,
                 MolliePaymentMethodTransfer::MAXIMUM_AMOUNT,
             ],
@@ -105,7 +100,7 @@ class MolliePaymentMethodsTable extends AbstractTable
             }
 
             $results[] = [
-                MolliePaymentMethodTransfer::ID => $paymentMethod->getId(),
+                MolliePaymentMethodTransfer::DESCRIPTION => $paymentMethod->getDescription(),
                 MolliePaymentMethodTransfer::STATUS => $paymentMethod->getStatus(),
                 MolliePaymentMethodTransfer::MINIMUM_AMOUNT => $this->formatMinimumAmountField($paymentMethod),
                 MolliePaymentMethodTransfer::MAXIMUM_AMOUNT => $this->formatMaximumAmountField($paymentMethod),
@@ -158,10 +153,10 @@ class MolliePaymentMethodsTable extends AbstractTable
     {
         $min = $transfer->getMinimumAmount();
         if (!$min) {
-            return '0.00';
+            return static::MIN_VALUE_DEFAULT;
         }
 
-        return $min['value'] . ' ' . $min['currency'];
+        return $min[static::AMOUNT_VALUE] . ' ' . $min[static::AMOUNT_CURRENCY];
     }
 
     /**
@@ -173,10 +168,10 @@ class MolliePaymentMethodsTable extends AbstractTable
     {
         $max = $transfer->getMaximumAmount();
         if (!$max) {
-            return 'unlimited';
+            return static::MAX_VALUE_DEFAULT;
         }
 
-        return $max['value'] . ' ' . $max['currency'];
+        return $max[static::AMOUNT_VALUE] . ' ' . $max[static::AMOUNT_CURRENCY];
     }
 
     /**
@@ -186,10 +181,33 @@ class MolliePaymentMethodsTable extends AbstractTable
      */
     protected function formatIssuerList(array $issuers): string
     {
+        $issuers = '[
+          {
+              "id": "ideal_ABNANL2A",
+            "name": "ABN AMRO",
+            "image": {
+              "size1x": "https://mollie.com/external/icons/issuers/ideal/ABNANL2A.png",
+              "size2x": "https://mollie.com/external/icons/issuers/ideal/ABNANL2A%402x.png",
+              "svg": "https://mollie.com/external/icons/issuers/ideal/ABNANL2A.svg"
+            }
+          },
+          {
+              "id": "ideal_INGBNL2A",
+            "name": "ING",
+            "image": {
+              "size1x": "https://mollie.com/external/icons/issuers/ideal/INGBNL2A.png",
+              "size2x": "https://mollie.com/external/icons/issuers/ideal/INGBNL2A%402x.png",
+              "svg": "https://mollie.com/external/icons/issuers/ideal/INGBNL2A.svg"
+            }
+          }
+        ]';
+        $issuers = json_decode($issuers, true);
         $html = '';
-        foreach ($issuers as $key => $issuer) {
-            $html .= "{$issuer}, ";
+        foreach ($issuers as $issuer) {
+            $html .= "{$issuer["name"]}, ";
         }
+
+        $html = rtrim($html, ', ');
 
         return $html;
     }
@@ -203,7 +221,7 @@ class MolliePaymentMethodsTable extends AbstractTable
     {
         $html = '';
         foreach ($images as $key => $imageUrl) {
-            $html .= "<img src=\"{$imageUrl}\">";
+            $html .= sprintf(static::IMAGE_HTML, $imageUrl);
         }
 
         return $html;
