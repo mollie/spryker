@@ -11,10 +11,20 @@
         <property name="digitalGoods" type="bool"/>
     </transfer>
 
+    <transfer name="MollieBankTransferPayment">
+        <property name="dueDate" type="string"/>
+        <property name="billingEmail" type="bool"/>
+    </transfer>
+
+    <transfer name="MollieKlarnaPayment">
+        <property name="extraMerchantData" type="string"/>
+    </transfer>
+
     <transfer name="Payment">
         <property name="mollieCreditCardPayment" type="MollieCreditCardPayment"/>
-        <property name="mollieCreatePayment" type="MollieCreatePayment" />
         <property name="molliePayPalPayment" type="MolliePayPalPayment"/>
+        <property name="mollieBankTransferPayment" type="MollieBankTransferPayment"/>
+        <property name="mollieKlarnaPayment" type="MollieKlarnaPayment"/>
     </transfer>
 
     <transfer name="MolliePaymentMethod">

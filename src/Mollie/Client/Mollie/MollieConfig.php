@@ -40,6 +40,21 @@ class MollieConfig extends AbstractBundleConfig
     /**
      * @var string
      */
+    public const REQUEST_PARAMETER_CREATE_PAYMENT_BANK_TRANSFER_DUE_DATE = 'dueDate';
+
+    /**
+     * @var string
+     */
+    public const REQUEST_PARAMETER_CREATE_PAYMENT_BANK_TRANSFER_BILLING_EMAIL = 'billingAddress.email';
+
+    /**
+     * @var string
+     */
+    public const REQUEST_PARAMETER_CREATE_PAYMENT_KLARNA_EXTRA_MERCHANT_DATA = 'extraMerchantData';
+
+    /**
+     * @var string
+     */
     public const RESPONSE_PARAMETER_CREATE_PAYMENT_EMBEDDED = '_embedded';
 
     /**
