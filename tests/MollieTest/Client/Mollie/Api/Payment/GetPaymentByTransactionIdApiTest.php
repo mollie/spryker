@@ -56,7 +56,7 @@ class GetPaymentByTransactionIdApiTest extends AbstractClientTest
     {
         $response = [
             GetPaymentRequest::class => new MockResponse(
-                $this->tester->getPaymentByTransactionId(),
+                $this->tester->getMollieMockedPaymentTransactionResponsePayload(),
             ),
         ];
 
