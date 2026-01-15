@@ -31,7 +31,9 @@
     "spryker/cart-extension": "^4.3",
     "spryker/checkout-extension": "^1.5",
     "spryker/router": "^1.23",
-    "spryker/error-handler": "^2.11"
+    "spryker/error-handler": "^2.11",
+    "spryker/store": "^1.19.0",
+    "spryker/config": "^3.0.0"
   },
   "require-dev": {
     "spryker/application": "^3.33",
