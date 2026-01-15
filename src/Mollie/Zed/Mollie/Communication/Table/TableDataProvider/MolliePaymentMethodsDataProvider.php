@@ -6,6 +6,7 @@ namespace Mollie\Zed\Mollie\Communication\Table\TableDataProvider;
 
 use Generated\Shared\Transfer\MollieApiRequestTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodQueryParametersTransfer;
+use Generated\Shared\Transfer\MolliePaymentMethodsApiResponseTransfer;
 use Mollie\Client\Mollie\MollieClientInterface;
 use Mollie\Shared\Mollie\MollieConstants;
 use Symfony\Component\HttpFoundation\Request;
@@ -25,7 +26,7 @@ class MolliePaymentMethodsDataProvider
      *
      * @return \Generated\Shared\Transfer\MolliePaymentMethodsApiResponseTransfer
      */
-    public function getData(Request $request)
+    public function getData(Request $request): MolliePaymentMethodsApiResponseTransfer
     {
         $showOnlyEnabled = $request->query->get(MollieConstants::MOLLIE_QUERY_PARAMETER_SHOW_ONLY_ENABLED);
         $requestTransfer = $this->createRequestTransfer();

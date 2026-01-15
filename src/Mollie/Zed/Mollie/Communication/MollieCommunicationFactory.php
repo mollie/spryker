@@ -19,7 +19,7 @@ class MollieCommunicationFactory extends AbstractCommunicationFactory
     /**
      * @return \Mollie\Zed\Mollie\Communication\Table\MolliePaymentMethodsTable
      */
-    public function createMolliePaymentMethodsTable()
+    public function createMolliePaymentMethodsTable(): MolliePaymentMethodsTable
     {
         return new MolliePaymentMethodsTable(
             $this->createMolliePaymentMethodsDataProvider(),
@@ -29,7 +29,7 @@ class MollieCommunicationFactory extends AbstractCommunicationFactory
     /**
      * @return \Mollie\Zed\Mollie\Communication\Table\TableDataProvider\MolliePaymentMethodsDataProvider
      */
-    public function createMolliePaymentMethodsDataProvider()
+    public function createMolliePaymentMethodsDataProvider(): MolliePaymentMethodsDataProvider
     {
         return new MolliePaymentMethodsDataProvider(
             $this->getMollieClient(),
