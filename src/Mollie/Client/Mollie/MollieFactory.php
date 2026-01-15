@@ -9,7 +9,11 @@ use Mollie\Client\Mollie\Api\ApiCallInterface;
 use Mollie\Client\Mollie\Api\Payment\AvailablePaymentMethodsApi;
 use Mollie\Client\Mollie\Api\Payment\CreatePaymentApi;
 use Mollie\Client\Mollie\Api\Payment\GetPaymentByTransactionIdApi;
+use Mollie\Client\Mollie\Dependency\Client\MollieToStorageClientInterface;
+use Mollie\Client\Mollie\Dependency\Client\MollieToStoreClientInterface;
 use Mollie\Client\Mollie\Dependency\Service\MollieToUtilEncodingServiceInterface;
+use Mollie\Client\Mollie\Provider\Payment\PaymentMethodsProvider;
+use Mollie\Client\Mollie\Provider\Payment\PaymentMethodsProviderInterface;
 use Mollie\Service\Mollie\MollieServiceInterface;
 use Spryker\Client\Kernel\AbstractFactory;
 
@@ -18,6 +22,20 @@ use Spryker\Client\Kernel\AbstractFactory;
  */
 class MollieFactory extends AbstractFactory
 {
+    /**
+     * @return \Mollie\Client\Mollie\Provider\Payment\PaymentMethodsProviderInterface
+     */
+    public function createAvailablePaymentMethodsProvider(): PaymentMethodsProviderInterface
+    {
+        return new PaymentMethodsProvider(
+            $this->createAvailablePaymentMethodsApi(),
+            $this->getConfig(),
+            $this->getUtilEncodingService(),
+            $this->getStorageClient(),
+            $this->getStoreClient(),
+        );
+    }
+
     /**
      * @return \Mollie\Client\Mollie\Api\Payment\AvailablePaymentMethodsApi
      */
@@ -77,5 +95,21 @@ class MollieFactory extends AbstractFactory
     public function getMollieService(): MollieServiceInterface
     {
         return $this->getProvidedDependency(MollieDependencyProvider::MOLLIE_SERVICE);
+    }
+
+    /**
+     * @return \Mollie\Client\Mollie\Dependency\Client\MollieToStorageClientInterface
+     */
+    public function getStorageClient(): MollieToStorageClientInterface
+    {
+        return $this->getProvidedDependency(MollieDependencyProvider::CLIENT_STORAGE);
+    }
+
+    /**
+     * @return \Mollie\Client\Mollie\Dependency\Client\MollieToStoreClientInterface
+     */
+    public function getStoreClient(): MollieToStoreClientInterface
+    {
+        return $this->getProvidedDependency(MollieDependencyProvider::CLIENT_STORE);
     }
 }

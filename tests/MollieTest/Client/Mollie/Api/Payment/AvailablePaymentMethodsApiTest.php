@@ -5,7 +5,6 @@ declare(strict_types = 1);
 namespace MollieTest\Client\Mollie\Api\Payment;
 
 use ArrayObject;
-use Generated\Shared\Transfer\MollieAmountTransfer;
 use Generated\Shared\Transfer\MollieApiRequestTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodQueryParametersTransfer;
 use Mollie\Api\Fake\MockMollieClient;

@@ -28,29 +28,9 @@ class MollieConfig extends AbstractBundleConfig
     public const RESPONSE_PARAMETER_CREATE_PAYMENT_LINKS = '_links';
 
     /**
-     * @var string
+     * @var int
      */
-    public const RESPONSE_PARAMETER_CREATE_PAYMENT_EMBEDDED = '_embedded';
-
-    /**
-     * @var string
-     */
-    public const RESPONSE_PARAMETER_CREATE_PAYMENT_LINKS_CHECKOUT = 'checkout';
-
-    /**
-     * @var string
-     */
-    public const RESPONSE_PARAMETER_CREATE_PAYMENT_LINKS_HREF = 'href';
-
-    /**
-     * @var string
-     */
-    public const RESPONSE_PARAMETER_CREATE_PAYMENT_METADATA = 'metadata';
-
-    /**
-     * @var string
-     */
-    public const RESPONSE_PARAMETER_CREATE_PAYMENT_ID = 'id';
+    public const MOLLIE_PAYMENT_METHODS_STORAGE_KEY_TTL = 21600;
 
     /**
      * @return string
@@ -94,5 +74,21 @@ class MollieConfig extends AbstractBundleConfig
     public function getMollieApiKey(): string|null
     {
         return $this->getSharedConfig()->getMollieApiKey();
+    }
+
+    /**
+     * @return string
+     */
+    public function getMollieTestModeEnabled(): string
+    {
+        return $this->getSharedConfig()->getMollieTestModeEnabled();
+    }
+
+    /**
+     * @return int
+     */
+    public function getMolliePaymentMethodsStorageKeyTTL(): int
+    {
+        return static::MOLLIE_PAYMENT_METHODS_STORAGE_KEY_TTL;
     }
 }

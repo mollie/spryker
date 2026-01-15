@@ -13,10 +13,13 @@ use Spryker\Shared\Oms\OmsConstants;
 use Spryker\Shared\Sales\SalesConstants;
 
 $config[MollieConstants::MOLLIE] = [
-  MollieConstants::MOLLIE_PROFILE_ID => '',
-  MollieConstants::MOLLIE_TEST_MODE => true,
+    MollieConstants::MOLLIE_PROFILE_ID => '',
+    MollieConstants::MOLLIE_TEST_MODE => false,
+    MollieConstants::MOLLIE_API_KEY => '',
+    MollieConstants::MOLLIE_REDIRECT_URL => '',
+    MollieConstants::MOLLIE_WEBHOOK_URL => '',
+    MollieConstants::MOLLIE_OMS_TO_PAYMENT_METHOD_MAPPING => [],
 ];
-
 $config[OmsConstants::PROCESS_LOCATION] = [
     OmsConfig::DEFAULT_PROCESS_LOCATION,
     APPLICATION_VENDOR_DIR . '/mollie/spryker-payment/config/Zed/Oms',
