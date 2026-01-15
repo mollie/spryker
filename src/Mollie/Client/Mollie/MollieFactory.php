@@ -11,6 +11,8 @@ use Mollie\Client\Mollie\Api\Payment\GetAllPaymentMethodsApi;
 use Mollie\Client\Mollie\Api\Payment\GetEnabledPaymentMethodsApi;
 use Mollie\Client\Mollie\Api\Payment\GetPaymentByTransactionIdApi;
 use Mollie\Client\Mollie\Dependency\Service\MollieToUtilEncodingServiceInterface;
+use Mollie\Client\Mollie\Mapper\MollieClientMapper;
+use Mollie\Client\Mollie\Mapper\MollieClientMapperInterface;
 use Mollie\Service\Mollie\MollieServiceInterface;
 use Spryker\Client\Kernel\AbstractFactory;
 
@@ -28,6 +30,7 @@ class MollieFactory extends AbstractFactory
             $this->createMollieApiClient(),
             $this->getConfig(),
             $this->getUtilEncodingService(),
+            $this->createMollieClientMapper(),
         );
     }
 
@@ -40,6 +43,7 @@ class MollieFactory extends AbstractFactory
             $this->createMollieApiClient(),
             $this->getConfig(),
             $this->getUtilEncodingService(),
+            $this->createMollieClientMapper(),
         );
     }
 
@@ -82,6 +86,14 @@ class MollieFactory extends AbstractFactory
             $this->getUtilEncodingService(),
             $this->getMollieService(),
         );
+    }
+
+    /**
+     * @return \Mollie\Client\Mollie\Mapper\MollieClientMapperInterface
+     */
+    public function createMollieClientMapper(): MollieClientMapperInterface
+    {
+        return new MollieClientMapper();
     }
 
     /**

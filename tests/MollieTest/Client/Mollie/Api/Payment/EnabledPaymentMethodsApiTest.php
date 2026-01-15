@@ -15,7 +15,7 @@ use Mollie\Client\Mollie\MollieClientInterface;
 use MollieTest\Client\Mollie\AbstractClientTest;
 use MollieTest\Client\Mollie\MollieApiClientTester;
 
-class AvailablePaymentMethodsApiTest extends AbstractClientTest
+class EnabledPaymentMethodsApiTest extends AbstractClientTest
 {
     /**
      * @var \MollieTest\Client\Mollie\MollieApiClientTester
@@ -25,7 +25,7 @@ class AvailablePaymentMethodsApiTest extends AbstractClientTest
     /**
      * @return void
      */
-    public function testGetAvailablePaymentMethodsApi(): void
+    public function testGetEnabledPaymentMethodsApi(): void
     {
 
         $transfer = $this->createMollieApiRequestTransfer();

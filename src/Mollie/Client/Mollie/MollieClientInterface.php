@@ -26,11 +26,11 @@ interface MollieClientInterface
      *  Specification:
      *  - Gets list of all payment methods from Mollie
      *
+     * @api
+     *
      * @param \Generated\Shared\Transfer\MollieApiRequestTransfer $mollieApiRequestTransfer
      *
      * @return \Generated\Shared\Transfer\MolliePaymentMethodsApiResponseTransfer
-     *@api
-     *
      */
     public function getAllPaymentMethods(MollieApiRequestTransfer $mollieApiRequestTransfer): MolliePaymentMethodsApiResponseTransfer;
 

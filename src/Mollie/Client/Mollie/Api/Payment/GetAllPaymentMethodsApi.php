@@ -6,14 +6,15 @@ namespace Mollie\Client\Mollie\Api\Payment;
 
 use Generated\Shared\Transfer\MollieApiRequestTransfer;
 use Generated\Shared\Transfer\MollieApiResponseTransfer;
-use Generated\Shared\Transfer\MolliePaymentMethodCollectionTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodQueryParametersTransfer;
-use Generated\Shared\Transfer\MolliePaymentMethodsApiResponseTransfer;
-use Generated\Shared\Transfer\MolliePaymentMethodTransfer;
 use Mollie\Api\Http\Data\Money;
 use Mollie\Api\Http\Request;
 use Mollie\Api\Http\Requests\GetAllMethodsRequest;
+use Mollie\Api\MollieApiClient;
 use Mollie\Client\Mollie\Api\AbstractApiCall;
+use Mollie\Client\Mollie\Dependency\Service\MollieToUtilEncodingServiceInterface;
+use Mollie\Client\Mollie\Mapper\MollieClientMapperInterface;
+use Mollie\Client\Mollie\MollieConfig;
 use Spryker\Shared\Kernel\Transfer\AbstractTransfer;
 use Spryker\Shared\Log\LoggerTrait;
 
@@ -26,30 +27,28 @@ class GetAllPaymentMethodsApi extends AbstractApiCall
     protected const string METHODS_KEY = 'methods';
 
     /**
+     * @param \Mollie\Client\Mollie\Api\Payment\MollieApiClient $mollieApiClient
+     * @param \Mollie\Client\Mollie\Api\Payment\MollieConfig $mollieConfig
+     * @param \Mollie\Client\Mollie\Api\Payment\MollieToUtilEncodingServiceInterface $utilEncodingService
+     * @param \Mollie\Client\Mollie\Mapper\MollieClientMapperInterface $mapper
+     */
+    public function __construct(
+        MollieApiClient $mollieApiClient,
+        MollieConfig $mollieConfig,
+        MollieToUtilEncodingServiceInterface $utilEncodingService,
+        protected MollieClientMapperInterface $mapper,
+    ) {
+        parent::__construct($mollieApiClient, $mollieConfig, $utilEncodingService);
+    }
+
+    /**
      * @param \Generated\Shared\Transfer\MollieApiResponseTransfer $mollieApiResponseTransfer
      *
      * @return \Generated\Shared\Transfer\MolliePaymentMethodsApiResponseTransfer
      */
     protected function mapApiResponse(MollieApiResponseTransfer $mollieApiResponseTransfer): AbstractTransfer
     {
-        $molliePaymentMethodsApiResponseTransfer = new MolliePaymentMethodsApiResponseTransfer();
-        $molliePaymentMethodsApiResponseTransfer
-            ->setIsSuccessful($mollieApiResponseTransfer->getIsSuccessful())
-            ->setMessage($mollieApiResponseTransfer->getMessage());
-
-        $molliePaymentMethodCollectionTransfer = new MolliePaymentMethodCollectionTransfer();
-        $methods = $mollieApiResponseTransfer->getPayload()[static::METHODS_WRAPPER_KEY][static::METHODS_KEY] ?? [];
-        foreach ($methods as $method) {
-            $molliePaymentMethodTransfer = new MolliePaymentMethodTransfer();
-
-            $molliePaymentMethodTransfer->fromArray($method, true);
-
-            $molliePaymentMethodCollectionTransfer->addMethods($molliePaymentMethodTransfer);
-        }
-
-        $molliePaymentMethodsApiResponseTransfer->setCollection($molliePaymentMethodCollectionTransfer);
-
-        return $molliePaymentMethodsApiResponseTransfer;
+        return $this->mapper->mapPaymentMethodApiResponse($mollieApiResponseTransfer);
     }
 
     /**
