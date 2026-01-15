@@ -28,9 +28,9 @@ class GetEnabledPaymentMethodsApi extends AbstractApiCall
     protected const string METHODS_KEY = 'methods';
 
     /**
-     * @param \Mollie\Client\Mollie\Api\Payment\MollieApiClient $mollieApiClient
-     * @param \Mollie\Client\Mollie\Api\Payment\MollieConfig $mollieConfig
-     * @param \Mollie\Client\Mollie\Api\Payment\MollieToUtilEncodingServiceInterface $utilEncodingService
+     * @param \Mollie\Api\MollieApiClient $mollieApiClient
+     * @param \Mollie\Client\Mollie\MollieConfig $mollieConfig
+     * @param \Mollie\Client\Mollie\Dependency\Service\MollieToUtilEncodingServiceInterface $utilEncodingService
      * @param \Mollie\Client\Mollie\Mapper\MollieClientMapperInterface $mapper
      */
     public function __construct(
