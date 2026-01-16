@@ -34,6 +34,11 @@ interface MollieConstants
      */
     public const MOLLIE_WEBHOOK_URL = 'MOLLIE:WEBHOOK_URL';
 
+    /**
+     * @var string
+     */
+    public const MOLLIE_CANCEL_URL = 'MOLLIE:CANCEL_URL';
+
     // Payment statuses from Mollie
     /**
      * @var string

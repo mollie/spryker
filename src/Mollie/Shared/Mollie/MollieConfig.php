@@ -49,6 +49,31 @@ class MollieConfig extends AbstractSharedConfig
     /**
      * @var string
      */
+    public const MOLLIE_PAYMENT_EPS = 'mollieEpsPayment';
+
+    /**
+     * @var string
+     */
+    public const MOLLIE_PAYMENT_IDEAL = 'mollieIdealPayment';
+
+    /**
+     * @var string
+     */
+    public const MOLLIE_PAYMENT_BANCONTACT = 'mollieBancontactPayment';
+
+    /**
+     * @var string
+     */
+    public const MOLLIE_PAYMENT_KBC = 'mollieKbcPayment';
+
+    /**
+     * @var string
+     */
+    public const MOLLIE_PAYMENT_PAY_BY_BANK = 'molliePayByBankPayment';
+
+    /**
+     * @var string
+     */
     public const MOLLIE_PAYMENT_TRANSACTION_STORAGE_KEY_PREFIX = 'mollie:payment';
 
     /**

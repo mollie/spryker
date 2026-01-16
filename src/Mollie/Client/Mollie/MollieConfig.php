@@ -94,6 +94,14 @@ class MollieConfig extends AbstractBundleConfig
     }
 
     /**
+     * @return string
+     */
+    public function getMollieCancelUrl(): string
+    {
+        return $this->get(MollieConstants::MOLLIE)[MollieConstants::MOLLIE_CANCEL_URL];
+    }
+
+    /**
      * @return array<string, string>
      */
     public function getMollieOmsToPaymentMethodMapping(): array

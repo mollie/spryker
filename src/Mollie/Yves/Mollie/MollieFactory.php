@@ -6,27 +6,42 @@ namespace Mollie\Yves\Mollie;
 
 use Mollie\Client\Mollie\MollieClientInterface;
 use Mollie\Yves\Mollie\Dependency\Client\MollieToStorageClientInterface;
+use Mollie\Yves\Mollie\Handler\MolliePaymentBancontactHandler;
 use Mollie\Yves\Mollie\Handler\MolliePaymentBankTransferHandler;
 use Mollie\Yves\Mollie\Handler\MolliePaymentCreditCardHandler;
+use Mollie\Yves\Mollie\Handler\MolliePaymentEpsHandler;
 use Mollie\Yves\Mollie\Handler\MolliePaymentHandlerInterface;
+use Mollie\Yves\Mollie\Handler\MolliePaymentIdealHandler;
+use Mollie\Yves\Mollie\Handler\MolliePaymentKbcHandler;
 use Mollie\Yves\Mollie\Handler\MolliePaymentKlarnaHandler;
 use Mollie\Yves\Mollie\Handler\MolliePaymentKlarnaPayLaterHandler;
 use Mollie\Yves\Mollie\Handler\MolliePaymentKlarnaPayNowHandler;
 use Mollie\Yves\Mollie\Handler\MolliePaymentKlarnaSliceItHandler;
+use Mollie\Yves\Mollie\Handler\MolliePaymentPayByBankHandler;
 use Mollie\Yves\Mollie\Handler\MolliePaymentPayPalHandler;
+use Mollie\Yves\Mollie\PaymentPage\Form\DataProvider\MollieBancontactSubFormDataProvider;
 use Mollie\Yves\Mollie\PaymentPage\Form\DataProvider\MollieBankTransferSubFormDataProvider;
 use Mollie\Yves\Mollie\PaymentPage\Form\DataProvider\MollieCreditCardSubFormDataProvider;
+use Mollie\Yves\Mollie\PaymentPage\Form\DataProvider\MollieEpsSubFormDataProvider;
+use Mollie\Yves\Mollie\PaymentPage\Form\DataProvider\MollieIdealSubFormDataProvider;
+use Mollie\Yves\Mollie\PaymentPage\Form\DataProvider\MollieKbcSubFormDataProvider;
 use Mollie\Yves\Mollie\PaymentPage\Form\DataProvider\MollieKlarnaPayLaterSubFormDataProvider;
 use Mollie\Yves\Mollie\PaymentPage\Form\DataProvider\MollieKlarnaPayNowSubFormDataProvider;
 use Mollie\Yves\Mollie\PaymentPage\Form\DataProvider\MollieKlarnaSliceItSubFormDataProvider;
 use Mollie\Yves\Mollie\PaymentPage\Form\DataProvider\MollieKlarnaSubFormDataProvider;
+use Mollie\Yves\Mollie\PaymentPage\Form\DataProvider\MolliePayByBankSubFormDataProvider;
 use Mollie\Yves\Mollie\PaymentPage\Form\DataProvider\MolliePayPalSubFormDataProvider;
+use Mollie\Yves\Mollie\PaymentPage\Form\MollieBancontactSubForm;
 use Mollie\Yves\Mollie\PaymentPage\Form\MollieBankTransferSubForm;
 use Mollie\Yves\Mollie\PaymentPage\Form\MollieCreditCardSubForm;
+use Mollie\Yves\Mollie\PaymentPage\Form\MollieEpsSubForm;
+use Mollie\Yves\Mollie\PaymentPage\Form\MollieIdealSubForm;
+use Mollie\Yves\Mollie\PaymentPage\Form\MollieKbcSubForm;
 use Mollie\Yves\Mollie\PaymentPage\Form\MollieKlarnaPayLaterSubForm;
 use Mollie\Yves\Mollie\PaymentPage\Form\MollieKlarnaPayNowSubForm;
 use Mollie\Yves\Mollie\PaymentPage\Form\MollieKlarnaSliceItSubForm;
 use Mollie\Yves\Mollie\PaymentPage\Form\MollieKlarnaSubForm;
+use Mollie\Yves\Mollie\PaymentPage\Form\MolliePayByBankSubForm;
 use Mollie\Yves\Mollie\PaymentPage\Form\MolliePayPalSubForm;
 use Spryker\Yves\Kernel\AbstractFactory;
 use Spryker\Yves\StepEngine\Dependency\Form\StepEngineFormDataProviderInterface;
@@ -94,6 +109,46 @@ class MollieFactory extends AbstractFactory
     }
 
     /**
+     * @return \Spryker\Yves\StepEngine\Dependency\Form\SubFormInterface
+     */
+    public function createMollieEpsSubForm(): SubFormInterface
+    {
+        return new MollieEpsSubForm();
+    }
+
+    /**
+     * @return \Spryker\Yves\StepEngine\Dependency\Form\SubFormInterface
+     */
+    public function createMollieIdealSubForm(): SubFormInterface
+    {
+        return new MollieIdealSubForm();
+    }
+
+    /**
+     * @return \Spryker\Yves\StepEngine\Dependency\Form\SubFormInterface
+     */
+    public function createMollieBancontactSubForm(): SubFormInterface
+    {
+        return new MollieBancontactSubForm();
+    }
+
+    /**
+     * @return \Spryker\Yves\StepEngine\Dependency\Form\SubFormInterface
+     */
+    public function createMollieKbcSubForm(): SubFormInterface
+    {
+        return new MollieKbcSubForm();
+    }
+
+    /**
+     * @return \Spryker\Yves\StepEngine\Dependency\Form\SubFormInterface
+     */
+    public function createMolliePayByBankSubForm(): SubFormInterface
+    {
+        return new MolliePayByBankSubForm();
+    }
+
+    /**
      * @return \Spryker\Yves\StepEngine\Dependency\Form\StepEngineFormDataProviderInterface
      */
     public function createMollieCreditCardSubFormDataProvider(): StepEngineFormDataProviderInterface
@@ -150,6 +205,46 @@ class MollieFactory extends AbstractFactory
     }
 
     /**
+     * @return \Spryker\Yves\StepEngine\Dependency\Form\StepEngineFormDataProviderInterface
+     */
+    public function createMollieEpsSubFormDataProvider(): StepEngineFormDataProviderInterface
+    {
+        return new MollieEpsSubFormDataProvider();
+    }
+
+    /**
+     * @return \Spryker\Yves\StepEngine\Dependency\Form\StepEngineFormDataProviderInterface
+     */
+    public function createMollieIdealSubFormDataProvider(): StepEngineFormDataProviderInterface
+    {
+        return new MollieIdealSubFormDataProvider();
+    }
+
+    /**
+     * @return \Spryker\Yves\StepEngine\Dependency\Form\StepEngineFormDataProviderInterface
+     */
+    public function createMollieBancontactSubFormDataProvider(): StepEngineFormDataProviderInterface
+    {
+        return new MollieBancontactSubFormDataProvider();
+    }
+
+    /**
+     * @return \Spryker\Yves\StepEngine\Dependency\Form\StepEngineFormDataProviderInterface
+     */
+    public function createMollieKbcSubFormDataProvider(): StepEngineFormDataProviderInterface
+    {
+        return new MollieKbcSubFormDataProvider();
+    }
+
+    /**
+     * @return \Spryker\Yves\StepEngine\Dependency\Form\StepEngineFormDataProviderInterface
+     */
+    public function createMolliePayByBankSubFormDataProvider(): StepEngineFormDataProviderInterface
+    {
+        return new MolliePayByBankSubFormDataProvider();
+    }
+
+    /**
      * @return \Mollie\Yves\Mollie\Handler\MolliePaymentHandlerInterface
      */
     public function createMollieCreditCardPaymentHandler(): MolliePaymentHandlerInterface
@@ -203,6 +298,46 @@ class MollieFactory extends AbstractFactory
     public function createMollieKlarnaSliceItPaymentHandler(): MolliePaymentHandlerInterface
     {
         return new MolliePaymentKlarnaSliceItHandler();
+    }
+
+    /**
+     * @return \Mollie\Yves\Mollie\Handler\MolliePaymentHandlerInterface
+     */
+    public function createMollieEpsPaymentHandler(): MolliePaymentHandlerInterface
+    {
+        return new MolliePaymentEpsHandler();
+    }
+
+    /**
+     * @return \Mollie\Yves\Mollie\Handler\MolliePaymentHandlerInterface
+     */
+    public function createMollieIdealPaymentHandler(): MolliePaymentHandlerInterface
+    {
+        return new MolliePaymentIdealHandler();
+    }
+
+    /**
+     * @return \Mollie\Yves\Mollie\Handler\MolliePaymentHandlerInterface
+     */
+    public function createMollieBancontactPaymentHandler(): MolliePaymentHandlerInterface
+    {
+        return new MolliePaymentBancontactHandler();
+    }
+
+    /**
+     * @return \Mollie\Yves\Mollie\Handler\MolliePaymentHandlerInterface
+     */
+    public function createMollieKbcPaymentHandler(): MolliePaymentHandlerInterface
+    {
+        return new MolliePaymentKbcHandler();
+    }
+
+    /**
+     * @return \Mollie\Yves\Mollie\Handler\MolliePaymentHandlerInterface
+     */
+    public function createMolliePayByBankPaymentHandler(): MolliePaymentHandlerInterface
+    {
+        return new MolliePaymentPayByBankHandler();
     }
 
     /**
