@@ -118,9 +118,9 @@ class MollieApiClientTester extends Actor
                 'image' => [
                     'size1x' => 'https://www.mollie.com/external/icons/payment-methods/applepay.png',
                     'size2x' => 'https://www.mollie.com/external/icons/payment-methods/applepay%402x.png',
-                    'svg'    => 'https://www.mollie.com/external/icons/payment-methods/applepay.svg',
+                    'svg' => 'https://www.mollie.com/external/icons/payment-methods/applepay.svg',
                 ],
-                'status' => null,
+                'status' => 'rejected',
                 '_links' => [
                     'self' => [
                         'href' => 'https://api.mollie.com/v2/methods/applepay',
@@ -143,9 +143,9 @@ class MollieApiClientTester extends Actor
                 'image' => [
                     'size1x' => 'https://www.mollie.com/external/icons/payment-methods/googlepay.png',
                     'size2x' => 'https://www.mollie.com/external/icons/payment-methods/googlepay%402x.png',
-                    'svg'    => 'https://www.mollie.com/external/icons/payment-methods/googlepay.svg',
+                    'svg' => 'https://www.mollie.com/external/icons/payment-methods/googlepay.svg',
                 ],
-                'status' => null,
+                'status' => 'rejected',
                 '_links' => [
                     'self' => [
                         'href' => 'https://api.mollie.com/v2/methods/googlepay',
@@ -168,7 +168,7 @@ class MollieApiClientTester extends Actor
                 'image' => [
                     'size1x' => 'https://www.mollie.com/external/icons/payment-methods/ideal.png',
                     'size2x' => 'https://www.mollie.com/external/icons/payment-methods/ideal%402x.png',
-                    'svg'    => 'https://www.mollie.com/external/icons/payment-methods/ideal.svg',
+                    'svg' => 'https://www.mollie.com/external/icons/payment-methods/ideal.svg',
                 ],
                 'status' => 'activated',
                 '_links' => [
@@ -191,7 +191,7 @@ class MollieApiClientTester extends Actor
             'type' => 'application/hal+json',
         ],
     ],
-];
+    ];
 
     /**
      * @var array
