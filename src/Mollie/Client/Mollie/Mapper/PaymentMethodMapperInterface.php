@@ -9,7 +9,7 @@ use Generated\Shared\Transfer\MolliePaymentMethodCollectionTransfer;
 interface PaymentMethodMapperInterface
 {
     /**
-     * @param array $payload
+     * @param array<string, mixed> $payload
      *
      * @return \Generated\Shared\Transfer\MolliePaymentMethodCollectionTransfer
      */

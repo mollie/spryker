@@ -14,7 +14,7 @@ class PaymentMethodMapper implements PaymentMethodMapperInterface
     protected const string METHODS_KEY = 'methods';
 
     /**
-     * @param array $payload
+     * @param array<string, mixed> $payload
      *
      * @return \Generated\Shared\Transfer\MolliePaymentMethodCollectionTransfer
      */
