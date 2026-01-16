@@ -96,8 +96,8 @@ class GetAllPaymentMethodsApi extends AbstractApiCall
         }
 
         return new Money(
-            $amountTransfer->getValue(),
             $amountTransfer->getCurrency(),
+            $amountTransfer->getValue(),
         );
     }
 }
