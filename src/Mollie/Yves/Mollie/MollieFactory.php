@@ -6,6 +6,7 @@ namespace Mollie\Yves\Mollie;
 
 use Mollie\Client\Mollie\MollieClientInterface;
 use Mollie\Yves\Mollie\Dependency\Client\MollieToStorageClientInterface;
+use Mollie\Yves\Mollie\Dependency\Service\MollieToUtilEncodingServiceInterface;
 use Mollie\Yves\Mollie\Handler\MolliePaymentCreditCardHandler;
 use Mollie\Yves\Mollie\Handler\MolliePaymentCreditCardHandlerInterface;
 use Mollie\Yves\Mollie\PaymentPage\Form\DataProvider\MollieCreditCardSubFormDataProvider;
@@ -57,5 +58,13 @@ class MollieFactory extends AbstractFactory
     public function getMollieApiClient(): MollieClientInterface
     {
         return $this->getProvidedDependency(MollieDependencyProvider::CLIENT_MOLLIE);
+    }
+
+    /**
+     * @return \Mollie\Yves\Mollie\Dependency\Service\MollieToUtilEncodingServiceInterface
+     */
+    public function getUtilEncodingService(): MollieToUtilEncodingServiceInterface
+    {
+        return $this->getProvidedDependency(MollieDependencyProvider::SERVICE_UTIL_ENCODING);
     }
 }

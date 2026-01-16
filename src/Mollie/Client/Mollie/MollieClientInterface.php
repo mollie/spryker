@@ -7,6 +7,8 @@ namespace Mollie\Client\Mollie;
 use Generated\Shared\Transfer\MollieApiRequestTransfer;
 use Generated\Shared\Transfer\MollieAvailablePaymentMethodsApiResponseTransfer;
 use Generated\Shared\Transfer\MolliePaymentApiResponseTransfer;
+use Generated\Shared\Transfer\OrderCollectionRequestTransfer;
+use Generated\Shared\Transfer\OrderCollectionResponseTransfer;
 
 interface MollieClientInterface
 {
@@ -45,4 +47,16 @@ interface MollieClientInterface
      * @return \Generated\Shared\Transfer\MolliePaymentApiResponseTransfer
      */
     public function createPayment(MollieApiRequestTransfer $mollieApiRequestTransfer): MolliePaymentApiResponseTransfer;
+
+    /**
+     * @param \Generated\Shared\Transfer\OrderCollectionRequestTransfer $updateOrderCollectionRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\OrderCollectionRequestTransfer
+     */
+    public function updateOrderCollection(OrderCollectionRequestTransfer $updateOrderCollectionRequestTransfer): OrderCollectionResponseTransfer;
+
+    /**
+     * @return string
+     */
+    public function buildWebhookUrl(): string;
 }
