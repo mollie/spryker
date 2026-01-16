@@ -69,7 +69,7 @@ class MolliePaymentMethodsTable extends AbstractTable
     }
 
     /**
-     * @return array
+     * @return array<string, string>
      */
     protected function generateQueryParams(): array
     {
@@ -87,7 +87,7 @@ class MolliePaymentMethodsTable extends AbstractTable
     /**
      * @param \Spryker\Zed\Gui\Communication\Table\TableConfiguration $config
      *
-     * @return array
+     * @return array<int, mixed>
      */
     protected function prepareData(TableConfiguration $config): array
     {
@@ -97,6 +97,11 @@ class MolliePaymentMethodsTable extends AbstractTable
         return $this->processData($paymentMethodsCollection->getMethods()->getArrayCopy());
     }
 
+    /**
+     * @param array<string, mixed> $paymentMethods
+     *
+     * @return array<int, mixed>
+     */
     protected function processData(array $paymentMethods): array
     {
         $results = [];
@@ -126,9 +131,9 @@ class MolliePaymentMethodsTable extends AbstractTable
     }
 
     /**
-     * @param array $results
+     * @param array<int, mixed> $results
      *
-     * @return array
+     * @return array<int, mixed>
      */
     protected function paginateResults(array $results): array
     {
@@ -180,7 +185,7 @@ class MolliePaymentMethodsTable extends AbstractTable
     }
 
     /**
-     * @param array $issuers
+     * @param array<string, mixed> $issuers
      *
      * @return string
      */
@@ -197,7 +202,7 @@ class MolliePaymentMethodsTable extends AbstractTable
     }
 
     /**
-     * @param array $images
+     * @param array<string, mixed> $images
      *
      * @return string
      */
