@@ -209,7 +209,7 @@ class MolliePaymentMethodsTable extends AbstractTable
     protected function formatImagesField(array $images): string
     {
         $html = '';
-        foreach ($images as $key => $imageUrl) {
+        foreach (array_values($images) as $imageUrl) {
             $html .= sprintf(static::IMAGE_HTML, $imageUrl);
         }
 
