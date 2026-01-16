@@ -11,8 +11,8 @@ use Mollie\Client\Mollie\Api\Payment\GetAllPaymentMethodsApi;
 use Mollie\Client\Mollie\Api\Payment\GetEnabledPaymentMethodsApi;
 use Mollie\Client\Mollie\Api\Payment\GetPaymentByTransactionIdApi;
 use Mollie\Client\Mollie\Dependency\Service\MollieToUtilEncodingServiceInterface;
-use Mollie\Client\Mollie\Mapper\MollieClientMapper;
-use Mollie\Client\Mollie\Mapper\MollieClientMapperInterface;
+use Mollie\Client\Mollie\Mapper\PaymentMethodMapper;
+use Mollie\Client\Mollie\Mapper\PaymentMethodMapperInterface;
 use Mollie\Service\Mollie\MollieServiceInterface;
 use Spryker\Client\Kernel\AbstractFactory;
 
@@ -24,26 +24,26 @@ class MollieFactory extends AbstractFactory
     /**
      * @return \Mollie\Client\Mollie\Api\Payment\GetEnabledPaymentMethodsApi
      */
-    public function createEnabledPaymentMethodsApi(): ApiCallInterface
+    public function createGetEnabledPaymentMethodsApi(): ApiCallInterface
     {
         return new GetEnabledPaymentMethodsApi(
             $this->createMollieApiClient(),
             $this->getConfig(),
             $this->getUtilEncodingService(),
-            $this->createMollieClientMapper(),
+            $this->createPaymentMethodMapper(),
         );
     }
 
     /**
      * @return \Mollie\Client\Mollie\Api\Payment\GetAllPaymentMethodsApi
      */
-    public function createAllPaymentMethodsApi(): ApiCallInterface
+    public function createGetAllPaymentMethodsApi(): ApiCallInterface
     {
         return new GetAllPaymentMethodsApi(
             $this->createMollieApiClient(),
             $this->getConfig(),
             $this->getUtilEncodingService(),
-            $this->createMollieClientMapper(),
+            $this->createPaymentMethodMapper(),
         );
     }
 
@@ -89,11 +89,11 @@ class MollieFactory extends AbstractFactory
     }
 
     /**
-     * @return \Mollie\Client\Mollie\Mapper\MollieClientMapperInterface
+     * @return \Mollie\Client\Mollie\Mapper\PaymentMethodMapperInterface
      */
-    public function createMollieClientMapper(): MollieClientMapperInterface
+    public function createPaymentMethodMapper(): PaymentMethodMapperInterface
     {
-        return new MollieClientMapper();
+        return new PaymentMethodMapper();
     }
 
     /**
