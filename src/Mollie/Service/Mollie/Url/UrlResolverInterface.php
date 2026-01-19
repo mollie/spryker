@@ -1,22 +1,9 @@
 <?php
 
-declare(strict_types=1);
+namespace Mollie\Service\Mollie\Url;
 
-namespace Mollie\Service\Mollie;
-
-interface MollieServiceInterface
+interface UrlResolverInterface
 {
-    /**
-     * Calls IntegerToDecimalConverter class from shared layer
-     *
-     * @api
-     *
-     * @param int $value
-     *
-     * @return float
-     */
-    public function convertIntegerToDecimal(int $value): float;
-
     /**
      * Calls UrlResolver class from client layer
      *

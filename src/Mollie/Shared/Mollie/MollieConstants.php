@@ -104,6 +104,16 @@ interface MollieConstants
     /**
      * @var string
      */
+    public const MOLLIE_HTACCESS_USERNAME = 'MOLLIE:MOLLIE_HTACCESS_USERNAME';
+
+    /**
+     * @var string
+     */
+    public const MOLLIE_HTACCESS_PASSWORD = 'MOLLIE:MOLLIE_HTACCESS_PASSWORD';
+
+    /**
+     * @var string
+     */
     public const SUCCESS_MESSAGE = 'success';
 
     public const string MOLLIE_AVAILABLE_METHODS_STORAGE_KEY = 'mollie:availableMethods';

@@ -17,7 +17,7 @@ class MollieRouteProviderPlugin extends AbstractRouteProviderPlugin
     /**
      * @var string
      */
-    public const ROUTE_MOLLIE_TEST = 'mollie/test';
+    public const ROUTE_MOLLIE_WEBHOOK = 'mollie/webhook';
 
     /**
      * @param \Spryker\Yves\Router\Route\RouteCollection $routeCollection
@@ -27,7 +27,7 @@ class MollieRouteProviderPlugin extends AbstractRouteProviderPlugin
     public function addRoutes(RouteCollection $routeCollection): RouteCollection
     {
         $routeCollection = $this->addPaymentStatusRoute($routeCollection);
-        $routeCollection = $this->addTestRoute($routeCollection);
+        $routeCollection = $this->addWebhookRoute($routeCollection);
 
         return $routeCollection;
     }
@@ -51,11 +51,11 @@ class MollieRouteProviderPlugin extends AbstractRouteProviderPlugin
      *
      * @return \Spryker\Yves\Router\Route\RouteCollection
      */
-    protected function addTestRoute(RouteCollection $routeCollection): RouteCollection
+    protected function addWebhookRoute(RouteCollection $routeCollection): RouteCollection
     {
-        $route = $this->buildRoute('/mollie/test', 'Mollie', 'Index', 'testAction');
-        $route = $route->setMethods(['GET', 'POST']);
-        $routeCollection->add(static::ROUTE_MOLLIE_TEST, $route);
+        $route = $this->buildRoute('/mollie/webhook', 'Mollie', 'Webhook', 'webhookAction');
+        $route = $route->setMethods(['POST']);
+        $routeCollection->add(static::ROUTE_MOLLIE_WEBHOOK, $route);
 
         return $routeCollection;
     }

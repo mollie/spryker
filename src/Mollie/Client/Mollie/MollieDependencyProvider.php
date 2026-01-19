@@ -24,6 +24,11 @@ class MollieDependencyProvider extends AbstractDependencyProvider
     public const MOLLIE_SERVICE = 'MOLLIE_SERVICE';
 
     /**
+     * @var string
+     */
+    public const SERVICE_ZED = 'zed service';
+
+    /**
      * @param \Spryker\Client\Kernel\Container $container
      *
      * @return \Spryker\Client\Kernel\Container
@@ -33,6 +38,7 @@ class MollieDependencyProvider extends AbstractDependencyProvider
         $container = parent::provideServiceLayerDependencies($container);
         $container = $this->addUtilEncodingService($container);
         $container = $this->addMollieService($container);
+        $container = $this->addZedRequestClient($container);
 
         return $container;
     }
@@ -62,6 +68,20 @@ class MollieDependencyProvider extends AbstractDependencyProvider
     {
         $container->set(static::MOLLIE_SERVICE, function (Container $container): MollieServiceInterface {
             return $container->getLocator()->mollie()->service();
+        });
+
+        return $container;
+    }
+
+    /**
+     * @param \Spryker\Client\Kernel\Container $container
+     *
+     * @return \Spryker\Client\Kernel\Container
+     */
+    protected function addZedRequestClient(Container $container): Container
+    {
+        $container->set(static::SERVICE_ZED, function (Container $container) {
+            return $container->getLocator()->zedRequest()->client();
         });
 
         return $container;
