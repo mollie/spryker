@@ -19,7 +19,7 @@ class MolliePaymentKlarnaHandler implements MolliePaymentHandlerInterface
         $paymentTransfer = $quoteTransfer->getPayment();
 
         $paymentTransfer
-            ->setPaymentProvider(MollieConfig::PROVIDER_NAME)
+            ->setPaymentProvider(MollieConfig::MOLLIE_PROVIDER_KLARNA)
             ->setPaymentMethod(MollieConfig::MOLLIE_PAYMENT_KLARNA);
 
         return $quoteTransfer;

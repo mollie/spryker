@@ -19,7 +19,7 @@ class MolliePaymentKlarnaSliceItHandler implements MolliePaymentHandlerInterface
         $paymentTransfer = $quoteTransfer->getPayment();
 
         $paymentTransfer
-            ->setPaymentProvider(MollieConfig::PROVIDER_NAME)
+            ->setPaymentProvider(MollieConfig::MOLLIE_PROVIDER_KLARNA_SLICE_IT)
             ->setPaymentMethod(MollieConfig::MOLLIE_PAYMENT_KLARNA_SLICE_IT);
 
         return $quoteTransfer;

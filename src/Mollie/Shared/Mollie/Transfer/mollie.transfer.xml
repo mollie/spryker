@@ -33,6 +33,9 @@
         <property name="molliePayPalPayment" type="MolliePayPalPayment"/>
         <property name="mollieBankTransferPayment" type="MollieBankTransferPayment"/>
         <property name="mollieKlarnaPayment" type="MollieKlarnaPayment"/>
+        <property name="mollieKlarnaPayLaterPayment" type="[]"/>
+        <property name="mollieKlarnaPayNowPayment" type="[]"/>
+        <property name="mollieKlarnaSliceItPayment" type="[]"/>
         <property name="mollieEpsPayment" type="[]"/>
         <property name="mollieIdealPayment" type="MollieIdealPayment"/>
         <property name="mollieBancontactPayment" type="[]"/>

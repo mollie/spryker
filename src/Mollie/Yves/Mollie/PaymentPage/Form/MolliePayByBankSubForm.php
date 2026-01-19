@@ -37,7 +37,7 @@ class MolliePayByBankSubForm extends AbstractSubFormType implements SubFormInter
      */
     protected function getTemplatePath(): string
     {
-        return MollieConfig::PROVIDER_NAME . DIRECTORY_SEPARATOR . static::PAYMENT_METHOD;
+        return MollieConfig::MOLLIE_PROVIDER_PAY_BY_BANK . DIRECTORY_SEPARATOR . static::PAYMENT_METHOD;
     }
 
     /**
@@ -61,6 +61,6 @@ class MolliePayByBankSubForm extends AbstractSubFormType implements SubFormInter
      */
     public function getProviderName(): string
     {
-        return MollieConfig::PROVIDER_NAME;
+        return MollieConfig::MOLLIE_PROVIDER_PAY_BY_BANK;
     }
 }

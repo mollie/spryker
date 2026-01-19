@@ -19,7 +19,7 @@ class MolliePaymentEpsHandler implements MolliePaymentHandlerInterface
         $paymentTransfer = $quoteTransfer->getPayment();
 
         $paymentTransfer
-            ->setPaymentProvider(MollieConfig::PROVIDER_NAME)
+            ->setPaymentProvider(MollieConfig::MOLLIE_PROVIDER_EPS)
             ->setPaymentMethod(MollieConfig::MOLLIE_PAYMENT_EPS);
 
         return $quoteTransfer;

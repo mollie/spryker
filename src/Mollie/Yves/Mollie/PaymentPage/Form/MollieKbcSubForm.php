@@ -37,7 +37,7 @@ class MollieKbcSubForm extends AbstractSubFormType implements SubFormInterface, 
      */
     protected function getTemplatePath(): string
     {
-        return MollieConfig::PROVIDER_NAME . DIRECTORY_SEPARATOR . static::PAYMENT_METHOD;
+        return MollieConfig::MOLLIE_PROVIDER_KBC . DIRECTORY_SEPARATOR . static::PAYMENT_METHOD;
     }
 
     /**
@@ -61,6 +61,6 @@ class MollieKbcSubForm extends AbstractSubFormType implements SubFormInterface, 
      */
     public function getProviderName(): string
     {
-        return MollieConfig::PROVIDER_NAME;
+        return MollieConfig::MOLLIE_PROVIDER_KBC;
     }
 }

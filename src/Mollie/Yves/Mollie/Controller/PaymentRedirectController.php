@@ -25,7 +25,10 @@ class PaymentRedirectController extends AbstractMollieController
         $paymentId = $this->getFactory()->getStorageClient()->get($key);
 
         if (!$paymentId) {
-            return $this->redirectResponseInternal(CheckoutPageRouteProviderPlugin::ROUTE_NAME_CHECKOUT_ERROR);
+            $this->addErrorMessage($this->getFactory()->getConfig()->getPaymentIdDoesntExistMessage());
+            $this->clearOrderReference();
+
+            return $this->redirectResponseInternal(CheckoutPageRouteProviderPlugin::ROUTE_NAME_CHECKOUT_PAYMENT);
         }
 
         $mollieApiRequestTransfer = new MollieApiRequestTransfer();

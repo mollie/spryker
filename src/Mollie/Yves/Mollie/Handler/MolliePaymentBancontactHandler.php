@@ -19,7 +19,7 @@ class MolliePaymentBancontactHandler implements MolliePaymentHandlerInterface
         $paymentTransfer = $quoteTransfer->getPayment();
 
         $paymentTransfer
-            ->setPaymentProvider(MollieConfig::PROVIDER_NAME)
+            ->setPaymentProvider(MollieConfig::MOLLIE_PROVIDER_BANCONTACT)
             ->setPaymentMethod(MollieConfig::MOLLIE_PAYMENT_BANCONTACT);
 
         return $quoteTransfer;

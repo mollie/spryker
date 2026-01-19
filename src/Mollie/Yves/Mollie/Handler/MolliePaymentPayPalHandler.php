@@ -19,7 +19,7 @@ class MolliePaymentPayPalHandler implements MolliePaymentHandlerInterface
         $paymentTransfer = $quoteTransfer->getPayment();
 
         $paymentTransfer
-            ->setPaymentProvider(MollieConfig::PROVIDER_NAME)
+            ->setPaymentProvider(MollieConfig::MOLLIE_PROVIDER_PAYPAL)
             ->setPaymentMethod(MollieConfig::MOLLIE_PAYMENT_PAYPAL);
 
         return $quoteTransfer;

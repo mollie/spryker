@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Mollie\Yves\Mollie\PaymentPage\Form;
 
-use Generated\Shared\Transfer\MollieKlarnaPaymentTransfer;
 use Mollie\Shared\Mollie\MollieConfig;
 use Spryker\Yves\StepEngine\Dependency\Form\AbstractSubFormType;
 use Spryker\Yves\StepEngine\Dependency\Form\SubFormInterface;
@@ -28,7 +27,7 @@ class MollieKlarnaPayNowSubForm extends AbstractSubFormType implements SubFormIn
         parent::configureOptions($resolver);
         $resolver
             ->setDefaults([
-                'data_class' => MollieKlarnaPaymentTransfer::class,
+                'data_class' => null,
             ])
             ->setRequired(static::OPTIONS_FIELD_NAME);
     }
@@ -38,7 +37,7 @@ class MollieKlarnaPayNowSubForm extends AbstractSubFormType implements SubFormIn
      */
     protected function getTemplatePath(): string
     {
-        return MollieConfig::PROVIDER_NAME . DIRECTORY_SEPARATOR . static::PAYMENT_METHOD;
+        return MollieConfig::MOLLIE_PROVIDER_KLARNA_PAY_NOW . DIRECTORY_SEPARATOR . static::PAYMENT_METHOD;
     }
 
     /**
@@ -46,7 +45,7 @@ class MollieKlarnaPayNowSubForm extends AbstractSubFormType implements SubFormIn
      */
     public function getPropertyPath(): string
     {
-        return MollieConfig::MOLLIE_PAYMENT_KLARNA;
+        return MollieConfig::MOLLIE_PAYMENT_KLARNA_PAY_NOW;
     }
 
     /**
@@ -62,6 +61,6 @@ class MollieKlarnaPayNowSubForm extends AbstractSubFormType implements SubFormIn
      */
     public function getProviderName(): string
     {
-        return MollieConfig::PROVIDER_NAME;
+        return MollieConfig::MOLLIE_PROVIDER_KLARNA_PAY_NOW;
     }
 }

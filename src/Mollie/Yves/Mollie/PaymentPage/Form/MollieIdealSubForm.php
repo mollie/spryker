@@ -38,7 +38,7 @@ class MollieIdealSubForm extends AbstractSubFormType implements SubFormInterface
      */
     protected function getTemplatePath(): string
     {
-        return MollieConfig::PROVIDER_NAME . DIRECTORY_SEPARATOR . static::PAYMENT_METHOD;
+        return MollieConfig::MOLLIE_PROVIDER_IDEAL . DIRECTORY_SEPARATOR . static::PAYMENT_METHOD;
     }
 
     /**
@@ -62,6 +62,6 @@ class MollieIdealSubForm extends AbstractSubFormType implements SubFormInterface
      */
     public function getProviderName(): string
     {
-        return MollieConfig::PROVIDER_NAME;
+        return MollieConfig::MOLLIE_PROVIDER_IDEAL;
     }
 }

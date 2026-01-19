@@ -19,7 +19,7 @@ class MolliePaymentKbcHandler implements MolliePaymentHandlerInterface
         $paymentTransfer = $quoteTransfer->getPayment();
 
         $paymentTransfer
-            ->setPaymentProvider(MollieConfig::PROVIDER_NAME)
+            ->setPaymentProvider(MollieConfig::MOLLIE_PROVIDER_KBC)
             ->setPaymentMethod(MollieConfig::MOLLIE_PAYMENT_KBC);
 
         return $quoteTransfer;
