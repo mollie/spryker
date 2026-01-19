@@ -1,0 +1,4 @@
+mollie.title.payment_methods,Mollie Payment methods
+mollie.button.clear_cache,Manually clear cache
+mollie.button.filter_all,Show all methods
+mollie.button.filter_activated,Show only enabled methods

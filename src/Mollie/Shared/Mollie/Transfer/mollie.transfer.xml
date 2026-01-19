@@ -106,13 +106,13 @@
         <property name="isSuccess" type="bool" />
     </transfer>
 
-    <transfer name="MollieAvailablePaymentMethodsApiResponse">
+    <transfer name="MolliePaymentMethodsApiResponse">
         <property name="isSuccessful" type="bool"/>
         <property name="message" type="string"/>
-        <property name="collection" type="MollieAvailablePaymentMethodCollection"/>
+        <property name="collection" type="MolliePaymentMethodCollection"/>
     </transfer>
 
-    <transfer name="MollieAvailablePaymentMethodCollection">
+    <transfer name="MolliePaymentMethodCollection">
         <property name="methods" type="MolliePaymentMethod[]"/>
     </transfer>
 
@@ -121,6 +121,11 @@
         <property name="amount" type="MollieAmount"/>
         <property name="billingCountry" type="string"/>
         <property name="sequenceType" type="string"/>
+        <property name="profileId" type="string"/>
+        <property name="orderLineCategories" type="array"/>
+        <property name="includeWallets" type="array"/>
+        <property name="includeIssuers" type="bool"/>
+        <property name="includePricing" type="bool"/>
     </transfer>
 
     <transfer name="MollieApiRequest">

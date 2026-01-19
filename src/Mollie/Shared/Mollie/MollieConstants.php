@@ -105,4 +105,8 @@ interface MollieConstants
      * @var string
      */
     public const SUCCESS_MESSAGE = 'success';
+
+    public const string MOLLIE_AVAILABLE_METHODS_STORAGE_KEY = 'mollie:availableMethods';
+
+    public const string MOLLIE_QUERY_PARAMETER_SHOW_ONLY_ENABLED = 'showOnlyEnabled';
 }
