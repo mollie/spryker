@@ -70,7 +70,7 @@ class GetEnabledPaymentMethodsApi extends AbstractApiCall
     {
         if (!$mollieApiRequestTransfer) {
             return new GetEnabledMethodsRequest(
-                'oneOff',
+                'oneoff',
                 MethodQuery::RESOURCE_PAYMENTS,
             );
         }
