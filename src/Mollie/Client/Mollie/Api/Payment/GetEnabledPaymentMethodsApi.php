@@ -15,7 +15,7 @@ use Mollie\Api\MollieApiClient;
 use Mollie\Api\Types\MethodQuery;
 use Mollie\Client\Mollie\Api\AbstractApiCall;
 use Mollie\Client\Mollie\Dependency\Service\MollieToUtilEncodingServiceInterface;
-use Mollie\Client\Mollie\Mapper\PaymentMethodMapperInterface;
+use Mollie\Client\Mollie\Mapper\Payment\PaymentMethodsMapperInterface;
 use Mollie\Client\Mollie\MollieConfig;
 use Spryker\Shared\Kernel\Transfer\AbstractTransfer;
 use Spryker\Shared\Log\LoggerTrait;
@@ -32,13 +32,13 @@ class GetEnabledPaymentMethodsApi extends AbstractApiCall
      * @param \Mollie\Api\MollieApiClient $mollieApiClient
      * @param \Mollie\Client\Mollie\MollieConfig $mollieConfig
      * @param \Mollie\Client\Mollie\Dependency\Service\MollieToUtilEncodingServiceInterface $utilEncodingService
-     * @param \Mollie\Client\Mollie\Mapper\PaymentMethodMapperInterface $mapper
+     * @param \Mollie\Client\Mollie\Mapper\Payment\PaymentMethodsMapperInterface $mapper
      */
     public function __construct(
         MollieApiClient $mollieApiClient,
         MollieConfig $mollieConfig,
         MollieToUtilEncodingServiceInterface $utilEncodingService,
-        protected PaymentMethodMapperInterface $mapper,
+        protected PaymentMethodsMapperInterface $mapper,
     ) {
         parent::__construct($mollieApiClient, $mollieConfig, $utilEncodingService);
     }

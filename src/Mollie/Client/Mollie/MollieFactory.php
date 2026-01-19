@@ -10,13 +10,16 @@ use Mollie\Client\Mollie\Api\Payment\CreatePaymentApi;
 use Mollie\Client\Mollie\Api\Payment\GetAllPaymentMethodsApi;
 use Mollie\Client\Mollie\Api\Payment\GetEnabledPaymentMethodsApi;
 use Mollie\Client\Mollie\Api\Payment\GetPaymentByTransactionIdApi;
+use Mollie\Client\Mollie\Dependency\Client\MollieToLocaleClientInterface;
 use Mollie\Client\Mollie\Dependency\Client\MollieToStorageClientInterface;
 use Mollie\Client\Mollie\Dependency\Client\MollieToStoreClientInterface;
 use Mollie\Client\Mollie\Dependency\Service\MollieToUtilEncodingServiceInterface;
+use Mollie\Client\Mollie\Provider\Payment\AllPaymentMethodsProvider;
+use Mollie\Client\Mollie\Provider\Payment\EnabledPaymentMethodsProvider;
 use Mollie\Client\Mollie\Provider\Payment\PaymentMethodsProvider;
 use Mollie\Client\Mollie\Provider\Payment\PaymentMethodsProviderInterface;
-use Mollie\Client\Mollie\Mapper\PaymentMethodMapper;
-use Mollie\Client\Mollie\Mapper\PaymentMethodMapperInterface;
+use Mollie\Client\Mollie\Mapper\Payment\PaymentMethodsMapper;
+use Mollie\Client\Mollie\Mapper\Payment\PaymentMethodsMapperInterface;
 use Mollie\Service\Mollie\MollieServiceInterface;
 use Spryker\Client\Kernel\AbstractFactory;
 
@@ -26,19 +29,36 @@ use Spryker\Client\Kernel\AbstractFactory;
 class MollieFactory extends AbstractFactory
 {
     /**
-     * @return \Mollie\Client\Mollie\Provider\Payment\PaymentMethodsProviderInterface
+     * @return PaymentMethodsProviderInterface
      */
-    public function createAvailablePaymentMethodsProvider(): PaymentMethodsProviderInterface
+    public function createEnabledPaymentMethodsProvider(): PaymentMethodsProviderInterface
     {
-        return new PaymentMethodsProvider(
-            $this->createAvailablePaymentMethodsApi(),
+        return new EnabledPaymentMethodsProvider(
+            $this->createGetEnabledPaymentMethodsApi(),
+            $this->createPaymentMethodsMapper(),
             $this->getConfig(),
             $this->getUtilEncodingService(),
             $this->getStorageClient(),
             $this->getStoreClient(),
+            $this->getLocaleClient()
         );
     }
 
+    /**
+     * @return PaymentMethodsProviderInterface
+     */
+    public function createAllPaymentMethodsProvider(): PaymentMethodsProviderInterface
+    {
+        return new AllPaymentMethodsProvider(
+            $this->createGetAllPaymentMethodsApi(),
+            $this->createPaymentMethodsMapper(),
+            $this->getConfig(),
+            $this->getUtilEncodingService(),
+            $this->getStorageClient(),
+            $this->getStoreClient(),
+            $this->getLocaleClient()
+        );
+    }
     /**
      * @return \Mollie\Client\Mollie\Api\Payment\GetEnabledPaymentMethodsApi
      */
@@ -48,7 +68,7 @@ class MollieFactory extends AbstractFactory
             $this->createMollieApiClient(),
             $this->getConfig(),
             $this->getUtilEncodingService(),
-            $this->createPaymentMethodMapper(),
+            $this->createPaymentMethodsMapper(),
         );
     }
 
@@ -61,7 +81,7 @@ class MollieFactory extends AbstractFactory
             $this->createMollieApiClient(),
             $this->getConfig(),
             $this->getUtilEncodingService(),
-            $this->createPaymentMethodMapper(),
+            $this->createPaymentMethodsMapper(),
         );
     }
 
@@ -107,11 +127,11 @@ class MollieFactory extends AbstractFactory
     }
 
     /**
-     * @return \Mollie\Client\Mollie\Mapper\PaymentMethodMapperInterface
+     * @return \Mollie\Client\Mollie\Mapper\Payment\PaymentMethodsMapperInterface
      */
-    public function createPaymentMethodMapper(): PaymentMethodMapperInterface
+    public function createPaymentMethodsMapper(): PaymentMethodsMapperInterface
     {
-        return new PaymentMethodMapper();
+        return new PaymentMethodsMapper();
     }
 
     /**
@@ -136,5 +156,13 @@ class MollieFactory extends AbstractFactory
     public function getStoreClient(): MollieToStoreClientInterface
     {
         return $this->getProvidedDependency(MollieDependencyProvider::CLIENT_STORE);
+    }
+
+    /**
+     * @return MollieToLocaleClientInterface
+     */
+    public function getLocaleClient(): MollieToLocaleClientInterface
+    {
+        return $this->getProvidedDependency(MollieDependencyProvider::CLIENT_LOCALE);
     }
 }

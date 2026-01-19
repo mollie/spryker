@@ -105,4 +105,11 @@ interface MollieConstants
      * @var string
      */
     public const SUCCESS_MESSAGE = 'success';
+
+    public const string MOLLIE_STORAGE_PAYMENT_METHODS_KEY = 'mollie:payment-methods';
+
+    public const string MOLLIE_STORAGE_ALL_PAYMENT_METHODS_KEY = self::MOLLIE_STORAGE_PAYMENT_METHODS_KEY .  ':all';
+
+    public const string MOLLIE_STORAGE_ENABLED_PAYMENT_METHODS_KEY = self::MOLLIE_STORAGE_PAYMENT_METHODS_KEY . ':enabled';
+
 }

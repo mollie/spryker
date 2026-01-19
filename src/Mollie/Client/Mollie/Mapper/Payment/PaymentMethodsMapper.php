@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Mollie\Client\Mollie\Mapper;
+namespace Mollie\Client\Mollie\Mapper\Payment;
 
 use Generated\Shared\Transfer\MolliePaymentMethodCollectionTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodTransfer;
 
-class PaymentMethodMapper implements PaymentMethodMapperInterface
+class PaymentMethodsMapper implements PaymentMethodsMapperInterface
 {
     protected const string METHODS_WRAPPER_KEY = '_embedded';
 
