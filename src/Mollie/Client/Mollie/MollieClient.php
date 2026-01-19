@@ -7,6 +7,8 @@ namespace Mollie\Client\Mollie;
 use Generated\Shared\Transfer\MollieApiRequestTransfer;
 use Generated\Shared\Transfer\MolliePaymentApiResponseTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodsApiResponseTransfer;
+use Generated\Shared\Transfer\OrderCollectionRequestTransfer;
+use Generated\Shared\Transfer\OrderCollectionResponseTransfer;
 use Spryker\Client\Kernel\AbstractClient;
 
 /**
@@ -74,5 +76,15 @@ class MollieClient extends AbstractClient implements MollieClientInterface
     public function createPayment(MollieApiRequestTransfer $mollieApiRequestTransfer): MolliePaymentApiResponseTransfer
     {
         return $this->getFactory()->createPaymentApi()->execute($mollieApiRequestTransfer);
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\OrderCollectionRequestTransfer $updateOrderCollectionRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\OrderCollectionResponseTransfer
+     */
+    public function updateOrderCollection(OrderCollectionRequestTransfer $updateOrderCollectionRequestTransfer): OrderCollectionResponseTransfer
+    {
+        return $this->getFactory()->createZedMollieStub()->updateOrderCollection($updateOrderCollectionRequestTransfer);
     }
 }

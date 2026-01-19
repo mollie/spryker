@@ -57,7 +57,13 @@ class CreatePaymentApi extends AbstractApiCall
             value: $value,
         );
         $redirectUrl = $this->getRedirectUrl($checkoutResponseTransfer->getSaveOrderOrFail()->getOrderReference());
-        $webhookUrl = $this->mollieConfig->getMollieWebhookUrl();
+
+        $webhookUrl = $this->mollieService->resolveWebhookUrl(
+            $this->mollieConfig->getMollieHtaccessUsername(),
+            $this->mollieConfig->getMollieHtaccessPassword(),
+            $this->mollieConfig->getMollieWebhookUrl(),
+        );
+
         $method = $this->mollieConfig->getMolliePaymentMethod($paymentTransfer->getPaymentMethod());
         $metadata = $this->addMetadata($checkoutResponseTransfer);
         $additionalParameters = $this->addAdditionalParameters($mollieApiRequestTransfer);
@@ -96,7 +102,10 @@ class CreatePaymentApi extends AbstractApiCall
      */
     protected function convertAmountToString(int $amount): string
     {
-        return (string)$this->mollieService->convertIntegerToDecimal($amount);
+        $amount = $this->mollieService->convertIntegerToDecimal($amount);
+        $amount = number_format($amount, 2, '.', '');
+
+        return $amount;
     }
 
     /**

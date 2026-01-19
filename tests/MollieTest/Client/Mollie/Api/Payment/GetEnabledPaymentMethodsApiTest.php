@@ -45,7 +45,7 @@ class GetEnabledPaymentMethodsApiTest extends AbstractClientTest
         $transfer = new MollieApiRequestTransfer();
         $queryTransfer = new MolliePaymentMethodQueryParametersTransfer();
 
-        $queryTransfer->setSequenceType('oneOff');
+        $queryTransfer->setSequenceType('oneoff');
         $transfer->setMolliePaymentMethodQueryParameters($queryTransfer);
 
         return $transfer;
