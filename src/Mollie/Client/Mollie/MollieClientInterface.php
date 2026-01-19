@@ -49,6 +49,11 @@ interface MollieClientInterface
     public function createPayment(MollieApiRequestTransfer $mollieApiRequestTransfer): MolliePaymentApiResponseTransfer;
 
     /**
+     * Specification:
+     *  - Updates payment status in mollie record
+     *
+     * @api
+     *
      * @param \Generated\Shared\Transfer\OrderCollectionRequestTransfer $updateOrderCollectionRequestTransfer
      *
      * @return \Generated\Shared\Transfer\OrderCollectionRequestTransfer
