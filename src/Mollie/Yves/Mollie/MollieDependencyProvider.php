@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Mollie\Yves\Mollie;
 
 use Mollie\Client\Mollie\MollieClientInterface;
+use Mollie\Yves\Mollie\Dependency\Client\MollieToQuoteClientBridge;
+use Mollie\Yves\Mollie\Dependency\Client\MollieToQuoteClientInterface;
 use Mollie\Yves\Mollie\Dependency\Client\MollieToStorageClientBridge;
 use Mollie\Yves\Mollie\Dependency\Client\MollieToStorageClientInterface;
 use Mollie\Yves\Mollie\Dependency\Service\MollieToUtilEncodingServiceBridge;
@@ -26,6 +28,11 @@ class MollieDependencyProvider extends AbstractBundleDependencyProvider
     /**
      * @var string
      */
+    public const CLIENT_QUOTE = 'CLIENT_QUOTE';
+
+    /**
+     * @var string
+     */
     public const SERVICE_UTIL_ENCODING = 'SERVICE_UTIL_ENCODING';
 
     /**
@@ -38,6 +45,7 @@ class MollieDependencyProvider extends AbstractBundleDependencyProvider
         $container = parent::provideDependencies($container);
         $container = $this->addMollieToStorageClientBridge($container);
         $container = $this->addMollieClient($container);
+        $container = $this->addQuoteClient($container);
         $container = $this->addUtilEncodingService($container);
 
         return $container;
@@ -68,6 +76,22 @@ class MollieDependencyProvider extends AbstractBundleDependencyProvider
     {
         $container->set(static::CLIENT_MOLLIE, function (Container $container): MollieClientInterface {
             return $container->getLocator()->mollie()->client();
+        });
+
+        return $container;
+    }
+
+    /**
+     * @param \Spryker\Yves\Kernel\Container $container
+     *
+     * @return \Spryker\Yves\Kernel\Container
+     */
+    protected function addQuoteClient(Container $container): Container
+    {
+        $container->set(static::CLIENT_QUOTE, function (Container $container): MollieToQuoteClientInterface {
+            return new MollieToQuoteClientBridge(
+                $container->getLocator()->quote()->client(),
+            );
         });
 
         return $container;

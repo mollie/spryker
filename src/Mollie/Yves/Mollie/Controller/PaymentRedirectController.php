@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Mollie\Yves\Mollie\Controller;
 
+use ArrayObject;
 use Generated\Shared\Transfer\MollieApiRequestTransfer;
 use Mollie\Shared\Mollie\MollieConfig as MollieConfigShared;
 use SprykerShop\Yves\CheckoutPage\Plugin\Router\CheckoutPageRouteProviderPlugin;
@@ -35,10 +36,23 @@ class PaymentRedirectController extends AbstractMollieController
 
         if (!$molliePaymentApiResponseTransfer->getIsSuccessful() || in_array($payment->getStatus(), MollieConfigShared::MOLLIE_PAYMENT_STATUS_FAILED, true)) {
             $this->addErrorMessage(sprintf($this->getFactory()->getConfig()->getPaymentFailedMessage(), $payment->getStatus()));
+            $this->clearOrderReference();
 
-            return $this->redirectResponseInternal(CheckoutPageRouteProviderPlugin::ROUTE_NAME_CHECKOUT_ERROR);
+            return $this->redirectResponseInternal(CheckoutPageRouteProviderPlugin::ROUTE_NAME_CHECKOUT_PAYMENT);
         }
 
         return $this->redirectResponseInternal(CheckoutPageRouteProviderPlugin::ROUTE_NAME_CHECKOUT_SUCCESS);
+    }
+
+    /**
+     * @return void
+     */
+    protected function clearOrderReference(): void
+    {
+        $quoteTransfer = $this->getFactory()->getQuoteClient()->getQuote();
+        $quoteTransfer->setOrderReference(null)
+            ->setErrors(new ArrayObject());
+
+        $this->getFactory()->getQuoteClient()->setQuote($quoteTransfer);
     }
 }

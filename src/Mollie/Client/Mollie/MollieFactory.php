@@ -6,10 +6,13 @@ namespace Mollie\Client\Mollie;
 
 use Mollie\Api\MollieApiClient;
 use Mollie\Client\Mollie\Api\ApiCallInterface;
-use Mollie\Client\Mollie\Api\Payment\AvailablePaymentMethodsApi;
 use Mollie\Client\Mollie\Api\Payment\CreatePaymentApi;
+use Mollie\Client\Mollie\Api\Payment\GetAllPaymentMethodsApi;
+use Mollie\Client\Mollie\Api\Payment\GetEnabledPaymentMethodsApi;
 use Mollie\Client\Mollie\Api\Payment\GetPaymentByTransactionIdApi;
 use Mollie\Client\Mollie\Dependency\Service\MollieToUtilEncodingServiceInterface;
+use Mollie\Client\Mollie\Mapper\PaymentMethodMapper;
+use Mollie\Client\Mollie\Mapper\PaymentMethodMapperInterface;
 use Mollie\Client\Mollie\Zed\MollieStub;
 use Mollie\Client\Mollie\Zed\MollieStubInterface;
 use Mollie\Service\Mollie\MollieServiceInterface;
@@ -22,14 +25,28 @@ use Spryker\Client\ZedRequest\ZedRequestClientInterface;
 class MollieFactory extends AbstractFactory
 {
     /**
-     * @return \Mollie\Client\Mollie\Api\Payment\AvailablePaymentMethodsApi
+     * @return \Mollie\Client\Mollie\Api\Payment\GetEnabledPaymentMethodsApi
      */
-    public function createAvailablePaymentMethodsApi(): ApiCallInterface
+    public function createGetEnabledPaymentMethodsApi(): ApiCallInterface
     {
-        return new AvailablePaymentMethodsApi(
+        return new GetEnabledPaymentMethodsApi(
             $this->createMollieApiClient(),
             $this->getConfig(),
             $this->getUtilEncodingService(),
+            $this->createPaymentMethodMapper(),
+        );
+    }
+
+    /**
+     * @return \Mollie\Client\Mollie\Api\Payment\GetAllPaymentMethodsApi
+     */
+    public function createGetAllPaymentMethodsApi(): ApiCallInterface
+    {
+        return new GetAllPaymentMethodsApi(
+            $this->createMollieApiClient(),
+            $this->getConfig(),
+            $this->getUtilEncodingService(),
+            $this->createPaymentMethodMapper(),
         );
     }
 
@@ -82,6 +99,14 @@ class MollieFactory extends AbstractFactory
             $this->getUtilEncodingService(),
             $this->getMollieService(),
         );
+    }
+
+    /**
+     * @return \Mollie\Client\Mollie\Mapper\PaymentMethodMapperInterface
+     */
+    public function createPaymentMethodMapper(): PaymentMethodMapperInterface
+    {
+        return new PaymentMethodMapper();
     }
 
     /**

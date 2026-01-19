@@ -102,7 +102,10 @@ class CreatePaymentApi extends AbstractApiCall
      */
     protected function convertAmountToString(int $amount): string
     {
-        return (string)$this->mollieService->convertIntegerToDecimal($amount);
+        $amount = $this->mollieService->convertIntegerToDecimal($amount);
+        $amount = number_format($amount, 2, '.', '');
+
+        return $amount;
     }
 
     /**

@@ -61,6 +61,19 @@ class MollieDependencyProvider extends AbstractBundleDependencyProvider
      *
      * @return \Spryker\Zed\Kernel\Container
      */
+    public function provideCommunicationLayerDependencies(Container $container): Container
+    {
+        $container = $this->addStorageClient($container);
+        $container = $this->addMollieClient($container);
+
+        return $container;
+    }
+
+    /**
+     * @param \Spryker\Zed\Kernel\Container $container
+     *
+     * @return \Spryker\Zed\Kernel\Container
+     */
     public function providePersistenceLayerDependencies(Container $container): Container
     {
         $container = parent::providePersistenceLayerDependencies($container);
