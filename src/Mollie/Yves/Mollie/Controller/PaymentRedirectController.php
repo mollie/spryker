@@ -32,7 +32,7 @@ class PaymentRedirectController extends AbstractMollieController
         }
 
         $mollieApiRequestTransfer = new MollieApiRequestTransfer();
-        $mollieApiRequestTransfer->setBody(['id' => $paymentId]);
+        $mollieApiRequestTransfer->setTransactionId($paymentId);
 
         $molliePaymentApiResponseTransfer = $this->getFactory()->getMollieApiClient()->getPaymentByTransactionId($mollieApiRequestTransfer);
         $payment = $molliePaymentApiResponseTransfer->getMolliePayment();

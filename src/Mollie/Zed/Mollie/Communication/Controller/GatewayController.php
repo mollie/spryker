@@ -1,0 +1,24 @@
+<?php
+
+namespace Mollie\Zed\Mollie\Communication\Controller;
+
+use Generated\Shared\Transfer\OrderCollectionRequestTransfer;
+use Generated\Shared\Transfer\OrderCollectionResponseTransfer;
+use Spryker\Zed\Kernel\Communication\Controller\AbstractGatewayController;
+
+/**
+ * @method \Mollie\Zed\Mollie\Business\MollieFacadeInterface getFacade()()
+ */
+class GatewayController extends AbstractGatewayController
+{
+    /**
+     * @param \Generated\Shared\Transfer\OrderCollectionRequestTransfer $updateOrderCollectionRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\OrderCollectionResponseTransfer
+     */
+    public function updateOrderCollectionAction(
+        OrderCollectionRequestTransfer $updateOrderCollectionRequestTransfer,
+    ): OrderCollectionResponseTransfer {
+        return $this->getFacade()->updateOrderCollection($updateOrderCollectionRequestTransfer);
+    }
+}

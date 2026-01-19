@@ -7,6 +7,7 @@ namespace Mollie\Yves\Mollie;
 use Mollie\Client\Mollie\MollieClientInterface;
 use Mollie\Yves\Mollie\Dependency\Client\MollieToQuoteClientInterface;
 use Mollie\Yves\Mollie\Dependency\Client\MollieToStorageClientInterface;
+use Mollie\Yves\Mollie\Dependency\Service\MollieToUtilEncodingServiceInterface;
 use Mollie\Yves\Mollie\Handler\MolliePaymentBancontactHandler;
 use Mollie\Yves\Mollie\Handler\MolliePaymentBankTransferHandler;
 use Mollie\Yves\Mollie\Handler\MolliePaymentCreditCardHandler;
@@ -363,5 +364,13 @@ class MollieFactory extends AbstractFactory
     public function getQuoteClient(): MollieToQuoteClientInterface
     {
         return $this->getProvidedDependency(MollieDependencyProvider::CLIENT_QUOTE);
+    }
+
+    /**
+     * @return \Mollie\Yves\Mollie\Dependency\Service\MollieToUtilEncodingServiceInterface
+     */
+    public function getUtilEncodingService(): MollieToUtilEncodingServiceInterface
+    {
+        return $this->getProvidedDependency(MollieDependencyProvider::SERVICE_UTIL_ENCODING);
     }
 }

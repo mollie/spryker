@@ -120,4 +120,20 @@ class MollieConfig extends AbstractBundleConfig
     {
         return $this->getSharedConfig()->getMollieApiKey();
     }
+
+    /**
+     * @return string
+     */
+    public function getMollieHtaccessUsername(): string
+    {
+        return $this->get(MollieConstants::MOLLIE)[MollieConstants::MOLLIE_HTACCESS_USERNAME];
+    }
+
+    /**
+     * @return string
+     */
+    public function getMollieHtaccessPassword(): string
+    {
+        return $this->get(MollieConstants::MOLLIE)[MollieConstants::MOLLIE_HTACCESS_PASSWORD];
+    }
 }

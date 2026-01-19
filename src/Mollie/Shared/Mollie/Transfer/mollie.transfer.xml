@@ -133,6 +133,7 @@
         <property name="checkoutResponse" type="CheckoutResponse"/>
         <property name="body" type="array"/>
         <property name="molliePaymentMethodQueryParameters" type="MolliePaymentMethodQueryParameters" />
+        <property name="transactionId" type="string"/>
     </transfer>
 
     <transfer name="MollieApiResponse">
