@@ -27,11 +27,6 @@ class MollieApiClientTester extends Actor
     use _generated\MollieApiClientTesterActions;
 
     /**
-     * @var string
-     */
-    protected const TEST = 'test';
-
-    /**
      * @var array
      */
     protected const MOLLIE_MOCKED_PAYMENT_METHOD_RESPONSE_PAYLOAD = [
