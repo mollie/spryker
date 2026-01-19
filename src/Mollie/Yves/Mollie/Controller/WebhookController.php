@@ -29,8 +29,6 @@ class WebhookController extends AbstractController
     {
         $response = new Response();
 
-        $this->getFactory()->getMollieApiClient()->buildWebhookUrl();
-
         $content = $request->getContent();
         $data = $this->getFactory()->getUtilEncodingService()->decodeJson($content);
 

@@ -34,11 +34,6 @@ class MollieService extends AbstractService implements MollieServiceInterface
      */
     public function resolveWebhookUrl(string $username, string $password, string $webhookUrl): string
     {
-        // Implement check for credentials adn create class for it
-        if ($username && $password) {
-            return $webhookUrl;
-        }
-
-        return $webhookUrl;
+        return $this->getFactory()->createUrlReolver()->resolveWebhookUrl($username, $password, $webhookUrl);
     }
 }

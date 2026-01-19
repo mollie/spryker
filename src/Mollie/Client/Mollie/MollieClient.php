@@ -70,12 +70,4 @@ class MollieClient extends AbstractClient implements MollieClientInterface
     {
         return $this->getFactory()->createZedMollieStub()->updateOrderCollection($updateOrderCollectionRequestTransfer);
     }
-
-    /**
-     * @return string
-     */
-    public function buildWebhookUrl(): string
-    {
-        return $this->getFactory()->createTestUrlBuilder()->buildWebhookUrl();
-    }
 }

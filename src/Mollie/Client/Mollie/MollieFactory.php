@@ -99,15 +99,4 @@ class MollieFactory extends AbstractFactory
     {
         return $this->getProvidedDependency(MollieDependencyProvider::SERVICE_ZED);
     }
-
-    /**
-     * @return \Mollie\Client\Mollie\TestUrlBuilder
-     */
-    public function createTestUrlBuilder(): TestUrlBuilder
-    {
-        return new TestUrlBuilder(
-            $this->getMollieService(),
-            $this->getConfig(),
-        );
-    }
 }

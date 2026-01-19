@@ -54,9 +54,4 @@ interface MollieClientInterface
      * @return \Generated\Shared\Transfer\OrderCollectionRequestTransfer
      */
     public function updateOrderCollection(OrderCollectionRequestTransfer $updateOrderCollectionRequestTransfer): OrderCollectionResponseTransfer;
-
-    /**
-     * @return string
-     */
-    public function buildWebhookUrl(): string;
 }
