@@ -22,6 +22,6 @@ class MollieCreditCardPaymentHandlerPlugin extends AbstractPlugin implements Ste
      */
     public function addToDataClass(Request $request, AbstractTransfer $dataTransfer): AbstractTransfer
     {
-        return $this->getFactory()->createMolliePaymentHandler()->addPaymentToQuote($dataTransfer);
+        return $this->getFactory()->createMollieCreditCardPaymentHandler()->addPaymentToQuote($dataTransfer);
     }
 }
