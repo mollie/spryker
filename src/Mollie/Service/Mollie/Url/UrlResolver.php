@@ -14,9 +14,9 @@ class UrlResolver implements UrlResolverInterface
     public function resolveWebhookUrl(string $username, string $password, string $webhookUrl): string
     {
         if ($username && $password) {
-            return sprintf('https://%s:%s@%s', $username, $password, $webhookUrl);
+            return sprintf('http://%s:%s@%s', $username, $password, $webhookUrl);
         }
 
-        return 'https://' . $webhookUrl;
+        return 'http://' . $webhookUrl;
     }
 }
