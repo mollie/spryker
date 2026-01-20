@@ -6,8 +6,41 @@
         <property name="cardToken" type="string"/>
     </transfer>
 
+    <transfer name="MolliePayPalPayment">
+        <property name="sessionId" type="string"/>
+        <property name="digitalGoods" type="bool"/>
+    </transfer>
+
+    <transfer name="MollieBankTransferPayment">
+        <property name="dueDate" type="string"/>
+        <property name="billingEmail" type="bool"/>
+    </transfer>
+
+    <transfer name="MollieKlarnaPayment">
+        <property name="extraMerchantData" type="string"/>
+    </transfer>
+
+    <transfer name="MollieEpsPayment">
+        <property name="extraMerchantData" type="string"/>
+    </transfer>
+
+    <transfer name="MollieIdealPayment">
+        <property name="consumerDateOfBirth" type="string"/>
+    </transfer>
+
     <transfer name="Payment">
         <property name="mollieCreditCardPayment" type="MollieCreditCardPayment"/>
+        <property name="molliePayPalPayment" type="MolliePayPalPayment"/>
+        <property name="mollieBankTransferPayment" type="MollieBankTransferPayment"/>
+        <property name="mollieKlarnaPayment" type="MollieKlarnaPayment"/>
+        <property name="mollieKlarnaPayLaterPayment" type="[]"/>
+        <property name="mollieKlarnaPayNowPayment" type="[]"/>
+        <property name="mollieKlarnaSliceItPayment" type="[]"/>
+        <property name="mollieEpsPayment" type="[]"/>
+        <property name="mollieIdealPayment" type="MollieIdealPayment"/>
+        <property name="mollieBancontactPayment" type="[]"/>
+        <property name="mollieKbcPayment" type="[]"/>
+        <property name="molliePayByBankPayment" type="[]"/>
     </transfer>
 
     <transfer name="MolliePaymentMethod">
@@ -73,13 +106,13 @@
         <property name="isSuccess" type="bool" />
     </transfer>
 
-    <transfer name="MollieAvailablePaymentMethodsApiResponse">
+    <transfer name="MolliePaymentMethodsApiResponse">
         <property name="isSuccessful" type="bool"/>
         <property name="message" type="string"/>
-        <property name="collection" type="MollieAvailablePaymentMethodCollection"/>
+        <property name="collection" type="MolliePaymentMethodCollection"/>
     </transfer>
 
-    <transfer name="MollieAvailablePaymentMethodCollection">
+    <transfer name="MolliePaymentMethodCollection">
         <property name="methods" type="MolliePaymentMethod[]"/>
     </transfer>
 
@@ -88,6 +121,11 @@
         <property name="amount" type="MollieAmount"/>
         <property name="billingCountry" type="string"/>
         <property name="sequenceType" type="string"/>
+        <property name="profileId" type="string"/>
+        <property name="orderLineCategories" type="array"/>
+        <property name="includeWallets" type="array"/>
+        <property name="includeIssuers" type="bool"/>
+        <property name="includePricing" type="bool"/>
     </transfer>
 
     <transfer name="MollieApiRequest">
@@ -95,6 +133,7 @@
         <property name="checkoutResponse" type="CheckoutResponse"/>
         <property name="body" type="array"/>
         <property name="molliePaymentMethodQueryParameters" type="MolliePaymentMethodQueryParameters" />
+        <property name="transactionId" type="string"/>
     </transfer>
 
     <transfer name="MollieApiResponse">

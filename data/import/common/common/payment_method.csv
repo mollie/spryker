@@ -1,0 +1,13 @@
+payment_method_key,payment_method_name,payment_provider_key,payment_provider_name,is_active
+mollieCreditCardPayment,Credit Card,MollieCreditCardPayment,Mollie Credit Card Payment,1
+molliePayPalPayment,PayPal,MolliePayPalPayment,Mollie PayPal Payment,1
+mollieBankTransferPayment,Bank Transfer,MollieBankTransferPayment,Mollie Bank Transfer Payment,1
+mollieKlarnaPayment,Klarna,MollieKlarnaPayment,Mollie Klarna Payment,1
+mollieKlarnaPayLaterPayment,Klarna Pay Later,MollieKlarnaPayLaterPayment,Mollie Klarna Pay Later Payment,1
+mollieKlarnaPayNowPayment,Klarna Pay Now,MollieKlarnaPayNowPayment,Mollie Klarna Pay Now Payment,1
+mollieKlarnaSliceItPayment,Klarna Slice It,MollieKlarnaSliceItPayment,Mollie Slice It Payment,1
+mollieEpsPayment,EPS,MollieEpsPayment,Mollie EPS Payment,1
+mollieIdealPayment,iDEAL,MollieIdealPayment,Mollie iDEAL Payment,1
+mollieBancontactPayment,Bancontact,MollieBancontactPayment,Mollie Bancontact Payment,1
+mollieKbcPayment,KBC,MollieKbcPayment,Mollie KBC Payment,1
+molliePayByBankPayment,Pay By Bank,MolliePayByBankPayment,Mollie Pay By Bank Payment,1

@@ -1,0 +1,70 @@
+mollieCreditCardPayment,Kreditkarte,de_DE
+mollieCreditCardPayment,Credit card,en_US
+molliePayPalPayment,PayPal,de_DE
+molliePayPalPayment,PayPal,en_US
+mollieBankTransferPayment,Banküberweisung,de_DE
+mollieBankTransferPayment,Bank transfer,en_US
+mollieKlarnaPayment,Klarna,de_DE
+mollieKlarnaPayment,Klarna,en_US
+mollieKlarnaPayLaterPayment,Klarna Pay Later,de_DE
+mollieKlarnaPayLaterPayment,Klarna Pay Later,en_US
+mollieKlarnaPayNowPayment,Klarna Pay Now,de_DE
+mollieKlarnaPayNowPayment,Klarna Pay Now,en_US
+mollieKlarnaSliceItPayment,Klarna Slice It,de_DE
+mollieKlarnaSliceItPayment,Klarna Slice It,en_US
+mollieEpsPayment,EPS,de_DE
+mollieEpsPayment,EPS,en_US
+mollieIdealPayment,iDEAL,de_DE
+mollieIdealPayment,iDEAL,en_US
+mollieBancontactPayment,Bancontact,de_DE
+mollieBancontactPayment,Bancontact,en_US
+mollieKbcPayment,KBC,de_DE
+mollieKbcPayment,KBC,en_US
+molliePayByBankPayment,Per Banküberweisung bezahlen,de_DE
+molliePayByBankPayment,Pay by bank transfer,en_US
+checkout.payment.provider.MollieCreditCardPayment,Mollie Kreditkarte,de_DE
+checkout.payment.provider.MollieCreditCardPayment,Mollie Credit Card,en_US
+checkout.payment.provider.MolliePayPalPayment,Mollie PayPal,de_DE
+checkout.payment.provider.MolliePayPalPayment,Mollie PayPal,en_US
+checkout.payment.provider.MollieBankTransferPayment,Mollie Banküberweisung,de_DE
+checkout.payment.provider.MollieBankTransferPayment,Mollie Bank Transfer,en_US
+checkout.payment.provider.mollieKlarnaPayment,Mollie Klarna,de_DE
+checkout.payment.provider.mollieKlarnaPayment,Mollie Klarna,en_US
+checkout.payment.provider.MollieKlarnaPayLaterPayment,Mollie Klarna Pay Later,de_DE
+checkout.payment.provider.MollieKlarnaPayLaterPayment,Mollie Klarna Pay Later,en_US
+checkout.payment.provider.MollieKlarnaPayNowPayment,Mollie Klarna Pay Now,de_DE
+checkout.payment.provider.MollieKlarnaPayNowPayment,Mollie Klarna Pay Now,en_US
+checkout.payment.provider.MollieKlarnaSliceItPayment,Mollie Klarna Slice It,de_DE
+checkout.payment.provider.MollieKlarnaSliceItPayment,Mollie Klarna Slice It,en_US
+checkout.payment.provider.MollieEpsPayment,Mollie EPS,de_DE
+checkout.payment.provider.MollieEpsPayment,Mollie EPS,en_US
+checkout.payment.provider.MollieIdealPayment,Mollie iDEAL,de_DE
+checkout.payment.provider.MollieIdealPayment,Mollie iDEAL,en_US
+checkout.payment.provider.MollieBancontactPayment,Mollie Bancontact,de_DE
+checkout.payment.provider.MollieBancontactPayment,Mollie Bancontact,en_US
+checkout.payment.provider.MollieKbcPayment,Mollie KBC,de_DE
+checkout.payment.provider.MollieKbcPayment,Mollie KBC,en_US
+checkout.payment.provider.MolliePayByBankPayment,Mollie per Bank bezahlen,de_DE
+checkout.payment.provider.MolliePayByBankPayment,Mollie Pay By Bank,en_US
+checkout.payment.provider.molliePaypal.descriptionText,Schließen Sie Ihren Einkauf sicher mit Ihrem PayPal-Konto ab.,de_DE
+checkout.payment.provider.molliePaypal.descriptionText,Complete your purchase securely using your PayPal account.,en_US
+checkout.payment.provider.mollieBankTransfer.descriptionText,Schließen Sie Ihren Einkauf sicher per Banküberweisung ab.,de_DE
+checkout.payment.provider.mollieBankTransfer.descriptionText,Complete your purchase securely using bank transfer.,en_US
+checkout.payment.provider.mollieKlarna.descriptionText,Schließen Sie Ihren Einkauf sicher mit Klarna ab.,de_DE
+checkout.payment.provider.mollieKlarna.descriptionText,Complete your purchase securely with Klarna.,en_US
+checkout.payment.provider.mollieKlarnaPayLater.descriptionText,Jetzt kaufen und später bezahlen mit Klarna.,de_DE
+checkout.payment.provider.mollieKlarnaPayLater.descriptionText,Buy now and pay later with Klarna.,en_US
+checkout.payment.provider.mollieKlarnaPayNow.descriptionText,Sofort bezahlen mit Klarna per Online-Banking.,de_DE
+checkout.payment.provider.mollieKlarnaPayNow.descriptionText,Pay immediately with Klarna via online banking.,en_US
+checkout.payment.provider.mollieKlarnaSliceIt.descriptionText,In Raten zahlen mit Klarna.,de_DE
+checkout.payment.provider.mollieKlarnaSliceIt.descriptionText,Pay in installments with Klarna.,en_US
+checkout.payment.provider.mollieEps.descriptionText,Bezahlen Sie sicher mit eps Online-Überweisung.,de_DE
+checkout.payment.provider.mollieEps.descriptionText,Pay securely using eps online bank transfer.,en_US
+checkout.payment.provider.mollieIdeal.descriptionText,Schnelle und sichere Zahlung mit iDEAL.,de_DE
+checkout.payment.provider.mollieIdeal.descriptionText,Fast and secure payment with iDEAL.,en_US
+checkout.payment.provider.mollieBancontact.descriptionText,Sicher bezahlen mit Bancontact.,de_DE
+checkout.payment.provider.mollieBancontact.descriptionText,Secure payment with Bancontact.,en_US
+checkout.payment.provider.mollieKbc.descriptionText,Bezahlen Sie direkt über KBC Online-Banking.,de_DE
+checkout.payment.provider.mollieKbc.descriptionText,Pay directly via KBC online banking.,en_US
+checkout.payment.provider.molliePayByBank.descriptionText,Bezahlen Sie per sicherer Banküberweisung.,de_DE
+checkout.payment.provider.molliePayByBank.descriptionText,Pay using a secure bank transfer.,en_US

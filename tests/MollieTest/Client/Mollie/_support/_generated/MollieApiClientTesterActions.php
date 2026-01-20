@@ -1,4 +1,4 @@
-<?php  //[STAMP] 727aa09086a5dcbbd0b33a732649ed3a
+<?php  //[STAMP] f8fbe645ef77c0d18f1954200e759e50
 // phpcs:ignoreFile
 namespace MollieTest\Client\Mollie\_generated;
 

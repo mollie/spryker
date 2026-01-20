@@ -17,7 +17,12 @@ class MollieConfig extends AbstractBundleConfig
     /**
      * @var string
      */
-    protected const ERROR_MESSAGE_ORDER_STATUS_PAYMENT_ERROR = 'An error occurred while processing your payment (status: %s). Please try again.';
+    protected const ERROR_MESSAGE_ORDER_STATUS_PAYMENT_ERROR = 'Payment did not get processed (status: %s). Please try again.';
+
+    /**
+     * @var string
+     */
+    protected const ERROR_MESSAGE_PAYMENT_ID_DOESNT_EXIST = 'Payment ID does not exist.';
 
     /**
      * @return string
@@ -26,13 +31,6 @@ class MollieConfig extends AbstractBundleConfig
     {
         return $this->get(MollieConstants::MOLLIE)[MollieConstants::MOLLIE_PROFILE_ID];
     }
-
-    /**
-     * @return string
-     *
-     * @var string
-     */
-    public const ROUTE_PAYMENT_REDIRECT = 'payment/status';
 
     /**
      * @return bool
@@ -56,5 +54,13 @@ class MollieConfig extends AbstractBundleConfig
     public function getPaymentFailedMessage(): string
     {
         return static::ERROR_MESSAGE_ORDER_STATUS_PAYMENT_ERROR;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPaymentIdDoesntExistMessage(): string
+    {
+        return static::ERROR_MESSAGE_PAYMENT_ID_DOESNT_EXIST;
     }
 }

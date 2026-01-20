@@ -5,22 +5,36 @@ declare(strict_types=1);
 namespace Mollie\Client\Mollie;
 
 use Generated\Shared\Transfer\MollieApiRequestTransfer;
-use Generated\Shared\Transfer\MollieAvailablePaymentMethodsApiResponseTransfer;
 use Generated\Shared\Transfer\MolliePaymentApiResponseTransfer;
+use Generated\Shared\Transfer\MolliePaymentMethodsApiResponseTransfer;
+use Generated\Shared\Transfer\OrderCollectionRequestTransfer;
+use Generated\Shared\Transfer\OrderCollectionResponseTransfer;
 
 interface MollieClientInterface
 {
     /**
      *  Specification:
-     *  - Gets list of available payment methods from Mollie
+     *  - Gets list of enabled payment methods from Mollie
      *
      * @api
      *
      * @param \Generated\Shared\Transfer\MollieApiRequestTransfer $mollieApiRequestTransfer
      *
-     * @return \Generated\Shared\Transfer\MollieAvailablePaymentMethodsApiResponseTransfer
+     * @return \Generated\Shared\Transfer\MolliePaymentMethodsApiResponseTransfer
      */
-    public function getAvailablePaymentMethods(MollieApiRequestTransfer $mollieApiRequestTransfer): MollieAvailablePaymentMethodsApiResponseTransfer;
+    public function getEnabledPaymentMethods(MollieApiRequestTransfer $mollieApiRequestTransfer): MolliePaymentMethodsApiResponseTransfer;
+
+    /**
+     *  Specification:
+     *  - Gets list of all payment methods from Mollie
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\MollieApiRequestTransfer $mollieApiRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\MolliePaymentMethodsApiResponseTransfer
+     */
+    public function getAllPaymentMethods(MollieApiRequestTransfer $mollieApiRequestTransfer): MolliePaymentMethodsApiResponseTransfer;
 
     /**
      * Specification:
@@ -45,4 +59,16 @@ interface MollieClientInterface
      * @return \Generated\Shared\Transfer\MolliePaymentApiResponseTransfer
      */
     public function createPayment(MollieApiRequestTransfer $mollieApiRequestTransfer): MolliePaymentApiResponseTransfer;
+
+    /**
+     * Specification:
+     *  - Updates payment status in mollie record
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\OrderCollectionRequestTransfer $updateOrderCollectionRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\OrderCollectionRequestTransfer
+     */
+    public function updateOrderCollection(OrderCollectionRequestTransfer $updateOrderCollectionRequestTransfer): OrderCollectionResponseTransfer;
 }

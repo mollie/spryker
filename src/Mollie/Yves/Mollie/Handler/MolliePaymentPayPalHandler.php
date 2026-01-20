@@ -1,0 +1,27 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Mollie\Yves\Mollie\Handler;
+
+use Generated\Shared\Transfer\QuoteTransfer;
+use Mollie\Shared\Mollie\MollieConfig;
+
+class MolliePaymentPayPalHandler implements MolliePaymentHandlerInterface
+{
+    /**
+     * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
+     *
+     * @return \Generated\Shared\Transfer\QuoteTransfer
+     */
+    public function addPaymentToQuote(QuoteTransfer $quoteTransfer): QuoteTransfer
+    {
+        $paymentTransfer = $quoteTransfer->getPayment();
+
+        $paymentTransfer
+            ->setPaymentProvider(MollieConfig::MOLLIE_PROVIDER_PAYPAL)
+            ->setPaymentMethod(MollieConfig::MOLLIE_PAYMENT_PAYPAL);
+
+        return $quoteTransfer;
+    }
+}

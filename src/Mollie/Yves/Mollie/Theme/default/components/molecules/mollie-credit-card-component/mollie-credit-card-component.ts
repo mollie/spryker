@@ -140,6 +140,7 @@ export default class MollieCreditCardComponent extends Component {
         }
 
         event.preventDefault();
+        debugger;
         this.mollie.createToken().then((result) => {
              const { token, error } = result;
 
