@@ -130,9 +130,9 @@ class MollieConfig extends AbstractBundleConfig
     /**
      * @return bool
      */
-    public function getMollieTestModeEnabled(): bool
+    public function isMollieTestModeEnabled(): bool
     {
-        return $this->getSharedConfig()->getMollieTestModeEnabled();
+        return $this->getSharedConfig()->isMollieTestModeEnabled();
     }
 
     /**

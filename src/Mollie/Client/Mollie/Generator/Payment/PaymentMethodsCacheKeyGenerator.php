@@ -30,7 +30,7 @@ class PaymentMethodsCacheKeyGenerator implements PaymentMethodsCacheKeyGenerator
         MolliePaymentMethodQueryParametersTransfer $queryParametersTransfer,
         string $cacheKeyPrefix,
     ): string {
-        $mode = $this->config->getMollieTestModeEnabled() ? static::TEST_MODE_IDENTIFIER : static::LIVE_MODE_IDENTIFIER;
+        $mode = $this->config->isMollieTestModeEnabled() ? static::TEST_MODE_IDENTIFIER : static::LIVE_MODE_IDENTIFIER;
 
         $profileId = $queryParametersTransfer->getProfileId();
         $amount = $queryParametersTransfer->getAmount();
