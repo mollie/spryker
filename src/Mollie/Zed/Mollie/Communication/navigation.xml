@@ -1,19 +1,9 @@
 <?xml version="1.0"?>
-<config>
-    <mollie-payment-methods>
-        <label>Mollie payment methods</label>
-        <title>Mollie payment methods</title>
-        <uri>/mollie-payment-methods</uri>
-        <icon>fa-copy</icon>
-        <pages>
-            <mollie-dashboard>
-                <label>Mollie payment methods</label>
-                <title>Mollie payment methods</title>
-                <bundle>mollie</bundle>
-                <controller>index</controller>
-                <action>index</action>
-                <visible>1</visible>
-            </mollie-dashboard>
-        </pages>
-    </mollie-payment-methods>
-</config>
+<mollie-payment-method>
+    <label>Mollie payment methods</label>
+    <title>Mollie payment methods</title>
+    <bundle>mollie</bundle>
+    <controller>index</controller>
+    <action>index</action>
+    <visible>1</visible>
+</mollie-payment-method>
