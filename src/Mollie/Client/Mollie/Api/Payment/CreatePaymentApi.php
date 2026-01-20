@@ -60,9 +60,9 @@ class CreatePaymentApi extends AbstractApiCall
         $redirectUrl = $this->getRedirectUrl($checkoutResponseTransfer->getSaveOrderOrFail()->getOrderReference());
 
         $webhookUrl = $this->mollieService->resolveWebhookUrl(
-            $this->mollieConfig->getMollieHtaccessUsername(),
-            $this->mollieConfig->getMollieHtaccessPassword(),
             $this->mollieConfig->getMollieWebhookUrl(),
+            $this->mollieConfig->getTestEnvironmentMollieWebhookUrl(),
+            $this->mollieConfig->isMollieTestModeEnabled(),
         );
 
         $method = $this->mollieConfig->getMolliePaymentMethod($paymentTransfer->getPaymentMethod());

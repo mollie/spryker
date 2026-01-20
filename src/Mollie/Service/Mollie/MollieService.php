@@ -26,14 +26,14 @@ class MollieService extends AbstractService implements MollieServiceInterface
     }
 
     /**
-     * @param string $username
-     * @param string $password
      * @param string $webhookUrl
+     * @param string $testEnvironmentWebhookUrl
+     * @param bool $testMode
      *
      * @return string
      */
-    public function resolveWebhookUrl(string $username, string $password, string $webhookUrl): string
+    public function resolveWebhookUrl(string $webhookUrl, string $testEnvironmentWebhookUrl, bool $testMode): string
     {
-        return $this->getFactory()->createUrlReolver()->resolveWebhookUrl($username, $password, $webhookUrl);
+        return $this->getFactory()->createUrlReolver()->resolveWebhookUrl($webhookUrl, $testEnvironmentWebhookUrl, $testMode);
     }
 }
