@@ -45,7 +45,6 @@ class PaymentMethodsProvider implements PaymentMethodsProviderInterface
     ): MolliePaymentMethodsApiResponseTransfer {
         $molliePaymentMethodsApiResponseTransfer = $this->getCachedResponse($mollieApiRequestTransfer);
         if (!$molliePaymentMethodsApiResponseTransfer) {
-
             /** @var \Generated\Shared\Transfer\MolliePaymentMethodsApiResponseTransfer $molliePaymentMethodsApiResponseTransfer */
             $molliePaymentMethodsApiResponseTransfer = $this->getEnabledPaymentMethodsApi->execute($mollieApiRequestTransfer);
 
@@ -93,8 +92,7 @@ class PaymentMethodsProvider implements PaymentMethodsProviderInterface
         $molliePaymentMethodsApiResponseTransfer = new MolliePaymentMethodsApiResponseTransfer();
         $molliePaymentMethodCollectionTransfer = new MolliePaymentMethodCollectionTransfer();
 
-        $arrayResponse = $this->encodingService->decodeJson($data);
-        $molliePaymentMethodCollectionTransfer->fromArray($arrayResponse, true);
+        $molliePaymentMethodCollectionTransfer->fromArray($data, true);
 
         $molliePaymentMethodsApiResponseTransfer
             ->setIsSuccessful(true)
