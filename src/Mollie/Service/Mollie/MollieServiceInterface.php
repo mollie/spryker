@@ -22,11 +22,11 @@ interface MollieServiceInterface
      *
      * @api
      *
-     * @param string $username
-     * @param string $password
      * @param string $webhookUrl
+     * @param string $testEnvironmentWebhookUrl
+     * @param string $testMode
      *
      * @return string
      */
-    public function resolveWebhookUrl(string $username, string $password, string $webhookUrl): string;
+    public function resolveWebhookUrl(string $webhookUrl, string $testEnvironmentWebhookUrl, string $testMode): string;
 }

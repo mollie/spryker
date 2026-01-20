@@ -69,6 +69,14 @@ class MollieConfig extends AbstractBundleConfig
     }
 
     /**
+     * @return string
+     */
+    public function getTestEnvironmentMollieWebhookUrl(): string
+    {
+        return $this->get(MollieConstants::MOLLIE)[MollieConstants::MOLLIE_TEST_ENVIRONMENT_WEBHOOK_URL];
+    }
+
+    /**
      * @return array<string, string>
      */
     public function getMollieOmsToPaymentMethodMapping(): array
@@ -99,16 +107,8 @@ class MollieConfig extends AbstractBundleConfig
     /**
      * @return string
      */
-    public function getMollieHtaccessUsername(): string
+    public function getMollieTestModeEnabled(): string
     {
-        return $this->get(MollieConstants::MOLLIE)[MollieConstants::MOLLIE_HTACCESS_USERNAME];
-    }
-
-    /**
-     * @return string
-     */
-    public function getMollieHtaccessPassword(): string
-    {
-        return $this->get(MollieConstants::MOLLIE)[MollieConstants::MOLLIE_HTACCESS_PASSWORD];
+        return $this->get(MollieConstants::MOLLIE)[MollieConstants::MOLLIE_TEST_MODE];
     }
 }

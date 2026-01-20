@@ -5,18 +5,18 @@ namespace Mollie\Service\Mollie\Url;
 class UrlResolver implements UrlResolverInterface
 {
     /**
-     * @param string $username
-     * @param string $password
      * @param string $webhookUrl
+     * @param string $testEnvironmentWebhookUrl
+     * @param string $testMode
      *
      * @return string
      */
-    public function resolveWebhookUrl(string $username, string $password, string $webhookUrl): string
+    public function resolveWebhookUrl(string $webhookUrl, string $testEnvironmentWebhookUrl, string $testMode): string
     {
-        if ($username && $password) {
-            return sprintf('http://%s:%s@%s', $username, $password, $webhookUrl);
+        if ($testMode) {
+            return $testEnvironmentWebhookUrl;
         }
 
-        return 'http://' . $webhookUrl;
+        return $webhookUrl;
     }
 }
