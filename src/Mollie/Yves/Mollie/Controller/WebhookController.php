@@ -29,17 +29,16 @@ class WebhookController extends AbstractController
     {
         $response = new Response();
 
-        $content = $request->getContent();
-        $data = $this->getFactory()->getUtilEncodingService()->decodeJson($content);
+        $paymentId = $request->request->get('id') ?? '';
 
-        if (!isset($data['id'])) {
+        if (!$paymentId) {
             return $response
                 ->setStatusCode(Response::HTTP_OK)
                 ->setContent('Missing payment ID');
         }
 
         $mollieApiRequestTransfer = (new MollieApiRequestTransfer())
-            ->setTransactionId($data['id']);
+            ->setTransactionId($paymentId);
 
         $molliePaymentApiResponseTransfer = $this->getFactory()->getMollieApiClient()->getPaymentByTransactionId($mollieApiRequestTransfer);
 
