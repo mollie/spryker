@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Mollie\Client\Mollie\Dependency\Client;
 
 interface MollieToStorageClientInterface
@@ -19,4 +21,11 @@ interface MollieToStorageClientInterface
      * @return mixed
      */
     public function get(string $key): mixed;
+
+    /**
+     * @param string $key
+     *
+     * @return void
+     */
+    public function delete(string $key): void;
 }

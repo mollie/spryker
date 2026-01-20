@@ -8,7 +8,7 @@ use Mollie\Shared\Mollie\MollieConstants;
 use Spryker\Client\Kernel\AbstractBundleConfig;
 
 /**
- * @method \Mollie\Shared\Mollie\MollieConfig getSharedConfig()()
+ * @method \Mollie\Shared\Mollie\MollieConfig getSharedConfig()
  */
 class MollieConfig extends AbstractBundleConfig
 {
@@ -56,6 +56,16 @@ class MollieConfig extends AbstractBundleConfig
      * @var int
      */
     public const MOLLIE_PAYMENT_METHODS_STORAGE_KEY_TTL = 21600;
+
+    /**
+     * @var string
+     */
+    protected const CACHE_KEY_PREFIX_FOR_ALL_PAYMENT_METHODS = 'all_payment_methods';
+
+     /**
+      * @var string
+      */
+    protected const CACHE_KEY_PREFIX_FOR_ENABLED_PAYMENT_METHODS = 'enabled_payment_methods';
 
     /**
      * @return string
@@ -118,9 +128,9 @@ class MollieConfig extends AbstractBundleConfig
     }
 
     /**
-     * @return string
+     * @return bool
      */
-    public function getMollieTestModeEnabled(): string
+    public function getMollieTestModeEnabled(): bool
     {
         return $this->getSharedConfig()->getMollieTestModeEnabled();
     }
@@ -131,5 +141,21 @@ class MollieConfig extends AbstractBundleConfig
     public function getMolliePaymentMethodsStorageKeyTTL(): int
     {
         return static::MOLLIE_PAYMENT_METHODS_STORAGE_KEY_TTL;
+    }
+
+      /**
+       * @return string
+       */
+    public function getCacheKeyPrefixForAllPaymentMethods(): string
+    {
+        return static::CACHE_KEY_PREFIX_FOR_ALL_PAYMENT_METHODS;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCacheKeyPrefixForEnabledPaymentMethods(): string
+    {
+        return static::CACHE_KEY_PREFIX_FOR_ENABLED_PAYMENT_METHODS;
     }
 }

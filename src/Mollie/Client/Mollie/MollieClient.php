@@ -1,12 +1,12 @@
 <?php
 
-
 declare(strict_types = 1);
 
 namespace Mollie\Client\Mollie;
 
 use Generated\Shared\Transfer\MollieApiRequestTransfer;
 use Generated\Shared\Transfer\MolliePaymentApiResponseTransfer;
+use Generated\Shared\Transfer\MolliePaymentMethodQueryParametersTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodsApiResponseTransfer;
 use Generated\Shared\Transfer\OrderCollectionRequestTransfer;
 use Generated\Shared\Transfer\OrderCollectionResponseTransfer;
@@ -84,5 +84,33 @@ class MollieClient extends AbstractClient implements MollieClientInterface
     public function updateOrderCollection(OrderCollectionRequestTransfer $updateOrderCollectionRequestTransfer): OrderCollectionResponseTransfer
     {
         return $this->getFactory()->createZedMollieStub()->updateOrderCollection($updateOrderCollectionRequestTransfer);
+    }
+
+    /**
+     *  Specification:
+     *  - Deletes cache for enabled payment methods API
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\MolliePaymentMethodQueryParametersTransfer $parameters
+     *
+     * @return void
+     */
+    public function deleteEnabledPaymentMethodsCache(MolliePaymentMethodQueryParametersTransfer $parameters): void
+    {
+        $this->getFactory()->createPaymentMethodsCacheDeleter()->deleteEnabledPaymentMethodsCache($parameters);
+    }
+
+    /**
+     * Specification:
+     *  - Deletes cache for all payment methods API
+     *
+     * @param \Generated\Shared\Transfer\MolliePaymentMethodQueryParametersTransfer $parameters
+     *
+     * @return void
+     */
+    public function deleteAllPaymentMethodsCache(MolliePaymentMethodQueryParametersTransfer $parameters): void
+    {
+        $this->getFactory()->createPaymentMethodsCacheDeleter()->deleteAllPaymentMethodsCache($parameters);
     }
 }

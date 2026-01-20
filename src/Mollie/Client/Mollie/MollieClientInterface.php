@@ -1,11 +1,11 @@
 <?php
-
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Mollie\Client\Mollie;
 
 use Generated\Shared\Transfer\MollieApiRequestTransfer;
 use Generated\Shared\Transfer\MolliePaymentApiResponseTransfer;
+use Generated\Shared\Transfer\MolliePaymentMethodQueryParametersTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodsApiResponseTransfer;
 use Generated\Shared\Transfer\OrderCollectionRequestTransfer;
 use Generated\Shared\Transfer\OrderCollectionResponseTransfer;
@@ -71,4 +71,28 @@ interface MollieClientInterface
      * @return \Generated\Shared\Transfer\OrderCollectionRequestTransfer
      */
     public function updateOrderCollection(OrderCollectionRequestTransfer $updateOrderCollectionRequestTransfer): OrderCollectionResponseTransfer;
+
+    /**
+     * Specification:
+     * - Deletes cache for enabled payment methods API
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\MolliePaymentMethodQueryParametersTransfer $parameters
+     *
+     * @return void
+     */
+    public function deleteEnabledPaymentMethodsCache(MolliePaymentMethodQueryParametersTransfer $parameters): void;
+
+    /**
+     * Specification:
+     * - Deletes cache for all payment methods API
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\MolliePaymentMethodQueryParametersTransfer $parameters
+     *
+     * @return void
+     */
+    public function deleteAllPaymentMethodsCache(MolliePaymentMethodQueryParametersTransfer $parameters): void;
 }

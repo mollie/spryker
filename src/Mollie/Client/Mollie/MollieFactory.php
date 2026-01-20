@@ -1,6 +1,7 @@
 <?php
 
-declare(strict_types=1);
+
+declare(strict_types = 1);
 
 namespace Mollie\Client\Mollie;
 
@@ -10,8 +11,12 @@ use Mollie\Client\Mollie\Api\Payment\CreatePaymentApi;
 use Mollie\Client\Mollie\Api\Payment\GetAllPaymentMethodsApi;
 use Mollie\Client\Mollie\Api\Payment\GetEnabledPaymentMethodsApi;
 use Mollie\Client\Mollie\Api\Payment\GetPaymentByTransactionIdApi;
+use Mollie\Client\Mollie\Deleter\Payment\PaymentMethodsCacheDeleter;
+use Mollie\Client\Mollie\Deleter\Payment\PaymentMethodsCacheDeleterInterface;
 use Mollie\Client\Mollie\Dependency\Client\MollieToStorageClientInterface;
 use Mollie\Client\Mollie\Dependency\Service\MollieToUtilEncodingServiceInterface;
+use Mollie\Client\Mollie\Generator\Payment\PaymentMethodsCacheKeyGenerator;
+use Mollie\Client\Mollie\Generator\Payment\PaymentMethodsCacheKeyGeneratorInterface;
 use Mollie\Client\Mollie\Mapper\PaymentMethodMapper;
 use Mollie\Client\Mollie\Mapper\PaymentMethodMapperInterface;
 use Mollie\Client\Mollie\Provider\Payment\PaymentMethodsProvider;
@@ -38,6 +43,29 @@ class MollieFactory extends AbstractFactory
             $this->getConfig(),
             $this->getUtilEncodingService(),
             $this->getStorageClient(),
+            $this->createPaymentMethodsCacheKeyGenerator(),
+        );
+    }
+
+    /**
+     * @return \Mollie\Client\Mollie\Generator\Payment\PaymentMethodsCacheKeyGeneratorInterface
+     */
+    public function createPaymentMethodsCacheKeyGenerator(): PaymentMethodsCacheKeyGeneratorInterface
+    {
+        return new PaymentMethodsCacheKeyGenerator(
+            $this->getConfig(),
+        );
+    }
+
+    /**
+     * @return \Mollie\Client\Mollie\Deleter\Payment\PaymentMethodsCacheDeleterInterface
+     */
+    public function createPaymentMethodsCacheDeleter(): PaymentMethodsCacheDeleterInterface
+    {
+        return new PaymentMethodsCacheDeleter(
+            $this->createPaymentMethodsCacheKeyGenerator(),
+            $this->getStorageClient(),
+            $this->getConfig(),
         );
     }
 
