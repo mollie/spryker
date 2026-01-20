@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Mollie\Client\Mollie\Dependency\Client;
 
-interface MollieToLocaleClientInterface 
+interface MollieToLocaleClientInterface
 {
     /**
      * @return string

@@ -19,8 +19,8 @@ class MollieToLocaleClientBridge implements MollieToLocaleClientInterface
     /**
      * @return string
      */
-    public function getCurrentLocale(): string  
+    public function getCurrentLocale(): string
     {
-        $this->localeClient->getCurrentLocale();
+        return $this->localeClient->getCurrentLocale();
     }
 }

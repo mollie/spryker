@@ -55,8 +55,8 @@ abstract class AbstractPaymentMethodsProvider implements PaymentMethodsProviderI
             return $cachedResponse;
         }
 
-        $responseTransfer = $this->PaymentMethodsApi->execute($mollieApiRequestTransfer);
-        if ($responseTransfer->isSuccessful()) {
+        $responseTransfer = $this->paymentMethodsApi->execute($mollieApiRequestTransfer);
+        if ($responseTransfer->getIsSuccessful()) {
             $this->cacheResponse($key, $responseTransfer);
         }
 
@@ -75,7 +75,15 @@ abstract class AbstractPaymentMethodsProvider implements PaymentMethodsProviderI
             return null;
         }
 
-        return $this->mapper->mapPayloadToMolliePaymentMethodCollectionTransfer($cached);
+        $molliePaymentMethodsApiResponseTransfer = new MolliePaymentMethodsApiResponseTransfer();
+        $molliePaymentMethodsApiResponseTransfer
+            ->setIsSuccessful(true)
+            ->setMessage('');
+
+        $collection = $this->mapper->mapPayloadToMolliePaymentMethodCollectionTransfer($cached);
+        $molliePaymentMethodsApiResponseTransfer->setCollection($collection);
+
+        return $molliePaymentMethodsApiResponseTransfer;
     }
 
     /**
@@ -87,8 +95,8 @@ abstract class AbstractPaymentMethodsProvider implements PaymentMethodsProviderI
     protected function cacheResponse(string $key, MolliePaymentMethodsApiResponseTransfer $transfer): void
     {
         $ttl = $this->config->getMolliePaymentMethodsStorageKeyTTL();
-        $methods = $transfer->getCollection()->getMethods()->getArrayCopy();
-        $payload = $this->encodingService->encodeJson($methods);
+        $data = $transfer->toArray(true, true);
+        $payload = $this->encodingService->encodeJson($data);
         $this->storageClient->set($key, $payload, $ttl);
     }
 }

@@ -26,10 +26,10 @@ class AllPaymentMethodsProvider extends AbstractPaymentMethodsProvider implement
      */
     protected function generateCacheKey(MollieApiRequestTransfer $mollieApiRequestTransfer): string
     {
-//        $locale = $this->localeClient->getCurrentLocale();
-        $locale = 'de_DE';
-//        $storeName = $this->storeClient->getCurrentStore()->getName();
-        $storeName = 'DE';
+        $locale = $this->localeClient->getCurrentLocale() ?? 'null';
+//        $locale = 'de_DE';
+        $storeName = $this->storeClient->getCurrentStore()->getName();
+//        $storeName = 'DE';
         $mode = $this->config->getMollieTestModeEnabled();
         $currency = 'null';
         $value = 'null';
