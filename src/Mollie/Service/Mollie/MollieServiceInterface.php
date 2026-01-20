@@ -24,9 +24,9 @@ interface MollieServiceInterface
      *
      * @param string $webhookUrl
      * @param string $testEnvironmentWebhookUrl
-     * @param string $testMode
+     * @param bool $testMode
      *
      * @return string
      */
-    public function resolveWebhookUrl(string $webhookUrl, string $testEnvironmentWebhookUrl, string $testMode): string;
+    public function resolveWebhookUrl(string $webhookUrl, string $testEnvironmentWebhookUrl, bool $testMode): string;
 }

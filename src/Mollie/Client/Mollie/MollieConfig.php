@@ -105,9 +105,9 @@ class MollieConfig extends AbstractBundleConfig
     }
 
     /**
-     * @return string
+     * @return bool
      */
-    public function getMollieTestModeEnabled(): string
+    public function isMollieTestModeEnabled(): bool
     {
         return $this->get(MollieConstants::MOLLIE)[MollieConstants::MOLLIE_TEST_MODE];
     }

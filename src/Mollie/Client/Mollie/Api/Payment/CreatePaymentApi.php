@@ -61,7 +61,7 @@ class CreatePaymentApi extends AbstractApiCall
         $webhookUrl = $this->mollieService->resolveWebhookUrl(
             $this->mollieConfig->getMollieWebhookUrl(),
             $this->mollieConfig->getTestEnvironmentMollieWebhookUrl(),
-            $this->mollieConfig->getMollieTestModeEnabled(),
+            $this->mollieConfig->isMollieTestModeEnabled(),
         );
 
         $method = $this->mollieConfig->getMolliePaymentMethod($paymentTransfer->getPaymentMethod());
