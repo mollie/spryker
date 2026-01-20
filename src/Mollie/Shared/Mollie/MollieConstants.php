@@ -34,6 +34,11 @@ interface MollieConstants
      */
     public const MOLLIE_WEBHOOK_URL = 'MOLLIE:WEBHOOK_URL';
 
+    /**
+     * @var string
+     */
+    public const MOLLIE_TEST_ENVIRONMENT_WEBHOOK_URL = 'MOLLIE:TEST_ENVIRONMENT_WEBHOOK_URL';
+
     // Payment statuses from Mollie
     /**
      * @var string
@@ -100,16 +105,6 @@ interface MollieConstants
      * @var string
      */
     public const MOLLIE_OMS_TO_PAYMENT_METHOD_MAPPING = 'MOLLIE:MOLLIE_OMS_TO_PAYMENT_METHOD_MAPPING';
-
-    /**
-     * @var string
-     */
-    public const MOLLIE_HTACCESS_USERNAME = 'MOLLIE:MOLLIE_HTACCESS_USERNAME';
-
-    /**
-     * @var string
-     */
-    public const MOLLIE_HTACCESS_PASSWORD = 'MOLLIE:MOLLIE_HTACCESS_PASSWORD';
 
     /**
      * @var string
