@@ -12,7 +12,7 @@ class MollieToStoreClientBridge implements MollieToStoreClientInterface
     /**
      * @param \Spryker\Client\Store\StoreClientInterface $storeClient
      */
-    public function __construct(StoreClientInterface $storeClient)
+    public function __construct($storeClient)
     {
         $this->storeClient = $storeClient;
     }

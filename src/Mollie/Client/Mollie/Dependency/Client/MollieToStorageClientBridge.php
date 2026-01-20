@@ -13,7 +13,7 @@ class MollieToStorageClientBridge implements MollieToStorageClientInterface
     /**
      * @param \Spryker\Client\Storage\StorageClientInterface $storageClient
      */
-    public function __construct(StorageClientInterface $storageClient)
+    public function __construct($storageClient)
     {
         $this->storageClient = $storageClient;
     }
@@ -21,11 +21,11 @@ class MollieToStorageClientBridge implements MollieToStorageClientInterface
     /**
      * @param string $key
      * @param string $value
-     * @param int $ttl
+     * @param int|null $ttl
      *
      * @return void
      */
-    public function set(string $key, string $value, int $ttl): void
+    public function set(string $key, string $value, ?int $ttl = null): void
     {
         $this->storageClient->set($key, $value, $ttl);
     }
