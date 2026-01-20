@@ -1,5 +1,6 @@
 <?php
 
+
 declare(strict_types = 1);
 
 namespace Mollie\Client\Mollie;
@@ -27,10 +28,7 @@ class MollieClient extends AbstractClient implements MollieClientInterface
      */
     public function getEnabledPaymentMethods(MollieApiRequestTransfer $mollieApiRequestTransfer): MolliePaymentMethodsApiResponseTransfer
     {
-          /** @var \Generated\Shared\Transfer\MolliePaymentMethodsApiResponseTransfer $molliePaymentMethodsApiResponseTransfer */
-        $molliePaymentMethodsApiResponseTransfer = $this->getFactory()->createGetEnabledPaymentMethodsApi()->execute($mollieApiRequestTransfer);
-
-        return $molliePaymentMethodsApiResponseTransfer;
+        return $this->getFactory()->createPaymentMethodsProvider()->getEnabledPaymentMethods($mollieApiRequestTransfer);
     }
 
     /**
@@ -44,10 +42,7 @@ class MollieClient extends AbstractClient implements MollieClientInterface
      */
     public function getAllPaymentMethods(MollieApiRequestTransfer $mollieApiRequestTransfer): MolliePaymentMethodsApiResponseTransfer
     {
-        /** @var \Generated\Shared\Transfer\MolliePaymentMethodsApiResponseTransfer $molliePaymentMethodsApiResponseTransfer */
-        $molliePaymentMethodsApiResponseTransfer = $this->getFactory()->createGetAllPaymentMethodsApi()->execute($mollieApiRequestTransfer);
-
-        return $molliePaymentMethodsApiResponseTransfer;
+        return $this->getFactory()->createPaymentMethodsProvider()->getAllPaymentMethods($mollieApiRequestTransfer);
     }
 
     /**
@@ -75,7 +70,10 @@ class MollieClient extends AbstractClient implements MollieClientInterface
      */
     public function createPayment(MollieApiRequestTransfer $mollieApiRequestTransfer): MolliePaymentApiResponseTransfer
     {
-        return $this->getFactory()->createPaymentApi()->execute($mollieApiRequestTransfer);
+         /** @var \Generated\Shared\Transfer\MolliePaymentApiResponseTransfer $molliePaymentApiResponseTransfer */
+        $molliePaymentApiResponseTransfer = $this->getFactory()->createPaymentApi()->execute($mollieApiRequestTransfer);
+
+        return $molliePaymentApiResponseTransfer;
     }
 
     /**

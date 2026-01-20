@@ -23,10 +23,6 @@ class GetAllPaymentMethodsApi extends AbstractApiCall
 {
     use LoggerTrait;
 
-    protected const string METHODS_WRAPPER_KEY = '_embedded';
-
-    protected const string METHODS_KEY = 'methods';
-
     /**
      * @param \Mollie\Api\MollieApiClient $mollieApiClient
      * @param \Mollie\Client\Mollie\MollieConfig $mollieConfig

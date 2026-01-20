@@ -11,7 +11,6 @@ use Mollie\Client\Mollie\Api\Payment\GetAllPaymentMethodsApi;
 use Mollie\Client\Mollie\Api\Payment\GetEnabledPaymentMethodsApi;
 use Mollie\Client\Mollie\Api\Payment\GetPaymentByTransactionIdApi;
 use Mollie\Client\Mollie\Dependency\Client\MollieToStorageClientInterface;
-use Mollie\Client\Mollie\Dependency\Client\MollieToStoreClientInterface;
 use Mollie\Client\Mollie\Dependency\Service\MollieToUtilEncodingServiceInterface;
 use Mollie\Client\Mollie\Mapper\PaymentMethodMapper;
 use Mollie\Client\Mollie\Mapper\PaymentMethodMapperInterface;
@@ -31,21 +30,21 @@ class MollieFactory extends AbstractFactory
     /**
      * @return \Mollie\Client\Mollie\Provider\Payment\PaymentMethodsProviderInterface
      */
-    public function createAvailablePaymentMethodsProvider(): PaymentMethodsProviderInterface
+    public function createPaymentMethodsProvider(): PaymentMethodsProviderInterface
     {
         return new PaymentMethodsProvider(
             $this->createGetEnabledPaymentMethodsApi(),
+            $this->createGetAllPaymentMethodsApi(),
             $this->getConfig(),
             $this->getUtilEncodingService(),
             $this->getStorageClient(),
-            $this->getStoreClient(),
         );
     }
 
     /**
      * @return \Mollie\Client\Mollie\Api\Payment\GetEnabledPaymentMethodsApi
      */
-    public function createGetEnabledPaymentMethodsApi(): ApiCallInterface
+    public function createGetEnabledPaymentMethodsApi(): GetEnabledPaymentMethodsApi
     {
         return new GetEnabledPaymentMethodsApi(
             $this->createMollieApiClient(),
@@ -58,7 +57,7 @@ class MollieFactory extends AbstractFactory
     /**
      * @return \Mollie\Client\Mollie\Api\Payment\GetAllPaymentMethodsApi
      */
-    public function createGetAllPaymentMethodsApi(): ApiCallInterface
+    public function createGetAllPaymentMethodsApi(): GetAllPaymentMethodsApi
     {
         return new GetAllPaymentMethodsApi(
             $this->createMollieApiClient(),
@@ -149,13 +148,5 @@ class MollieFactory extends AbstractFactory
     public function getStorageClient(): MollieToStorageClientInterface
     {
         return $this->getProvidedDependency(MollieDependencyProvider::CLIENT_STORAGE);
-    }
-
-    /**
-     * @return \Mollie\Client\Mollie\Dependency\Client\MollieToStoreClientInterface
-     */
-    public function getStoreClient(): MollieToStoreClientInterface
-    {
-        return $this->getProvidedDependency(MollieDependencyProvider::CLIENT_STORE);
     }
 }

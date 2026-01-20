@@ -7,8 +7,6 @@ namespace Mollie\Client\Mollie;
 
 use Mollie\Client\Mollie\Dependency\Client\MollieToStorageClientBridge;
 use Mollie\Client\Mollie\Dependency\Client\MollieToStorageClientInterface;
-use Mollie\Client\Mollie\Dependency\Client\MollieToStoreClientBridge;
-use Mollie\Client\Mollie\Dependency\Client\MollieToStoreClientInterface;
 use Mollie\Client\Mollie\Dependency\Service\MollieToUtilEncodingServiceBridge;
 use Mollie\Client\Mollie\Dependency\Service\MollieToUtilEncodingServiceInterface;
 use Mollie\Service\Mollie\MollieServiceInterface;
@@ -54,7 +52,6 @@ class MollieDependencyProvider extends AbstractDependencyProvider
         $container = $this->addMollieService($container);
         $container = $this->addZedRequestClient($container);
         $container = $this->addStorageClient($container);
-        $container = $this->addStoreClient($container);
 
         return $container;
     }
@@ -113,22 +110,6 @@ class MollieDependencyProvider extends AbstractDependencyProvider
         $container->set(static::CLIENT_STORAGE, function (Container $container): MollieToStorageClientInterface {
             return new MollieToStorageClientBridge(
                 $container->getLocator()->storage()->client(),
-            );
-        });
-
-        return $container;
-    }
-
-     /**
-      * @param \Spryker\Client\Kernel\Container $container
-      *
-      * @return \Spryker\Client\Kernel\Container
-      */
-    protected function addStoreClient(Container $container): Container
-    {
-        $container->set(static::CLIENT_STORE, function (Container $container): MollieToStoreClientInterface {
-            return new MollieToStoreClientBridge(
-                $container->getLocator()->store()->client(),
             );
         });
 
