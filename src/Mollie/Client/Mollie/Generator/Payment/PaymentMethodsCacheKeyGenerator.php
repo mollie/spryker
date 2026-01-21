@@ -36,7 +36,6 @@ class PaymentMethodsCacheKeyGenerator implements PaymentMethodsCacheKeyGenerator
         $amount = $queryParametersTransfer->getAmount();
         $keyParts = [
             $cacheKeyPrefix,
-            $queryParametersTransfer->getStoreName(),
             $profileId,
             $mode,
             $queryParametersTransfer->getLocale(),

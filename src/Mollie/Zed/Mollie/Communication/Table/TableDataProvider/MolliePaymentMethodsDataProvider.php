@@ -9,15 +9,18 @@ use Generated\Shared\Transfer\MolliePaymentMethodQueryParametersTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodsApiResponseTransfer;
 use Mollie\Client\Mollie\MollieClientInterface;
 use Mollie\Shared\Mollie\MollieConstants;
+use Mollie\Zed\Mollie\Dependency\Facade\MollieToLocaleFacadeInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 class MolliePaymentMethodsDataProvider
 {
     /**
      * @param \Mollie\Client\Mollie\MollieClientInterface $mollieClient
+     * @param \Mollie\Zed\Mollie\Dependency\Facade\MollieToLocaleFacadeInterface $localeFacade
      */
     public function __construct(
         private MollieClientInterface $mollieClient,
+        protected MollieToLocaleFacadeInterface $localeFacade,
     ) {
     }
 
@@ -42,10 +45,13 @@ class MolliePaymentMethodsDataProvider
      */
     protected function createRequestTransfer(): MollieApiRequestTransfer
     {
+        $currentLocale = $this->localeFacade->getCurrentLocale();
+
         return (new MollieApiRequestTransfer())
             ->setMolliePaymentMethodQueryParameters(
                 (new MolliePaymentMethodQueryParametersTransfer())
-                    ->setSequenceType('oneoff'),
+                    ->setSequenceType('oneoff')
+                    ->setLocale($currentLocale->getLocaleName()),
             );
     }
 }

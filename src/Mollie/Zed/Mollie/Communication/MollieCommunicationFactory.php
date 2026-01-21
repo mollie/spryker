@@ -7,6 +7,7 @@ namespace Mollie\Zed\Mollie\Communication;
 use Mollie\Client\Mollie\MollieClientInterface;
 use Mollie\Zed\Mollie\Communication\Table\MolliePaymentMethodsTable;
 use Mollie\Zed\Mollie\Communication\Table\TableDataProvider\MolliePaymentMethodsDataProvider;
+use Mollie\Zed\Mollie\Dependency\Facade\MollieToLocaleFacadeInterface;
 use Mollie\Zed\Mollie\Dependency\MollieToStorageClientInterface;
 use Mollie\Zed\Mollie\MollieDependencyProvider;
 use Spryker\Zed\Kernel\Communication\AbstractCommunicationFactory;
@@ -33,6 +34,7 @@ class MollieCommunicationFactory extends AbstractCommunicationFactory
     {
         return new MolliePaymentMethodsDataProvider(
             $this->getMollieClient(),
+            $this->getLocaleFacade(),
         );
     }
 
@@ -50,5 +52,13 @@ class MollieCommunicationFactory extends AbstractCommunicationFactory
     public function getMollieClient(): MollieClientInterface
     {
         return $this->getProvidedDependency(MollieDependencyProvider::CLIENT_MOLLIE);
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Dependency\Facade\MollieToLocaleFacadeInterface
+     */
+    public function getLocaleFacade(): MollieToLocaleFacadeInterface
+    {
+        return $this->getProvidedDependency(MollieDependencyProvider::FACADE_LOCALE);
     }
 }
