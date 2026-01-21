@@ -48,11 +48,13 @@ class PaymentMethodsProvider implements PaymentMethodsProviderInterface
             /** @var \Generated\Shared\Transfer\MolliePaymentMethodsApiResponseTransfer $molliePaymentMethodsApiResponseTransfer */
             $molliePaymentMethodsApiResponseTransfer = $this->getEnabledPaymentMethodsApi->execute($mollieApiRequestTransfer);
 
-            $this->cacheResponse(
-                $mollieApiRequestTransfer,
-                $molliePaymentMethodsApiResponseTransfer,
-                $cacheKeyPrefix,
-            );
+            if ($molliePaymentMethodsApiResponseTransfer->getIsSuccessful()) {
+                 $this->cacheResponse(
+                     $mollieApiRequestTransfer,
+                     $molliePaymentMethodsApiResponseTransfer,
+                     $cacheKeyPrefix,
+                 );
+            }
         }
 
         return $molliePaymentMethodsApiResponseTransfer;
@@ -73,11 +75,13 @@ class PaymentMethodsProvider implements PaymentMethodsProviderInterface
             /** @var \Generated\Shared\Transfer\MolliePaymentMethodsApiResponseTransfer $molliePaymentMethodsApiResponseTransfer */
             $molliePaymentMethodsApiResponseTransfer = $this->getAllPaymentMethodsApi->execute($mollieApiRequestTransfer);
 
-            $this->cacheResponse(
-                $mollieApiRequestTransfer,
-                $molliePaymentMethodsApiResponseTransfer,
-                $cacheKeyPrefix,
-            );
+            if ($molliePaymentMethodsApiResponseTransfer->getIsSuccessful()) {
+                $this->cacheResponse(
+                    $mollieApiRequestTransfer,
+                    $molliePaymentMethodsApiResponseTransfer,
+                    $cacheKeyPrefix,
+                );
+            }
         }
 
         return $molliePaymentMethodsApiResponseTransfer;
