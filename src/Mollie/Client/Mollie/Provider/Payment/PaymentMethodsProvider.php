@@ -16,14 +16,14 @@ use Mollie\Client\Mollie\MollieConfig;
 
 class PaymentMethodsProvider implements PaymentMethodsProviderInterface
 {
- /**
-  * @param \Mollie\Client\Mollie\Api\Payment\GetEnabledPaymentMethodsApi $getEnabledPaymentMethodsApi
-  * @param \Mollie\Client\Mollie\Api\Payment\GetAllPaymentMethodsApi $getAllPaymentMethodsApi
-  * @param \Mollie\Client\Mollie\MollieConfig $config
-  * @param \Mollie\Client\Mollie\Dependency\Service\MollieToUtilEncodingServiceInterface $encodingService
-  * @param \Mollie\Client\Mollie\Dependency\Client\MollieToStorageClientInterface $storageClient
-  * @param \Mollie\Client\Mollie\Generator\Payment\PaymentMethodsCacheKeyGeneratorInterface $cacheKeyGenerator
-  */
+    /**
+     * @param \Mollie\Client\Mollie\Api\Payment\GetEnabledPaymentMethodsApi $getEnabledPaymentMethodsApi
+     * @param \Mollie\Client\Mollie\Api\Payment\GetAllPaymentMethodsApi $getAllPaymentMethodsApi
+     * @param \Mollie\Client\Mollie\MollieConfig $config
+     * @param \Mollie\Client\Mollie\Dependency\Service\MollieToUtilEncodingServiceInterface $encodingService
+     * @param \Mollie\Client\Mollie\Dependency\Client\MollieToStorageClientInterface $storageClient
+     * @param \Mollie\Client\Mollie\Generator\Payment\PaymentMethodsCacheKeyGeneratorInterface $cacheKeyGenerator
+     */
     public function __construct(
         protected GetEnabledPaymentMethodsApi $getEnabledPaymentMethodsApi,
         protected GetAllPaymentMethodsApi $getAllPaymentMethodsApi,
