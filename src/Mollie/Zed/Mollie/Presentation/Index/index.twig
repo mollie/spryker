@@ -5,7 +5,7 @@
 
     {% set filterButtonText = 'mollie.button.filter_all' %}
     {% set filterButtonValue = 0 %}
-    {% if not showOnlyEnabled %}
+    {% if not showOnlyEnabledPaymentMethods %}
         {% set filterButtonText = 'mollie.button.filter_activated' %}
         {% set filterButtonValue = 1 %}
     {% endif %}
@@ -17,7 +17,7 @@
             {{ 'mollie.button.clear_cache' | trans }}
         </a>
         <a class="btn btn-primary"
-           href="/mollie?showOnlyEnabled={{ filterButtonValue }}"
+           href="/mollie?showOnlyEnabledPaymentMethods={{ filterButtonValue }}"
         >
             {{ filterButtonText | trans }}
         </a>

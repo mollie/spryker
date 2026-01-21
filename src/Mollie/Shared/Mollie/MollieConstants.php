@@ -113,5 +113,7 @@ interface MollieConstants
 
     public const string MOLLIE_AVAILABLE_METHODS_STORAGE_KEY = 'mollie:availableMethods';
 
-    public const string MOLLIE_QUERY_PARAMETER_SHOW_ONLY_ENABLED = 'showOnlyEnabled';
+    public const string MOLLIE_QUERY_PARAMETER_SHOW_ONLY_ENABLED = 'showOnlyEnabledPaymentMethods';
+
+    public const string MOLLIE_SEQUENCE_TYPE_ONE_OFF = 'oneoff';
 }
