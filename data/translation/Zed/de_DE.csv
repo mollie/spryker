@@ -2,3 +2,9 @@ mollie.title.payment_methods,Mollie Zahlungsmethoden
 mollie.button.clear_cache,Cache manuell löschen
 mollie.button.filter_all,Alle Methoden anzeigen
 mollie.button.filter_activated,Nur aktivierte Methoden anzeigen
+Name,Name
+Status,Status
+Minimal amount,Minimalbetrag
+Maximal amount,Maximalbetrag
+Issuer List,Ausstellerliste
+Images,Bilder
