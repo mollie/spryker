@@ -11,7 +11,7 @@ use Generated\Shared\Transfer\MollieApiRequestTransfer;
 use Generated\Shared\Transfer\MolliePaymentApiResponseTransfer;
 use Generated\Shared\Transfer\QuoteTransfer;
 use Mollie\Client\Mollie\MollieClientInterface;
-use Mollie\Shared\Mollie\MollieConfig as MollieMollieConfig;
+use Mollie\Shared\Mollie\MollieConstants;
 use Mollie\Zed\Mollie\Business\Writer\MolliePaymentWriterInterface;
 use Mollie\Zed\Mollie\Dependency\MollieToStorageClientInterface;
 use Mollie\Zed\Mollie\MollieConfig;
@@ -86,7 +86,7 @@ class MolliePaymentHandler implements MolliePaymentHandlerInterface
     {
         return $molliePaymentApiResponseTransfer
             ->getMolliePayment()
-            ->getLinks()[MollieConfig::RESPONSE_PARAMETER_CREATE_PAYMENT_LINKS_CHECKOUT][MollieConfig::RESPONSE_PARAMETER_CREATE_PAYMENT_LINKS_HREF] ?? null;
+            ->getLinks()[MollieConstants::RESPONSE_PARAMETER_CREATE_PAYMENT_LINKS_CHECKOUT][MollieConstants::RESPONSE_PARAMETER_CREATE_PAYMENT_LINKS_HREF] ?? null;
     }
 
     /**
@@ -107,8 +107,8 @@ class MolliePaymentHandler implements MolliePaymentHandlerInterface
      */
     protected function savePaymentIdToStorage(string $paymentId, string $orderReference): void
     {
-        $key = sprintf('%s:%s', MollieMollieConfig::MOLLIE_PAYMENT_TRANSACTION_STORAGE_KEY_PREFIX, $orderReference);
-        $this->storageClient->set($key, $paymentId, MollieMollieConfig::MOLLIE_PAYMENT_TRANSACTION_STORAGE_TTL);
+        $key = sprintf('%s:%s', MollieConstants::MOLLIE_PAYMENT_TRANSACTION_STORAGE_KEY_PREFIX, $orderReference);
+        $this->storageClient->set($key, $paymentId, MollieConstants::MOLLIE_PAYMENT_TRANSACTION_STORAGE_TTL);
     }
 
     /**

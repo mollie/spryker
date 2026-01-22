@@ -35,16 +35,6 @@ class MollieConfig extends AbstractBundleConfig
     public const CANCELED = 'canceled';
 
     /**
-     * @var string
-     */
-    public const RESPONSE_PARAMETER_CREATE_PAYMENT_LINKS_CHECKOUT = 'checkout';
-
-    /**
-     * @var string
-     */
-    public const RESPONSE_PARAMETER_CREATE_PAYMENT_LINKS_HREF = 'href';
-
-    /**
      * @return string
      */
     public function getMollieRedirectUrl(): string
