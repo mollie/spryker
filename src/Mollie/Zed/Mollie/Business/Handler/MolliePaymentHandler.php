@@ -30,11 +30,13 @@ class MolliePaymentHandler implements MolliePaymentHandlerInterface
      * @param \Mollie\Client\Mollie\MollieClientInterface $mollieClient
      * @param \Mollie\Zed\Mollie\Dependency\MollieToStorageClientInterface $storageClient
      * @param \Mollie\Zed\Mollie\Business\Writer\MolliePaymentWriterInterface $molliePaymentWriter
+     * @param \Mollie\Zed\Mollie\MollieConfig $config
      */
     public function __construct(
         protected MollieClientInterface $mollieClient,
         protected MollieToStorageClientInterface $storageClient,
         protected MolliePaymentWriterInterface $molliePaymentWriter,
+        protected MollieConfig $config,
     ) {
     }
 
@@ -55,16 +57,19 @@ class MolliePaymentHandler implements MolliePaymentHandlerInterface
         if (!$molliePaymentApiResponseTransfer->getIsSuccessful()) {
             $this->getLogger()->error($molliePaymentApiResponseTransfer->getMessage());
             $errors = $this->createErrorMessages($molliePaymentApiResponseTransfer->getMessage());
+            $redirectUrl = $this->getFailedPaymentRedirectUrl($checkoutResponseTransfer->getSaveOrder()->getOrderReference());
             $checkoutResponseTransfer
                 ->setErrors($errors)
-                ->setIsSuccess(false);
+                ->setIsSuccess(false)
+                ->setIsExternalRedirect(true)
+                ->setRedirectUrl($redirectUrl);
 
             return $checkoutResponseTransfer;
         }
 
         $this->savePaymentIdToStorage($molliePaymentApiResponseTransfer->getMolliePayment()->getId(), $checkoutResponseTransfer->getSaveOrderOrFail()->getOrderReference());
         $this->molliePaymentWriter->addMolliePaymentData($checkoutResponseTransfer->getSaveOrder()->getIdSalesOrder(), $molliePaymentApiResponseTransfer->getMolliePayment());
-        $redirectUrl = $this->getRedirectUrl($molliePaymentApiResponseTransfer);
+        $redirectUrl = $this->getSuccessfulPaymentRedirectUrl($molliePaymentApiResponseTransfer);
 
         return $checkoutResponseTransfer
             ->setIsSuccess(true)
@@ -77,11 +82,21 @@ class MolliePaymentHandler implements MolliePaymentHandlerInterface
      *
      * @return string|null
      */
-    protected function getRedirectUrl(MolliePaymentApiResponseTransfer $molliePaymentApiResponseTransfer): ?string
+    protected function getSuccessfulPaymentRedirectUrl(MolliePaymentApiResponseTransfer $molliePaymentApiResponseTransfer): ?string
     {
         return $molliePaymentApiResponseTransfer
             ->getMolliePayment()
             ->getLinks()[MollieConfig::RESPONSE_PARAMETER_CREATE_PAYMENT_LINKS_CHECKOUT][MollieConfig::RESPONSE_PARAMETER_CREATE_PAYMENT_LINKS_HREF] ?? null;
+    }
+
+    /**
+     * @param string $orderReference
+     *
+     * @return string
+     */
+    protected function getFailedPaymentRedirectUrl(string $orderReference): string
+    {
+        return $this->config->getMollieRedirectUrl() . '?orderReference=' . $orderReference;
     }
 
     /**
@@ -105,6 +120,7 @@ class MolliePaymentHandler implements MolliePaymentHandlerInterface
     {
         $error = new CheckoutErrorTransfer();
         $error->setMessage($message);
+        $error->setErrorCode('payment failed');
 
         $errors = new ArrayObject();
         $errors->append($error);

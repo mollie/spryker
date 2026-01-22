@@ -83,6 +83,7 @@ class MollieBusinessFactory extends AbstractBusinessFactory
             $this->getMollieClient(),
             $this->getStorageClient(),
             $this->createMolliePaymentWriter(),
+            $this->getConfig(),
         );
     }
 
