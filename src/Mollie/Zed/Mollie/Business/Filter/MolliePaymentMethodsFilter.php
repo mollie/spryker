@@ -1,0 +1,168 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Mollie\Zed\Mollie\Business\Filter;
+
+use ArrayObject;
+use Generated\Shared\Transfer\MollieApiRequestTransfer;
+use Generated\Shared\Transfer\MolliePaymentMethodQueryParametersTransfer;
+use Generated\Shared\Transfer\MolliePaymentMethodTransfer;
+use Generated\Shared\Transfer\PaymentMethodsTransfer;
+use Generated\Shared\Transfer\QuoteTransfer;
+use Mollie\Client\Mollie\MollieClientInterface;
+use Mollie\Service\Mollie\MollieServiceInterface;
+use Mollie\Shared\Mollie\MollieConstants;
+use Mollie\Zed\Mollie\Dependency\Facade\MollieToLocaleFacadeInterface;
+use Mollie\Zed\Mollie\MollieConfig;
+
+class MolliePaymentMethodsFilter implements MolliePaymentMethodsFilterInterface
+{
+    /**
+     * @param \Mollie\Client\Mollie\MollieClientInterface $mollieClient
+     * @param \Mollie\Service\Mollie\MollieServiceInterface $mollieService
+     * @param \Mollie\Zed\Mollie\Dependency\Facade\MollieToLocaleFacadeInterface $localeFacade
+     * @param \Mollie\Zed\Mollie\MollieConfig $mollieConfig
+     */
+    public function __construct(
+        protected MollieClientInterface $mollieClient,
+        protected MollieServiceInterface $mollieService,
+        protected MollieToLocaleFacadeInterface $localeFacade,
+        protected MollieConfig $mollieConfig,
+    ) {
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\PaymentMethodsTransfer $paymentMethodsTransfer
+     * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
+     *
+     * @return \Generated\Shared\Transfer\PaymentMethodsTransfer
+     */
+    public function applyFilter(PaymentMethodsTransfer $paymentMethodsTransfer, QuoteTransfer $quoteTransfer): PaymentMethodsTransfer
+    {
+        $requestTransfer = $this->createRequestTransfer($quoteTransfer);
+        $molliePaymentMethodsApiResponseTransfer = $this->mollieClient->getEnabledPaymentMethods($requestTransfer);
+        $molliePaymentMethods = $molliePaymentMethodsApiResponseTransfer->getCollection()->getMethods();
+
+        $paymentMethodsTransfer = $this->filterMolliePaymentMethods($paymentMethodsTransfer, $quoteTransfer, $molliePaymentMethods);
+
+        return $paymentMethodsTransfer;
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieApiRequestTransfer
+     */
+    protected function createRequestTransfer(QuoteTransfer $quoteTransfer): MollieApiRequestTransfer
+    {
+        return (new MollieApiRequestTransfer())
+            ->setMolliePaymentMethodQueryParameters(
+                (new MolliePaymentMethodQueryParametersTransfer())
+                    ->setLocale($this->localeFacade->getCurrentLocale()->getLocaleName())
+                    ->setBillingCountry($quoteTransfer->getBillingAddress()->getIso2Code())
+                    ->setSequenceType(MollieConstants::MOLLIE_SEQUENCE_TYPE_ONE_OFF),
+            );
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\PaymentMethodsTransfer $paymentMethodsTransfer
+     * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
+     * @param \ArrayObject<int, \Generated\Shared\Transfer\MolliePaymentMethodTransfer> $molliePaymentMethods
+     *
+     * @return \Generated\Shared\Transfer\PaymentMethodsTransfer
+     */
+    protected function filterMolliePaymentMethods(
+        PaymentMethodsTransfer $paymentMethodsTransfer,
+        QuoteTransfer $quoteTransfer,
+        ArrayObject $molliePaymentMethods,
+    ): PaymentMethodsTransfer {
+        $activeMollieMethods = $this->getActiveMollieMethods($molliePaymentMethods);
+        $grandTotal = $this->mollieService->convertIntegerToDecimal($quoteTransfer->getTotals()->getGrandTotal());
+
+        $filteredMethods = new ArrayObject();
+
+        foreach ($paymentMethodsTransfer->getMethods() as $paymentMethodTransfer) {
+            $provider = $paymentMethodTransfer->getPaymentProvider();
+            if (!$provider || !$this->isMollieProvider($provider->getPaymentProviderKey())) {
+                $filteredMethods->append($paymentMethodTransfer);
+
+                continue;
+            }
+
+            $mollieMethodId = $this->mollieConfig->getMolliePaymentMethod($paymentMethodTransfer->getPaymentMethodKey());
+
+            if (!isset($activeMollieMethods[$mollieMethodId])) {
+                continue;
+            }
+
+            $molliePaymentMethod = $activeMollieMethods[$mollieMethodId];
+            if (!$this->isGrandTotalWithinValidMinAndMaxAmount($grandTotal, $molliePaymentMethod)) {
+                continue;
+            }
+
+            $filteredMethods->append($paymentMethodTransfer);
+        }
+
+        $paymentMethodsTransfer->setMethods($filteredMethods);
+
+        return $paymentMethodsTransfer;
+    }
+
+    /**
+     * @param \ArrayObject<int, \Generated\Shared\Transfer\MolliePaymentMethodTransfer> $molliePaymentMethods
+     *
+     * @return array<string, \Generated\Shared\Transfer\MolliePaymentMethodTransfer>
+     */
+    protected function getActiveMollieMethods(ArrayObject $molliePaymentMethods): array
+    {
+        $activePaymentMethods = [];
+
+        foreach ($molliePaymentMethods as $method) {
+            if ($method->getStatus() === MollieConfig::MOLLIE_PAYMENT_METHOD_STATUS_ACTIVATED) {
+                $activePaymentMethods[$method->getId()] = $method;
+            }
+        }
+
+        return $activePaymentMethods;
+    }
+
+    /**
+     * @param string $providerKey
+     *
+     * @return bool
+     */
+    protected function isMollieProvider(string $providerKey): bool
+    {
+        return str_starts_with(strtolower($providerKey), MollieConfig::MOLLIE_PAYMENT_PROVIDER);
+    }
+
+    /**
+     * @param float $grandTotal
+     * @param \Generated\Shared\Transfer\MolliePaymentMethodTransfer $paymentMethodTransfer
+     *
+     * @return bool
+     */
+    protected function isGrandTotalWithinValidMinAndMaxAmount(float $grandTotal, MolliePaymentMethodTransfer $paymentMethodTransfer): bool
+    {
+        $minimumAmount = $paymentMethodTransfer->getMinimumAmount();
+        $minimumAmount = isset($minimumAmount[MollieConfig::MOLLIE_PAYMENT_METHOD_AMOUNT_VALUE])
+            ? (float)$minimumAmount[MollieConfig::MOLLIE_PAYMENT_METHOD_AMOUNT_VALUE]
+            : null;
+
+        $maximumAmount = $paymentMethodTransfer->getMaximumAmount();
+        $maximumAmount = isset($maximumAmount[MollieConfig::MOLLIE_PAYMENT_METHOD_AMOUNT_VALUE])
+            ? (float)$maximumAmount[MollieConfig::MOLLIE_PAYMENT_METHOD_AMOUNT_VALUE]
+            : null;
+
+        if ($minimumAmount !== null && $grandTotal < $minimumAmount) {
+            return false;
+        }
+
+        if ($maximumAmount !== null && $grandTotal > $maximumAmount) {
+            return false;
+        }
+
+        return true;
+    }
+}
