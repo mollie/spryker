@@ -5,8 +5,13 @@ declare(strict_types=1);
 namespace Mollie\Zed\Mollie\Communication;
 
 use Mollie\Client\Mollie\MollieClientInterface;
+use Mollie\Zed\Mollie\Communication\Cache\MollieCacheInvalidator;
+use Mollie\Zed\Mollie\Communication\Cache\MollieCacheInvalidatorInterface;
+use Mollie\Zed\Mollie\Communication\Mapper\MollieCommunicationMapper;
+use Mollie\Zed\Mollie\Communication\Mapper\MollieCommunicationMapperInterface;
 use Mollie\Zed\Mollie\Communication\Table\MolliePaymentMethodsTable;
 use Mollie\Zed\Mollie\Communication\Table\TableDataProvider\MolliePaymentMethodsDataProvider;
+use Mollie\Zed\Mollie\Dependency\Facade\MollieToLocaleFacadeInterface;
 use Mollie\Zed\Mollie\Dependency\MollieToStorageClientInterface;
 use Mollie\Zed\Mollie\MollieDependencyProvider;
 use Spryker\Zed\Kernel\Communication\AbstractCommunicationFactory;
@@ -32,8 +37,30 @@ class MollieCommunicationFactory extends AbstractCommunicationFactory
     public function createMolliePaymentMethodsDataProvider(): MolliePaymentMethodsDataProvider
     {
         return new MolliePaymentMethodsDataProvider(
+            $this->createMollieCommunicationMapper(),
             $this->getMollieClient(),
+            $this->getLocaleFacade(),
         );
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Communication\Cache\MollieCacheInvalidatorInterface
+     */
+    public function createMollieCacheInvalidator(): MollieCacheInvalidatorInterface
+    {
+        return new MollieCacheInvalidator(
+            $this->createMollieCommunicationMapper(),
+            $this->getMollieClient(),
+            $this->getLocaleFacade(),
+        );
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Communication\Mapper\MollieCommunicationMapperInterface
+     */
+    public function createMollieCommunicationMapper(): MollieCommunicationMapperInterface
+    {
+        return new MollieCommunicationMapper();
     }
 
     /**
@@ -50,5 +77,13 @@ class MollieCommunicationFactory extends AbstractCommunicationFactory
     public function getMollieClient(): MollieClientInterface
     {
         return $this->getProvidedDependency(MollieDependencyProvider::CLIENT_MOLLIE);
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Dependency\Facade\MollieToLocaleFacadeInterface
+     */
+    public function getLocaleFacade(): MollieToLocaleFacadeInterface
+    {
+        return $this->getProvidedDependency(MollieDependencyProvider::FACADE_LOCALE);
     }
 }

@@ -8,7 +8,7 @@ use Mollie\Shared\Mollie\MollieConstants;
 use Spryker\Client\Kernel\AbstractBundleConfig;
 
 /**
- * @method \Mollie\Shared\Mollie\MollieConfig getSharedConfig()()
+ * @method \Mollie\Shared\Mollie\MollieConfig getSharedConfig()
  */
 class MollieConfig extends AbstractBundleConfig
 {
@@ -53,29 +53,19 @@ class MollieConfig extends AbstractBundleConfig
     public const REQUEST_PARAMETER_CREATE_PAYMENT_KLARNA_EXTRA_MERCHANT_DATA = 'extraMerchantData';
 
     /**
-     * @var string
+     * @var int
      */
-    public const RESPONSE_PARAMETER_CREATE_PAYMENT_EMBEDDED = '_embedded';
+    public const MOLLIE_PAYMENT_METHODS_STORAGE_KEY_TTL = 21600;
 
     /**
      * @var string
      */
-    public const RESPONSE_PARAMETER_CREATE_PAYMENT_LINKS_CHECKOUT = 'checkout';
+    protected const CACHE_KEY_PREFIX_FOR_ALL_PAYMENT_METHODS = 'all_payment_methods';
 
-    /**
-     * @var string
-     */
-    public const RESPONSE_PARAMETER_CREATE_PAYMENT_LINKS_HREF = 'href';
-
-    /**
-     * @var string
-     */
-    public const RESPONSE_PARAMETER_CREATE_PAYMENT_METADATA = 'metadata';
-
-    /**
-     * @var string
-     */
-    public const RESPONSE_PARAMETER_CREATE_PAYMENT_ID = 'id';
+     /**
+      * @var string
+      */
+    protected const CACHE_KEY_PREFIX_FOR_ENABLED_PAYMENT_METHODS = 'enabled_payment_methods';
 
     /**
      * @return string
@@ -134,6 +124,30 @@ class MollieConfig extends AbstractBundleConfig
      */
     public function isMollieTestModeEnabled(): bool
     {
-        return $this->get(MollieConstants::MOLLIE)[MollieConstants::MOLLIE_TEST_MODE];
+        return $this->getSharedConfig()->isMollieTestModeEnabled();
+    }
+
+    /**
+     * @return int
+     */
+    public function getMolliePaymentMethodsStorageKeyTTL(): int
+    {
+        return static::MOLLIE_PAYMENT_METHODS_STORAGE_KEY_TTL;
+    }
+
+      /**
+       * @return string
+       */
+    public function getCacheKeyPrefixForAllPaymentMethods(): string
+    {
+        return static::CACHE_KEY_PREFIX_FOR_ALL_PAYMENT_METHODS;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCacheKeyPrefixForEnabledPaymentMethods(): string
+    {
+        return static::CACHE_KEY_PREFIX_FOR_ENABLED_PAYMENT_METHODS;
     }
 }

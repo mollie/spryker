@@ -22,12 +22,12 @@ class IndexController extends AbstractController
      */
     public function indexAction(Request $request): array
     {
-        $showOnlyEnabled = $request->query->get(MollieConstants::MOLLIE_QUERY_PARAMETER_SHOW_ONLY_ENABLED);
+        $showOnlyEnabledPaymentMethods = $request->query->get(MollieConstants::MOLLIE_QUERY_PARAMETER_SHOW_ONLY_ENABLED);
         $table = $this->getFactory()->createMolliePaymentMethodsTable();
 
         return $this->viewResponse([
             'mollieTable' => $table->render(),
-            MollieConstants::MOLLIE_QUERY_PARAMETER_SHOW_ONLY_ENABLED => $showOnlyEnabled,
+            MollieConstants::MOLLIE_QUERY_PARAMETER_SHOW_ONLY_ENABLED => $showOnlyEnabledPaymentMethods,
         ]);
     }
 
@@ -50,7 +50,7 @@ class IndexController extends AbstractController
      */
     public function clearCacheAction(Request $request): RedirectResponse
     {
-        $this->getFactory()->getStorageClient()->delete(MollieConstants::MOLLIE_AVAILABLE_METHODS_STORAGE_KEY);
+        $this->getFactory()->createMollieCacheInvalidator()->invalidateCache();
 
         return $this->redirectResponse($request->headers->get('referer'));
     }

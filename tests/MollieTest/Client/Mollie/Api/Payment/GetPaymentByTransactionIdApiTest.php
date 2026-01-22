@@ -25,7 +25,7 @@ class GetPaymentByTransactionIdApiTest extends AbstractClientTest
     public function testGetPaymentByTransactionIdApi(): void
     {
         $mollieApiRequestTransfer = new MollieApiRequestTransfer();
-        $mollieApiRequestTransfer->setBody(['id' => 'tr_IUDAHSMGnU6qLbRaksas']);
+        $mollieApiRequestTransfer->setTransactionId('tr_IUDAHSMGnU6qLbRaksas');
 
         $client = $this->createClient();
 

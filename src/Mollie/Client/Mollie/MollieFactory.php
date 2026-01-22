@@ -1,6 +1,7 @@
 <?php
 
-declare(strict_types=1);
+
+declare(strict_types = 1);
 
 namespace Mollie\Client\Mollie;
 
@@ -10,9 +11,16 @@ use Mollie\Client\Mollie\Api\Payment\CreatePaymentApi;
 use Mollie\Client\Mollie\Api\Payment\GetAllPaymentMethodsApi;
 use Mollie\Client\Mollie\Api\Payment\GetEnabledPaymentMethodsApi;
 use Mollie\Client\Mollie\Api\Payment\GetPaymentByTransactionIdApi;
+use Mollie\Client\Mollie\Deleter\Payment\PaymentMethodsCacheDeleter;
+use Mollie\Client\Mollie\Deleter\Payment\PaymentMethodsCacheDeleterInterface;
+use Mollie\Client\Mollie\Dependency\Client\MollieToStorageClientInterface;
 use Mollie\Client\Mollie\Dependency\Service\MollieToUtilEncodingServiceInterface;
+use Mollie\Client\Mollie\Generator\Payment\PaymentMethodsCacheKeyGenerator;
+use Mollie\Client\Mollie\Generator\Payment\PaymentMethodsCacheKeyGeneratorInterface;
 use Mollie\Client\Mollie\Mapper\PaymentMethodMapper;
 use Mollie\Client\Mollie\Mapper\PaymentMethodMapperInterface;
+use Mollie\Client\Mollie\Provider\Payment\PaymentMethodsProvider;
+use Mollie\Client\Mollie\Provider\Payment\PaymentMethodsProviderInterface;
 use Mollie\Client\Mollie\Zed\MollieStub;
 use Mollie\Client\Mollie\Zed\MollieStubInterface;
 use Mollie\Service\Mollie\MollieServiceInterface;
@@ -25,9 +33,46 @@ use Spryker\Client\ZedRequest\ZedRequestClientInterface;
 class MollieFactory extends AbstractFactory
 {
     /**
+     * @return \Mollie\Client\Mollie\Provider\Payment\PaymentMethodsProviderInterface
+     */
+    public function createPaymentMethodsProvider(): PaymentMethodsProviderInterface
+    {
+        return new PaymentMethodsProvider(
+            $this->createGetEnabledPaymentMethodsApi(),
+            $this->createGetAllPaymentMethodsApi(),
+            $this->getConfig(),
+            $this->getUtilEncodingService(),
+            $this->getStorageClient(),
+            $this->createPaymentMethodsCacheKeyGenerator(),
+        );
+    }
+
+    /**
+     * @return \Mollie\Client\Mollie\Generator\Payment\PaymentMethodsCacheKeyGeneratorInterface
+     */
+    public function createPaymentMethodsCacheKeyGenerator(): PaymentMethodsCacheKeyGeneratorInterface
+    {
+        return new PaymentMethodsCacheKeyGenerator(
+            $this->getConfig(),
+        );
+    }
+
+    /**
+     * @return \Mollie\Client\Mollie\Deleter\Payment\PaymentMethodsCacheDeleterInterface
+     */
+    public function createPaymentMethodsCacheDeleter(): PaymentMethodsCacheDeleterInterface
+    {
+        return new PaymentMethodsCacheDeleter(
+            $this->createPaymentMethodsCacheKeyGenerator(),
+            $this->getStorageClient(),
+            $this->getConfig(),
+        );
+    }
+
+    /**
      * @return \Mollie\Client\Mollie\Api\Payment\GetEnabledPaymentMethodsApi
      */
-    public function createGetEnabledPaymentMethodsApi(): ApiCallInterface
+    public function createGetEnabledPaymentMethodsApi(): GetEnabledPaymentMethodsApi
     {
         return new GetEnabledPaymentMethodsApi(
             $this->createMollieApiClient(),
@@ -40,7 +85,7 @@ class MollieFactory extends AbstractFactory
     /**
      * @return \Mollie\Client\Mollie\Api\Payment\GetAllPaymentMethodsApi
      */
-    public function createGetAllPaymentMethodsApi(): ApiCallInterface
+    public function createGetAllPaymentMethodsApi(): GetAllPaymentMethodsApi
     {
         return new GetAllPaymentMethodsApi(
             $this->createMollieApiClient(),
@@ -123,5 +168,13 @@ class MollieFactory extends AbstractFactory
     public function getZedRequestClient(): ZedRequestClientInterface
     {
         return $this->getProvidedDependency(MollieDependencyProvider::SERVICE_ZED);
+    }
+
+    /**
+     * @return \Mollie\Client\Mollie\Dependency\Client\MollieToStorageClientInterface
+     */
+    public function getStorageClient(): MollieToStorageClientInterface
+    {
+        return $this->getProvidedDependency(MollieDependencyProvider::CLIENT_STORAGE);
     }
 }

@@ -131,7 +131,6 @@
     <transfer name="MollieApiRequest">
         <property name="quote" type="Quote"/>
         <property name="checkoutResponse" type="CheckoutResponse"/>
-        <property name="body" type="array"/>
         <property name="molliePaymentMethodQueryParameters" type="MolliePaymentMethodQueryParameters" />
         <property name="transactionId" type="string"/>
     </transfer>

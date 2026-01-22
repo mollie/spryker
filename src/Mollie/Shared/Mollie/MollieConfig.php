@@ -1,5 +1,8 @@
 <?php
 
+
+declare(strict_types = 1);
+
 namespace Mollie\Shared\Mollie;
 
 use Spryker\Shared\Kernel\AbstractSharedConfig;
@@ -141,6 +144,16 @@ class MollieConfig extends AbstractSharedConfig
      */
     public const MOLLIE_PAYMENT_STATUS_FAILED = ['failed', 'expired', 'canceled'];
 
+     /**
+      * @var string
+      */
+    protected const CACHE_KEY_IDENTIFIER_FOR_ALL_PAYMENT_METHODS = 'all_payment_methods';
+
+     /**
+      * @var string
+      */
+    protected const CACHE_KEY_IDENTIFIER_FOR_ENABLED_PAYMENT_METHODS = 'enabled_payment_methods';
+
     /**
      * @return string|null
      */
@@ -150,10 +163,26 @@ class MollieConfig extends AbstractSharedConfig
     }
 
     /**
-     * @return string
+     * @return bool
      */
-    public function getMollieTestModeEnabled(): string
+    public function isMollieTestModeEnabled(): bool
     {
         return $this->get(MollieConstants::MOLLIE)[MollieConstants::MOLLIE_TEST_MODE];
+    }
+
+    /**
+     * @return string
+     */
+    public function getCacheKeyIdentifierForAllPaymentMethods(): string
+    {
+        return static::CACHE_KEY_IDENTIFIER_FOR_ALL_PAYMENT_METHODS;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCacheKeyIdentifierForEnabledPaymentMethods(): string
+    {
+        return static::CACHE_KEY_IDENTIFIER_FOR_ENABLED_PAYMENT_METHODS;
     }
 }
