@@ -1,10 +1,14 @@
 <?php
 
+
+declare(strict_types = 1);
+
 namespace MollieTest\Client\Mollie;
 
 use Codeception\Test\Unit;
 use Mollie\Api\Fake\MockMollieClient;
 use Mollie\Api\MollieApiClient;
+use Mollie\Client\Mollie\Dependency\Client\MollieToStorageClientBridge;
 use Mollie\Client\Mollie\MollieClient;
 use Mollie\Client\Mollie\MollieClientInterface;
 use Mollie\Client\Mollie\MollieConfig;
@@ -15,6 +19,8 @@ use Spryker\Client\Kernel\Container;
 
 abstract class AbstractClientTest extends Unit
 {
+    protected MollieApiClientTester $tester;
+
     /**
      * @param array $response
      *
@@ -35,7 +41,7 @@ abstract class AbstractClientTest extends Unit
     public function createMollieFactoryMock(): MollieFactory
     {
         $mollieFactoryMock = $this->getMockBuilder(MollieFactory::class)
-            ->onlyMethods(['createMollieApiClient'])
+            ->onlyMethods(['createMollieApiClient', 'getStorageClient'])
             ->getMock();
 
         $mollieFactoryMock->setConfig(new MollieConfig());
@@ -45,7 +51,22 @@ abstract class AbstractClientTest extends Unit
         $dependencyProvider->provideServiceLayerDependencies($container);
         $mollieFactoryMock->setContainer($container);
 
+        $mollieToStorageClientBridgeMock = $this->createMollieToStorageClientBridgeMock();
+        $mollieFactoryMock->method('getStorageClient')
+            ->willReturn($mollieToStorageClientBridgeMock);
+
         return $mollieFactoryMock;
+    }
+
+    /**
+     * @return \Mollie\Client\Mollie\Dependency\Client\MollieToStorageClientBridge
+     */
+    public function createMollieToStorageClientBridgeMock(): MollieToStorageClientBridge
+    {
+        return $this->getMockBuilder(MollieToStorageClientBridge::class)
+            ->onlyMethods(['get', 'set', 'delete'])
+            ->disableOriginalConstructor()
+            ->getMock();
     }
 
     /**

@@ -10,18 +10,12 @@ use Mollie\Api\Fake\MockResponse;
 use Mollie\Api\Http\Requests\GetPaymentRequest;
 use Mollie\Client\Mollie\MollieClientInterface;
 use MollieTest\Client\Mollie\AbstractClientTest;
-use MollieTest\Client\Mollie\MollieApiClientTester;
 
 class GetPaymentByTransactionIdApiTest extends AbstractClientTest
 {
-     /**
-      * @var \MollieTest\Client\Mollie\MollieApiClientTester
-      */
-    protected MollieApiClientTester $tester;
-
-    /**
-     * @return void
-     */
+ /**
+  * @return void
+  */
     public function testGetPaymentByTransactionIdApi(): void
     {
         $mollieApiRequestTransfer = new MollieApiRequestTransfer();

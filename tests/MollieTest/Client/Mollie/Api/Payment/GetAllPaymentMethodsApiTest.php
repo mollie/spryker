@@ -12,18 +12,12 @@ use Mollie\Api\Fake\MockResponse;
 use Mollie\Api\Http\Requests\GetAllMethodsRequest;
 use Mollie\Client\Mollie\MollieClientInterface;
 use MollieTest\Client\Mollie\AbstractClientTest;
-use MollieTest\Client\Mollie\MollieApiClientTester;
 
 class GetAllPaymentMethodsApiTest extends AbstractClientTest
 {
-    /**
-     * @var \MollieTest\Client\Mollie\MollieApiClientTester
-     */
-    protected MollieApiClientTester $tester;
-
-    /**
-     * @return void
-     */
+ /**
+  * @return void
+  */
     public function testGetAllPaymentMethodsApi(): void
     {
         $transfer = $this->createMollieApiRequestTransfer();
@@ -49,6 +43,10 @@ class GetAllPaymentMethodsApiTest extends AbstractClientTest
     {
         $transfer = new MollieApiRequestTransfer();
         $queryTransfer = new MolliePaymentMethodQueryParametersTransfer();
+
+        $queryTransfer
+            ->setLocale('en_US')
+            ->setSequenceType('oneoff');
 
         $transfer->setMolliePaymentMethodQueryParameters($queryTransfer);
 
