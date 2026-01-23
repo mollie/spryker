@@ -1,12 +1,12 @@
 <?php
 
+
+declare(strict_types = 1);
+
 namespace MollieTest\Zed\Mollie\Business\Order;
 
 use Generated\Shared\Transfer\OrderCollectionRequestTransfer;
-use Generated\Shared\Transfer\OrderCollectionResponseTransfer;
 use MollieTest\Zed\Mollie\Business\AbstractBusinessTest;
-use Spryker\Service\Container\Container;
-use Spryker\Shared\Kernel\Container\GlobalContainer;
 
 class OrderUpdateCollectionTest extends AbstractBusinessTest
 {
@@ -21,30 +21,29 @@ class OrderUpdateCollectionTest extends AbstractBusinessTest
     public function setUp(): void
     {
         parent::setUp();
-        $globalContainer = new GlobalContainer();
-        $globalContainer->setContainer(new Container([
-            'request_stack' => $this->getRequestStackMock(),
-        ]));
+        $this->tester->configureTestStateMachine([static::TEST_STATE_MACHINE_NAME]);
     }
 
-    //TODO: test will be finalized once the webhook integration is finished
     /**
      * @return void
      */
-    public function testUpdateOrderCollectionSuccessfullyUpdatesOrder(): void
+    public function testWebHookRequestSuccessfullyUpdatesMolliePayment(): void
     {
         // Arrange
-        $saveOrderTransfer = $this->tester->createOrder();
+        $saveOrderTransfer = $this->tester->haveOrder([
+        ], static::TEST_STATE_MACHINE_NAME);
+
         $molliePaymentEntity = $this->tester->createMolliePayment($saveOrderTransfer->getIdSalesOrder());
         $orderCollectionRequestTransfer = (new OrderCollectionRequestTransfer())
             ->setId($molliePaymentEntity->getTransactionId())
-            ->setStatus($molliePaymentEntity->getStatus());
+            ->setStatus('paid');
 
         //Act
         $response = $this->mollieFacade->updateOrderCollection($orderCollectionRequestTransfer);
+        $updatedMolliePaymentEntity = $this->tester->findMolliePayment($molliePaymentEntity->getFkSalesOrder());
 
         //Assert
-        $this->assertInstanceOf(OrderCollectionResponseTransfer::class, $response);
-        $this->assertEquals(true, $response->getIsSuccess());
+        $this->assertEquals('paid', $updatedMolliePaymentEntity->getStatus());
+        $this->assertTrue($response->getIsSuccess());
     }
 }

@@ -1,14 +1,13 @@
 <?php
 
-
 declare(strict_types = 1);
 
 namespace MollieTest\Zed\Mollie;
 
 use Codeception\Actor;
 use DateTime;
-use Generated\Shared\Transfer\SaveOrderTransfer;
 use Orm\Zed\Mollie\Persistence\SpyPaymentMollie;
+use Orm\Zed\Mollie\Persistence\SpyPaymentMollieQuery;
 
 /**
  * Inherited Methods
@@ -31,19 +30,6 @@ class MollieZedTester extends Actor
     use _generated\MollieZedTesterActions;
 
     /**
-     * @var string
-     */
-    public const TEST_STATE_MACHINE_NAME = 'Test01';
-
-    /**
-     * @return \Generated\Shared\Transfer\SaveOrderTransfer
-     */
-    public function createOrder(): SaveOrderTransfer
-    {
-        return $this->haveOrder([], static::TEST_STATE_MACHINE_NAME);
-    }
-
-    /**
      * @param int $idSalesOrder
      *
      * @return \Orm\Zed\Mollie\Persistence\SpyPaymentMollie
@@ -53,7 +39,7 @@ class MollieZedTester extends Actor
         $spyPaymentMollieEntity = (new SpyPaymentMollie())
             ->setFkSalesOrder($idSalesOrder)
             ->setTransactionId('test_123')
-            ->setStatus('paid')
+            ->setStatus('open')
             ->setDescription('Test payment')
             ->setSequenceType('123')
             ->setMetadata('[]')
@@ -63,5 +49,17 @@ class MollieZedTester extends Actor
         $spyPaymentMollieEntity->save();
 
         return $spyPaymentMollieEntity;
+    }
+
+    /**
+     * @param int $idSalesOrder
+     *
+     * @return \Orm\Zed\Mollie\Persistence\SpyPaymentMollie
+     */
+    public function findMolliePayment(int $idSalesOrder): SpyPaymentMollie
+    {
+        return SpyPaymentMollieQuery::create()
+            ->filterByFkSalesOrder($idSalesOrder)
+            ->findOne();
     }
 }
