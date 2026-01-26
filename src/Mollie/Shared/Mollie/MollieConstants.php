@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Mollie\Shared\Mollie;
 
@@ -38,6 +38,16 @@ interface MollieConstants
      * @var string
      */
     public const MOLLIE_TEST_ENVIRONMENT_WEBHOOK_URL = 'MOLLIE:TEST_ENVIRONMENT_WEBHOOK_URL';
+
+    /**
+     * @var string
+     */
+    public const MOLLIE_CREDIT_CARD_COMPONENTS_ENABLED = 'MOLLIE:MOLLIE_CREDIT_CARD_COMPONENTS_ENABLED';
+
+    /**
+     * @var string
+     */
+    public const MOLLIE_CREDIT_CARD_COMPONENT_JS_SRC = 'MOLLIE:MOLLIE_CREDIT_CARD_COMPONENT_JS_SRC';
 
     // Payment statuses from Mollie
     /**
