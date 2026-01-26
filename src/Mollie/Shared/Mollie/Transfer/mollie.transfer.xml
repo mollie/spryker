@@ -41,6 +41,7 @@
         <property name="mollieBancontactPayment" type="[]"/>
         <property name="mollieKbcPayment" type="[]"/>
         <property name="molliePayByBankPayment" type="[]"/>
+        <property name="mollieApplePayPayment" type="[]"/>
     </transfer>
 
     <transfer name="MolliePaymentMethod">

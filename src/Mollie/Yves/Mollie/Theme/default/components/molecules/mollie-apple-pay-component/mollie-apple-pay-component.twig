@@ -1,0 +1,16 @@
+{% extends model('component') %}
+
+{% define config = {
+    name: 'mollie-apple-pay-component',
+    tag: 'mollie-apple-pay-component',
+} %}
+
+{% define attributes = {
+    'form-selector': '[name="paymentForm"]',
+    'selected-payment-method': '[name="paymentForm[paymentSelection]"]:checked',
+    'locale': app.locale,
+} %}
+
+{% block body %}
+    <div class="{{ config.name }}__description spacing-top--big">testing apple pay</div>
+{% endblock %}
