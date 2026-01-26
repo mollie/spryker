@@ -7,6 +7,7 @@ namespace Mollie\Zed\Mollie\Business;
 use Generated\Shared\Transfer\CheckoutResponseTransfer;
 use Generated\Shared\Transfer\OrderCollectionRequestTransfer;
 use Generated\Shared\Transfer\OrderCollectionResponseTransfer;
+use Generated\Shared\Transfer\PaymentMethodsTransfer;
 use Generated\Shared\Transfer\QuoteTransfer;
 
 interface MollieFacadeInterface
@@ -32,4 +33,12 @@ interface MollieFacadeInterface
      * @return \Generated\Shared\Transfer\CheckoutResponseTransfer
      */
     public function createPayment(QuoteTransfer $quoteTransfer, CheckoutResponseTransfer $checkoutResponseTransfer): CheckoutResponseTransfer;
+
+    /**
+     * @param \Generated\Shared\Transfer\PaymentMethodsTransfer $paymentMethodsTransfer
+     * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
+     *
+     * @return \Generated\Shared\Transfer\PaymentMethodsTransfer
+     */
+    public function filterActiveMolliePaymentMethods(PaymentMethodsTransfer $paymentMethodsTransfer, QuoteTransfer $quoteTransfer): PaymentMethodsTransfer;
 }
