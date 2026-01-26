@@ -42,6 +42,7 @@ class PaymentMethodsCacheKeyGenerator implements PaymentMethodsCacheKeyGenerator
             $amount?->getCurrency(),
             $amount?->getValue(),
             $queryParametersTransfer->getBillingCountry(),
+            $queryParametersTransfer->getSequenceType(),
         ];
 
         return implode(':', array_filter($keyParts));
