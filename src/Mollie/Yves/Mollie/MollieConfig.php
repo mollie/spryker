@@ -27,9 +27,9 @@ class MollieConfig extends AbstractBundleConfig
     /**
      * @return string
      */
-    public function getMollieCreditCardComponentJsSrc(): string
+    public function getMollieCreditCardComponentsJsSrc(): string
     {
-        return $this->get(MollieConstants::MOLLIE)[MollieConstants::MOLLIE_CREDIT_CARD_COMPONENT_JS_SRC];
+        return $this->get(MollieConstants::MOLLIE)[MollieConstants::MOLLIE_CREDIT_CARD_COMPONENTS_JS_SRC];
     }
 
     /**

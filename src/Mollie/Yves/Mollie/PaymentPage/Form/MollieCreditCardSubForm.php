@@ -85,7 +85,7 @@ class MollieCreditCardSubForm extends AbstractSubFormType implements SubFormInte
         $view->vars['isMollieCreditCardComponentEnabled'] = $this->getConfig()->isMollieCreditCardComponentEnabled();
         $view->vars['profileId'] = $this->getConfig()->getProfileId();
         $view->vars['testMode'] = $this->getConfig()->isTestMode() ? 'true' : 'false';
-        $view->vars['jsSrc'] = $this->getConfig()->getMollieCreditCardComponentJsSrc();
+        $view->vars['jsSrc'] = $this->getConfig()->getMollieCreditCardComponentsJsSrc();
     }
 
     /**
