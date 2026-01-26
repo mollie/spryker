@@ -120,7 +120,6 @@ class MolliePaymentHandler implements MolliePaymentHandlerInterface
     {
         $error = new CheckoutErrorTransfer();
         $error->setMessage($message);
-        $error->setErrorCode('payment failed');
 
         $errors = new ArrayObject();
         $errors->append($error);
