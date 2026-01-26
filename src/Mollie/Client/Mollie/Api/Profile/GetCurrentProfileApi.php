@@ -1,0 +1,44 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Mollie\Client\Mollie\Api\Profile;
+
+use Generated\Shared\Transfer\MollieApiRequestTransfer;
+use Generated\Shared\Transfer\MollieApiResponseTransfer;
+use Generated\Shared\Transfer\MollieGetProfileApiResponseTransfer;
+use Generated\Shared\Transfer\MollieProfileTransfer;
+use Mollie\Api\Http\Request;
+use Mollie\Api\Http\Requests\GetCurrentProfileRequest;
+use Mollie\Client\Mollie\Api\AbstractApiCall;
+use Spryker\Shared\Kernel\Transfer\AbstractTransfer;
+
+class GetCurrentProfileApi extends AbstractApiCall
+{
+    /**
+     * @param MollieApiRequestTransfer|null $mollieApiRequestTransfer
+     *
+     * @return Request|null
+     */
+    public function buildRequest(?MollieApiRequestTransfer $mollieApiRequestTransfer = null): ?Request
+    {
+        return new GetCurrentProfileRequest();
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MollieApiResponseTransfer $mollieApiResponseTransfer
+     *
+     * @return \Generated\Shared\Transfer\MolliePaymentMethodsApiResponseTransfer
+     */
+    protected function mapApiResponse(MollieApiResponseTransfer $mollieApiResponseTransfer): AbstractTransfer
+    {
+        $payload = $mollieApiResponseTransfer->getPayload();
+        $molliePaymentMethodsApiResponseTransfer = new MollieGetProfileApiResponseTransfer();
+        $molliePaymentMethodsApiResponseTransfer
+            ->setIsSuccessful($mollieApiResponseTransfer->getIsSuccessful())
+            ->setMessage($mollieApiResponseTransfer->getMessage())
+            ->setProfile(new MollieProfileTransfer()->fromArray($payload, true));
+        
+        return $molliePaymentMethodsApiResponseTransfer;
+    }
+}
