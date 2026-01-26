@@ -8,6 +8,7 @@ namespace Mollie\Client\Mollie;
 use Mollie\Api\MollieApiClient;
 use Mollie\Client\Mollie\Api\ApiCallInterface;
 use Mollie\Client\Mollie\Api\Payment\CreatePaymentApi;
+use Mollie\Client\Mollie\Api\Payment\CreateRefundApi;
 use Mollie\Client\Mollie\Api\Payment\GetAllPaymentMethodsApi;
 use Mollie\Client\Mollie\Api\Payment\GetEnabledPaymentMethodsApi;
 use Mollie\Client\Mollie\Api\Payment\GetPaymentByTransactionIdApi;
@@ -139,6 +140,19 @@ class MollieFactory extends AbstractFactory
     public function createPaymentApi(): ApiCallInterface
     {
         return new CreatePaymentApi(
+            $this->createMollieApiClient(),
+            $this->getConfig(),
+            $this->getUtilEncodingService(),
+            $this->getMollieService(),
+        );
+    }
+
+    /**
+     * @return \Mollie\Client\Mollie\Api\ApiCallInterface
+     */
+    public function createRefundApi(): ApiCallInterface
+    {
+        return new CreateRefundApi(
             $this->createMollieApiClient(),
             $this->getConfig(),
             $this->getUtilEncodingService(),

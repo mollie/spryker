@@ -11,8 +11,14 @@ use Mollie\Zed\Mollie\Business\Mapper\Oms\MolleOmsStatusMapper;
 use Mollie\Zed\Mollie\Business\Mapper\Oms\MolleOmsStatusMapperInterface;
 use Mollie\Zed\Mollie\Business\Order\OrderUpdater;
 use Mollie\Zed\Mollie\Business\Order\OrderUpdaterInterface;
+use Mollie\Zed\Mollie\Business\OrderItem\OrderItemGrossAmountCalculator;
+use Mollie\Zed\Mollie\Business\OrderItem\OrderItemGrossAmountCalculatorInterface;
+use Mollie\Zed\Mollie\Business\Processor\RefundProcessor;
+use Mollie\Zed\Mollie\Business\Processor\RefundProcessorInterface;
 use Mollie\Zed\Mollie\Business\Writer\MolliePaymentWriter;
 use Mollie\Zed\Mollie\Business\Writer\MolliePaymentWriterInterface;
+use Mollie\Zed\Mollie\Business\Writer\MollieRefundWriter;
+use Mollie\Zed\Mollie\Business\Writer\MollieRefundWriterInterface;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToOmsInterface;
 use Mollie\Zed\Mollie\Dependency\MollieToStorageClientInterface;
 use Mollie\Zed\Mollie\MollieDependencyProvider;
@@ -47,6 +53,37 @@ class MollieBusinessFactory extends AbstractBusinessFactory
     {
         return new MolleOmsStatusMapper(
             $this->getConfig(),
+        );
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Business\OrderItem\OrderItemGrossAmountCalculatorInterface
+     */
+    public function createOrderItemGrossAmountCalculator(): OrderItemGrossAmountCalculatorInterface
+    {
+        return new OrderItemGrossAmountCalculator();
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Business\Processor\RefundProcessorInterface
+     */
+    public function createRefundProcessor(): RefundProcessorInterface
+    {
+        return new RefundProcessor(
+            $this->createOrderItemGrossAmountCalculator(),
+            $this->getRepository(),
+            $this->getMollieClient(),
+            $this->createMollieRefundWritter(),
+        );
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Business\Writer\MollieRefundWriterInterface
+     */
+    public function createMollieRefundWritter(): MollieRefundWriterInterface
+    {
+        return new MollieRefundWriter(
+            $this->getEntityManager(),
         );
     }
 

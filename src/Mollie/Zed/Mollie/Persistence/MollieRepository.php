@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Mollie\Zed\Mollie\Persistence;
 
+use Generated\Shared\Transfer\MolliePaymentTransfer;
 use Propel\Runtime\Collection\ObjectCollection;
 use Spryker\Zed\Kernel\Persistence\AbstractRepository;
 
@@ -31,5 +32,22 @@ class MollieRepository extends AbstractRepository implements MollieRepositoryInt
         return $this->getFactory()
             ->createMollieOrderItemMapper()
             ->extractOrderItemsFromSpyPaymentMollieEntity($spyPaymentMollieCollection);
+    }
+
+    /**
+     * @param string $orderId
+     *
+     * @return \Generated\Shared\Transfer\MolliePaymentTransfer
+     */
+    public function getPaymentByOrderId(string $orderId): MolliePaymentTransfer
+    {
+        $spyPaymentMollieRecord = $this->getFactory()
+            ->createSpyPaymentMollieQuery()
+            ->filterByFkSalesOrder($orderId)
+            ->find();
+
+        return $this->getFactory()
+            ->createMollieOrderMapper()
+            ->mapFromSpyPaymentMollieEntityToMolliePaymentTransfer($spyPaymentMollieRecord);
     }
 }

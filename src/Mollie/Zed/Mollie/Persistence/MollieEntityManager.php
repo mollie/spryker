@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace Mollie\Zed\Mollie\Persistence;
 
 use Generated\Shared\Transfer\MolliePaymentTransfer;
+use Generated\Shared\Transfer\MollieRefundTransfer;
 use Generated\Shared\Transfer\OrderCollectionRequestTransfer;
 use Orm\Zed\Mollie\Persistence\SpyPaymentMollie;
+use Orm\Zed\Mollie\Persistence\SpyRefundMollie;
 use Spryker\Zed\Kernel\Persistence\AbstractEntityManager;
 
 /**
@@ -55,5 +57,28 @@ class MollieEntityManager extends AbstractEntityManager implements MollieEntityM
             ->setCreatedAt($molliePaymentTransfer->getCreatedAt());
 
         $spyPaymentMollieEntity->save();
+    }
+
+    /**
+     * @param int $idSalesOrder
+     * @param \Generated\Shared\Transfer\MollieRefundTransfer $mollieRefundTransfer
+     *
+     * @return void
+     */
+    public function addMollieRefundData(int $idSalesOrder, MollieRefundTransfer $mollieRefundTransfer): void
+    {
+        $spyRefundMollieEntity = new SpyRefundMollie();
+        $metadata = $this->getFactory()->getUtilEncodingService()->encodeJson($mollieRefundTransfer->getMetadata());
+        $spyRefundMollieEntity
+            ->setFkSalesOrder($idSalesOrder)
+            ->setDescription($mollieRefundTransfer->getDescription())
+            ->setCurrency($mollieRefundTransfer->getAmount()->getCurrency())
+            ->setValue($mollieRefundTransfer->getAmount()->getValue())
+            ->setStatus($mollieRefundTransfer->getStatus())
+            ->setMetadata($metadata)
+            ->setRefundId($mollieRefundTransfer->getId())
+            ->setCreatedAt($mollieRefundTransfer->getCreatedAt());
+
+        $spyRefundMollieEntity->save();
     }
 }

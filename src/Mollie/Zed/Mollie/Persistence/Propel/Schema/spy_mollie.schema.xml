@@ -25,4 +25,27 @@
         <id-method-parameter value="spy_payment_mollie_pk_seq"/>
     </table>
 
+    <table name="spy_refund_mollie" phpName="SpyRefundMollie">
+        <column name="id_refund_mollie" required="true" type="INTEGER" autoIncrement="true" primaryKey="true"/>
+        <column name="fk_sales_order" required="true" type="INTEGER"/>
+        <column name="description" type="VARCHAR" size="255"/>
+        <column name="currency" type="VARCHAR" size="32"/>
+        <column name="value" type="VARCHAR" size="32"/>
+        <column name="status" required="true" type="VARCHAR" size="64"/>
+        <column name="metadata" type="LONGVARCHAR"/>
+        <column name="refund_id" required="true" type="VARCHAR" size="255"/>
+        <column name="created_at" type="TIMESTAMP"/>
+
+        <foreign-key name="spy_refund_mollie-fk_sales_order" foreignTable="spy_sales_order" phpName="SpySalesOrder">
+            <reference foreign="id_sales_order" local="fk_sales_order"/>
+        </foreign-key>
+
+        <index name="index-spy_refund_mollie-transaction_id">
+            <index-column name="transaction_id"/>
+        </index>
+
+        <behavior name="timestampable"/>
+        <id-method-parameter value="spy_refund_mollie_pk_seq"/>
+    </table>
+
 </database>
