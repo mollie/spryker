@@ -13,6 +13,8 @@ class PaymentMethodsCacheDeleter implements PaymentMethodsCacheDeleterInterface
 {
     public const string KV_PREFIX = 'kv:';
 
+    public const string WILDCARD = '*';
+
     public const int REDIS_SCAN_LIMIT = 1000;
 
     /**
@@ -36,7 +38,8 @@ class PaymentMethodsCacheDeleter implements PaymentMethodsCacheDeleterInterface
     {
         $cacheKeyPrefix = $this->config->getCacheKeyPrefixForEnabledPaymentMethods();
         $cacheKey = $this->keyGenerator->generateCacheKey($parameters, $cacheKeyPrefix);
-        $storageTransfer = $this->storageClient->scanKeys($cacheKey, static::REDIS_SCAN_LIMIT);
+        $cacheKeyWithWildcard = $cacheKey . static::WILDCARD;
+        $storageTransfer = $this->storageClient->scanKeys($cacheKeyWithWildcard, static::REDIS_SCAN_LIMIT);
         $formattedKeys = $this->formatRedisKeys($storageTransfer->getKeys());
         $this->storageClient->deleteMulti($formattedKeys);
     }
