@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace Mollie\Client\Mollie\Dependency\Client;
 
+use Generated\Shared\Transfer\StorageScanResultTransfer;
 use Spryker\Client\Storage\StorageClientInterface;
 
 class MollieToStorageClientBridge implements MollieToStorageClientInterface
@@ -16,6 +17,18 @@ class MollieToStorageClientBridge implements MollieToStorageClientInterface
     public function __construct($storageClient)
     {
         $this->storageClient = $storageClient;
+    }
+
+    /**
+     * @param string $pattern
+     * @param int $limit
+     * @param int|null $cursor
+     *
+     * @return \Generated\Shared\Transfer\StorageScanResultTransfer
+     */
+    public function scanKeys(string $pattern, int $limit, ?int $cursor = 0): StorageScanResultTransfer
+    {
+        return $this->storageClient->scanKeys($pattern, $limit, $cursor);
     }
 
     /**
@@ -48,5 +61,15 @@ class MollieToStorageClientBridge implements MollieToStorageClientInterface
     public function delete(string $key): void
     {
         $this->storageClient->delete($key);
+    }
+
+    /**
+     * @param array<string> $keys
+     *
+     * @return void
+     */
+    public function deleteMulti(array $keys): void
+    {
+        $this->storageClient->deleteMulti($keys);
     }
 }

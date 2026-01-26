@@ -11,6 +11,10 @@ use Mollie\Client\Mollie\MollieConfig;
 
 class PaymentMethodsCacheDeleter implements PaymentMethodsCacheDeleterInterface
 {
+    public const string KV_PREFIX = 'kv:';
+
+    public const int REDIS_SCAN_LIMIT = 1000;
+
     /**
      * @param \Mollie\Client\Mollie\Generator\Payment\PaymentMethodsCacheKeyGeneratorInterface $keyGenerator
      * @param \Mollie\Client\Mollie\Dependency\Client\MollieToStorageClientInterface $storageClient
@@ -32,7 +36,9 @@ class PaymentMethodsCacheDeleter implements PaymentMethodsCacheDeleterInterface
     {
         $cacheKeyPrefix = $this->config->getCacheKeyPrefixForEnabledPaymentMethods();
         $cacheKey = $this->keyGenerator->generateCacheKey($parameters, $cacheKeyPrefix);
-        $this->storageClient->delete($cacheKey);
+        $storageTransfer = $this->storageClient->scanKeys($cacheKey, static::REDIS_SCAN_LIMIT);
+        $formattedKeys = $this->formatRedisKeys($storageTransfer->getKeys());
+        $this->storageClient->deleteMulti($formattedKeys);
     }
 
      /**
@@ -44,6 +50,37 @@ class PaymentMethodsCacheDeleter implements PaymentMethodsCacheDeleterInterface
     {
         $cacheKeyPrefix = $this->config->getCacheKeyPrefixForAllPaymentMethods();
         $cacheKey = $this->keyGenerator->generateCacheKey($parameters, $cacheKeyPrefix);
-        $this->storageClient->delete($cacheKey);
+        $storageTransfer = $this->storageClient->scanKeys($cacheKey, static::REDIS_SCAN_LIMIT);
+        $formattedKeys = $this->formatRedisKeys($storageTransfer->getKeys());
+        $this->storageClient->deleteMulti($formattedKeys);
+    }
+
+    /**
+     * @param array<string> $keys
+     *
+     * @return array<string>
+     */
+    protected function formatRedisKeys(array $keys): array
+    {
+        $formattedKeys = [];
+        foreach ($keys as $key) {
+            $formattedKeys[] = $this->truncateSprykerRedisKeyPrefix($key);
+        }
+
+        return $formattedKeys;
+    }
+
+    /**
+     * @param string $key
+     *
+     * @return string
+     */
+    protected function truncateSprykerRedisKeyPrefix(string $key): string
+    {
+        if (str_starts_with($key, static::KV_PREFIX)) {
+            return substr($key, strlen(static::KV_PREFIX));
+        }
+
+        return $key;
     }
 }
