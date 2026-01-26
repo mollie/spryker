@@ -77,7 +77,7 @@ class MolliePaymentMethodsFilter implements MolliePaymentMethodsFilterInterface
         QuoteTransfer $quoteTransfer,
         ArrayObject $molliePaymentMethods,
     ): PaymentMethodsTransfer {
-        $activeMollieMethods = $this->getActiveMollieMethods($molliePaymentMethods);
+        $activeMollieMethods = $this->indexMollieMethods($molliePaymentMethods);
         $grandTotal = $this->mollieService->convertIntegerToDecimal($quoteTransfer->getTotals()->getGrandTotal());
 
         $filteredMethods = new ArrayObject();
@@ -114,17 +114,15 @@ class MolliePaymentMethodsFilter implements MolliePaymentMethodsFilterInterface
      *
      * @return array<string, \Generated\Shared\Transfer\MolliePaymentMethodTransfer>
      */
-    protected function getActiveMollieMethods(ArrayObject $molliePaymentMethods): array
+    protected function indexMollieMethods(ArrayObject $molliePaymentMethods): array
     {
-        $activePaymentMethods = [];
+        $indexedMethods = [];
 
         foreach ($molliePaymentMethods as $method) {
-            if ($method->getStatus() === MollieConfig::MOLLIE_PAYMENT_METHOD_STATUS_ACTIVATED) {
-                $activePaymentMethods[$method->getId()] = $method;
-            }
+            $indexedMethods[$method->getId()] = $method;
         }
 
-        return $activePaymentMethods;
+        return $indexedMethods;
     }
 
     /**
