@@ -48,6 +48,11 @@ class MollieDependencyProvider extends AbstractBundleDependencyProvider
     public const SERVICE_UTIL_ENCODING = 'SERVICE_UTIL_ENCODING';
 
     /**
+     * @var string
+     */
+    public const SERVICE_MOLLIE = 'SERVICE_MOLLIE';
+
+    /**
      * @param \Spryker\Zed\Kernel\Container $container
      *
      * @return \Spryker\Zed\Kernel\Container
@@ -59,6 +64,8 @@ class MollieDependencyProvider extends AbstractBundleDependencyProvider
         $container = $this->addLogger($container);
         $container = $this->addMollieClient($container);
         $container = $this->addStorageClient($container);
+        $container = $this->addMollieService($container);
+        $container = $this->addLocaleFacade($container);
 
         return $container;
     }
@@ -177,6 +184,20 @@ class MollieDependencyProvider extends AbstractBundleDependencyProvider
             return new MollieToLocaleFacadeBridge(
                 $container->getLocator()->locale()->facade(),
             );
+        });
+
+        return $container;
+    }
+
+    /**
+     * @param \Spryker\Zed\Kernel\Container $container
+     *
+     * @return \Spryker\Zed\Kernel\Container
+     */
+    protected function addMollieService(Container $container): Container
+    {
+        $container->set(static::SERVICE_MOLLIE, function (Container $container) {
+            return $container->getLocator()->mollie()->service();
         });
 
         return $container;
