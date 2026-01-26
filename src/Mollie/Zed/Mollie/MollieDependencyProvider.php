@@ -7,6 +7,8 @@ namespace Mollie\Zed\Mollie;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToLocaleFacadeBridge;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToLocaleFacadeInterface;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToOmsBridge;
+use Mollie\Zed\Mollie\Dependency\Facade\MollieToStoreFacadeBridge;
+use Mollie\Zed\Mollie\Dependency\Facade\MollieToStoreFacadeInterface;
 use Mollie\Zed\Mollie\Dependency\MollieToStorageClientBridge;
 use Mollie\Zed\Mollie\Dependency\MollieToStorageClientInterface;
 use Mollie\Zed\Mollie\Dependency\Service\MollieToUtilEncodingServiceBridge;
@@ -26,6 +28,11 @@ class MollieDependencyProvider extends AbstractBundleDependencyProvider
      * @var string
      */
     public const FACADE_LOCALE = 'FACADE_LOCALE';
+
+    /**
+     * @var string
+     */
+    public const FACADE_STORE = 'FACADE_STORE';
 
     /**
      * @var string
@@ -73,6 +80,7 @@ class MollieDependencyProvider extends AbstractBundleDependencyProvider
         $container = $this->addStorageClient($container);
         $container = $this->addMollieClient($container);
         $container = $this->addLocaleFacade($container);
+        $container = $this->addStoreFacade($container);
 
         return $container;
     }
@@ -176,6 +184,22 @@ class MollieDependencyProvider extends AbstractBundleDependencyProvider
         $container->set(static::FACADE_LOCALE, function (Container $container): MollieToLocaleFacadeInterface {
             return new MollieToLocaleFacadeBridge(
                 $container->getLocator()->locale()->facade(),
+            );
+        });
+
+        return $container;
+    }
+
+    /**
+     * @param \Spryker\Zed\Kernel\Container $container
+     *
+     * @return \Spryker\Zed\Kernel\Container
+     */
+    protected function addStoreFacade(Container $container): Container
+    {
+        $container->set(static::FACADE_STORE, function (Container $container): MollieToStoreFacadeInterface {
+            return new MollieToStoreFacadeBridge(
+                $container->getLocator()->store()->facade(),
             );
         });
 

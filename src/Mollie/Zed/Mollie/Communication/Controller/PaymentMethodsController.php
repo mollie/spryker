@@ -13,7 +13,7 @@ use Symfony\Component\HttpFoundation\Request;
 /**
  * @method \Mollie\Zed\Mollie\Communication\MollieCommunicationFactory getFactory()
  */
-class IndexController extends AbstractController
+class PaymentMethodsController extends AbstractController
 {
     /**
      * @param \Symfony\Component\HttpFoundation\Request $request

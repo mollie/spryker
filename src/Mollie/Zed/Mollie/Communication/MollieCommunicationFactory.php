@@ -7,14 +7,18 @@ namespace Mollie\Zed\Mollie\Communication;
 use Mollie\Client\Mollie\MollieClientInterface;
 use Mollie\Zed\Mollie\Communication\Cache\MollieCacheInvalidator;
 use Mollie\Zed\Mollie\Communication\Cache\MollieCacheInvalidatorInterface;
+use Mollie\Zed\Mollie\Communication\Form\ApiKeyForm;
+use Mollie\Zed\Mollie\Communication\Form\DataProvider\ApiKeyFormDataProvider;
 use Mollie\Zed\Mollie\Communication\Mapper\MollieCommunicationMapper;
 use Mollie\Zed\Mollie\Communication\Mapper\MollieCommunicationMapperInterface;
 use Mollie\Zed\Mollie\Communication\Table\MolliePaymentMethodsTable;
 use Mollie\Zed\Mollie\Communication\Table\TableDataProvider\MolliePaymentMethodsDataProvider;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToLocaleFacadeInterface;
+use Mollie\Zed\Mollie\Dependency\Facade\MollieToStoreFacadeInterface;
 use Mollie\Zed\Mollie\Dependency\MollieToStorageClientInterface;
 use Mollie\Zed\Mollie\MollieDependencyProvider;
 use Spryker\Zed\Kernel\Communication\AbstractCommunicationFactory;
+use Symfony\Component\Form\FormInterface;
 
 /**
  * @method \Mollie\Zed\Mollie\Business\MollieFacade getFacade();
@@ -64,6 +68,27 @@ class MollieCommunicationFactory extends AbstractCommunicationFactory
     }
 
     /**
+     * @param array $data
+     * @param array $options
+     *
+     * @return FormInterface
+     */
+    public function createApiKeyForm(array $data = [], array $options = []): FormInterface
+    {
+        return $this->getFormFactory()->create(ApiKeyForm::class, $data, $options);
+    }
+
+    /**
+     * @return ApiKeyFormDataProvider
+     */
+    public function createApiKeyFormDataProvider(): ApiKeyFormDataProvider
+    {
+        return new ApiKeyFormDataProvider(
+            $this->getStoreFacade()
+        );
+    }
+
+    /**
      * @return \Mollie\Zed\Mollie\Dependency\MollieToStorageClientInterface
      */
     public function getStorageClient(): MollieToStorageClientInterface
@@ -85,5 +110,13 @@ class MollieCommunicationFactory extends AbstractCommunicationFactory
     public function getLocaleFacade(): MollieToLocaleFacadeInterface
     {
         return $this->getProvidedDependency(MollieDependencyProvider::FACADE_LOCALE);
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Dependency\Facade\MollieToLocaleFacadeInterface
+     */
+    public function getStoreFacade(): MollieToStoreFacadeInterface
+    {
+        return $this->getProvidedDependency(MollieDependencyProvider::FACADE_STORE);
     }
 }

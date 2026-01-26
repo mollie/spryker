@@ -21,6 +21,7 @@ class MollieCommunicationMapper implements MollieCommunicationMapperInterface
             ->setMolliePaymentMethodQueryParameters(
                 (new MolliePaymentMethodQueryParametersTransfer())
                     ->setLocale($locale)
+                    ->setIncludeIssuers(true)
                     ->setSequenceType(MollieConstants::MOLLIE_SEQUENCE_TYPE_ONE_OFF),
             );
     }
