@@ -7,6 +7,7 @@ namespace Mollie\Yves\Mollie\Controller;
 use ArrayObject;
 use Generated\Shared\Transfer\MollieApiRequestTransfer;
 use Mollie\Shared\Mollie\MollieConfig as MollieConfigShared;
+use Mollie\Shared\Mollie\MollieConstants;
 use SprykerShop\Yves\CheckoutPage\Plugin\Router\CheckoutPageRouteProviderPlugin;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -21,7 +22,7 @@ class PaymentRedirectController extends AbstractMollieController
     public function paymentRedirectAction(Request $request): RedirectResponse
     {
         $orderReference = $request->query->get($this->getFactory()->getConfig()->getOrderReferenceQueryParamName());
-        $key = sprintf('%s:%s', MollieConfigShared::MOLLIE_PAYMENT_TRANSACTION_STORAGE_KEY_PREFIX, $orderReference);
+        $key = sprintf('%s:%s', MollieConstants::MOLLIE_PAYMENT_TRANSACTION_STORAGE_KEY_PREFIX, $orderReference);
         $paymentId = $this->getFactory()->getStorageClient()->get($key);
 
         if (!$paymentId) {

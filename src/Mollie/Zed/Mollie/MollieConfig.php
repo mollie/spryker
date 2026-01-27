@@ -37,16 +37,6 @@ class MollieConfig extends AbstractBundleConfig
     /**
      * @var string
      */
-    public const RESPONSE_PARAMETER_CREATE_PAYMENT_LINKS_CHECKOUT = 'checkout';
-
-    /**
-     * @var string
-     */
-    public const RESPONSE_PARAMETER_CREATE_PAYMENT_LINKS_HREF = 'href';
-
-    /**
-     * @var string
-     */
     public const MOLLIE_PAYMENT_METHOD_STATUS_ACTIVATED = 'activated';
 
     /**
@@ -77,5 +67,13 @@ class MollieConfig extends AbstractBundleConfig
         $mapping = $this->getMollieOmsToPaymentMethodMapping();
 
         return $mapping[$paymentMethodKey] ?? null;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMollieRedirectUrl(): string
+    {
+        return $this->get(MollieConstants::MOLLIE)[MollieConstants::MOLLIE_REDIRECT_URL];
     }
 }
