@@ -54,16 +54,6 @@ class MollieToStorageClientBridge implements MollieToStorageClientInterface
     }
 
     /**
-     * @param string $key
-     *
-     * @return void
-     */
-    public function delete(string $key): void
-    {
-        $this->storageClient->delete($key);
-    }
-
-    /**
      * @param array<string> $keys
      *
      * @return void
