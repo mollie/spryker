@@ -6,19 +6,27 @@
 
     <process name="MollieRefund">
         <states>
+            <state name="refund pending" display="oms.state.refund-pending"/>
             <state name="refunded" display="oms.state.refunded"/>
         </states>
 
         <transitions>
             <transition>
                 <source>delivered</source>
-                <target>refunded</target>
+                <target>refund pending</target>
                 <event>refund</event>
+            </transition>
+
+            <transition>
+                <source>refund pending</source>
+                <target>refunded</target>
+                <event>payment refunded</event>
             </transition>
         </transitions>
 
         <events>
             <event name="refund" manual="true" command="Mollie/Refund"/>
+            <event name="payment refunded"/>
         </events>
     </process>
 
