@@ -42,7 +42,7 @@ class OrderUpdater implements OrderUpdaterInterface
         $orderItems = $this->repository->getOrderItemsByPaymentId($updateOrderCollectionRequestTransfer->getId());
 
         if (!$orderItems) {
-            return $orderCollectionResponseTransfer;
+            return $orderCollectionResponseTransfer->setIsSuccess(false);
         }
 
         $this->entityManager->updateMolliePaymentWithStatus($updateOrderCollectionRequestTransfer);
@@ -50,6 +50,8 @@ class OrderUpdater implements OrderUpdaterInterface
         $omsEvent = $this->molleOmsStatusMapper->mapMollieStatusToOmsStatus($updateOrderCollectionRequestTransfer->getStatus());
 
         $this->omsFacade->triggerEvent($omsEvent, $orderItems, []);
+
+        $orderCollectionResponseTransfer->setIsSuccess(true);
 
         return $orderCollectionResponseTransfer;
     }
