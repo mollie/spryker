@@ -2,12 +2,14 @@
 
 namespace Mollie\Zed\Mollie\Business\OrderItem;
 
+use Generated\Shared\Transfer\OrderTransfer;
+
 interface OrderItemGrossAmountCalculatorInterface
 {
     /**
-     * @param array<int, object> $orderItems
+     * @param \Generated\Shared\Transfer\OrderTransfer $orderTransfer
      *
      * @return int
      */
-    public function calculateOrderItemsGrossAmount(array $orderItems): int;
+    public function calculateOrderItemsGrossAmount(OrderTransfer $orderTransfer): int;
 }

@@ -2,18 +2,20 @@
 
 namespace Mollie\Zed\Mollie\Business\OrderItem;
 
+use Generated\Shared\Transfer\OrderTransfer;
+
 class OrderItemGrossAmountCalculator implements OrderItemGrossAmountCalculatorInterface
 {
     /**
-     * @param array<int, object> $orderItems
+     * @param \Generated\Shared\Transfer\OrderTransfer $orderTransfer
      *
      * @return int
      */
-    public function calculateOrderItemsGrossAmount(array $orderItems): int
+    public function calculateOrderItemsGrossAmount(OrderTransfer $orderTransfer): int
     {
         $refundableAmount = null;
 
-        foreach ($orderItems as $orderItem) {
+        foreach ($orderTransfer->getItems() as $orderItem) {
             $refundableAmount += $orderItem->getRefundableAmount();
         }
 

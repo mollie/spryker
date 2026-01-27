@@ -30,7 +30,9 @@ class MollieRefundCommandPlugin extends AbstractPlugin implements CommandByOrder
             ->setIdSalesOrder($orderEntity->getIdSalesOrder())
             ->setCurrencyIsoCode($orderEntity->getCurrencyIsoCode());
 
-        $mollieRefundApiResponseTransfer = $this->getFacade()->processOrderItemsRefund($orderItems, $orderTransfer);
+        $orderTransfer = $this->getFacade()->mapOrderItemsToOrderTransfer($orderTransfer, $orderItems);
+
+        $mollieRefundApiResponseTransfer = $this->getFacade()->processOrderItemsRefund($orderTransfer);
 
         if (!$mollieRefundApiResponseTransfer->getIsSuccessful()) {
             throw new Exception(

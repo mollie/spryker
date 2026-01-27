@@ -9,6 +9,8 @@ use Mollie\Zed\Mollie\Business\Handler\MolliePaymentHandler;
 use Mollie\Zed\Mollie\Business\Handler\MolliePaymentHandlerInterface;
 use Mollie\Zed\Mollie\Business\Mapper\Oms\MolleOmsStatusMapper;
 use Mollie\Zed\Mollie\Business\Mapper\Oms\MolleOmsStatusMapperInterface;
+use Mollie\Zed\Mollie\Business\Mapper\Order\OrderMapper;
+use Mollie\Zed\Mollie\Business\Mapper\Order\OrderMapperInterface;
 use Mollie\Zed\Mollie\Business\Order\OrderUpdater;
 use Mollie\Zed\Mollie\Business\Order\OrderUpdaterInterface;
 use Mollie\Zed\Mollie\Business\OrderItem\OrderItemGrossAmountCalculator;
@@ -85,6 +87,14 @@ class MollieBusinessFactory extends AbstractBusinessFactory
         return new MollieRefundWriter(
             $this->getEntityManager(),
         );
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Business\Mapper\Order\OrderMapperInterface
+     */
+    public function createOrderMapper(): OrderMapperInterface
+    {
+        return new OrderMapper();
     }
 
     /**

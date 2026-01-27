@@ -32,15 +32,14 @@ class RefundProcessor implements RefundProcessorInterface
     }
 
     /**
-     * @param array<int, object> $orderItems
      * @param \Generated\Shared\Transfer\OrderTransfer $orderTransfer
      *
      * @return \Generated\Shared\Transfer\MollieRefundApiResponseTransfer
      */
-    public function processOrderItemsRefund(array $orderItems, OrderTransfer $orderTransfer): MollieRefundApiResponseTransfer
+    public function processOrderItemsRefund(OrderTransfer $orderTransfer): MollieRefundApiResponseTransfer
     {
         //testiraj order s vise itema, buildaj klasu za racunanje
-        $orderItemsGrossAmount = $this->grossAmountCalculator->calculateOrderItemsGrossAmount($orderItems);
+        $orderItemsGrossAmount = $this->grossAmountCalculator->calculateOrderItemsGrossAmount($orderTransfer);
 
         // fetch payment id
         // dobi ga iz persistance layera

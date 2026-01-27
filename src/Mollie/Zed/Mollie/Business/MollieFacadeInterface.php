@@ -36,10 +36,17 @@ interface MollieFacadeInterface
     public function createPayment(QuoteTransfer $quoteTransfer, CheckoutResponseTransfer $checkoutResponseTransfer): CheckoutResponseTransfer;
 
     /**
-     * @param array<int, object> $orderItems
      * @param \Generated\Shared\Transfer\OrderTransfer $orderTransfer
      *
      * @return \Generated\Shared\Transfer\MollieRefundApiResponseTransfer
      */
-    public function processOrderItemsRefund(array $orderItems, OrderTransfer $orderTransfer): MollieRefundApiResponseTransfer;
+    public function processOrderItemsRefund(OrderTransfer $orderTransfer): MollieRefundApiResponseTransfer;
+
+    /**
+     * @param \Generated\Shared\Transfer\OrderTransfer $orderTransfer
+     * @param array<int, mixed> $orderItems
+     *
+     * @return \Generated\Shared\Transfer\OrderTransfer
+     */
+    public function mapOrderItemsToOrderTransfer(OrderTransfer $orderTransfer, array $orderItems): OrderTransfer;
 }

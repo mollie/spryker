@@ -89,7 +89,10 @@ class MollieClient extends AbstractClient implements MollieClientInterface
      */
     public function createRefund(MollieApiRequestTransfer $mollieApiRequestTransfer): MollieRefundApiResponseTransfer
     {
-        return $this->getFactory()->createRefundApi()->execute($mollieApiRequestTransfer);
+        /** @var \Generated\Shared\Transfer\MollieRefundApiResponseTransfer $mollieRefundApiResponseTransfer */
+        $mollieRefundApiResponseTransfer = $this->getFactory()->createRefundApi()->execute($mollieApiRequestTransfer);
+
+        return $mollieRefundApiResponseTransfer;
     }
 
     /**
