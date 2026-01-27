@@ -1,0 +1,14 @@
+{% extends '@Gui/Layout/layout.twig' %}
+
+{% set title = 'mollie.title.profile' | trans %}
+{% block content %}
+    <div>
+        <span>Profile ID: {{ id }}</span>
+        <span>Status: {{ status }}</span>
+    </div>
+    {% if status != 'verified' %}
+    <div>
+        {{ 'mollie.profile.error-message.not-verified' | trans }}
+    </div>
+    {% endif %}
+{% endblock %}
