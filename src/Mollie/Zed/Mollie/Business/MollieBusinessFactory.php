@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Mollie\Zed\Mollie\Business;
 
 use Mollie\Client\Mollie\MollieClientInterface;
+use Mollie\Zed\Mollie\Business\Calculator\OrderItem\OrderItemGrossAmountCalculator;
+use Mollie\Zed\Mollie\Business\Calculator\OrderItem\OrderItemGrossAmountCalculatorInterface;
 use Mollie\Zed\Mollie\Business\Handler\MolliePaymentHandler;
 use Mollie\Zed\Mollie\Business\Handler\MolliePaymentHandlerInterface;
 use Mollie\Zed\Mollie\Business\Mapper\Oms\MolleOmsStatusMapper;
@@ -13,10 +15,8 @@ use Mollie\Zed\Mollie\Business\Mapper\Order\OrderMapper;
 use Mollie\Zed\Mollie\Business\Mapper\Order\OrderMapperInterface;
 use Mollie\Zed\Mollie\Business\Order\OrderUpdater;
 use Mollie\Zed\Mollie\Business\Order\OrderUpdaterInterface;
-use Mollie\Zed\Mollie\Business\OrderItem\OrderItemGrossAmountCalculator;
-use Mollie\Zed\Mollie\Business\OrderItem\OrderItemGrossAmountCalculatorInterface;
-use Mollie\Zed\Mollie\Business\Processor\RefundProcessor;
-use Mollie\Zed\Mollie\Business\Processor\RefundProcessorInterface;
+use Mollie\Zed\Mollie\Business\Processor\Refund\RefundProcessor;
+use Mollie\Zed\Mollie\Business\Processor\Refund\RefundProcessorInterface;
 use Mollie\Zed\Mollie\Business\Writer\MolliePaymentWriter;
 use Mollie\Zed\Mollie\Business\Writer\MolliePaymentWriterInterface;
 use Mollie\Zed\Mollie\Business\Writer\MollieRefundWriter;
@@ -59,7 +59,7 @@ class MollieBusinessFactory extends AbstractBusinessFactory
     }
 
     /**
-     * @return \Mollie\Zed\Mollie\Business\OrderItem\OrderItemGrossAmountCalculatorInterface
+     * @return \Mollie\Zed\Mollie\Business\Calculator\OrderItem\OrderItemGrossAmountCalculatorInterface
      */
     public function createOrderItemGrossAmountCalculator(): OrderItemGrossAmountCalculatorInterface
     {
@@ -67,7 +67,7 @@ class MollieBusinessFactory extends AbstractBusinessFactory
     }
 
     /**
-     * @return \Mollie\Zed\Mollie\Business\Processor\RefundProcessorInterface
+     * @return \Mollie\Zed\Mollie\Business\Processor\Refund\RefundProcessorInterface
      */
     public function createRefundProcessor(): RefundProcessorInterface
     {

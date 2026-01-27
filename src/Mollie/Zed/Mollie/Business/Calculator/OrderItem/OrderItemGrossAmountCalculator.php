@@ -1,6 +1,6 @@
 <?php
 
-namespace Mollie\Zed\Mollie\Business\OrderItem;
+namespace Mollie\Zed\Mollie\Business\Calculator\OrderItem;
 
 use Generated\Shared\Transfer\OrderTransfer;
 

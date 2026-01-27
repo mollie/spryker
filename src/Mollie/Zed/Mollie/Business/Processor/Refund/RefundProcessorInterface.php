@@ -1,6 +1,6 @@
 <?php
 
-namespace Mollie\Zed\Mollie\Business\Processor;
+namespace Mollie\Zed\Mollie\Business\Processor\Refund;
 
 use Generated\Shared\Transfer\MollieRefundApiResponseTransfer;
 use Generated\Shared\Transfer\OrderTransfer;

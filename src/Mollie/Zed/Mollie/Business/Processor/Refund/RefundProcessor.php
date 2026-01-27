@@ -1,6 +1,6 @@
 <?php
 
-namespace Mollie\Zed\Mollie\Business\Processor;
+namespace Mollie\Zed\Mollie\Business\Processor\Refund;
 
 use Generated\Shared\Transfer\MollieAmountTransfer;
 use Generated\Shared\Transfer\MollieApiRequestTransfer;
@@ -8,7 +8,7 @@ use Generated\Shared\Transfer\MolliePaymentMethodQueryParametersTransfer;
 use Generated\Shared\Transfer\MollieRefundApiResponseTransfer;
 use Generated\Shared\Transfer\OrderTransfer;
 use Mollie\Client\Mollie\MollieClientInterface;
-use Mollie\Zed\Mollie\Business\OrderItem\OrderItemGrossAmountCalculatorInterface;
+use Mollie\Zed\Mollie\Business\Calculator\OrderItem\OrderItemGrossAmountCalculatorInterface;
 use Mollie\Zed\Mollie\Business\Writer\MollieRefundWriterInterface;
 use Mollie\Zed\Mollie\Persistence\MollieRepositoryInterface;
 use Spryker\Shared\Log\LoggerTrait;
@@ -18,7 +18,7 @@ class RefundProcessor implements RefundProcessorInterface
     use LoggerTrait;
 
     /**
-     * @param \Mollie\Zed\Mollie\Business\OrderItem\OrderItemGrossAmountCalculatorInterface $grossAmountCalculator
+     * @param \Mollie\Zed\Mollie\Business\Calculator\OrderItem\OrderItemGrossAmountCalculatorInterface $grossAmountCalculator
      * @param \Mollie\Zed\Mollie\Persistence\MollieRepositoryInterface $repository
      * @param \Mollie\Client\Mollie\MollieClientInterface $mollieClient
      * @param \Mollie\Zed\Mollie\Business\Writer\MollieRefundWriterInterface $refundWriter
