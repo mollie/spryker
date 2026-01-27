@@ -35,6 +35,41 @@ class MollieConfig extends AbstractBundleConfig
     public const CANCELED = 'canceled';
 
     /**
+     * @var string
+     */
+    public const MOLLIE_PAYMENT_METHOD_STATUS_ACTIVATED = 'activated';
+
+    /**
+     * @var string
+     */
+    public const MOLLIE_PAYMENT_PROVIDER = 'mollie';
+
+    /**
+     * @var string
+     */
+    public const MOLLIE_PAYMENT_METHOD_AMOUNT_VALUE = 'value';
+
+    /**
+     * @return array<string, string>
+     */
+    public function getMollieOmsToPaymentMethodMapping(): array
+    {
+        return $this->get(MollieConstants::MOLLIE)[MollieConstants::MOLLIE_OMS_TO_PAYMENT_METHOD_MAPPING];
+    }
+
+    /**
+     * @param string $paymentMethodKey
+     *
+     * @return string|null
+     */
+    public function getMolliePaymentMethod(string $paymentMethodKey): ?string
+    {
+        $mapping = $this->getMollieOmsToPaymentMethodMapping();
+
+        return $mapping[$paymentMethodKey] ?? null;
+    }
+
+    /**
      * @return string
      */
     public function getMollieRedirectUrl(): string
