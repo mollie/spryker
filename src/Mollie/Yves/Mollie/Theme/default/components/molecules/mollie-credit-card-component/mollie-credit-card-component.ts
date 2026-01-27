@@ -30,14 +30,12 @@ export default class MollieCreditCardComponent extends Component {
     protected verificationCode: Object;
     protected verificationCodeError: HTMLElement;
     protected form: HTMLFormElement;
-    protected settings: HTMLInputElement;
     protected cardToken: HTMLInputElement;
     protected errorOutput: HTMLDivElement;
 
     protected readyCallback(): void {}
 
     protected init(): void {
-        this.settings = <HTMLInputElement>document.querySelector(this.settingsClass);
         this.cardToken = <HTMLInputElement>document.querySelector(this.cardTokenClass);
         this.scriptLoader = <ScriptLoader>this.querySelector(this.scriptLoaderTag);
         this.errorOutput = <HTMLDivElement>this.querySelector(this.errorTokenOutputClass);
@@ -140,7 +138,6 @@ export default class MollieCreditCardComponent extends Component {
         }
 
         event.preventDefault();
-        debugger;
         this.mollie.createToken().then((result) => {
              const { token, error } = result;
 
@@ -160,10 +157,6 @@ export default class MollieCreditCardComponent extends Component {
         return currentPaymentMethodInput?.value
             ? currentPaymentMethodInput.value === MOLLIE_CREDIT_CARD_PAYMENT_METHOD_IDENTIFIER
             : null;
-    }
-
-    protected get settingsClass(): string {
-        return '.settings';
     }
 
     protected get cardTokenClass(): string {
@@ -195,11 +188,11 @@ export default class MollieCreditCardComponent extends Component {
 
     protected get profileId(): string
     {
-        return this.settings.getAttribute('data-profile-id');
+        return this.getAttribute('profile-id');
     }
 
     protected get testMode(): boolean
     {
-        return this.settings.getAttribute('data-test-mode') === 'true';
+        return this.getAttribute('test-mode') === 'true';
     }
 }

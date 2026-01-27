@@ -68,3 +68,5 @@ checkout.payment.provider.mollieKbc.descriptionText,Bezahlen Sie direkt über KB
 checkout.payment.provider.mollieKbc.descriptionText,Pay directly via KBC online banking.,en_US
 checkout.payment.provider.molliePayByBank.descriptionText,Bezahlen Sie per sicherer Banküberweisung.,de_DE
 checkout.payment.provider.molliePayByBank.descriptionText,Pay using a secure bank transfer.,en_US
+checkout.payment.provider.mollieCreditCard.descriptionText,Schließen Sie Ihren Einkauf sicher mit Ihren Kreditkartendaten ab.,de_DE
+checkout.payment.provider.mollieCreditCard.descriptionText,Complete your purchase securely using your credit card credentials.,en_US

@@ -15,7 +15,7 @@ class PaymentMethodsCacheDeleter implements PaymentMethodsCacheDeleterInterface
 
     public const string WILDCARD = '*';
 
-    public const int REDIS_SCAN_LIMIT = 1000;
+    public const int STORAGE_SCAN_LIMIT = 100;
 
     /**
      * @param \Mollie\Client\Mollie\Generator\Payment\PaymentMethodsCacheKeyGeneratorInterface $keyGenerator
@@ -39,8 +39,8 @@ class PaymentMethodsCacheDeleter implements PaymentMethodsCacheDeleterInterface
         $cacheKeyPrefix = $this->config->getCacheKeyPrefixForEnabledPaymentMethods();
         $cacheKey = $this->keyGenerator->generateCacheKey($parameters, $cacheKeyPrefix);
         $cacheKeyWithWildcard = $cacheKey . static::WILDCARD;
-        $storageTransfer = $this->storageClient->scanKeys($cacheKeyWithWildcard, static::REDIS_SCAN_LIMIT);
-        $formattedKeys = $this->formatRedisKeys($storageTransfer->getKeys());
+        $storageTransfer = $this->storageClient->scanKeys($cacheKeyWithWildcard, static::STORAGE_SCAN_LIMIT);
+        $formattedKeys = $this->formatKeys($storageTransfer->getKeys());
         $this->storageClient->deleteMulti($formattedKeys);
     }
 
@@ -53,8 +53,8 @@ class PaymentMethodsCacheDeleter implements PaymentMethodsCacheDeleterInterface
     {
         $cacheKeyPrefix = $this->config->getCacheKeyPrefixForAllPaymentMethods();
         $cacheKey = $this->keyGenerator->generateCacheKey($parameters, $cacheKeyPrefix);
-        $storageTransfer = $this->storageClient->scanKeys($cacheKey, static::REDIS_SCAN_LIMIT);
-        $formattedKeys = $this->formatRedisKeys($storageTransfer->getKeys());
+        $storageTransfer = $this->storageClient->scanKeys($cacheKey, static::STORAGE_SCAN_LIMIT);
+        $formattedKeys = $this->formatKeys($storageTransfer->getKeys());
         $this->storageClient->deleteMulti($formattedKeys);
     }
 
@@ -63,11 +63,11 @@ class PaymentMethodsCacheDeleter implements PaymentMethodsCacheDeleterInterface
      *
      * @return array<string>
      */
-    protected function formatRedisKeys(array $keys): array
+    protected function formatKeys(array $keys): array
     {
         $formattedKeys = [];
         foreach ($keys as $key) {
-            $formattedKeys[] = $this->truncateSprykerRedisKeyPrefix($key);
+            $formattedKeys[] = $this->truncateKeyPrefix($key);
         }
 
         return $formattedKeys;
@@ -78,7 +78,7 @@ class PaymentMethodsCacheDeleter implements PaymentMethodsCacheDeleterInterface
      *
      * @return string
      */
-    protected function truncateSprykerRedisKeyPrefix(string $key): string
+    protected function truncateKeyPrefix(string $key): string
     {
         if (str_starts_with($key, static::KV_PREFIX)) {
             return substr($key, strlen(static::KV_PREFIX));

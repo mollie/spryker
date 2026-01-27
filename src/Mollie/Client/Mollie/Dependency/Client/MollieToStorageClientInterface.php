@@ -34,13 +34,6 @@ interface MollieToStorageClientInterface
     public function get(string $key): mixed;
 
     /**
-     * @param string $key
-     *
-     * @return void
-     */
-    public function delete(string $key): void;
-
-    /**
      * @param array<string> $keys
      *
      * @return void

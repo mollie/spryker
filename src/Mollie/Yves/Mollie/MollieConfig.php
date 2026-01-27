@@ -27,6 +27,14 @@ class MollieConfig extends AbstractBundleConfig
     /**
      * @return string
      */
+    public function getMollieCreditCardComponentsJsSrc(): string
+    {
+        return $this->get(MollieConstants::MOLLIE)[MollieConstants::MOLLIE_CREDIT_CARD_COMPONENTS_JS_SRC];
+    }
+
+    /**
+     * @return string
+     */
     public function getProfileId(): string
     {
         return $this->get(MollieConstants::MOLLIE)[MollieConstants::MOLLIE_PROFILE_ID];
@@ -38,6 +46,14 @@ class MollieConfig extends AbstractBundleConfig
     public function isTestMode(): bool
     {
         return $this->get(MollieConstants::MOLLIE)[MollieConstants::MOLLIE_TEST_MODE];
+    }
+
+    /**
+     * @return bool
+     */
+    public function isMollieCreditCardComponentEnabled(): bool
+    {
+        return $this->get(MollieConstants::MOLLIE)[MollieConstants::MOLLIE_CREDIT_CARD_COMPONENTS_ENABLED];
     }
 
     /**
