@@ -120,6 +120,6 @@ class MollieClient extends AbstractClient implements MollieClientInterface
      */
     public function getCurrentProfile(): MollieGetProfileApiResponseTransfer
     {
-        $this->getFactory()->createGetCurrentProfileApi()->execute();
+        return $this->getFactory()->createGetCurrentProfileApi()->execute();
     }
 }

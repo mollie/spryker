@@ -9,3 +9,5 @@ Maximal amount,Maximal amount
 Issuer List,Issuer List
 Images,Images
 Mollie payment methods,Mollie Payment Methods
+mollie.title.profile,Profile overview
+mollie.profile.error-message.not-verified,Zahlungen sind im Live-Modus möglicherweise erst nach der Verifizierung Ihres Profils möglich.

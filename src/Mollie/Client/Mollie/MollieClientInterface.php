@@ -4,6 +4,7 @@ declare(strict_types = 1);
 namespace Mollie\Client\Mollie;
 
 use Generated\Shared\Transfer\MollieApiRequestTransfer;
+use Generated\Shared\Transfer\MollieGetProfileApiResponseTransfer;
 use Generated\Shared\Transfer\MolliePaymentApiResponseTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodQueryParametersTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodsApiResponseTransfer;
@@ -95,4 +96,9 @@ interface MollieClientInterface
      * @return void
      */
     public function deleteAllPaymentMethodsCache(MolliePaymentMethodQueryParametersTransfer $parameters): void;
+    
+    /**
+     * @return MollieGetProfileApiResponseTransfer
+     */
+    public function getCurrentProfile(): MollieGetProfileApiResponseTransfer;
 }
