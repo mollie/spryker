@@ -40,12 +40,32 @@ class GetPaymentByTransactionIdApi extends AbstractApiCall
     }
 
     /**
+     * @param \Generated\Shared\Transfer\MollieApiResponseTransfer $mollieApiResponseTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieApiResponseTransfer
+     */
+    protected function maskResponseData(MollieApiResponseTransfer $mollieApiResponseTransfer): MollieApiResponseTransfer
+    {
+        $maskedTransfer = (new MollieApiResponseTransfer())
+            ->fromArray(
+                $mollieApiResponseTransfer->toArray(true, true),
+            );
+
+        $payload = $maskedTransfer->getPayload();
+        $payload['profileId'] = static::MASKED;
+
+        return $maskedTransfer->setPayload($payload);
+    }
+
+    /**
      * @param \Generated\Shared\Transfer\MollieApiRequestTransfer|null $mollieApiRequestTransfer
      *
      * @return \Mollie\Api\Http\Request|null
      */
     protected function buildRequest(?MollieApiRequestTransfer $mollieApiRequestTransfer = null): ?Request
     {
-        return new GetPaymentRequest($mollieApiRequestTransfer->getTransactionId());
+        $this->request = new GetPaymentRequest($mollieApiRequestTransfer->getTransactionId());
+
+        return $this->request;
     }
 }

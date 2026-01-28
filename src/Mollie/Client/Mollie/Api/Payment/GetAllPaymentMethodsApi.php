@@ -14,6 +14,7 @@ use Mollie\Api\Http\Requests\GetAllMethodsRequest;
 use Mollie\Api\MollieApiClient;
 use Mollie\Client\Mollie\Api\AbstractApiCall;
 use Mollie\Client\Mollie\Dependency\Service\MollieToUtilEncodingServiceInterface;
+use Mollie\Client\Mollie\Logger\MollieLoggerInterface;
 use Mollie\Client\Mollie\Mapper\PaymentMethodMapperInterface;
 use Mollie\Client\Mollie\MollieConfig;
 use Spryker\Shared\Kernel\Transfer\AbstractTransfer;
@@ -33,9 +34,10 @@ class GetAllPaymentMethodsApi extends AbstractApiCall
         MollieApiClient $mollieApiClient,
         MollieConfig $mollieConfig,
         MollieToUtilEncodingServiceInterface $utilEncodingService,
+        MollieLoggerInterface $logger,
         protected PaymentMethodMapperInterface $mapper,
     ) {
-        parent::__construct($mollieApiClient, $mollieConfig, $utilEncodingService);
+        parent::__construct($mollieApiClient, $mollieConfig, $utilEncodingService, $logger);
     }
 
     /**
@@ -57,6 +59,16 @@ class GetAllPaymentMethodsApi extends AbstractApiCall
     }
 
     /**
+     * @param \Generated\Shared\Transfer\MollieApiResponseTransfer $mollieApiResponseTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieApiResponseTransfer
+     */
+    protected function maskResponseData(MollieApiResponseTransfer $mollieApiResponseTransfer): MollieApiResponseTransfer
+    {
+        return $mollieApiResponseTransfer;
+    }
+
+    /**
      * @param \Generated\Shared\Transfer\MollieApiRequestTransfer|null $mollieApiRequestTransfer
      *
      * @return \Mollie\Api\Http\Request|null
@@ -70,13 +82,15 @@ class GetAllPaymentMethodsApi extends AbstractApiCall
         $queryParametersTransfer = $mollieApiRequestTransfer->getMolliePaymentMethodQueryParameters();
         $amount = $this->getAmount($queryParametersTransfer);
 
-        return new GetAllMethodsRequest(
+        $this->request = new GetAllMethodsRequest(
             $queryParametersTransfer->getIncludeIssuers() ?? false,
             $queryParametersTransfer->getIncludePricing() ?? false,
             $queryParametersTransfer->getLocale(),
             $amount,
             $queryParametersTransfer->getProfileId(),
         );
+
+        return $this->request;
     }
 
     /**

@@ -16,6 +16,7 @@ use Mollie\Api\Http\Requests\CreatePaymentRequest;
 use Mollie\Api\MollieApiClient;
 use Mollie\Client\Mollie\Api\AbstractApiCall;
 use Mollie\Client\Mollie\Dependency\Service\MollieToUtilEncodingServiceInterface;
+use Mollie\Client\Mollie\Logger\MollieLoggerInterface;
 use Mollie\Client\Mollie\MollieConfig;
 use Mollie\Service\Mollie\MollieServiceInterface;
 use Mollie\Shared\Mollie\MollieConfig as SharedConfig;
@@ -36,9 +37,10 @@ class CreatePaymentApi extends AbstractApiCall
         MollieApiClient $mollieApiClient,
         MollieConfig $mollieConfig,
         MollieToUtilEncodingServiceInterface $utilEncodingService,
+        MollieLoggerInterface $logger,
         protected MollieServiceInterface $mollieService,
     ) {
-        parent::__construct($mollieApiClient, $mollieConfig, $utilEncodingService);
+        parent::__construct($mollieApiClient, $mollieConfig, $utilEncodingService, $logger);
     }
 
     /**
@@ -69,7 +71,7 @@ class CreatePaymentApi extends AbstractApiCall
         $metadata = $this->addMetadata($checkoutResponseTransfer);
         $additionalParameters = $this->addAdditionalParameters($mollieApiRequestTransfer);
 
-        return new CreatePaymentRequest(
+        $this->request = new CreatePaymentRequest(
             description: $checkoutResponseTransfer->getSaveOrderOrFail()->getOrderReference(),
             amount: $amount,
             redirectUrl: $redirectUrl,
@@ -78,6 +80,26 @@ class CreatePaymentApi extends AbstractApiCall
             metadata: $metadata,
             additional: $additionalParameters,
         );
+
+        return $this->request;
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MollieApiResponseTransfer $mollieApiResponseTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieApiResponseTransfer
+     */
+    protected function maskResponseData(MollieApiResponseTransfer $mollieApiResponseTransfer): MollieApiResponseTransfer
+    {
+        $maskedTransfer = (new MollieApiResponseTransfer())
+            ->fromArray(
+                $mollieApiResponseTransfer->toArray(true, true),
+            );
+
+        $payload = $maskedTransfer->getPayload();
+        $payload['profileId'] = static::MASKED;
+
+        return $maskedTransfer->setPayload($payload);
     }
 
     /**

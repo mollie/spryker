@@ -15,6 +15,8 @@ use Mollie\Api\MollieApiClient;
 use Mollie\Api\Types\MethodQuery;
 use Mollie\Client\Mollie\Api\AbstractApiCall;
 use Mollie\Client\Mollie\Dependency\Service\MollieToUtilEncodingServiceInterface;
+use Mollie\Client\Mollie\Logger\MollieLogger;
+use Mollie\Client\Mollie\Logger\MollieLoggerInterface;
 use Mollie\Client\Mollie\Mapper\PaymentMethodMapperInterface;
 use Mollie\Client\Mollie\MollieConfig;
 use Spryker\Shared\Kernel\Transfer\AbstractTransfer;
@@ -22,8 +24,6 @@ use Spryker\Shared\Log\LoggerTrait;
 
 class GetEnabledPaymentMethodsApi extends AbstractApiCall
 {
-    use LoggerTrait;
-
     /**
      * @param \Mollie\Api\MollieApiClient $mollieApiClient
      * @param \Mollie\Client\Mollie\MollieConfig $mollieConfig
@@ -34,9 +34,10 @@ class GetEnabledPaymentMethodsApi extends AbstractApiCall
         MollieApiClient $mollieApiClient,
         MollieConfig $mollieConfig,
         MollieToUtilEncodingServiceInterface $utilEncodingService,
+        MollieLoggerInterface $logger,
         protected PaymentMethodMapperInterface $mapper,
     ) {
-        parent::__construct($mollieApiClient, $mollieConfig, $utilEncodingService);
+        parent::__construct($mollieApiClient, $mollieConfig, $utilEncodingService, $logger);
     }
 
     /**
@@ -58,6 +59,16 @@ class GetEnabledPaymentMethodsApi extends AbstractApiCall
     }
 
     /**
+     * @param MollieApiResponseTransfer $mollieApiResponseTransfer
+     *
+     * @return MollieApiResponseTransfer
+     */
+    protected function maskResponseData(MollieApiResponseTransfer $mollieApiResponseTransfer): MollieApiResponseTransfer
+    {
+        return $mollieApiResponseTransfer;
+    }
+
+    /**
      * @param \Generated\Shared\Transfer\MollieApiRequestTransfer|null $mollieApiRequestTransfer
      *
      * @return \Mollie\Api\Http\Request|null
@@ -74,7 +85,7 @@ class GetEnabledPaymentMethodsApi extends AbstractApiCall
         $queryParametersTransfer = $mollieApiRequestTransfer->getMolliePaymentMethodQueryParameters();
         $amount = $this->getAmount($queryParametersTransfer);
 
-        return new GetEnabledMethodsRequest(
+        $this->request = new GetEnabledMethodsRequest(
             $queryParametersTransfer->getSequenceType(),
             MethodQuery::RESOURCE_PAYMENTS,
             $queryParametersTransfer->getLocale(),
@@ -85,6 +96,8 @@ class GetEnabledPaymentMethodsApi extends AbstractApiCall
             $queryParametersTransfer->getProfileId(),
             $queryParametersTransfer->getIncludeIssuers(),
         );
+
+        return $this->request;
     }
 
     /**
