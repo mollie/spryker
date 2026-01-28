@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Mollie\Shared\Mollie;
 
@@ -37,7 +37,27 @@ interface MollieConstants
     /**
      * @var string
      */
+    public const MOLLIE_PAYMENT_TRANSACTION_STORAGE_KEY_PREFIX = 'mollie:payment';
+
+    /**
+     * @var int
+     */
+    public const MOLLIE_PAYMENT_TRANSACTION_STORAGE_TTL = 300;
+
+    /**
+     * @var string
+     */
     public const MOLLIE_TEST_ENVIRONMENT_WEBHOOK_URL = 'MOLLIE:TEST_ENVIRONMENT_WEBHOOK_URL';
+
+    /**
+     * @var string
+     */
+    public const MOLLIE_CREDIT_CARD_COMPONENTS_ENABLED = 'MOLLIE:MOLLIE_CREDIT_CARD_COMPONENTS_ENABLED';
+
+    /**
+     * @var string
+     */
+    public const MOLLIE_CREDIT_CARD_COMPONENTS_JS_SRC = 'MOLLIE:MOLLIE_CREDIT_CARD_COMPONENTS_JS_SRC';
 
     // Payment statuses from Mollie
     /**
@@ -111,7 +131,15 @@ interface MollieConstants
      */
     public const SUCCESS_MESSAGE = 'success';
 
-    public const string MOLLIE_AVAILABLE_METHODS_STORAGE_KEY = 'mollie:availableMethods';
+    /**
+     * @var string
+     */
+    public const RESPONSE_PARAMETER_CREATE_PAYMENT_LINKS_CHECKOUT = 'checkout';
+
+    /**
+     * @var string
+     */
+    public const RESPONSE_PARAMETER_CREATE_PAYMENT_LINKS_HREF = 'href';
 
     public const string MOLLIE_QUERY_PARAMETER_SHOW_ONLY_ENABLED = 'showOnlyEnabledPaymentMethods';
 

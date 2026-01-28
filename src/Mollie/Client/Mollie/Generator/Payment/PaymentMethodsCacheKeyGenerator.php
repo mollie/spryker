@@ -13,6 +13,10 @@ class PaymentMethodsCacheKeyGenerator implements PaymentMethodsCacheKeyGenerator
 
     protected const string LIVE_MODE_IDENTIFIER = 'live';
 
+    protected const string ISSUERS_INCLUDED = 'issuers-included';
+
+    protected const string ISSUERS_EXCLUDED = 'issuers-excluded';
+
     /**
      * @param \Mollie\Client\Mollie\MollieConfig $config
      */
@@ -31,18 +35,20 @@ class PaymentMethodsCacheKeyGenerator implements PaymentMethodsCacheKeyGenerator
         string $cacheKeyPrefix,
     ): string {
         $mode = $this->config->isMollieTestModeEnabled() ? static::TEST_MODE_IDENTIFIER : static::LIVE_MODE_IDENTIFIER;
-
-        $profileId = $queryParametersTransfer->getProfileId();
+        $includeIssuers = $queryParametersTransfer->getIncludeIssuers() ? static::ISSUERS_INCLUDED : static::ISSUERS_EXCLUDED;
+        $profileId = $this->config->getMollieProfileId();
         $amount = $queryParametersTransfer->getAmount();
+
         $keyParts = [
             $cacheKeyPrefix,
             $profileId,
             $mode,
+            $includeIssuers,
+            $queryParametersTransfer->getSequenceType(),
             $queryParametersTransfer->getLocale(),
             $amount?->getCurrency(),
             $amount?->getValue(),
             $queryParametersTransfer->getBillingCountry(),
-            $queryParametersTransfer->getSequenceType(),
         ];
 
         return implode(':', array_filter($keyParts));

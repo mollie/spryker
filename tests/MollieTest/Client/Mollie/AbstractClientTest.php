@@ -64,7 +64,7 @@ abstract class AbstractClientTest extends Unit
     public function createMollieToStorageClientBridgeMock(): MollieToStorageClientBridge
     {
         return $this->getMockBuilder(MollieToStorageClientBridge::class)
-            ->onlyMethods(['get', 'set', 'delete'])
+            ->onlyMethods(['get', 'set'])
             ->disableOriginalConstructor()
             ->getMock();
     }

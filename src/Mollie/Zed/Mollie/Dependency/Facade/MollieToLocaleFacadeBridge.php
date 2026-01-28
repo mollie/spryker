@@ -20,6 +20,7 @@ class MollieToLocaleFacadeBridge implements MollieToLocaleFacadeInterface
     }
 
     /**
+     * @SuppressWarnings(PHPMD)
      * @return \Generated\Shared\Transfer\LocaleTransfer
      */
     public function getCurrentLocale(): LocaleTransfer

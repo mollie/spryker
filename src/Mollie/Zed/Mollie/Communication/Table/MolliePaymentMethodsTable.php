@@ -35,7 +35,6 @@ class MolliePaymentMethodsTable extends AbstractTable
         MolliePaymentMethodTransfer::STATUS => 'Status',
         MolliePaymentMethodTransfer::MINIMUM_AMOUNT => 'Minimal amount',
         MolliePaymentMethodTransfer::MAXIMUM_AMOUNT => 'Maximal amount',
-        MolliePaymentMethodTransfer::ISSUERS => 'Issuer List',
         MolliePaymentMethodTransfer::IMAGE => 'Images',
     ];
 
@@ -119,7 +118,6 @@ class MolliePaymentMethodsTable extends AbstractTable
                 MolliePaymentMethodTransfer::STATUS => $paymentMethod->getStatus() ?? static::STATUS_NOT_ACTIVATED,
                 MolliePaymentMethodTransfer::MINIMUM_AMOUNT => $this->formatMinimumAmountField($paymentMethod),
                 MolliePaymentMethodTransfer::MAXIMUM_AMOUNT => $this->formatMaximumAmountField($paymentMethod),
-                MolliePaymentMethodTransfer::ISSUERS => $this->formatIssuerList($paymentMethod->getIssuers()),
                 MolliePaymentMethodTransfer::IMAGE => $this->formatImagesField($paymentMethod->getImage()),
             ];
         }
@@ -182,23 +180,6 @@ class MolliePaymentMethodsTable extends AbstractTable
         }
 
         return $max[static::AMOUNT_VALUE] . ' ' . $max[static::AMOUNT_CURRENCY];
-    }
-
-    /**
-     * @param array<string, mixed> $issuers
-     *
-     * @return string
-     */
-    protected function formatIssuerList(array $issuers): string
-    {
-        $html = '';
-        foreach ($issuers as $issuer) {
-            $html .= "{$issuer["name"]}, ";
-        }
-
-        $html = rtrim($html, ', ');
-
-        return $html;
     }
 
     /**
