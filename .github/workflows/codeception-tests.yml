@@ -213,6 +213,9 @@ jobs:
           $config[StorageConstants::STORAGE_REDIS_PORT] = 6379;
           $config[StorageConstants::STORAGE_REDIS_DATABASE] = 0;
           
+          $sprykerFrontendHost = getenv('SPRYKER_FE_HOST') ?: 'not-configured-host';
+          $sprykerGlueBackendHost = 'not-configured-host';
+          
           // Application Configuration
           $config[ApplicationConstants::ENABLE_APPLICATION_DEBUG] = true;
           $config[KernelConstants::ENABLE_CONTAINER_OVERRIDING] = true;
