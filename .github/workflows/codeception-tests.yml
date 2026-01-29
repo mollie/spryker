@@ -119,14 +119,6 @@ jobs:
         env:
           COMPOSER_MEMORY_LIMIT: -1
 
-      - name: Generate transfer objects
-        working-directory: spryker-project
-        run: vendor/bin/console transfer:generate
-
-      - name: Generate transfer databuilder objects
-        working-directory: spryker-project
-        run: vendor/bin/console transfer:databuilder:generate
-
       - name: Get module name from composer.json
         id: module-info
         run: |
@@ -218,6 +210,14 @@ jobs:
           
           # Also create config_test.php for test environment
           cp config/Shared/config_local.php config/Shared/config_test.php
+
+      - name: Generate transfer objects
+        working-directory: spryker-project
+        run: vendor/bin/console transfer:generate
+
+      - name: Generate transfer databuilder objects
+        working-directory: spryker-project
+        run: vendor/bin/console transfer:databuilder:generate
 
       - name: Propel install
         working-directory: spryker-project
