@@ -231,7 +231,7 @@ jobs:
           $config[MollieConstants::MOLLIE] = [
               MollieConstants::MOLLIE_PROFILE_ID => 'pfl_pD5UernhAv',
               MollieConstants::MOLLIE_TEST_MODE => true,
-              MollieConstants::MOLLIE_API_KEY => getenv('MOLLIE_API_KEY') ?: 'test_123',
+              MollieConstants::MOLLIE_API_KEY => getenv('MOLLIE_API_KEY') ?: 'test_jdkshfdsk1213sjkadsdasfdsafdsfdsfdsfds2qeqasx',
           
               MollieConstants::MOLLIE_REDIRECT_URL => sprintf('https://%s%s', $sprykerFrontendHost, '/checkout/payment-redirect'),
               MollieConstants::MOLLIE_WEBHOOK_URL => sprintf('https://%s%s', $sprykerFrontendHost, '/mollie/webhook'),
