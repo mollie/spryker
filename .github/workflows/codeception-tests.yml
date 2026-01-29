@@ -144,6 +144,18 @@ jobs:
           
           echo "Module linked successfully at vendor/$VENDOR/$MODULE_NAME"
 
+      - name: Initialize test database
+        working-directory: spryker-project
+        run: |
+          # Wait for PostgreSQL to be ready
+          for i in {1..30}; do
+            PGPASSWORD=secret psql -h 127.0.0.1 -U spryker -d spryker_test -c "SELECT 1" > /dev/null 2>&1 && break
+            echo "Waiting for PostgreSQL to be ready... ($i/30)"
+            sleep 2
+          done
+          
+          echo "PostgreSQL is ready!"
+
       - name: Run Spryker propel install
         working-directory: spryker-project
         run: |
@@ -155,33 +167,50 @@ jobs:
         working-directory: spryker-project
         run: |
           # Copy environment configuration
-          cp config/Shared/config_default.php config/Shared/config_local.php
+          if [ -f config/Shared/config_default.php ]; then
+            cp config/Shared/config_default.php config/Shared/config_local.php
+          fi
           
           # Create test database configuration
-          cat > config/Shared/config_test.php << 'EOF'
+          cat > config/Shared/config_local.php << 'EOF'
           <?php
           
-          use Spryker\Shared\Application\ApplicationConstants;
           use Spryker\Shared\Propel\PropelConstants;
           use Spryker\Shared\Search\SearchConstants;
           use Spryker\Shared\Storage\StorageConstants;
+          use Spryker\Shared\Application\ApplicationConstants;
+          use Spryker\Shared\Kernel\KernelConstants;
           
+          // Database Configuration
           $config[PropelConstants::ZED_DB_USERNAME] = 'spryker';
           $config[PropelConstants::ZED_DB_PASSWORD] = 'secret';
           $config[PropelConstants::ZED_DB_DATABASE] = 'spryker_test';
           $config[PropelConstants::ZED_DB_HOST] = '127.0.0.1';
           $config[PropelConstants::ZED_DB_PORT] = 5432;
-          $config[PropelConstants::ZED_DB_ENGINE] = 'pgsql';
+          $config[PropelConstants::ZED_DB_ENGINE] = $config[PropelConstants::ZED_DB_ENGINE_PGSQL] = 'pgsql';
+          $config[PropelConstants::USE_SUDO_TO_MANAGE_DATABASE] = false;
           
+          // Force TCP connection instead of Unix socket
+          $config[PropelConstants::ZED_DB_ENGINE_PGSQL] = 'pgsql';
+          
+          // Elasticsearch Configuration
           $config[SearchConstants::ELASTICA_PARAMETER__HOST] = '127.0.0.1';
           $config[SearchConstants::ELASTICA_PARAMETER__PORT] = 9200;
           
+          // Redis Configuration
           $config[StorageConstants::STORAGE_REDIS_HOST] = '127.0.0.1';
           $config[StorageConstants::STORAGE_REDIS_PORT] = 6379;
           $config[StorageConstants::STORAGE_REDIS_DATABASE] = 0;
           
+          // Application Configuration
           $config[ApplicationConstants::ENABLE_APPLICATION_DEBUG] = true;
+          $config[KernelConstants::ENABLE_CONTAINER_OVERRIDING] = true;
+          $config[KernelConstants::RESOLVABLE_CLASS_NAMES_CACHE_ENABLED] = false;
+          
           EOF
+          
+          # Also create config_test.php for test environment
+          cp config/Shared/config_local.php config/Shared/config_test.php
 
       - name: Setup Codeception
         working-directory: spryker-project
