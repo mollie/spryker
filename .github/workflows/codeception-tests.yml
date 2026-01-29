@@ -114,12 +114,15 @@ jobs:
           COMPOSER_MEMORY_LIMIT: -1
 
       - name: Generate transfer objects
+        working-directory: spryker-project
         run: vendor/bin/console transfer:generate
 
       - name: Generate transfer databuilder objects
+        working-directory: spryker-project
         run: vendor/bin/console transfer:databuilder:generate
 
       - name: Propel install
+        working-directory: spryker-project
         run: |
           vendor/bin/console propel:schema:copy
           vendor/bin/console propel:model:build
@@ -170,13 +173,6 @@ jobs:
           done
           
           echo "PostgreSQL is ready!"
-
-      - name: Run Spryker propel install
-        working-directory: spryker-project
-        run: |
-          # Install propel if not already done
-          vendor/bin/console propel:install --no-interaction || echo "Propel install skipped or failed, continuing..."
-        continue-on-error: true
 
       - name: Setup Spryker configuration
         working-directory: spryker-project
