@@ -119,20 +119,30 @@ jobs:
           # Install jq if not available
           which jq || sudo apt-get update && sudo apt-get install -y jq
           
-          # Extract module name from composer.json
+          # Extract full package name from composer.json
           FULL_NAME=$(jq -r '.name' module-code/composer.json)
+          VENDOR=$(echo $FULL_NAME | cut -d'/' -f1)
           MODULE_NAME=$(echo $FULL_NAME | cut -d'/' -f2)
           
           echo "Full package name: $FULL_NAME"
+          echo "Vendor: $VENDOR"
           echo "Module name: $MODULE_NAME"
+          echo "vendor=$VENDOR" >> $GITHUB_OUTPUT
           echo "name=$MODULE_NAME" >> $GITHUB_OUTPUT
+          echo "full_name=$FULL_NAME" >> $GITHUB_OUTPUT
 
       - name: Link module into Spryker project
         run: |
+          VENDOR="${{ steps.module-info.outputs.vendor }}"
           MODULE_NAME="${{ steps.module-info.outputs.name }}"
-          rm -rf "spryker-project/vendor/spryker/$MODULE_NAME"
-          mkdir -p "spryker-project/vendor/spryker/$MODULE_NAME"
-          cp -r module-code/* "spryker-project/vendor/spryker/$MODULE_NAME/"
+          
+          echo "Linking $VENDOR/$MODULE_NAME into Spryker project..."
+          
+          rm -rf "spryker-project/vendor/$VENDOR/$MODULE_NAME"
+          mkdir -p "spryker-project/vendor/$VENDOR/$MODULE_NAME"
+          cp -r module-code/* "spryker-project/vendor/$VENDOR/$MODULE_NAME/"
+          
+          echo "Module linked successfully at vendor/$VENDOR/$MODULE_NAME"
 
       - name: Run Spryker propel install
         working-directory: spryker-project
@@ -184,13 +194,11 @@ jobs:
       - name: Run module tests
         working-directory: spryker-project
         run: |
+          VENDOR="${{ steps.module-info.outputs.vendor }}"
           MODULE_NAME="${{ steps.module-info.outputs.name }}"
-          MODULE_PATH="vendor/spryker/$MODULE_NAME"
+          MODULE_PATH="vendor/$VENDOR/$MODULE_NAME"
           
-          # Convert module name to StudlyCase for namespace (e.g., payment-mollie -> PaymentMollie)
-          MODULE_CLASS=$(echo $MODULE_NAME | sed -r 's/(^|-)([a-z])/\U\2/g')
-          
-          echo "Running tests for module: $MODULE_CLASS at $MODULE_PATH"
+          echo "Running tests for $VENDOR/$MODULE_NAME at $MODULE_PATH"
           
           # Find test directories
           TEST_DIRS=$(find "$MODULE_PATH/tests" -maxdepth 1 -type d -name "*Test" 2>/dev/null || echo "")
@@ -213,8 +221,9 @@ jobs:
       - name: Run PHPStan (if configured)
         working-directory: spryker-project
         run: |
+          VENDOR="${{ steps.module-info.outputs.vendor }}"
           MODULE_NAME="${{ steps.module-info.outputs.name }}"
-          MODULE_PATH="vendor/spryker/$MODULE_NAME"
+          MODULE_PATH="vendor/$VENDOR/$MODULE_NAME"
           
           if [ -f "$MODULE_PATH/phpstan.neon" ] || [ -f "$MODULE_PATH/phpstan.neon.dist" ]; then
             if [ ! -f "vendor/bin/phpstan" ]; then
@@ -228,8 +237,9 @@ jobs:
       - name: Run Code Sniffer (if configured)
         working-directory: spryker-project
         run: |
+          VENDOR="${{ steps.module-info.outputs.vendor }}"
           MODULE_NAME="${{ steps.module-info.outputs.name }}"
-          MODULE_PATH="vendor/spryker/$MODULE_NAME"
+          MODULE_PATH="vendor/$VENDOR/$MODULE_NAME"
           
           if [ ! -f "vendor/bin/phpcs" ]; then
             composer require --dev squizlabs/php_codesniffer --no-interaction
