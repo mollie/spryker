@@ -1,0 +1,26 @@
+{% extends '@Gui/Layout/layout.twig' %}
+
+{% set title = 'mollie.title.payment_methods' | trans %}
+{% block content %}
+
+    {% set filterButtonText = 'mollie.button.filter_all' %}
+    {% set filterButtonValue = 0 %}
+    {% if not showOnlyEnabledPaymentMethods %}
+        {% set filterButtonText = 'mollie.button.filter_activated' %}
+        {% set filterButtonValue = 1 %}
+    {% endif %}
+
+    <div>
+        <a class="btn btn-primary"
+           href="/mollie/index/clear-cache"
+        >
+            {{ 'mollie.button.clear_cache' | trans }}
+        </a>
+        <a class="btn btn-primary"
+           href="/mollie?showOnlyEnabledPaymentMethods={{ filterButtonValue }}"
+        >
+            {{ filterButtonText | trans }}
+        </a>
+    </div>
+    {{ mollieTable | raw }}
+{% endblock %}

@@ -5,8 +5,11 @@ declare(strict_types = 1);
 namespace Mollie\Client\Mollie;
 
 use Generated\Shared\Transfer\MollieApiRequestTransfer;
-use Generated\Shared\Transfer\MollieAvailablePaymentMethodsApiResponseTransfer;
 use Generated\Shared\Transfer\MolliePaymentApiResponseTransfer;
+use Generated\Shared\Transfer\MolliePaymentMethodQueryParametersTransfer;
+use Generated\Shared\Transfer\MolliePaymentMethodsApiResponseTransfer;
+use Generated\Shared\Transfer\OrderCollectionRequestTransfer;
+use Generated\Shared\Transfer\OrderCollectionResponseTransfer;
 use Spryker\Client\Kernel\AbstractClient;
 
 /**
@@ -21,14 +24,25 @@ class MollieClient extends AbstractClient implements MollieClientInterface
      *
      * @param \Generated\Shared\Transfer\MollieApiRequestTransfer $mollieApiRequestTransfer
      *
-     * @return \Generated\Shared\Transfer\MollieAvailablePaymentMethodsApiResponseTransfer
+     * @return \Generated\Shared\Transfer\MolliePaymentMethodsApiResponseTransfer
      */
-    public function getAvailablePaymentMethods(MollieApiRequestTransfer $mollieApiRequestTransfer): MollieAvailablePaymentMethodsApiResponseTransfer
+    public function getEnabledPaymentMethods(MollieApiRequestTransfer $mollieApiRequestTransfer): MolliePaymentMethodsApiResponseTransfer
     {
-          /** @var \Generated\Shared\Transfer\MollieAvailablePaymentMethodsApiResponseTransfer $mollieAvailablePaymentMethodsApiResponseTransfer */
-        $mollieAvailablePaymentMethodsApiResponseTransfer = $this->getFactory()->createAvailablePaymentMethodsApi()->execute($mollieApiRequestTransfer);
+        return $this->getFactory()->createPaymentMethodsProvider()->getEnabledPaymentMethods($mollieApiRequestTransfer);
+    }
 
-        return $mollieAvailablePaymentMethodsApiResponseTransfer;
+    /**
+     * {@inheritDoc}
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\MollieApiRequestTransfer $mollieApiRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\MolliePaymentMethodsApiResponseTransfer
+     */
+    public function getAllPaymentMethods(MollieApiRequestTransfer $mollieApiRequestTransfer): MolliePaymentMethodsApiResponseTransfer
+    {
+        return $this->getFactory()->createPaymentMethodsProvider()->getAllPaymentMethods($mollieApiRequestTransfer);
     }
 
     /**
@@ -56,6 +70,47 @@ class MollieClient extends AbstractClient implements MollieClientInterface
      */
     public function createPayment(MollieApiRequestTransfer $mollieApiRequestTransfer): MolliePaymentApiResponseTransfer
     {
-        return $this->getFactory()->createPaymentApi()->execute($mollieApiRequestTransfer);
+         /** @var \Generated\Shared\Transfer\MolliePaymentApiResponseTransfer $molliePaymentApiResponseTransfer */
+        $molliePaymentApiResponseTransfer = $this->getFactory()->createPaymentApi()->execute($mollieApiRequestTransfer);
+
+        return $molliePaymentApiResponseTransfer;
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\OrderCollectionRequestTransfer $updateOrderCollectionRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\OrderCollectionResponseTransfer
+     */
+    public function updateOrderCollection(OrderCollectionRequestTransfer $updateOrderCollectionRequestTransfer): OrderCollectionResponseTransfer
+    {
+        return $this->getFactory()->createZedMollieStub()->updateOrderCollection($updateOrderCollectionRequestTransfer);
+    }
+
+    /**
+     *  Specification:
+     *  - Deletes cache for enabled payment methods API
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\MolliePaymentMethodQueryParametersTransfer $parameters
+     *
+     * @return void
+     */
+    public function deleteEnabledPaymentMethodsCache(MolliePaymentMethodQueryParametersTransfer $parameters): void
+    {
+        $this->getFactory()->createPaymentMethodsCacheDeleter()->deleteEnabledPaymentMethodsCache($parameters);
+    }
+
+    /**
+     * Specification:
+     *  - Deletes cache for all payment methods API
+     *
+     * @param \Generated\Shared\Transfer\MolliePaymentMethodQueryParametersTransfer $parameters
+     *
+     * @return void
+     */
+    public function deleteAllPaymentMethodsCache(MolliePaymentMethodQueryParametersTransfer $parameters): void
+    {
+        $this->getFactory()->createPaymentMethodsCacheDeleter()->deleteAllPaymentMethodsCache($parameters);
     }
 }

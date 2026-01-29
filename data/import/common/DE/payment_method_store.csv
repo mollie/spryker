@@ -1,0 +1,13 @@
+payment_method_key,store
+mollieCreditCardPayment,DE
+molliePayPalPayment,DE
+mollieBankTransferPayment,DE
+mollieKlarnaPayment,DE
+mollieKlarnaPayLaterPayment,DE
+mollieKlarnaPayNowPayment,DE
+mollieKlarnaSliceItPayment,DE
+mollieEpsPayment,DE
+mollieIdealPayment,DE
+mollieBancontactPayment,DE
+mollieKbcPayment,DE
+molliePayByBankPayment,DE

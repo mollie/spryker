@@ -7,20 +7,23 @@
 
 {% define data = {
     form: required,
-    src: 'https://js.mollie.com/v1/mollie.js',
+    profileId: required,
+    testMode: required,
+    jsSrc: required,
 } %}
-
 
 {% define attributes = {
     'form-selector': '[name="paymentForm"]',
     'selected-payment-method': '[name="paymentForm[paymentSelection]"]:checked',
     'locale': app.locale,
+    'profile-id': data.profileId,
+    'test-mode': data.testMode,
 } %}
 
 {% block body %}
     {% include molecule('script-loader') with {
         attributes: {
-            src: data.src
+            src: data.jsSrc
         }
     } only %}
     <div class="{{ config.name }}__wrapper">

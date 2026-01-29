@@ -8,7 +8,7 @@ use Mollie\Shared\Mollie\MollieConstants;
 use Spryker\Client\Kernel\AbstractBundleConfig;
 
 /**
- * @method \Mollie\Shared\Mollie\MollieConfig getSharedConfig()()
+ * @method \Mollie\Shared\Mollie\MollieConfig getSharedConfig()
  */
 class MollieConfig extends AbstractBundleConfig
 {
@@ -16,6 +16,16 @@ class MollieConfig extends AbstractBundleConfig
      * @var string
      */
     public const REQUEST_PARAMETER_CREATE_PAYMENT_CARD_TOKEN = 'cardToken';
+
+    /**
+     * @var string
+     */
+    public const REQUEST_PARAMETER_CREATE_PAYMENT_PAYPAL_SESSION_ID = 'sessionId';
+
+    /**
+     * @var string
+     */
+    public const REQUEST_PARAMETER_CREATE_PAYMENT_PAYPAL_DIGITAL_GOODS = 'digitalGoods';
 
     /**
      * @var string
@@ -30,27 +40,32 @@ class MollieConfig extends AbstractBundleConfig
     /**
      * @var string
      */
-    public const RESPONSE_PARAMETER_CREATE_PAYMENT_EMBEDDED = '_embedded';
+    public const REQUEST_PARAMETER_CREATE_PAYMENT_BANK_TRANSFER_DUE_DATE = 'dueDate';
 
     /**
      * @var string
      */
-    public const RESPONSE_PARAMETER_CREATE_PAYMENT_LINKS_CHECKOUT = 'checkout';
+    public const REQUEST_PARAMETER_CREATE_PAYMENT_BANK_TRANSFER_BILLING_EMAIL = 'billingAddress.email';
 
     /**
      * @var string
      */
-    public const RESPONSE_PARAMETER_CREATE_PAYMENT_LINKS_HREF = 'href';
+    public const REQUEST_PARAMETER_CREATE_PAYMENT_KLARNA_EXTRA_MERCHANT_DATA = 'extraMerchantData';
+
+    /**
+     * @var int
+     */
+    public const MOLLIE_PAYMENT_METHODS_STORAGE_KEY_TTL = 21600;
 
     /**
      * @var string
      */
-    public const RESPONSE_PARAMETER_CREATE_PAYMENT_METADATA = 'metadata';
+    protected const CACHE_KEY_PREFIX_FOR_ALL_PAYMENT_METHODS = 'all_payment_methods';
 
-    /**
-     * @var string
-     */
-    public const RESPONSE_PARAMETER_CREATE_PAYMENT_ID = 'id';
+     /**
+      * @var string
+      */
+    protected const CACHE_KEY_PREFIX_FOR_ENABLED_PAYMENT_METHODS = 'enabled_payment_methods';
 
     /**
      * @return string
@@ -66,6 +81,14 @@ class MollieConfig extends AbstractBundleConfig
     public function getMollieWebhookUrl(): string
     {
         return $this->get(MollieConstants::MOLLIE)[MollieConstants::MOLLIE_WEBHOOK_URL];
+    }
+
+    /**
+     * @return string
+     */
+    public function getTestEnvironmentMollieWebhookUrl(): string
+    {
+        return $this->get(MollieConstants::MOLLIE)[MollieConstants::MOLLIE_TEST_ENVIRONMENT_WEBHOOK_URL];
     }
 
     /**
@@ -94,5 +117,45 @@ class MollieConfig extends AbstractBundleConfig
     public function getMollieApiKey(): string|null
     {
         return $this->getSharedConfig()->getMollieApiKey();
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getMollieProfileId(): string|null
+    {
+        return $this->getSharedConfig()->getMollieProfileid();
+    }
+
+    /**
+     * @return bool
+     */
+    public function isMollieTestModeEnabled(): bool
+    {
+        return $this->getSharedConfig()->isMollieTestModeEnabled();
+    }
+
+    /**
+     * @return int
+     */
+    public function getMolliePaymentMethodsStorageKeyTTL(): int
+    {
+        return static::MOLLIE_PAYMENT_METHODS_STORAGE_KEY_TTL;
+    }
+
+      /**
+       * @return string
+       */
+    public function getCacheKeyPrefixForAllPaymentMethods(): string
+    {
+        return static::CACHE_KEY_PREFIX_FOR_ALL_PAYMENT_METHODS;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCacheKeyPrefixForEnabledPaymentMethods(): string
+    {
+        return static::CACHE_KEY_PREFIX_FOR_ENABLED_PAYMENT_METHODS;
     }
 }

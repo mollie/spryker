@@ -7,7 +7,7 @@ namespace Mollie\Yves\Mollie\Handler;
 use Generated\Shared\Transfer\QuoteTransfer;
 use Mollie\Shared\Mollie\MollieConfig;
 
-class MolliePaymentCreditCardHandler implements MolliePaymentCreditCardHandlerInterface
+class MolliePaymentCreditCardHandler implements MolliePaymentHandlerInterface
 {
      /**
       * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
@@ -19,7 +19,7 @@ class MolliePaymentCreditCardHandler implements MolliePaymentCreditCardHandlerIn
         $paymentTransfer = $quoteTransfer->getPayment();
 
         $paymentTransfer
-            ->setPaymentProvider(MollieConfig::PROVIDER_NAME)
+            ->setPaymentProvider(MollieConfig::MOLLIE_PROVIDER_CREDIT_CARD)
             ->setPaymentMethod(MollieConfig::MOLLIE_PAYMENT_CREDIT_CARD);
 
         return $quoteTransfer;

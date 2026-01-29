@@ -18,6 +18,7 @@ use Mollie\Client\Mollie\Api\AbstractApiCall;
 use Mollie\Client\Mollie\Dependency\Service\MollieToUtilEncodingServiceInterface;
 use Mollie\Client\Mollie\MollieConfig;
 use Mollie\Service\Mollie\MollieServiceInterface;
+use Mollie\Shared\Mollie\MollieConfig as SharedConfig;
 use Spryker\Shared\Kernel\Transfer\AbstractTransfer;
 use Spryker\Shared\Log\LoggerTrait;
 
@@ -57,7 +58,13 @@ class CreatePaymentApi extends AbstractApiCall
             value: $value,
         );
         $redirectUrl = $this->getRedirectUrl($checkoutResponseTransfer->getSaveOrderOrFail()->getOrderReference());
-        $webhookUrl = $this->mollieConfig->getMollieWebhookUrl();
+
+        $webhookUrl = $this->mollieService->resolveWebhookUrl(
+            $this->mollieConfig->getMollieWebhookUrl(),
+            $this->mollieConfig->getTestEnvironmentMollieWebhookUrl(),
+            $this->mollieConfig->isMollieTestModeEnabled(),
+        );
+
         $method = $this->mollieConfig->getMolliePaymentMethod($paymentTransfer->getPaymentMethod());
         $metadata = $this->addMetadata($checkoutResponseTransfer);
         $additionalParameters = $this->addAdditionalParameters($mollieApiRequestTransfer);
@@ -82,8 +89,27 @@ class CreatePaymentApi extends AbstractApiCall
     {
         $additionalData = [];
         $paymentTransfer = $mollieApiRequestTransfer->getQuote()->getPayment();
-        if ($paymentTransfer->getMollieCreditCardPayment()) {
-            $additionalData[MollieConfig::REQUEST_PARAMETER_CREATE_PAYMENT_CARD_TOKEN] = $paymentTransfer->getMollieCreditCardPayment()->getCardToken();
+        switch ($paymentTransfer->getPaymentMethod()) {
+            case SharedConfig::MOLLIE_PAYMENT_CREDIT_CARD:
+                $additionalData[MollieConfig::REQUEST_PARAMETER_CREATE_PAYMENT_CARD_TOKEN] = $paymentTransfer->getMollieCreditCardPayment()->getCardToken();
+
+                break;
+            case SharedConfig::MOLLIE_PAYMENT_PAYPAL:
+                $additionalData[MollieConfig::REQUEST_PARAMETER_CREATE_PAYMENT_PAYPAL_SESSION_ID] = $paymentTransfer->getMolliePayPalPayment()->getSessionId() ?? '';
+                $additionalData[MollieConfig::REQUEST_PARAMETER_CREATE_PAYMENT_PAYPAL_DIGITAL_GOODS] = $paymentTransfer->getMolliePayPalPayment()->getDigitalGoods() ?? false;
+
+                break;
+            case SharedConfig::MOLLIE_PAYMENT_BANK_TRANSFER:
+                $additionalData[MollieConfig::REQUEST_PARAMETER_CREATE_PAYMENT_BANK_TRANSFER_DUE_DATE] = $paymentTransfer->getMollieBankTransferPayment()->getDueDate() ?? '';
+                $additionalData[MollieConfig::REQUEST_PARAMETER_CREATE_PAYMENT_BANK_TRANSFER_BILLING_EMAIL] = $paymentTransfer->getMollieBankTransferPayment()->getBillingEmail() ?? '';
+
+                break;
+            case SharedConfig::MOLLIE_PAYMENT_KLARNA:
+                $additionalData[MollieConfig::REQUEST_PARAMETER_CREATE_PAYMENT_KLARNA_EXTRA_MERCHANT_DATA] = $paymentTransfer->getMollieKlarnaPayment()->getExtraMerchantData() ?? '';
+
+                break;
+            default:
+                break;
         }
 
         return $additionalData;
@@ -96,7 +122,10 @@ class CreatePaymentApi extends AbstractApiCall
      */
     protected function convertAmountToString(int $amount): string
     {
-        return (string)$this->mollieService->convertIntegerToDecimal($amount);
+        $amount = $this->mollieService->convertIntegerToDecimal($amount);
+        $amount = number_format($amount, 2, '.', '');
+
+        return $amount;
     }
 
     /**
@@ -127,8 +156,8 @@ class CreatePaymentApi extends AbstractApiCall
     protected function mapApiResponse(MollieApiResponseTransfer $mollieApiResponseTransfer): AbstractTransfer
     {
         $molliePaymentApiResponseTransfer = (new MolliePaymentApiResponseTransfer())
-        ->setIsSuccessful($mollieApiResponseTransfer->getIsSuccessful())
-        ->setMessage($mollieApiResponseTransfer->getMessage());
+            ->setIsSuccessful($mollieApiResponseTransfer->getIsSuccessful())
+            ->setMessage($mollieApiResponseTransfer->getMessage());
 
         $molliePaymentTransfer = new MolliePaymentTransfer();
         $molliePaymentTransfer->fromArray($mollieApiResponseTransfer->getPayload(), true);

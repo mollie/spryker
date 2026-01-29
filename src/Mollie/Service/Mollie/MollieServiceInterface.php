@@ -16,4 +16,17 @@ interface MollieServiceInterface
      * @return float
      */
     public function convertIntegerToDecimal(int $value): float;
+
+    /**
+     * Calls UrlResolver class from client layer
+     *
+     * @api
+     *
+     * @param string $webhookUrl
+     * @param string $testEnvironmentWebhookUrl
+     * @param bool $testMode
+     *
+     * @return string
+     */
+    public function resolveWebhookUrl(string $webhookUrl, string $testEnvironmentWebhookUrl, bool $testMode): string;
 }

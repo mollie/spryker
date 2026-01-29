@@ -46,8 +46,6 @@ class GetPaymentByTransactionIdApi extends AbstractApiCall
      */
     protected function buildRequest(?MollieApiRequestTransfer $mollieApiRequestTransfer = null): ?Request
     {
-        $body = $mollieApiRequestTransfer->getBody();
-
-        return new GetPaymentRequest($body['id']);
+        return new GetPaymentRequest($mollieApiRequestTransfer->getTransactionId());
     }
 }

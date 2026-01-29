@@ -1,6 +1,5 @@
 <?php
 
-
 declare(strict_types = 1);
 
 namespace Mollie\Yves\Mollie\PaymentPage\Form;
@@ -12,6 +11,8 @@ use Spryker\Yves\StepEngine\Dependency\Form\SubFormInterface;
 use Spryker\Yves\StepEngine\Dependency\Form\SubFormProviderNameInterface;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
@@ -52,6 +53,11 @@ class MollieCreditCardSubForm extends AbstractSubFormType implements SubFormInte
      */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        $isMollieCreditCardComponentEnabled = $this->getConfig()->isMollieCreditCardComponentEnabled();
+        if (!$isMollieCreditCardComponentEnabled) {
+            return;
+        }
+
         $builder->add('cardToken', HiddenType::class, [
             'required' => true,
              'attr' => [
@@ -63,16 +69,23 @@ class MollieCreditCardSubForm extends AbstractSubFormType implements SubFormInte
                     'message' => 'mollie.checkout.payment.credit.card.missing.token',
                 ]),
             ],
-
-        ])
-        ->add('settings', HiddenType::class, [
-            'mapped' => false,
-            'attr' => [
-                 'class' => 'settings',
-                 'data-profile-id' => $this->getConfig()->getProfileId(),
-                 'data-test-mode' => $this->getConfig()->isTestMode() ? 'true' : 'false',
-            ],
         ]);
+    }
+
+    /**
+     * @param \Symfony\Component\Form\FormView $view
+     * @param \Symfony\Component\Form\FormInterface $form
+     * @param array<string, string> $options
+     *
+     * @return void
+     */
+    public function buildView(FormView $view, FormInterface $form, array $options): void
+    {
+        parent::buildView($view, $form, $options);
+        $view->vars['isMollieCreditCardComponentEnabled'] = $this->getConfig()->isMollieCreditCardComponentEnabled();
+        $view->vars['profileId'] = $this->getConfig()->getProfileId();
+        $view->vars['testMode'] = $this->getConfig()->isTestMode() ? 'true' : 'false';
+        $view->vars['jsSrc'] = $this->getConfig()->getMollieCreditCardComponentsJsSrc();
     }
 
     /**
@@ -80,7 +93,7 @@ class MollieCreditCardSubForm extends AbstractSubFormType implements SubFormInte
      */
     protected function getTemplatePath(): string
     {
-        return MollieConfig::PROVIDER_NAME . DIRECTORY_SEPARATOR . static::PAYMENT_METHOD;
+        return MollieConfig::MOLLIE_PROVIDER_CREDIT_CARD . DIRECTORY_SEPARATOR . static::PAYMENT_METHOD;
     }
 
     /**
@@ -104,6 +117,6 @@ class MollieCreditCardSubForm extends AbstractSubFormType implements SubFormInte
      */
     public function getProviderName(): string
     {
-        return MollieConfig::PROVIDER_NAME;
+        return MollieConfig::MOLLIE_PROVIDER_CREDIT_CARD;
     }
 }

@@ -17,7 +17,20 @@ class MollieConfig extends AbstractBundleConfig
     /**
      * @var string
      */
-    protected const ERROR_MESSAGE_ORDER_STATUS_PAYMENT_ERROR = 'An error occurred while processing your payment (status: %s). Please try again.';
+    protected const ERROR_MESSAGE_ORDER_STATUS_PAYMENT_ERROR = 'Payment did not get processed (status: %s). Please try again.';
+
+    /**
+     * @var string
+     */
+    protected const ERROR_MESSAGE_PAYMENT_ID_DOESNT_EXIST = 'Payment ID does not exist.';
+
+    /**
+     * @return string
+     */
+    public function getMollieCreditCardComponentsJsSrc(): string
+    {
+        return $this->get(MollieConstants::MOLLIE)[MollieConstants::MOLLIE_CREDIT_CARD_COMPONENTS_JS_SRC];
+    }
 
     /**
      * @return string
@@ -28,18 +41,19 @@ class MollieConfig extends AbstractBundleConfig
     }
 
     /**
-     * @return string
-     *
-     * @var string
-     */
-    public const ROUTE_PAYMENT_REDIRECT = 'payment/status';
-
-    /**
      * @return bool
      */
     public function isTestMode(): bool
     {
         return $this->get(MollieConstants::MOLLIE)[MollieConstants::MOLLIE_TEST_MODE];
+    }
+
+    /**
+     * @return bool
+     */
+    public function isMollieCreditCardComponentEnabled(): bool
+    {
+        return $this->get(MollieConstants::MOLLIE)[MollieConstants::MOLLIE_CREDIT_CARD_COMPONENTS_ENABLED];
     }
 
     /**
@@ -56,5 +70,13 @@ class MollieConfig extends AbstractBundleConfig
     public function getPaymentFailedMessage(): string
     {
         return static::ERROR_MESSAGE_ORDER_STATUS_PAYMENT_ERROR;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPaymentIdDoesntExistMessage(): string
+    {
+        return static::ERROR_MESSAGE_PAYMENT_ID_DOESNT_EXIST;
     }
 }

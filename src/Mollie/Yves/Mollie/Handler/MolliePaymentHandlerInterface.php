@@ -6,12 +6,12 @@ namespace Mollie\Yves\Mollie\Handler;
 
 use Generated\Shared\Transfer\QuoteTransfer;
 
-interface MolliePaymentCreditCardHandlerInterface
+interface MolliePaymentHandlerInterface
 {
-     /**
-      * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
-      *
-      * @return \Generated\Shared\Transfer\QuoteTransfer
-      */
+    /**
+     * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
+     *
+     * @return \Generated\Shared\Transfer\QuoteTransfer
+     */
     public function addPaymentToQuote(QuoteTransfer $quoteTransfer): QuoteTransfer;
 }
