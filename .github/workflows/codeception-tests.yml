@@ -282,6 +282,8 @@ jobs:
           vendor/bin/console propel:schema:copy
           vendor/bin/console propel:model:build
           vendor/bin/console transfer:entity:generate
+          vendor/bin/console propel:diff
+          vendor/bin/console propel:migrate
 
       - name: Setup Codeception
         working-directory: spryker-project
