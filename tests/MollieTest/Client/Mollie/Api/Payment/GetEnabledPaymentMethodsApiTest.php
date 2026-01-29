@@ -10,11 +10,45 @@ use Generated\Shared\Transfer\MolliePaymentMethodQueryParametersTransfer;
 use Mollie\Api\Fake\MockMollieClient;
 use Mollie\Api\Fake\MockResponse;
 use Mollie\Api\Http\Requests\GetEnabledMethodsRequest;
+use Mollie\Api\Http\Requests\GetPaymentRequest;
+use Mollie\Api\MollieApiClient;
 use Mollie\Client\Mollie\MollieClientInterface;
 use MollieTest\Client\Mollie\AbstractClientTest;
 
 class GetEnabledPaymentMethodsApiTest extends AbstractClientTest
 {
+
+    /**
+     * @return void
+     * @throws \Mollie\Api\Exceptions\LogicException
+     * @throws \Mollie\Api\Exceptions\MollieException
+     */
+    public function testGetEnabledPaymentMethodsApi2(): void
+    {
+        $client = MollieApiClient::fake([
+            GetPaymentRequest::class => new MockResponse(
+                body: [
+                    'resource' => 'payment',
+                    'id' => 'tr_xxxxxxxxxxxx',
+                    'mode' => 'test',
+                    'amount' => [
+                        'value' => '20.00',
+                        'currency' => 'EUR'
+                    ],
+                    'description' => 'Test',
+                    'status' => 'open',
+                    // ...
+                ],
+                status: 200
+            )
+        ]);
+
+        $response = $client->send(new GetPaymentRequest('tr_xxxxxxxxxxxx'));
+        $psrResponse = $response->getResponse()->getPsrResponse();
+        $data = json_decode($psrResponse->getBody()->getContents(), true);
+        $this->assertEquals('payment', $data['resource']);
+    }
+
  /**
   * @return void
   */
