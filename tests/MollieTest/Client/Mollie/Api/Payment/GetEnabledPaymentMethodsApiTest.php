@@ -40,8 +40,14 @@ class GetEnabledPaymentMethodsApiTest extends AbstractClientTest
           $mollieClient = (new MollieClient())->setFactory($mollieFactoryMock);
           $transfer = $this->createMollieApiRequestTransfer();
 
-        $response = $mollieClient->getAllPaymentMethods($transfer);
+        $response = $mollieClient->getEnabledPaymentMethods($transfer);
 
+          $methods = $response->getCollection()->getMethods();
+        $methodIds = $this->getMethodIds($methods);
+
+        $this->assertNotEmpty($methods);
+        $this->assertContains('ideal', $methodIds);
+        $this->assertContains('creditcard', $methodIds);
     }
 
  /**
