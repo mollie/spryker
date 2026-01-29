@@ -22,38 +22,6 @@ use Spryker\Client\Kernel\Container;
 
 class GetEnabledPaymentMethodsApiTest extends AbstractClientTest
 {
-
-    /**
-     * @return void
-     * @throws \Mollie\Api\Exceptions\LogicException
-     * @throws \Mollie\Api\Exceptions\MollieException
-     */
-    public function testGetEnabledPaymentMethodsApi2(): void
-    {
-         $mollieFactoryMock = $this->getMockBuilder(MollieFactory::class)
-            ->onlyMethods(['createMollieApiClient', 'getStorageClient'])
-            ->getMock();
-
-          $mollieFactoryMock->method('createMollieApiClient')
-            ->willReturn($this->createMockApiClientForEnabledPaymentMethods());
-          
-        $mollieFactoryMock->setConfig(new MollieConfig());
-
-          $mollieClient = (new MollieClient())->setFactory($mollieFactoryMock);
-          $transfer = $this->createMollieApiRequestTransfer();
-
-        $response = $mollieClient->getEnabledPaymentMethods($transfer);
-
-        fwrite(STDERR, print_r($response->toArray(), true));
-
-        $methods = $response->getCollection()->getMethods();
-        $methodIds = $this->getMethodIds($methods);
-
-        $this->assertNotEmpty($methods);
-        $this->assertContains('ideal', $methodIds);
-        $this->assertContains('creditcard', $methodIds);
-    }
-
  /**
   * @return void
   */
