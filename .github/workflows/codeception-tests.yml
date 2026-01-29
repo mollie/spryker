@@ -199,22 +199,56 @@ jobs:
           MODULE_PATH="vendor/$VENDOR/$MODULE_NAME"
           
           echo "Running tests for $VENDOR/$MODULE_NAME at $MODULE_PATH"
+          echo "Listing test directory structure:"
+          find "$MODULE_PATH/tests" -type f -name "*.yml" 2>/dev/null || echo "No yml files found"
+          ls -la "$MODULE_PATH/tests/" || echo "No tests directory"
           
-          # Find test directories
-          TEST_DIRS=$(find "$MODULE_PATH/tests" -maxdepth 1 -type d -name "*Test" 2>/dev/null || echo "")
-          
-          if [ -z "$TEST_DIRS" ]; then
-            echo "No *Test directories found in $MODULE_PATH/tests"
-            echo "Checking if tests directory exists..."
-            ls -la "$MODULE_PATH/tests" || echo "No tests directory found"
-            exit 1
+          # Check if there's a codeception.yml at the module root
+          if [ -f "$MODULE_PATH/codeception.yml" ]; then
+            echo "Found codeception.yml at module root, running from there"
+            vendor/bin/codecept run -c "$MODULE_PATH"
+          else
+            # Find test directories with codeception config
+            TEST_CONFIGS=$(find "$MODULE_PATH/tests" -name "codeception.yml" -o -name "codeception.dist.yml" 2>/dev/null || echo "")
+            
+            if [ -n "$TEST_CONFIGS" ]; then
+              # Run each test suite that has a config
+              for CONFIG in $TEST_CONFIGS; do
+                CONFIG_DIR=$(dirname "$CONFIG")
+                echo "Running tests with config at: $CONFIG_DIR"
+                vendor/bin/codecept run -c "$CONFIG_DIR"
+              done
+            else
+              # Try the *Test directory pattern
+              TEST_DIRS=$(find "$MODULE_PATH/tests" -maxdepth 1 -type d -name "*Test" 2>/dev/null || echo "")
+              
+              if [ -n "$TEST_DIRS" ]; then
+                for TEST_DIR in $TEST_DIRS; do
+                  # Check if codeception config exists in the test directory
+                  if [ -f "$TEST_DIR/codeception.yml" ] || [ -f "$TEST_DIR/codeception.dist.yml" ]; then
+                    echo "Running tests in: $TEST_DIR"
+                    vendor/bin/codecept run -c "$TEST_DIR"
+                  else
+                    echo "No codeception config found in $TEST_DIR, checking subdirectories..."
+                    # Look for config in subdirectories
+                    SUB_CONFIGS=$(find "$TEST_DIR" -name "codeception.yml" -o -name "codeception.dist.yml" 2>/dev/null)
+                    if [ -n "$SUB_CONFIGS" ]; then
+                      for SUB_CONFIG in $SUB_CONFIGS; do
+                        SUB_DIR=$(dirname "$SUB_CONFIG")
+                        echo "Running tests with config at: $SUB_DIR"
+                        vendor/bin/codecept run -c "$SUB_DIR"
+                      done
+                    else
+                      echo "No codeception config found in $TEST_DIR or subdirectories"
+                    fi
+                  fi
+                done
+              else
+                echo "No test directories or configurations found!"
+                exit 1
+              fi
+            fi
           fi
-          
-          # Run tests for each test directory found
-          for TEST_DIR in $TEST_DIRS; do
-            echo "Running tests in: $TEST_DIR"
-            vendor/bin/codecept run -c "$TEST_DIR" || echo "Tests in $TEST_DIR completed with exit code: $?"
-          done
           
           echo "All test suites completed"
 
