@@ -107,13 +107,7 @@ jobs:
           fi
           
           # Install with platform requirements ignored for optional extensions
-          composer install \
-            --no-interaction \
-            --prefer-dist \
-            --optimize-autoloader \
-            --ignore-platform-req=ext-grpc \
-            --ignore-platform-req=ext-protobuf \
-            --no-scripts
+          composer install 
           
           echo "Composer install completed successfully"
         env:
