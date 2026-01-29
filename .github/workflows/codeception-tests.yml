@@ -234,7 +234,7 @@ jobs:
           $config[MollieConstants::MOLLIE] = [
               MollieConstants::MOLLIE_PROFILE_ID => 'pfl_pD5UernhAv',
               MollieConstants::MOLLIE_TEST_MODE => true,
-              MollieConstants::MOLLIE_API_KEY => getenv('MOLLIE_API_KEY') ?: '',
+              MollieConstants::MOLLIE_API_KEY => getenv('MOLLIE_API_KEY') ?: 'test_123',
           
               MollieConstants::MOLLIE_REDIRECT_URL => sprintf('https://%s%s', $sprykerFrontendHost, '/checkout/payment-redirect'),
               MollieConstants::MOLLIE_WEBHOOK_URL => sprintf('https://%s%s', $sprykerFrontendHost, '/mollie/webhook'),
@@ -290,6 +290,26 @@ jobs:
           if [ ! -f "vendor/bin/codecept" ]; then
             composer require --dev codeception/codeception --no-interaction
           fi
+
+      - name: Build Codeception files
+        working-directory: spryker-project
+        run: |
+          VENDOR="${{ steps.module-info.outputs.vendor }}"
+          MODULE_NAME="${{ steps.module-info.outputs.name }}"
+          MODULE_PATH="vendor/$VENDOR/$MODULE_NAME"
+          
+          echo "Building Codeception files for module tests..."
+          
+          # Find all codeception configs and build them
+          find "$MODULE_PATH/tests" -name "codeception.yml" -o -name "codeception.dist.yml" | while read config; do
+            if [ -n "$config" ]; then
+              config_dir=$(dirname "$config")
+              echo "Building codeception for: $config_dir"
+              vendor/bin/codecept build -c "$config_dir"
+            fi
+          done
+          
+          echo "Codeception build completed"   
 
       - name: Run module tests
         working-directory: spryker-project
