@@ -25,28 +25,12 @@ class GetEnabledPaymentMethodsApiTest extends AbstractClientTest
      */
     public function testGetEnabledPaymentMethodsApi2(): void
     {
-        $client = MollieApiClient::fake([
-            GetPaymentRequest::class => new MockResponse(
-                body: [
-                    'resource' => 'payment',
-                    'id' => 'tr_xxxxxxxxxxxx',
-                    'mode' => 'test',
-                    'amount' => [
-                        'value' => '20.00',
-                        'currency' => 'EUR'
-                    ],
-                    'description' => 'Test',
-                    'status' => 'open',
-                    // ...
-                ],
-                status: 200
-            )
-        ]);
+        $client = $this->createMockApiClientForEnabledPaymentMethods();
 
-        $response = $client->send(new GetPaymentRequest('tr_xxxxxxxxxxxx'));
+        $response = $client->send(new GetEnabledMethodsRequest('oneOff'));
         $psrResponse = $response->getResponse()->getPsrResponse();
         $data = json_decode($psrResponse->getBody()->getContents(), true);
-        $this->assertEquals('payment', $data['resource']);
+        $this->assertNotEmpty($data['_embedded']['methods']);
     }
 
  /**
