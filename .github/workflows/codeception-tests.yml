@@ -50,7 +50,7 @@ jobs:
 
     strategy:
       matrix:
-        php-version: ['8.2']
+        php-version: ['8.3']
 
     steps:
       - name: Checkout module code
