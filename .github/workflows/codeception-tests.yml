@@ -91,27 +91,12 @@ jobs:
           ref: master  # or specific version tag like '202404.0'
           path: spryker-project
 
-      - name: Install Spryker dependencies
+      - name: Run docker
         working-directory: spryker-project
         run: |
-          # Remove composer.lock if it exists to avoid lock file issues
-          if [ -f composer.lock ]; then
-            echo "Removing existing composer.lock to avoid platform issues..."
-            rm composer.lock
-          fi
-          
-          # Install with platform requirements ignored for optional extensions
-          composer install \
-            --no-interaction \
-            --prefer-dist \
-            --optimize-autoloader \
-            --ignore-platform-req=ext-grpc \
-            --ignore-platform-req=ext-protobuf \
-            --no-scripts
-          
-          echo "Composer install completed successfully"
-        env:
-          COMPOSER_MEMORY_LIMIT: -1
+          git clone --depth 1 https://github.com/spryker/docker-sdk.git ./docker
+          docker/sdk boot deploy.ci.yml || docker/sdk boot deploy.dev.yml
+          docker/sdk up -t
 
       - name: Get module name from composer.json
         id: module-info
