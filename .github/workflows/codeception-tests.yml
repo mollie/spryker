@@ -308,6 +308,14 @@ jobs:
               config_dir=$(dirname "$config")
               echo "Building codeception for: $config_dir"
               vendor/bin/codecept build -c "$config_dir"
+              
+              # Debug: Check if tester was generated and show its methods
+              echo "--- Checking generated tester ---"
+              find "$config_dir" -name "*Tester.php" -path "*/_generated/*" | while read tester; do
+                echo "Found tester: $tester"
+                echo "Methods in tester:"
+                grep -E "public function|protected function" "$tester" | head -20 || echo "Could not read tester methods"
+              done
             fi
           done
           
