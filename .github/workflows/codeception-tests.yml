@@ -138,17 +138,27 @@ jobs:
           echo "full_name=$FULL_NAME" >> $GITHUB_OUTPUT
 
       - name: Link module into Spryker project
+        working-directory: spryker-project
         run: |
           VENDOR="${{ steps.module-info.outputs.vendor }}"
           MODULE_NAME="${{ steps.module-info.outputs.name }}"
+          FULL_NAME="$VENDOR/$MODULE_NAME"
           
           echo "Linking $VENDOR/$MODULE_NAME into Spryker project..."
           
-          rm -rf "spryker-project/vendor/$VENDOR/$MODULE_NAME"
-          mkdir -p "spryker-project/vendor/$VENDOR/$MODULE_NAME"
-          cp -r module-code/* "spryker-project/vendor/$VENDOR/$MODULE_NAME/"
+          # Remove existing module if present
+          rm -rf "vendor/$VENDOR/$MODULE_NAME"
           
-          echo "Module linked successfully at vendor/$VENDOR/$MODULE_NAME"
+          # Add path repository to composer.json
+          composer config repositories.local-module path ../module-code
+          
+          # Require the module from the local path
+          composer require "$FULL_NAME:*" --no-update
+          
+          # Update only this package
+          composer update "$FULL_NAME" --no-interaction
+          
+          echo "Module $FULL_NAME installed from local path"
 
       - name: Initialize test database
         working-directory: spryker-project
