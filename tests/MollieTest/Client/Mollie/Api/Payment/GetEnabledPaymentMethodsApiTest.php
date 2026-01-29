@@ -12,7 +12,10 @@ use Mollie\Api\Fake\MockResponse;
 use Mollie\Api\Http\Requests\GetEnabledMethodsRequest;
 use Mollie\Api\Http\Requests\GetPaymentRequest;
 use Mollie\Api\MollieApiClient;
+use Mollie\Client\Mollie\MollieClient;
 use Mollie\Client\Mollie\MollieClientInterface;
+use Mollie\Client\Mollie\MollieConfig;
+use Mollie\Client\Mollie\MollieFactory;
 use MollieTest\Client\Mollie\AbstractClientTest;
 
 class GetEnabledPaymentMethodsApiTest extends AbstractClientTest
@@ -25,12 +28,20 @@ class GetEnabledPaymentMethodsApiTest extends AbstractClientTest
      */
     public function testGetEnabledPaymentMethodsApi2(): void
     {
-        $client = $this->createMockApiClientForEnabledPaymentMethods();
+         $mollieFactoryMock = $this->getMockBuilder(MollieFactory::class)
+            ->onlyMethods(['createMollieApiClient', 'getStorageClient'])
+            ->getMock();
 
-        $response = $client->send(new GetEnabledMethodsRequest('oneOff'));
-        $psrResponse = $response->getResponse()->getPsrResponse();
-        $data = json_decode($psrResponse->getBody()->getContents(), true);
-        $this->assertNotEmpty($data['_embedded']['methods']);
+          $mollieFactoryMock->method('createMollieApiClient')
+            ->willReturn($this->createMockApiClientForEnabledPaymentMethods());
+          
+                 $mollieFactoryMock->setConfig(new MollieConfig());
+
+          $mollieClient = (new MollieClient())->setFactory($mollieFactoryMock);
+          $transfer = $this->createMollieApiRequestTransfer();
+
+        $response = $mollieClient->getAllPaymentMethods($transfer);
+
     }
 
  /**

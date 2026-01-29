@@ -1,0 +1,14 @@
+{
+  "name": "vendor_name/Payment",
+  "description": "description",
+  "minimum-stability": "stable",
+  "license": "proprietary",
+  "authors": [
+    {
+      "name": "tuxedo001",
+      "email": "email@example.com"
+    }
+  ],
+  "require": {
+  }
+}

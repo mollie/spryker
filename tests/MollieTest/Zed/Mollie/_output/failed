@@ -1,0 +1,5 @@
+../../Client/Mollie/Api/Payment/CreatePaymentApiTest.php:testCreatePaymentApi
+../../Client/Mollie/Api/Payment/GetAllPaymentMethodsApiTest.php:testGetAllPaymentMethodsApi
+../../Client/Mollie/Api/Payment/GetEnabledPaymentMethodsApiTest.php:testGetEnabledPaymentMethodsApi
+../../Client/Mollie/Api/Payment/GetPaymentByTransactionIdApiTest.php:testGetPaymentByTransactionIdApi
+Business/Order/OrderUpdateCollectionTest.php:testWebHookRequestSuccessfullyUpdatesMolliePayment
