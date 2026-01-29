@@ -26,7 +26,6 @@ use Mollie\Client\Mollie\Provider\Payment\PaymentMethodsProviderInterface;
 use Mollie\Client\Mollie\Zed\MollieStub;
 use Mollie\Client\Mollie\Zed\MollieStubInterface;
 use Mollie\Service\Mollie\MollieServiceInterface;
-use Psr\Log\LoggerInterface;
 use Spryker\Client\Kernel\AbstractFactory;
 use Spryker\Client\ZedRequest\ZedRequestClientInterface;
 
@@ -162,12 +161,12 @@ class MollieFactory extends AbstractFactory
     }
 
     /**
-     * @return MollieLoggerInterface
+     * @return \Mollie\Client\Mollie\Logger\MollieLoggerInterface
      */
     public function createMollieLogger(): MollieLoggerInterface
     {
         return new MollieLogger(
-            $this->getConfig()
+            $this->getConfig(),
         );
     }
 

@@ -10,8 +10,9 @@ interface MollieLoggerInterface
 {
     /**
      * @param string $apiName
-     * @param array $requestData
-     * @param MollieApiResponseTransfer $responseTransfer
+     * @param string $url
+     * @param array<string, mixed> $requestData
+     * @param \Generated\Shared\Transfer\MollieApiResponseTransfer $responseTransfer
      *
      * @return void
      */

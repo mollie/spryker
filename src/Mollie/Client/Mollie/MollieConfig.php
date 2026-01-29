@@ -135,10 +135,12 @@ class MollieConfig extends AbstractBundleConfig
         return $this->getSharedConfig()->isMollieTestModeEnabled();
     }
 
+    /**
+     * @return string
+     */
     public function getMollieLoggingMode(): string
     {
-        return 'basic';
-//        return $this->getSharedConfig()->getMollieLoggingMode();
+        return $this->getSharedConfig()->getMollieLoggingMode();
     }
 
     /**

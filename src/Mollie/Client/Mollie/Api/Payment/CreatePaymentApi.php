@@ -31,6 +31,7 @@ class CreatePaymentApi extends AbstractApiCall
      * @param \Mollie\Api\MollieApiClient $mollieApiClient
      * @param \Mollie\Client\Mollie\MollieConfig $mollieConfig
      * @param \Mollie\Client\Mollie\Dependency\Service\MollieToUtilEncodingServiceInterface $utilEncodingService
+     * @param \Mollie\Client\Mollie\Logger\MollieLoggerInterface $logger
      * @param \Mollie\Service\Mollie\MollieServiceInterface $mollieService
      */
     public function __construct(

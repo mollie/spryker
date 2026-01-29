@@ -15,12 +15,10 @@ use Mollie\Api\MollieApiClient;
 use Mollie\Api\Types\MethodQuery;
 use Mollie\Client\Mollie\Api\AbstractApiCall;
 use Mollie\Client\Mollie\Dependency\Service\MollieToUtilEncodingServiceInterface;
-use Mollie\Client\Mollie\Logger\MollieLogger;
 use Mollie\Client\Mollie\Logger\MollieLoggerInterface;
 use Mollie\Client\Mollie\Mapper\PaymentMethodMapperInterface;
 use Mollie\Client\Mollie\MollieConfig;
 use Spryker\Shared\Kernel\Transfer\AbstractTransfer;
-use Spryker\Shared\Log\LoggerTrait;
 
 class GetEnabledPaymentMethodsApi extends AbstractApiCall
 {
@@ -28,6 +26,7 @@ class GetEnabledPaymentMethodsApi extends AbstractApiCall
      * @param \Mollie\Api\MollieApiClient $mollieApiClient
      * @param \Mollie\Client\Mollie\MollieConfig $mollieConfig
      * @param \Mollie\Client\Mollie\Dependency\Service\MollieToUtilEncodingServiceInterface $utilEncodingService
+     * @param \Mollie\Client\Mollie\Logger\MollieLoggerInterface $logger
      * @param \Mollie\Client\Mollie\Mapper\PaymentMethodMapperInterface $mapper
      */
     public function __construct(
@@ -59,9 +58,9 @@ class GetEnabledPaymentMethodsApi extends AbstractApiCall
     }
 
     /**
-     * @param MollieApiResponseTransfer $mollieApiResponseTransfer
+     * @param \Generated\Shared\Transfer\MollieApiResponseTransfer $mollieApiResponseTransfer
      *
-     * @return MollieApiResponseTransfer
+     * @return \Generated\Shared\Transfer\MollieApiResponseTransfer
      */
     protected function maskResponseData(MollieApiResponseTransfer $mollieApiResponseTransfer): MollieApiResponseTransfer
     {
