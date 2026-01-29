@@ -284,6 +284,7 @@ jobs:
           vendor/bin/console transfer:entity:generate
           vendor/bin/console propel:diff
           vendor/bin/console propel:migrate
+          vendor/bin/console setup:init-db 
 
       - name: Setup Codeception
         working-directory: spryker-project
@@ -299,27 +300,7 @@ jobs:
           VENDOR="${{ steps.module-info.outputs.vendor }}"
           MODULE_NAME="${{ steps.module-info.outputs.name }}"
           MODULE_PATH="vendor/$VENDOR/$MODULE_NAME"
-          
-          echo "Building Codeception files for module tests..."
-          
-          # Find all codeception configs and build them
-          find "$MODULE_PATH/tests" -name "codeception.yml" -o -name "codeception.dist.yml" | while read config; do
-            if [ -n "$config" ]; then
-              config_dir=$(dirname "$config")
-              echo "Building codeception for: $config_dir"
-              vendor/bin/codecept build -c "$config_dir"
-              
-              # Debug: Check if tester was generated and show its methods
-              echo "--- Checking generated tester ---"
-              find "$config_dir" -name "*Tester.php" -path "*/_generated/*" | while read tester; do
-                echo "Found tester: $tester"
-                echo "Methods in tester:"
-                grep -E "public function|protected function" "$tester" | head -20 || echo "Could not read tester methods"
-              done
-            fi
-          done
-          
-          echo "Codeception build completed"   
+          vendor/bin/codecept build -c "$MODULE_PATH"
 
       - name: Run module tests
         working-directory: spryker-project
@@ -327,96 +308,4 @@ jobs:
           VENDOR="${{ steps.module-info.outputs.vendor }}"
           MODULE_NAME="${{ steps.module-info.outputs.name }}"
           MODULE_PATH="vendor/$VENDOR/$MODULE_NAME"
-          
-          echo "Running tests for $VENDOR/$MODULE_NAME at $MODULE_PATH"
-          echo "Listing test directory structure:"
-          find "$MODULE_PATH/tests" -type f -name "*.yml" 2>/dev/null || echo "No yml files found"
-          ls -la "$MODULE_PATH/tests/" || echo "No tests directory"
-          
-          # Check if there's a codeception.yml at the module root
-          if [ -f "$MODULE_PATH/codeception.yml" ]; then
-            echo "Found codeception.yml at module root, running from there"
-            vendor/bin/codecept run -c "$MODULE_PATH"
-          else
-            # Find test directories with codeception config
-            TEST_CONFIGS=$(find "$MODULE_PATH/tests" -name "codeception.yml" -o -name "codeception.dist.yml" 2>/dev/null || echo "")
-            
-            if [ -n "$TEST_CONFIGS" ]; then
-              # Run each test suite that has a config
-              for CONFIG in $TEST_CONFIGS; do
-                CONFIG_DIR=$(dirname "$CONFIG")
-                echo "Running tests with config at: $CONFIG_DIR"
-                vendor/bin/codecept run -c "$CONFIG_DIR"
-              done
-            else
-              # Try the *Test directory pattern
-              TEST_DIRS=$(find "$MODULE_PATH/tests" -maxdepth 1 -type d -name "*Test" 2>/dev/null || echo "")
-              
-              if [ -n "$TEST_DIRS" ]; then
-                for TEST_DIR in $TEST_DIRS; do
-                  # Check if codeception config exists in the test directory
-                  if [ -f "$TEST_DIR/codeception.yml" ] || [ -f "$TEST_DIR/codeception.dist.yml" ]; then
-                    echo "Running tests in: $TEST_DIR"
-                    vendor/bin/codecept run -c "$TEST_DIR"
-                  else
-                    echo "No codeception config found in $TEST_DIR, checking subdirectories..."
-                    # Look for config in subdirectories
-                    SUB_CONFIGS=$(find "$TEST_DIR" -name "codeception.yml" -o -name "codeception.dist.yml" 2>/dev/null)
-                    if [ -n "$SUB_CONFIGS" ]; then
-                      for SUB_CONFIG in $SUB_CONFIGS; do
-                        SUB_DIR=$(dirname "$SUB_CONFIG")
-                        echo "Running tests with config at: $SUB_DIR"
-                        vendor/bin/codecept run -c "$SUB_DIR"
-                      done
-                    else
-                      echo "No codeception config found in $TEST_DIR or subdirectories"
-                    fi
-                  fi
-                done
-              else
-                echo "No test directories or configurations found!"
-                exit 1
-              fi
-            fi
-          fi
-          
-          echo "All test suites completed"
-
-      - name: Run PHPStan (if configured)
-        working-directory: spryker-project
-        run: |
-          VENDOR="${{ steps.module-info.outputs.vendor }}"
-          MODULE_NAME="${{ steps.module-info.outputs.name }}"
-          MODULE_PATH="vendor/$VENDOR/$MODULE_NAME"
-          
-          if [ -f "$MODULE_PATH/phpstan.neon" ] || [ -f "$MODULE_PATH/phpstan.neon.dist" ]; then
-            if [ ! -f "vendor/bin/phpstan" ]; then
-              composer require --dev phpstan/phpstan --no-interaction
-            fi
-            vendor/bin/phpstan analyse -c "$MODULE_PATH/phpstan.neon" "$MODULE_PATH/src" || echo "PHPStan analysis completed"
-          else
-            echo "No PHPStan configuration found, skipping static analysis"
-          fi
-
-      - name: Run Code Sniffer (if configured)
-        working-directory: spryker-project
-        run: |
-          VENDOR="${{ steps.module-info.outputs.vendor }}"
-          MODULE_NAME="${{ steps.module-info.outputs.name }}"
-          MODULE_PATH="vendor/$VENDOR/$MODULE_NAME"
-          
-          if [ ! -f "vendor/bin/phpcs" ]; then
-            composer require --dev squizlabs/php_codesniffer --no-interaction
-          fi
-          
-          vendor/bin/phpcs "$MODULE_PATH/src" --standard=vendor/spryker/code-sniffer/Spryker/ruleset.xml --ignore=*/Generated/* || echo "Code sniff completed"
-
-      - name: Upload test results
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: test-results-php-${{ matrix.php-version }}
-          path: |
-            spryker-project/tests/_output/
-            spryker-project/tests/_log/
-          retention-days: 7
+          vendor/bin/codecept run -c "$MODULE_PATH"
