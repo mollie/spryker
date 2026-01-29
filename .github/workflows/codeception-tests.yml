@@ -9,6 +9,12 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    env:
+      APPLICATION_ENV: ci.mysql
+      APPLICATION_STORE: DE
+      PROJECT: suite
+      SPRYKER_CURRENT_REGION: EU
+      COMPOSER_IGNORE_CHROMEDRIVER: 1
 
     services:
       postgres:
@@ -121,16 +127,6 @@ jobs:
         working-directory: spryker-project
         run: vendor/bin/console transfer:databuilder:generate
 
-      - name: Propel install
-        working-directory: spryker-project
-        run: |
-          vendor/bin/console propel:schema:copy
-          vendor/bin/console propel:model:build
-          vendor/bin/console transfer:entity:generate
-
-      - name: Codecept build
-        run: vendor/bin/codecept build -q
-
       - name: Get module name from composer.json
         id: module-info
         run: |
@@ -222,6 +218,13 @@ jobs:
           
           # Also create config_test.php for test environment
           cp config/Shared/config_local.php config/Shared/config_test.php
+
+      - name: Propel install
+        working-directory: spryker-project
+        run: |
+          vendor/bin/console propel:schema:copy
+          vendor/bin/console propel:model:build
+          vendor/bin/console transfer:entity:generate
 
       - name: Setup Codeception
         working-directory: spryker-project
