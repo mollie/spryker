@@ -84,7 +84,7 @@ class CreatePaymentApiTest extends AbstractClientTest
     {
         $response = [
             CreatePaymentRequest::class => new MockResponse(
-                '{"resource":"payment","id":"tr_IUDAHSMGnU6qLbRaksas","mode":"live","amount":{"value":"10.00","currency":"EUR"},"description":"Order #12345","sequenceType":"oneoff","redirectUrl":"https://webshop.example.org/order/12345/","webhookUrl":"https://webshop.example.org/payments/webhook/","metadata":{"order_id":12345},"profileId":"pfl_QkEhN94Ba","status":"open","isCancelable":false,"createdAt":"2024-03-20T09:13:37+00:00","expiresAt":"2024-03-20T09:28:37+00:00","_links":{"self":{"href":"...","type":"application/hal+json"},"checkout":{"href":"https://www.mollie.com/checkout/select-method/7UhSN1zuXS","type":"text/html"},"dashboard":{"href":"https://www.mollie.com/dashboard/org_12345678/payments/tr_5B8cwPMGnU6qLbRvo7qEZo","type":"text/html"},"documentation":{"href":"...","type":"text/html"}}}',
+                $this->tester->getMollieMockedPaymentTransactionResponsePayload(),
             ),
         ];
 

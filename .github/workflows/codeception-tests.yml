@@ -153,10 +153,7 @@ jobs:
           composer config repositories.local-module path ../module-code
           
           # Require the module from the local path
-          composer require "$FULL_NAME:*" --no-update
-          
-          # Update only this package
-          composer update "$FULL_NAME" --no-interaction
+          composer require "$FULL_NAME"
           
           echo "Module $FULL_NAME installed from local path"
 
