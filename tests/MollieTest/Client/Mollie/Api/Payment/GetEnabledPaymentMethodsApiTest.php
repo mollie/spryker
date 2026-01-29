@@ -15,8 +15,10 @@ use Mollie\Api\MollieApiClient;
 use Mollie\Client\Mollie\MollieClient;
 use Mollie\Client\Mollie\MollieClientInterface;
 use Mollie\Client\Mollie\MollieConfig;
+use Mollie\Client\Mollie\MollieDependencyProvider;
 use Mollie\Client\Mollie\MollieFactory;
 use MollieTest\Client\Mollie\AbstractClientTest;
+use Spryker\Client\Kernel\Container;
 
 class GetEnabledPaymentMethodsApiTest extends AbstractClientTest
 {
@@ -35,14 +37,16 @@ class GetEnabledPaymentMethodsApiTest extends AbstractClientTest
           $mollieFactoryMock->method('createMollieApiClient')
             ->willReturn($this->createMockApiClientForEnabledPaymentMethods());
           
-                 $mollieFactoryMock->setConfig(new MollieConfig());
+        $mollieFactoryMock->setConfig(new MollieConfig());
 
           $mollieClient = (new MollieClient())->setFactory($mollieFactoryMock);
           $transfer = $this->createMollieApiRequestTransfer();
 
         $response = $mollieClient->getEnabledPaymentMethods($transfer);
 
-          $methods = $response->getCollection()->getMethods();
+        fwrite(STDERR, print_r($response->toArray(), true));
+
+        $methods = $response->getCollection()->getMethods();
         $methodIds = $this->getMethodIds($methods);
 
         $this->assertNotEmpty($methods);
