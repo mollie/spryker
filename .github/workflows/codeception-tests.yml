@@ -179,6 +179,8 @@ jobs:
           use Spryker\Shared\Storage\StorageConstants;
           use Spryker\Shared\Application\ApplicationConstants;
           use Spryker\Shared\Kernel\KernelConstants;
+          use Mollie\Shared\Mollie\MollieConfig;
+          use Mollie\Shared\Mollie\MollieConstants;
           
           // Database Configuration
           $config[PropelConstants::ZED_DB_USERNAME] = 'spryker';
