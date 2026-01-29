@@ -205,6 +205,48 @@ jobs:
           $config[ApplicationConstants::ENABLE_APPLICATION_DEBUG] = true;
           $config[KernelConstants::ENABLE_CONTAINER_OVERRIDING] = true;
           $config[KernelConstants::RESOLVABLE_CLASS_NAMES_CACHE_ENABLED] = false;
+          $config[KernelConstants::CORE_NAMESPACES] = [
+              'SprykerShop',
+              'SprykerEco',
+              'Spryker',
+              'SprykerSdk',
+              'Mollie',
+          ];
+          
+          // ----------------------------------------------------------------------------
+          // ------------------------------ Mollie API -------------------------------
+          // ----------------------------------------------------------------------------
+          $config[MollieConstants::MOLLIE] = [
+              MollieConstants::MOLLIE_PROFILE_ID => 'pfl_pD5UernhAv',
+              MollieConstants::MOLLIE_TEST_MODE => true,
+              MollieConstants::MOLLIE_API_KEY => getenv('MOLLIE_API_KEY') ?: '',
+          
+              MollieConstants::MOLLIE_REDIRECT_URL => sprintf('https://%s%s', $sprykerFrontendHost, '/checkout/payment-redirect'),
+              MollieConstants::MOLLIE_WEBHOOK_URL => sprintf('https://%s%s', $sprykerFrontendHost, '/mollie/webhook'),
+              MollieConstants::MOLLIE_CREDIT_CARD_COMPONENTS_ENABLED => true,
+              MollieConstants::MOLLIE_CREDIT_CARD_COMPONENTS_JS_SRC => 'https://js.mollie.com/v1/mollie.js',
+              MollieConstants::MOLLIE_TEST_ENVIRONMENT_WEBHOOK_URL => sprintf(
+                  'http://%s:%s@%s%s',
+                  getenv('SPRYKER_YVES_AUTH_USERNAME') ?? null,
+                  getenv('SPRYKER_YVES_AUTH_PASSWORD') ?? null,
+                  $sprykerFrontendHost,
+                  '/mollie/webhook',
+              ),
+              MollieConstants::MOLLIE_OMS_TO_PAYMENT_METHOD_MAPPING => [
+                  'mollieCreditCardPayment' => 'creditcard',
+                  'molliePayPalPayment' => 'paypal',
+                  'mollieBankTransferPayment' => 'banktransfer',
+                  'mollieKlarnaPayment' => 'klarna',
+                  'mollieKlarnaPayLaterPayment' => 'klarna',
+                  'mollieKlarnaPayNowPayment' => 'klarna',
+                  'mollieKlarnaSliceItPayment' => 'klarna',
+                  'mollieEpsPayment' => 'eps',
+                  'mollieIdealPayment' => 'ideal',
+                  'mollieBancontactPayment' => 'bancontact',
+                  'mollieKbcPayment' => 'kbc',
+                  'molliePayByBankPayment' => 'paybybank',
+              ],
+          ];
           
           EOF
           
