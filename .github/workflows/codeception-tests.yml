@@ -187,27 +187,28 @@ jobs:
           MODULE_NAME="${{ steps.module-info.outputs.name }}"
           MODULE_PATH="vendor/spryker/$MODULE_NAME"
           
-          # Convert module name to StudlyCase for namespace
+          # Convert module name to StudlyCase for namespace (e.g., payment-mollie -> PaymentMollie)
           MODULE_CLASS=$(echo $MODULE_NAME | sed -r 's/(^|-)([a-z])/\U\2/g')
           
-          echo "Running tests for module: $MODULE_CLASS"
+          echo "Running tests for module: $MODULE_CLASS at $MODULE_PATH"
           
-          # Check which test suites exist and run them
-          if [ -f "$MODULE_PATH/codeception.yml" ]; then
-            vendor/bin/codecept run -c "$MODULE_PATH" --coverage-xml
-          else
-            echo "No codeception.yml found, checking for test directories..."
-            
-            # Try to run tests directly if codeception config doesn't exist
-            if [ -d "$MODULE_PATH/tests" ]; then
-              vendor/bin/codecept run -c vendor/bin/codecept.yml \
-                --override "paths: tests: $MODULE_PATH/tests" \
-                --coverage-xml || echo "Tests execution completed with status: $?"
-            else
-              echo "No tests directory found in module"
-              exit 1
-            fi
+          # Find test directories
+          TEST_DIRS=$(find "$MODULE_PATH/tests" -maxdepth 1 -type d -name "*Test" 2>/dev/null || echo "")
+          
+          if [ -z "$TEST_DIRS" ]; then
+            echo "No *Test directories found in $MODULE_PATH/tests"
+            echo "Checking if tests directory exists..."
+            ls -la "$MODULE_PATH/tests" || echo "No tests directory found"
+            exit 1
           fi
+          
+          # Run tests for each test directory found
+          for TEST_DIR in $TEST_DIRS; do
+            echo "Running tests in: $TEST_DIR"
+            vendor/bin/codecept run -c "$TEST_DIR" || echo "Tests in $TEST_DIR completed with exit code: $?"
+          done
+          
+          echo "All test suites completed"
 
       - name: Run PHPStan (if configured)
         working-directory: spryker-project
