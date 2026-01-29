@@ -61,6 +61,8 @@ abstract class AbstractApiCall implements ApiCallInterface
             $result = $this->mollieApiClient->send($request);
             $response = $result->getResponse();
 
+            echo $this->mollieApiClient->send($request);
+
             if ($response->status() === Response::HTTP_OK || $response->status() === Response::HTTP_CREATED) {
                 $payload = $this->formatApiResponse($response);
                 $mollieApiResponseTransfer = $this->createSuccessResponse($payload);
