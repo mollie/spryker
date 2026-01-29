@@ -17,5 +17,8 @@ suites:
                 - \SprykerTest\Shared\Testify\Helper\Environment
                 - \SprykerTest\Client\Testify\Helper\FactoryHelper
                 - \SprykerTest\Shared\Testify\Helper\ConfigHelper
+                - \SprykerTest\Client\Storage\Helper\StorageHelper
+                - \SprykerTest\Client\Testify\Helper\ClientHelper
+                - \SprykerTest\Client\Testify\Helper\DependencyProviderHelper
                 - \SprykerTest\Shared\Testify\Helper\LocatorHelper:
                     projectNamespaces: ['Mollie']
