@@ -98,7 +98,7 @@ class MollieLogger implements MollieLoggerInterface
      */
     protected function logSuccessfulResponse(MollieLogApiTransfer $logApiTransfer): void
     {
-        $message = sprintf(static::API_SUCCESS_MESSAGE);
+        $message = sprintf(static::API_SUCCESS_MESSAGE, $logApiTransfer->getRequestIdentifier());
         $context = [
             'requestIdentifier' => $logApiTransfer->getRequestIdentifier(),
             'url' => $logApiTransfer->getUrl(),
@@ -120,7 +120,7 @@ class MollieLogger implements MollieLoggerInterface
      */
     protected function logFailedResponse(MollieLogApiTransfer $logApiTransfer): void
     {
-        $message = sprintf(static::API_ERROR_MESSAGE);
+        $message = sprintf(static::API_ERROR_MESSAGE, $logApiTransfer->getRequestIdentifier());
         $context = [
             'requestIdentifier' => $logApiTransfer->getRequestIdentifier(),
             'url' => $logApiTransfer->getUrl(),
