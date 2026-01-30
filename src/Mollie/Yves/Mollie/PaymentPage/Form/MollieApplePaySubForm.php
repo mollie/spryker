@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Mollie\Yves\Mollie\PaymentPage\Form;
 
+use Generated\Shared\Transfer\MollieApplePayPaymentTransfer;
 use Mollie\Shared\Mollie\MollieConfig;
 use Spryker\Yves\StepEngine\Dependency\Form\AbstractSubFormType;
 use Spryker\Yves\StepEngine\Dependency\Form\SubFormInterface;
@@ -15,7 +16,7 @@ class MollieApplePaySubForm extends AbstractSubFormType implements SubFormInterf
     /**
      * @var string
      */
-    protected const PAYMENT_METHOD = 'applepay';
+    protected const PAYMENT_METHOD = 'applePay';
 
     /**
      * @param \Symfony\Component\OptionsResolver\OptionsResolver $resolver
@@ -27,7 +28,7 @@ class MollieApplePaySubForm extends AbstractSubFormType implements SubFormInterf
         parent::configureOptions($resolver);
         $resolver
             ->setDefaults([
-                'data_class' => null,
+                'data_class' => MollieApplePayPaymentTransfer::class,
             ])
             ->setRequired(static::OPTIONS_FIELD_NAME);
     }

@@ -53,6 +53,11 @@ class MollieConfig extends AbstractBundleConfig
     public const REQUEST_PARAMETER_CREATE_PAYMENT_KLARNA_EXTRA_MERCHANT_DATA = 'extraMerchantData';
 
     /**
+     * @var string
+     */
+    public const REQUEST_PARAMETER_CREATE_PAYMENT_APPLE_PAY_PAYMENT_TOKEN = 'applePayPaymentToken';
+
+    /**
      * @var int
      */
     public const MOLLIE_PAYMENT_METHODS_STORAGE_KEY_TTL = 21600;
