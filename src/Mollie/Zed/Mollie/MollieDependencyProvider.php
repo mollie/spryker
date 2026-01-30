@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Mollie\Zed\Mollie;
 
-use Mollie\Service\Mollie\MollieServiceInterface;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToLocaleFacadeBridge;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToLocaleFacadeInterface;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToOmsBridge;

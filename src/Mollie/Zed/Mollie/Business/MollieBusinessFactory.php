@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Mollie\Zed\Mollie\Business;
 
 use Mollie\Client\Mollie\MollieClientInterface;
+use Mollie\Service\Mollie\MollieServiceInterface;
 use Mollie\Zed\Mollie\Business\Calculator\OrderItem\OrderItemGrossAmountCalculator;
 use Mollie\Zed\Mollie\Business\Calculator\OrderItem\OrderItemGrossAmountCalculatorInterface;
-use Mollie\Service\Mollie\MollieServiceInterface;
 use Mollie\Zed\Mollie\Business\Filter\MolliePaymentMethodsFilter;
 use Mollie\Zed\Mollie\Business\Filter\MolliePaymentMethodsFilterInterface;
 use Mollie\Zed\Mollie\Business\Handler\MolliePaymentHandler;

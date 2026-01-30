@@ -75,6 +75,6 @@ class MolliePersistenceFactory extends AbstractPersistenceFactory
      */
     public function getMollieService(): MollieServiceInterface
     {
-        return $this->getProvidedDependency(MollieDependencyProvider::MOLLIE_SERVICE);
+        return $this->getProvidedDependency(MollieDependencyProvider::SERVICE_MOLLIE);
     }
 }

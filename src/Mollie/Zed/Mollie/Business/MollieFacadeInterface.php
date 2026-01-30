@@ -11,8 +11,8 @@ use Generated\Shared\Transfer\MollieRefundResponseTransfer;
 use Generated\Shared\Transfer\MollieRefundTransfer;
 use Generated\Shared\Transfer\OrderCollectionRequestTransfer;
 use Generated\Shared\Transfer\OrderCollectionResponseTransfer;
-use Generated\Shared\Transfer\PaymentMethodsTransfer;
 use Generated\Shared\Transfer\OrderTransfer;
+use Generated\Shared\Transfer\PaymentMethodsTransfer;
 use Generated\Shared\Transfer\QuoteTransfer;
 
 interface MollieFacadeInterface
