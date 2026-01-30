@@ -13,7 +13,7 @@ use Symfony\Component\HttpFoundation\Request;
 /**
  * @method \Mollie\Zed\Mollie\Communication\MollieCommunicationFactory getFactory()
  */
-class PaymentMethodsController extends AbstractController
+class IndexController extends AbstractController
 {
     /**
      * @param \Symfony\Component\HttpFoundation\Request $request
@@ -22,10 +22,13 @@ class PaymentMethodsController extends AbstractController
      */
     public function indexAction(Request $request): array
     {
+        $profileResponseTransfer = $this->getFactory()->getMollieClient()->getCurrentProfile();
+        $profileTransfer = $profileResponseTransfer->getProfile();
         $showOnlyEnabledPaymentMethods = $request->query->get(MollieConstants::MOLLIE_QUERY_PARAMETER_SHOW_ONLY_ENABLED);
         $table = $this->getFactory()->createMolliePaymentMethodsTable();
 
         return $this->viewResponse([
+            'profile' => $profileResponseTransfer->getProfile(),
             'mollieTable' => $table->render(),
             MollieConstants::MOLLIE_QUERY_PARAMETER_SHOW_ONLY_ENABLED => $showOnlyEnabledPaymentMethods,
         ]);
