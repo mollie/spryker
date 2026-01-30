@@ -32,9 +32,9 @@ class MollieRefundWebhookHandlerPlugin extends AbstractPlugin implements MollieW
      */
     public function isApplicable(Request $request): bool
     {
-        $id = $request->request->get('id', '');
+        $refundId = $request->request->get('id', '');
 
-        return str_starts_with($id, static::REFUND_ID_PREFIX);
+        return str_starts_with($refundId, static::REFUND_ID_PREFIX);
     }
 
     /**
