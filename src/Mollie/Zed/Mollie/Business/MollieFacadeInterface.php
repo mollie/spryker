@@ -8,6 +8,7 @@ use Generated\Shared\Transfer\CheckoutResponseTransfer;
 use Generated\Shared\Transfer\MollieRefundApiResponseTransfer;
 use Generated\Shared\Transfer\MollieRefundRequestTransfer;
 use Generated\Shared\Transfer\MollieRefundResponseTransfer;
+use Generated\Shared\Transfer\MollieRefundTransfer;
 use Generated\Shared\Transfer\OrderCollectionRequestTransfer;
 use Generated\Shared\Transfer\OrderCollectionResponseTransfer;
 use Generated\Shared\Transfer\OrderTransfer;
@@ -58,4 +59,11 @@ interface MollieFacadeInterface
      * @return \Generated\Shared\Transfer\OrderTransfer
      */
     public function mapOrderItemsToOrderTransfer(OrderTransfer $orderTransfer, array $orderItems): OrderTransfer;
+
+    /**
+     * @param \Generated\Shared\Transfer\MollieRefundTransfer $mollieRefundTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieRefundResponseTransfer
+     */
+    public function processRefundData(MollieRefundTransfer $mollieRefundTransfer): MollieRefundResponseTransfer;
 }

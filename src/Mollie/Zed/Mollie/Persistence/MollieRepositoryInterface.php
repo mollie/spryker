@@ -19,6 +19,13 @@ interface MollieRepositoryInterface
     public function getOrderItemsByPaymentId(string $paymentId): ObjectCollection|null;
 
     /**
+     * @param string $refundId
+     *
+     * @return \Propel\Runtime\Collection\ObjectCollection|null
+     */
+    public function getOrderItemsFromSpyMollieRefund(string $refundId): ObjectCollection|null;
+
+    /**
      * @param string $orderId
      *
      * @return \Generated\Shared\Transfer\MolliePaymentTransfer

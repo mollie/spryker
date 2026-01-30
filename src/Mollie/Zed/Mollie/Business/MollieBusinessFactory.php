@@ -76,6 +76,9 @@ class MollieBusinessFactory extends AbstractBusinessFactory
             $this->getRepository(),
             $this->getMollieClient(),
             $this->createMollieRefundWritter(),
+            $this->getEntityManager(),
+            $this->createMollieOmsStatusMapper(),
+            $this->getOmsFacade(),
         );
     }
 

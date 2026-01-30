@@ -4,6 +4,7 @@ namespace Mollie\Client\Mollie\Zed;
 
 use Generated\Shared\Transfer\MollieRefundRequestTransfer;
 use Generated\Shared\Transfer\MollieRefundResponseTransfer;
+use Generated\Shared\Transfer\MollieRefundTransfer;
 use Generated\Shared\Transfer\OrderCollectionRequestTransfer;
 use Generated\Shared\Transfer\OrderCollectionResponseTransfer;
 use Spryker\Client\ZedRequest\ZedRequestClientInterface;
@@ -39,5 +40,17 @@ class MollieStub implements MollieStubInterface
         $updateOrderCollectionResponseTransfer = $this->zedStub->call('/mollie/gateway/update-order-collection', $updateOrderCollectionRequestTransfer);
 
         return $updateOrderCollectionResponseTransfer;
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MollieRefundTransfer $mollieRefundTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieRefundResponseTransfer
+     */
+    public function processRefundData(MollieRefundTransfer $mollieRefundTransfer): MollieRefundResponseTransfer
+    {
+        $mollieRefundResponseTransfer = $this->zedStub->call('/mollie/gateway/process-refund-data', $mollieRefundTransfer);
+
+        return $mollieRefundResponseTransfer;
     }
 }

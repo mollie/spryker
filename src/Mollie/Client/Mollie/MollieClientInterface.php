@@ -10,6 +10,7 @@ use Generated\Shared\Transfer\MolliePaymentMethodsApiResponseTransfer;
 use Generated\Shared\Transfer\MollieRefundApiResponseTransfer;
 use Generated\Shared\Transfer\MollieRefundRequestTransfer;
 use Generated\Shared\Transfer\MollieRefundResponseTransfer;
+use Generated\Shared\Transfer\MollieRefundTransfer;
 use Generated\Shared\Transfer\OrderCollectionRequestTransfer;
 use Generated\Shared\Transfer\OrderCollectionResponseTransfer;
 
@@ -134,4 +135,16 @@ interface MollieClientInterface
      * @return void
      */
     public function deleteAllPaymentMethodsCache(MolliePaymentMethodQueryParametersTransfer $parameters): void;
+
+    /**
+     * Specification:
+     * - Processes refund data
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\MollieRefundTransfer $mollieRefundTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieRefundResponseTransfer
+     */
+    public function processRefundData(MollieRefundTransfer $mollieRefundTransfer): MollieRefundResponseTransfer;
 }

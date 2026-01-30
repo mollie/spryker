@@ -22,6 +22,7 @@ class MolleOmsStatusMapper implements MolleOmsStatusMapperInterface
         MollieConfig::CANCELED => MollieStateMachineEvents::OMS_MOLLIE_PAYMENT_CANCELED,
         MollieConfig::EXPIRED => MollieStateMachineEvents::OMS_MOLLIE_PAYMENT_EXPIRED,
         MollieConfig::FAILED => MollieStateMachineEvents::OMS_MOLLIE_PAYMENT_FAILED,
+        MollieConfig::REFUNDED => MollieStateMachineEvents::OMS_MOLLIE_PAYMENT_REFUNDED,
     ];
 
     /**

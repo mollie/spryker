@@ -11,6 +11,7 @@ use Generated\Shared\Transfer\MolliePaymentMethodsApiResponseTransfer;
 use Generated\Shared\Transfer\MollieRefundApiResponseTransfer;
 use Generated\Shared\Transfer\MollieRefundRequestTransfer;
 use Generated\Shared\Transfer\MollieRefundResponseTransfer;
+use Generated\Shared\Transfer\MollieRefundTransfer;
 use Generated\Shared\Transfer\OrderCollectionRequestTransfer;
 use Generated\Shared\Transfer\OrderCollectionResponseTransfer;
 use Spryker\Client\Kernel\AbstractClient;
@@ -160,5 +161,15 @@ class MollieClient extends AbstractClient implements MollieClientInterface
     public function deleteAllPaymentMethodsCache(MolliePaymentMethodQueryParametersTransfer $parameters): void
     {
         $this->getFactory()->createPaymentMethodsCacheDeleter()->deleteAllPaymentMethodsCache($parameters);
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MollieRefundTransfer $mollieRefundTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieRefundResponseTransfer
+     */
+    public function processRefundData(MollieRefundTransfer $mollieRefundTransfer): MollieRefundResponseTransfer
+    {
+        return $this->getFactory()->createZedMollieStub()->processRefundData($mollieRefundTransfer);
     }
 }

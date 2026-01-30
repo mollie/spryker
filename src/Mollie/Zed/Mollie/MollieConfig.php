@@ -36,6 +36,11 @@ class MollieConfig extends AbstractBundleConfig
     /**
      * @var string
      */
+    public const REFUNDED = 'refunded';
+
+    /**
+     * @var string
+     */
     public const RESPONSE_PARAMETER_CREATE_PAYMENT_LINKS_CHECKOUT = 'checkout';
 
     /**

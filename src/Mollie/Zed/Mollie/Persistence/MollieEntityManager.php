@@ -61,6 +61,27 @@ class MollieEntityManager extends AbstractEntityManager implements MollieEntityM
     }
 
     /**
+     * @param \Generated\Shared\Transfer\MollieRefundTransfer $mollieRefundTransfer
+     *
+     * @return void
+     */
+    public function updateMollieRefundWithStatus(MollieRefundTransfer $mollieRefundTransfer): void
+    {
+        $spyRefundMollieEntityCollection = $this->getFactory()
+            ->createSpyRefundMollieQuery()
+            ->findByRefundId($mollieRefundTransfer->getId());
+
+        if (!$spyRefundMollieEntityCollection) {
+            return;
+        }
+
+        foreach ($spyRefundMollieEntityCollection as $spyRefundMollieEntity) {
+            $spyRefundMollieEntity->setStatus($mollieRefundTransfer->getStatus());
+            $spyRefundMollieEntity->save();
+        }
+    }
+
+    /**
      * @param \Generated\Shared\Transfer\OrderTransfer $orderTransfer
      * @param \Generated\Shared\Transfer\MolliePaymentTransfer $molliePaymentTransfer
      * @param \Generated\Shared\Transfer\MollieRefundTransfer $mollieRefundTransfer

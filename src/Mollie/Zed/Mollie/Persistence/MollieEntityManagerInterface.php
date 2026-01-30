@@ -27,6 +27,13 @@ interface MollieEntityManagerInterface
     public function addMolliePaymentData(int $idSalesOrder, MolliePaymentTransfer $molliePaymentTransfer): void;
 
     /**
+     * @param \Generated\Shared\Transfer\MollieRefundTransfer $mollieRefundTransfer
+     *
+     * @return void
+     */
+    public function updateMollieRefundWithStatus(MollieRefundTransfer $mollieRefundTransfer): void;
+
+    /**
      * @param \Generated\Shared\Transfer\OrderTransfer $orderTransfer
      * @param \Generated\Shared\Transfer\MolliePaymentTransfer $molliePaymentTransfer
      * @param \Generated\Shared\Transfer\MollieRefundTransfer $mollieRefundTransfer

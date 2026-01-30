@@ -37,6 +37,24 @@ class MollieRepository extends AbstractRepository implements MollieRepositoryInt
     }
 
     /**
+     * @param string $refundId
+     *
+     * @return \Propel\Runtime\Collection\ObjectCollection|null
+     */
+    public function getOrderItemsFromSpyMollieRefund(string $refundId): ObjectCollection|null
+    {
+        $spyRefundMollieCollection = $this->getFactory()
+            ->createSpyRefundMollieQuery()
+            ->filterByRefundId($refundId)
+            ->joinWithSpySalesOrderItem()
+            ->find();
+
+        return $this->getFactory()
+            ->createMollieOrderItemMapper()
+            ->extractOrderItemsFromSpyRefundMollieEntity($spyRefundMollieCollection);
+    }
+
+    /**
      * @param string $orderId
      *
      * @return \Generated\Shared\Transfer\MolliePaymentTransfer
