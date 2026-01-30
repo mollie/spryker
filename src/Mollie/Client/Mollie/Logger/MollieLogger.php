@@ -106,7 +106,7 @@ class MollieLogger implements MollieLoggerInterface
         ];
 
         if ($this->mode === MollieConstants::MOLLIE_LOGGER_EXTENSIVE) {
-            $context['requestBody'] = $logApiTransfer->getRequest();
+            $context['requestBody'] = $logApiTransfer->getRequestBody();
             $context['responseBody'] = $logApiTransfer->getPayload();
         }
 
@@ -129,7 +129,7 @@ class MollieLogger implements MollieLoggerInterface
         ];
 
         if ($this->mode === MollieConstants::MOLLIE_LOGGER_EXTENSIVE) {
-            $context['requestBody'] = $logApiTransfer->getRequest();
+            $context['requestBody'] = $logApiTransfer->getRequestBody();
         }
 
         $this->getLogger()->error($message, $context);
