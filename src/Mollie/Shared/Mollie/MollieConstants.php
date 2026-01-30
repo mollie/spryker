@@ -59,6 +59,11 @@ interface MollieConstants
      */
     public const MOLLIE_CREDIT_CARD_COMPONENTS_JS_SRC = 'MOLLIE:MOLLIE_CREDIT_CARD_COMPONENTS_JS_SRC';
 
+    /**
+     * @var string
+     */
+    public const MOLLIE_INCLUDE_WALLETS = 'MOLLIE:MOLLIE_INCLUDE_WALLETS';
+
     // Payment statuses from Mollie
     /**
      * @var string
