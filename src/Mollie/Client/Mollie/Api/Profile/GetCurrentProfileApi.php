@@ -16,9 +16,9 @@ use Spryker\Shared\Kernel\Transfer\AbstractTransfer;
 class GetCurrentProfileApi extends AbstractApiCall
 {
     /**
-     * @param MollieApiRequestTransfer|null $mollieApiRequestTransfer
+     * @param \Generated\Shared\Transfer\MollieApiRequestTransfer|null $mollieApiRequestTransfer
      *
-     * @return Request|null
+     * @return \Mollie\Api\Http\Request|null
      */
     public function buildRequest(?MollieApiRequestTransfer $mollieApiRequestTransfer = null): ?Request
     {
@@ -38,7 +38,7 @@ class GetCurrentProfileApi extends AbstractApiCall
             ->setIsSuccessful($mollieApiResponseTransfer->getIsSuccessful())
             ->setMessage($mollieApiResponseTransfer->getMessage())
             ->setProfile(new MollieProfileTransfer()->fromArray($payload, true));
-        
+
         return $molliePaymentMethodsApiResponseTransfer;
     }
 }

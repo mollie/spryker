@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace Mollie\Zed\Mollie\Communication\Controller;
 
-use Symfony\Component\HttpFoundation\Request;
-
 use Spryker\Zed\Kernel\Communication\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @method \Mollie\Zed\Mollie\Communication\MollieCommunicationFactory getFactory()
@@ -14,7 +13,7 @@ use Spryker\Zed\Kernel\Communication\Controller\AbstractController;
 class ApiKeyController extends AbstractController
 {
     /**
-     * @param Request $request
+     * @param \Symfony\Component\HttpFoundation\Request $request
      *
      * @return array
      */
@@ -28,6 +27,7 @@ class ApiKeyController extends AbstractController
 
         if ($form->isSubmitted() && $form->isvalid()) {
             $form->handleRequest($request);
+
             return [];
         }
 

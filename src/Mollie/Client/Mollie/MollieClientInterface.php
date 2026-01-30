@@ -96,9 +96,9 @@ interface MollieClientInterface
      * @return void
      */
     public function deleteAllPaymentMethodsCache(MolliePaymentMethodQueryParametersTransfer $parameters): void;
-    
+
     /**
-     * @return MollieGetProfileApiResponseTransfer
+     * @return \Generated\Shared\Transfer\MollieGetProfileApiResponseTransfer
      */
     public function getCurrentProfile(): MollieGetProfileApiResponseTransfer;
 }

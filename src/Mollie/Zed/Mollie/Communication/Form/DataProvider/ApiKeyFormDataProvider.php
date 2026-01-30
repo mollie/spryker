@@ -10,11 +10,12 @@ use Mollie\Zed\Mollie\Dependency\Facade\MollieToStoreFacadeInterface;
 class ApiKeyFormDataProvider
 {
     /**
-     * @param MollieToStoreFacadeInterface $storeFacade
+     * @param \Mollie\Zed\Mollie\Dependency\Facade\MollieToStoreFacadeInterface $storeFacade
      */
     public function __construct(
         protected MollieToStoreFacadeInterface $storeFacade,
-    ){}
+    ) {
+    }
 
     /**
      * @return array

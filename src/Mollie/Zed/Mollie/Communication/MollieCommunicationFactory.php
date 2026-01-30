@@ -71,7 +71,7 @@ class MollieCommunicationFactory extends AbstractCommunicationFactory
      * @param array $data
      * @param array $options
      *
-     * @return FormInterface
+     * @return \Symfony\Component\Form\FormInterface
      */
     public function createApiKeyForm(array $data = [], array $options = []): FormInterface
     {
@@ -79,12 +79,12 @@ class MollieCommunicationFactory extends AbstractCommunicationFactory
     }
 
     /**
-     * @return ApiKeyFormDataProvider
+     * @return \Mollie\Zed\Mollie\Communication\Form\DataProvider\ApiKeyFormDataProvider
      */
     public function createApiKeyFormDataProvider(): ApiKeyFormDataProvider
     {
         return new ApiKeyFormDataProvider(
-            $this->getStoreFacade()
+            $this->getStoreFacade(),
         );
     }
 

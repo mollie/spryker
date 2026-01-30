@@ -97,9 +97,9 @@ class MollieFactory extends AbstractFactory
     }
 
     /**
-     * @return GetCurrentProfileApi
+     * @return \Mollie\Client\Mollie\Api\Profile\GetCurrentProfileApi
      */
-    public function createGetCurrentProfileApi(): GetCurrentProfileApi 
+    public function createGetCurrentProfileApi(): GetCurrentProfileApi
     {
         return new GetCurrentProfileApi(
             $this->createMollieApiClient(),

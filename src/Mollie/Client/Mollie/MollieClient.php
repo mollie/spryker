@@ -116,7 +116,7 @@ class MollieClient extends AbstractClient implements MollieClientInterface
     }
 
     /**
-     * @return MollieGetProfileApiResponseTransfer
+     * @return \Generated\Shared\Transfer\MollieGetProfileApiResponseTransfer
      */
     public function getCurrentProfile(): MollieGetProfileApiResponseTransfer
     {
