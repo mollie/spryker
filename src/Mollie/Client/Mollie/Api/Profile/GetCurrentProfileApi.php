@@ -37,7 +37,7 @@ class GetCurrentProfileApi extends AbstractApiCall
         $molliePaymentMethodsApiResponseTransfer
             ->setIsSuccessful($mollieApiResponseTransfer->getIsSuccessful())
             ->setMessage($mollieApiResponseTransfer->getMessage())
-            ->setProfile(new MollieProfileTransfer()->fromArray($payload, true));
+            ->setProfile((new MollieProfileTransfer())->fromArray($payload, true));
 
         return $molliePaymentMethodsApiResponseTransfer;
     }
