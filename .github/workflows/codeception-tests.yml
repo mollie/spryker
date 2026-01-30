@@ -1,4 +1,4 @@
-name: Codeception tests
+name: Codeception Tests
 
 on:
   push:
