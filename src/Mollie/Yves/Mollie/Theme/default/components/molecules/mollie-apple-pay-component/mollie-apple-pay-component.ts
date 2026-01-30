@@ -24,6 +24,7 @@ export default class MollieApplePayComponent extends Component {
          const applePaySupported = this.isApplePaySupportedOS();
 
         if (!applePaySupported) {
+            console.warn('Apple Pay is not supported on this OS. Hiding Apple Pay option.');
             this.hideApplePay();
         }
 
