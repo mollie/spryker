@@ -1,12 +1,10 @@
 <?php
 
-
 declare(strict_types = 1);
 
 namespace MollieTest\Client\Mollie;
 
 use Codeception\Test\Unit;
-use Generated\Shared\Transfer\StorageScanResultTransfer;
 use Mollie\Api\Fake\MockMollieClient;
 use Mollie\Api\MollieApiClient;
 use Mollie\Client\Mollie\Dependency\Client\MollieToStorageClientBridge;
@@ -52,10 +50,6 @@ abstract class AbstractClientTest extends Unit
         $dependencyProvider->provideServiceLayerDependencies($container);
         $mollieFactoryMock->setContainer($container);
 
-        $mollieToStorageClientBridgeMock = $this->createMollieToStorageClientBridgeMock();
-        $mollieFactoryMock->method('getStorageClient')
-            ->willReturn($mollieToStorageClientBridgeMock);
-
         return $mollieFactoryMock;
     }
 
@@ -64,16 +58,10 @@ abstract class AbstractClientTest extends Unit
      */
     public function createMollieToStorageClientBridgeMock(): MollieToStorageClientBridge
     {
-        $mock = $this->getMockBuilder(MollieToStorageClientBridge::class)
+         return $this->getMockBuilder(MollieToStorageClientBridge::class)
             ->onlyMethods(['get', 'set', 'scanKeys'])
             ->setConstructorArgs([$this->tester->getStorageClient()])
             ->getMock();
-
-        $mock->method('scanKeys')->willReturn((new StorageScanResultTransfer())->setKeys([
-            'kv:enabled_payment_methods:pfl_pD5UernhAv:test:issuers-included:oneoff:en_US',
-        ]));
-
-        return $mock;
     }
 
     /**
