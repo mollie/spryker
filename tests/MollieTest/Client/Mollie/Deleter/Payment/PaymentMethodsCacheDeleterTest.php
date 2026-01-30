@@ -58,7 +58,7 @@ class PaymentMethodsCacheDeleterTest extends AbstractClientTest
     }
 
     /**
-     * @param \PHPUnit\Framework\MockObject\MockObject|null $mollieFactory
+     * @param \Mollie\Client\Mollie\MollieFactory|null $mollieFactory
      * @param string $cacheKey
      *
      * @return \Mollie\Client\Mollie\MollieClientInterface
