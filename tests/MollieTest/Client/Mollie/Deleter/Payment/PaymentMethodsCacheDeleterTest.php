@@ -15,9 +15,9 @@ use PHPUnit\Framework\MockObject\MockObject;
 
 class PaymentMethodsCacheDeleterTest extends AbstractClientTest
 {
- /**
-  * @return void
-  */
+    /**
+     * @return void
+     */
     public function testDeleteEnabledPaymentMethodsCacheRemovesItFromStorage(): void
     {
         // Arrange
@@ -36,9 +36,9 @@ class PaymentMethodsCacheDeleterTest extends AbstractClientTest
         $this->tester->assertStorageNotHasKey($cacheKey);
     }
 
-      /**
-       * @return void
-       */
+    /**
+     * @return void
+     */
     public function testDeleteAllPaymentMethodsCacheRemovesItFromStorage(): void
     {
         // Arrange
@@ -57,12 +57,12 @@ class PaymentMethodsCacheDeleterTest extends AbstractClientTest
         $this->tester->assertStorageNotHasKey($cacheKey);
     }
 
-     /**
-      * @param \Mollie\Client\Mollie\MollieFactory|null $mollieFactory
-      * @param string $cacheKey
-      *
-      * @return \Mollie\Client\Mollie\MollieClientInterface
-      */
+    /**
+     * @param \PHPUnit\Framework\MockObject\MockObject|null $mollieFactory
+     * @param string $cacheKey
+     *
+     * @return \Mollie\Client\Mollie\MollieClientInterface
+     */
     public function createClient(?MockObject $mollieFactory, string $cacheKey): MollieClientInterface
     {
         $mollieFactory->method('getStorageClient')->willReturn($this->getMollieToStorageClientBridgeMock($cacheKey));
