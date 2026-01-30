@@ -95,7 +95,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: spryker-shop/b2c-demo-shop
-          ref: master  # or specific version tag like '202404.0'
+          ref: master
           path: spryker-project
 
       - name: Install Spryker dependencies
