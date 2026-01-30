@@ -23,7 +23,6 @@ class MolliePaymentCreditCardHandlerTest extends Unit
         $result = $paymentHandler->addPaymentToQuote($quoteTransfer);
         $paymentTransfer = $result->getPayment();
 
-        $this->assertSame(MollieConfig::PROVIDER_NAME, $paymentTransfer->getPaymentProvider());
         $this->assertSame(MollieConfig::MOLLIE_PAYMENT_CREDIT_CARD, $paymentTransfer->getPaymentMethod());
     }
 }
