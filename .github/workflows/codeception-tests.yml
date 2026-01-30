@@ -173,11 +173,6 @@ jobs:
       - name: Setup Spryker configuration
         working-directory: spryker-project
         run: |
-          # Copy environment configuration
-          if [ -f config/Shared/config_default.php ]; then
-            cp config/Shared/config_default.php config/Shared/config_local.php
-          fi
-          
           # Create test database configuration
           cat > config/Shared/config_local.php << 'EOF'
           <?php

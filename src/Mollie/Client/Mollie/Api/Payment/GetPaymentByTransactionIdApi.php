@@ -69,4 +69,12 @@ class GetPaymentByTransactionIdApi extends AbstractApiCall
 
         return $this->request;
     }
+
+    /**
+     * @return array
+     */
+    protected function buildLogRequest(): array
+    {
+        return [];
+    }
 }

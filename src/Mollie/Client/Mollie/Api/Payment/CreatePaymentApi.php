@@ -196,4 +196,25 @@ class CreatePaymentApi extends AbstractApiCall
 
         return $molliePaymentApiResponseTransfer;
     }
+
+    /**
+     * @return array
+     */
+    protected function buildLogRequest(): array
+    {
+        /** @var \Mollie\Api\Http\Requests\CreatePaymentRequest $createPaymentRequest */
+        $createPaymentRequest = $this->request;
+
+        $payload = $createPaymentRequest->payload();
+        $data = $payload->all();
+        if (isset($data['metadata']['orderReference'])) {
+            $data['metadata']['orderReference'] = static::MASKED;
+        }
+
+        if (isset($data['description'])) {
+            $data['description'] = static::MASKED;
+        }
+
+        return $data;
+    }
 }

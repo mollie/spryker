@@ -57,11 +57,9 @@ abstract class AbstractApiCall implements ApiCallInterface
     abstract protected function mapApiResponse(MollieApiResponseTransfer $mollieApiResponseTransfer): AbstractTransfer;
 
     /**
-     * @param \Generated\Shared\Transfer\MollieApiResponseTransfer $mollieApiResponseTransfer
-     *
-     * @return \Generated\Shared\Transfer\MollieLogApiTransfer
+     * @return array
      */
-    abstract protected function buildLogApiTransfer(MollieApiResponseTransfer $mollieApiResponseTransfer): MollieLogApiTransfer;
+    abstract protected function buildLogRequest(): array;
 
     /**
      * @param \Generated\Shared\Transfer\MollieApiRequestTransfer|null $mollieApiRequestTransfer
@@ -93,7 +91,7 @@ abstract class AbstractApiCall implements ApiCallInterface
             $mollieApiResponseTransfer = $this->createExceptionResponse($exception->getMessage());
         }
 
-        $this->logResponse($mollieApiResponseTransfer);
+        $this->logApiResponse($mollieApiResponseTransfer);
 
         return $this->mapApiResponse($mollieApiResponseTransfer);
     }
@@ -103,24 +101,26 @@ abstract class AbstractApiCall implements ApiCallInterface
      *
      * @return void
      */
-    protected function logResponse(MollieApiResponseTransfer $mollieApiResponseTransfer): void
+    protected function logApiResponse(MollieApiResponseTransfer $mollieApiResponseTransfer): void
     {
+        $mollieApiLogTransfer = new MollieLogApiTransfer();
         $apiClassName = (new ReflectionClass($this))->getShortName();
         $mollieApiResponseTransfer->setRequestIdentifier($apiClassName);
+
         if ($this->request) {
-            $requestData = $this->request->query()->all();
             $url = sprintf(
                 static::URL_FORMAT,
                 $this->mollieApiClient->resolveBaseUrl(),
                 $this->request->resolveResourcePath(),
             );
 
-            $mollieApiResponseTransfer->setUrl($url);
-            $mollieApiResponseTransfer->setRequest($requestData);
+            $mollieApiLogTransfer->setUrl($url);
         }
 
-        $logApiTransfer = $this->buildLogApiTransfer($mollieApiResponseTransfer);
-        $this->logger->logResponse($logApiTransfer);
+        $logRequest = $this->buildLogRequest();
+        $mollieApiLogTransfer->setRequest($logRequest);
+
+        $this->logger->logResponse($mollieApiLogTransfer);
     }
 
     /**
