@@ -7,6 +7,9 @@ namespace Mollie\Zed\Mollie\Business;
 use Mollie\Client\Mollie\MollieClientInterface;
 use Mollie\Zed\Mollie\Business\Calculator\OrderItem\OrderItemGrossAmountCalculator;
 use Mollie\Zed\Mollie\Business\Calculator\OrderItem\OrderItemGrossAmountCalculatorInterface;
+use Mollie\Service\Mollie\MollieServiceInterface;
+use Mollie\Zed\Mollie\Business\Filter\MolliePaymentMethodsFilter;
+use Mollie\Zed\Mollie\Business\Filter\MolliePaymentMethodsFilterInterface;
 use Mollie\Zed\Mollie\Business\Handler\MolliePaymentHandler;
 use Mollie\Zed\Mollie\Business\Handler\MolliePaymentHandlerInterface;
 use Mollie\Zed\Mollie\Business\Mapper\Oms\MolleOmsStatusMapper;
@@ -21,6 +24,7 @@ use Mollie\Zed\Mollie\Business\Writer\MolliePaymentWriter;
 use Mollie\Zed\Mollie\Business\Writer\MolliePaymentWriterInterface;
 use Mollie\Zed\Mollie\Business\Writer\MollieRefundWriter;
 use Mollie\Zed\Mollie\Business\Writer\MollieRefundWriterInterface;
+use Mollie\Zed\Mollie\Dependency\Facade\MollieToLocaleFacadeInterface;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToOmsInterface;
 use Mollie\Zed\Mollie\Dependency\MollieToStorageClientInterface;
 use Mollie\Zed\Mollie\MollieDependencyProvider;
@@ -133,6 +137,7 @@ class MollieBusinessFactory extends AbstractBusinessFactory
             $this->getMollieClient(),
             $this->getStorageClient(),
             $this->createMolliePaymentWriter(),
+            $this->getConfig(),
         );
     }
 
@@ -150,5 +155,34 @@ class MollieBusinessFactory extends AbstractBusinessFactory
     public function createMolliePaymentWriter(): MolliePaymentWriterInterface
     {
         return new MolliePaymentWriter($this->getEntityManager());
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Business\Filter\MolliePaymentMethodsFilterInterface
+     */
+    public function createMolliePaymentMethodsFilter(): MolliePaymentMethodsFilterInterface
+    {
+        return new MolliePaymentMethodsFilter(
+            $this->getMollieClient(),
+            $this->getMollieService(),
+            $this->getLocaleFacade(),
+            $this->getConfig(),
+        );
+    }
+
+    /**
+     * @return \Mollie\Service\Mollie\MollieServiceInterface
+     */
+    public function getMollieService(): MollieServiceInterface
+    {
+        return $this->getProvidedDependency(MollieDependencyProvider::SERVICE_MOLLIE);
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Dependency\Facade\MollieToLocaleFacadeInterface
+     */
+    public function getLocaleFacade(): MollieToLocaleFacadeInterface
+    {
+        return $this->getProvidedDependency(MollieDependencyProvider::FACADE_LOCALE);
     }
 }

@@ -11,6 +11,12 @@ use Mollie\Client\Mollie\MollieConfig;
 
 class PaymentMethodsCacheDeleter implements PaymentMethodsCacheDeleterInterface
 {
+    public const string KV_PREFIX = 'kv:';
+
+    public const string WILDCARD = '*';
+
+    public const int STORAGE_SCAN_LIMIT = 100;
+
     /**
      * @param \Mollie\Client\Mollie\Generator\Payment\PaymentMethodsCacheKeyGeneratorInterface $keyGenerator
      * @param \Mollie\Client\Mollie\Dependency\Client\MollieToStorageClientInterface $storageClient
@@ -32,7 +38,10 @@ class PaymentMethodsCacheDeleter implements PaymentMethodsCacheDeleterInterface
     {
         $cacheKeyPrefix = $this->config->getCacheKeyPrefixForEnabledPaymentMethods();
         $cacheKey = $this->keyGenerator->generateCacheKey($parameters, $cacheKeyPrefix);
-        $this->storageClient->delete($cacheKey);
+        $cacheKeyWithWildcard = $cacheKey . static::WILDCARD;
+        $storageTransfer = $this->storageClient->scanKeys($cacheKeyWithWildcard, static::STORAGE_SCAN_LIMIT);
+        $formattedKeys = $this->formatKeys($storageTransfer->getKeys());
+        $this->storageClient->deleteMulti($formattedKeys);
     }
 
      /**
@@ -44,6 +53,37 @@ class PaymentMethodsCacheDeleter implements PaymentMethodsCacheDeleterInterface
     {
         $cacheKeyPrefix = $this->config->getCacheKeyPrefixForAllPaymentMethods();
         $cacheKey = $this->keyGenerator->generateCacheKey($parameters, $cacheKeyPrefix);
-        $this->storageClient->delete($cacheKey);
+        $storageTransfer = $this->storageClient->scanKeys($cacheKey, static::STORAGE_SCAN_LIMIT);
+        $formattedKeys = $this->formatKeys($storageTransfer->getKeys());
+        $this->storageClient->deleteMulti($formattedKeys);
+    }
+
+    /**
+     * @param array<string> $keys
+     *
+     * @return array<string>
+     */
+    protected function formatKeys(array $keys): array
+    {
+        $formattedKeys = [];
+        foreach ($keys as $key) {
+            $formattedKeys[] = $this->truncateKeyPrefix($key);
+        }
+
+        return $formattedKeys;
+    }
+
+    /**
+     * @param string $key
+     *
+     * @return string
+     */
+    protected function truncateKeyPrefix(string $key): string
+    {
+        if (str_starts_with($key, static::KV_PREFIX)) {
+            return substr($key, strlen(static::KV_PREFIX));
+        }
+
+        return $key;
     }
 }

@@ -1,4 +1,4 @@
-<?php  //[STAMP] 727aa09086a5dcbbd0b33a732649ed3a
+<?php  //[STAMP] 23b2cca3cabae30878dbd60c15bd2fe6
 // phpcs:ignoreFile
 namespace MollieTest\Client\Mollie\_generated;
 
@@ -1788,10 +1788,10 @@ trait MollieApiClientTesterActions
      *
      * @throws \Exception
      *
-     * @return \Spryker\Client\Kernel\AbstractFactory
-     * @see \SprykerTest\Client\Testify\Helper\FactoryHelper::mockFactoryMethod()
+     * @return \Spryker\Client\Kernel\AbstractFactory|object
+     * @see \SprykerTest\Client\Testify\Helper\ClientHelper::mockFactoryMethod()
      */
-    public function mockFactoryMethod(string $methodName, $return, ?string $moduleName = NULL): \Spryker\Client\Kernel\AbstractFactory {
+    public function mockFactoryMethod(string $methodName, $return, ?string $moduleName = NULL) {
         return $this->getScenario()->runStep(new \Codeception\Step\Action('mockFactoryMethod', func_get_args()));
     }
 
@@ -1802,7 +1802,7 @@ trait MollieApiClientTesterActions
      * @param string|null $moduleName
      *
      * @return \Spryker\Client\Kernel\AbstractFactory
-     * @see \SprykerTest\Client\Testify\Helper\FactoryHelper::getFactory()
+     * @see \SprykerTest\Client\Testify\Helper\ClientHelper::getFactory()
      */
     public function getFactory(?string $moduleName = NULL): \Spryker\Client\Kernel\AbstractFactory {
         return $this->getScenario()->runStep(new \Codeception\Step\Action('getFactory', func_get_args()));
@@ -1921,6 +1921,157 @@ trait MollieApiClientTesterActions
      */
     public function removeConfig(string $key): void {
         $this->getScenario()->runStep(new \Codeception\Step\Action('removeConfig', func_get_args()));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * @param string $key
+     *
+     * @return void
+     * @see \SprykerTest\Client\Storage\Helper\StorageHelper::assertStorageHasKey()
+     */
+    public function assertStorageHasKey(string $key): void {
+        $this->getScenario()->runStep(new \Codeception\Step\Action('assertStorageHasKey', func_get_args()));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * @param string $key
+     *
+     * @return void
+     * @see \SprykerTest\Client\Storage\Helper\StorageHelper::assertStorageNotHasKey()
+     */
+    public function assertStorageNotHasKey(string $key): void {
+        $this->getScenario()->runStep(new \Codeception\Step\Action('assertStorageNotHasKey', func_get_args()));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * This will clean-up the in-memory storage.
+     *
+     * @return void
+     * @see \SprykerTest\Client\Storage\Helper\StorageHelper::cleanupInMemoryStorage()
+     */
+    public function cleanupInMemoryStorage(): void {
+        $this->getScenario()->runStep(new \Codeception\Step\Action('cleanupInMemoryStorage', func_get_args()));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * @return \Spryker\Client\Storage\StorageClientInterface
+     * @see \SprykerTest\Client\Storage\Helper\StorageHelper::getStorageClient()
+     */
+    public function getStorageClient(): \Spryker\Client\Storage\StorageClientInterface {
+        return $this->getScenario()->runStep(new \Codeception\Step\Action('getStorageClient', func_get_args()));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * @param string $key
+     * @param string $value
+     * @param int|null $ttl
+     *
+     * @return void
+     * @see \SprykerTest\Client\Storage\Helper\StorageHelper::mockStorageData()
+     */
+    public function mockStorageData(string $key, string $value, ?int $ttl = NULL): void {
+        $this->getScenario()->runStep(new \Codeception\Step\Action('mockStorageData', func_get_args()));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * @return \SprykerTest\Client\Storage\Helper\InMemoryStoragePluginInterface
+     * @see \SprykerTest\Client\Storage\Helper\StorageHelper::getInMemoryStoragePlugin()
+     */
+    public function getInMemoryStoragePlugin(): \SprykerTest\Client\Storage\Helper\InMemoryStoragePluginInterface {
+        return $this->getScenario()->runStep(new \Codeception\Step\Action('getInMemoryStoragePlugin', func_get_args()));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * @param string $methodName
+     * @param mixed $return
+     * @param string|null $moduleName
+     *
+     * @throws \Exception
+     *
+     * @return \Spryker\Client\Kernel\AbstractClient
+     * @see \SprykerTest\Client\Testify\Helper\ClientHelper::mockClientMethod()
+     */
+    public function mockClientMethod(string $methodName, $return, ?string $moduleName = NULL) {
+        return $this->getScenario()->runStep(new \Codeception\Step\Action('mockClientMethod', func_get_args()));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * @param string|null $moduleName
+     *
+     * @return \Spryker\Client\Kernel\AbstractClient|null
+     * @see \SprykerTest\Client\Testify\Helper\ClientHelper::getClient()
+     */
+    public function getClient(?string $moduleName = NULL) {
+        return $this->getScenario()->runStep(new \Codeception\Step\Action('getClient', func_get_args()));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * @param string $key
+     * @param mixed $value
+     * @param string|null $onlyFor
+     *
+     * @return void
+     * @see \SprykerTest\Client\Testify\Helper\DependencyProviderHelper::setDependency()
+     */
+    public function setDependency($key, $value, $onlyFor = NULL) {
+        return $this->getScenario()->runStep(new \Codeception\Step\Action('setDependency', func_get_args()));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * @param string $methodName
+     * @param mixed $return
+     * @param string|null $moduleName
+     *
+     * @throws \Exception
+     *
+     * @return \Spryker\Client\Kernel\AbstractDependencyProvider
+     * @see \SprykerTest\Client\Testify\Helper\DependencyProviderHelper::mockDependencyProviderMethod()
+     */
+    public function mockDependencyProviderMethod(string $methodName, $return, ?string $moduleName = NULL): \Spryker\Client\Kernel\AbstractDependencyProvider {
+        return $this->getScenario()->runStep(new \Codeception\Step\Action('mockDependencyProviderMethod', func_get_args()));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * @param string|null $moduleName
+     *
+     * @return \Spryker\Client\Kernel\Container
+     * @see \SprykerTest\Client\Testify\Helper\DependencyProviderHelper::getModuleContainer()
+     */
+    public function getModuleContainer(?string $moduleName = NULL): \Spryker\Client\Kernel\Container {
+        return $this->getScenario()->runStep(new \Codeception\Step\Action('getModuleContainer', func_get_args()));
     }
 
  

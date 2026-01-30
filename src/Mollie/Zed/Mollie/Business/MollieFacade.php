@@ -12,6 +12,7 @@ use Generated\Shared\Transfer\MollieRefundTransfer;
 use Generated\Shared\Transfer\OrderCollectionRequestTransfer;
 use Generated\Shared\Transfer\OrderCollectionResponseTransfer;
 use Generated\Shared\Transfer\OrderTransfer;
+use Generated\Shared\Transfer\PaymentMethodsTransfer;
 use Generated\Shared\Transfer\QuoteTransfer;
 use Spryker\Zed\Kernel\Business\AbstractFacade;
 
@@ -54,6 +55,17 @@ class MollieFacade extends AbstractFacade implements MollieFacadeInterface
     public function createPayment(QuoteTransfer $quoteTransfer, CheckoutResponseTransfer $checkoutResponseTransfer): CheckoutResponseTransfer
     {
         return $this->getFactory()->createMolliePaymentHandler()->createPayment($quoteTransfer, $checkoutResponseTransfer);
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\PaymentMethodsTransfer $paymentMethodsTransfer
+     * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
+     *
+     * @return \Generated\Shared\Transfer\PaymentMethodsTransfer
+     */
+    public function filterActiveMolliePaymentMethods(PaymentMethodsTransfer $paymentMethodsTransfer, QuoteTransfer $quoteTransfer): PaymentMethodsTransfer
+    {
+        return $this->getFactory()->createMolliePaymentMethodsFilter()->applyFilter($paymentMethodsTransfer, $quoteTransfer);
     }
 
     /**

@@ -51,7 +51,7 @@ class MollieDependencyProvider extends AbstractBundleDependencyProvider
     /**
      * @var string
      */
-    public const MOLLIE_SERVICE = 'MOLLIE_SERVICE';
+    public const SERVICE_MOLLIE = 'SERVICE_MOLLIE';
 
     /**
      * @param \Spryker\Zed\Kernel\Container $container
@@ -65,6 +65,8 @@ class MollieDependencyProvider extends AbstractBundleDependencyProvider
         $container = $this->addLogger($container);
         $container = $this->addMollieClient($container);
         $container = $this->addStorageClient($container);
+        $container = $this->addMollieService($container);
+        $container = $this->addLocaleFacade($container);
 
         return $container;
     }
@@ -196,7 +198,7 @@ class MollieDependencyProvider extends AbstractBundleDependencyProvider
      */
     protected function addMollieService(Container $container): Container
     {
-        $container->set(static::MOLLIE_SERVICE, function (Container $container): MollieServiceInterface {
+        $container->set(static::SERVICE_MOLLIE, function (Container $container) {
             return $container->getLocator()->mollie()->service();
         });
 
