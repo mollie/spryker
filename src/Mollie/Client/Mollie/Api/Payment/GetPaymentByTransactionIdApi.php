@@ -73,7 +73,7 @@ class GetPaymentByTransactionIdApi extends AbstractApiCall
     /**
      * @return array
      */
-    protected function buildLogRequest(): array
+    protected function buildLogRequestBody(): array
     {
         return [];
     }

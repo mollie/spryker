@@ -59,7 +59,7 @@ abstract class AbstractApiCall implements ApiCallInterface
     /**
      * @return array
      */
-    abstract protected function buildLogRequest(): array;
+    abstract protected function buildLogRequestBody(): array;
 
     /**
      * @param \Generated\Shared\Transfer\MollieApiRequestTransfer|null $mollieApiRequestTransfer
@@ -117,8 +117,8 @@ abstract class AbstractApiCall implements ApiCallInterface
             $mollieApiLogTransfer->setUrl($url);
         }
 
-        $logRequest = $this->buildLogRequest();
-        $mollieApiLogTransfer->setRequest($logRequest);
+        $requestBody = $this->buildLogRequestBody();
+        $mollieApiLogTransfer->setRequestBody($requestBody);
 
         $this->logger->logResponse($mollieApiLogTransfer);
     }

@@ -200,7 +200,7 @@ class CreatePaymentApi extends AbstractApiCall
     /**
      * @return array
      */
-    protected function buildLogRequest(): array
+    protected function buildLogRequestBody(): array
     {
         /** @var \Mollie\Api\Http\Requests\CreatePaymentRequest $createPaymentRequest */
         $createPaymentRequest = $this->request;
