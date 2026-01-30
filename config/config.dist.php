@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 /**
  * Mollie Payment Configuration Blueprint
  * Copy the following blueprint to your config file (e.g., config/Shared/config_default.php)
@@ -8,16 +10,19 @@
 
 use Mollie\Shared\Mollie\MollieConfig;
 use Mollie\Shared\Mollie\MollieConstants;
-use Pyz\Zed\Oms\OmsConfig;
 use Spryker\Shared\Oms\OmsConstants;
 use Spryker\Shared\Sales\SalesConstants;
+use Spryker\Zed\Oms\OmsConfig;
 
 $config[MollieConstants::MOLLIE] = [
     MollieConstants::MOLLIE_PROFILE_ID => '',
-    MollieConstants::MOLLIE_TEST_MODE => false,
+    MollieConstants::MOLLIE_TEST_MODE => true,
     MollieConstants::MOLLIE_API_KEY => '',
     MollieConstants::MOLLIE_REDIRECT_URL => '',
+    MollieConstants::MOLLIE_CREDIT_CARD_COMPONENTS_ENABLED => true,
+    MollieConstants::MOLLIE_CREDIT_CARD_COMPONENTS_JS_SRC => '', //Example: https://js.mollie.com/v1/mollie.js
     MollieConstants::MOLLIE_WEBHOOK_URL => '',
+    MollieConstants::MOLLIE_TEST_ENVIRONMENT_WEBHOOK_URL => '',
     MollieConstants::MOLLIE_OMS_TO_PAYMENT_METHOD_MAPPING => [],
 ];
 $config[OmsConstants::PROCESS_LOCATION] = [

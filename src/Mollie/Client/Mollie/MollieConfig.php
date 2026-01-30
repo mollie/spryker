@@ -120,6 +120,14 @@ class MollieConfig extends AbstractBundleConfig
     }
 
     /**
+     * @return string|null
+     */
+    public function getMollieProfileId(): string|null
+    {
+        return $this->getSharedConfig()->getMollieProfileid();
+    }
+
+    /**
      * @return bool
      */
     public function isMollieTestModeEnabled(): bool

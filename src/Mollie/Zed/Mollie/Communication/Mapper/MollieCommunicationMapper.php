@@ -19,10 +19,7 @@ class MollieCommunicationMapper implements MollieCommunicationMapperInterface
     {
         return (new MollieApiRequestTransfer())
             ->setMolliePaymentMethodQueryParameters(
-                (new MolliePaymentMethodQueryParametersTransfer())
-                    ->setLocale($locale)
-                    ->setIncludeIssuers(true)
-                    ->setSequenceType(MollieConstants::MOLLIE_SEQUENCE_TYPE_ONE_OFF),
+                $this->createMolliePaymentMethodQueryParametersTransfer($locale),
             );
     }
 
@@ -35,6 +32,7 @@ class MollieCommunicationMapper implements MollieCommunicationMapperInterface
     {
         return (new MolliePaymentMethodQueryParametersTransfer())
             ->setLocale($locale)
+            ->setIncludeIssuers(true)
             ->setSequenceType(MollieConstants::MOLLIE_SEQUENCE_TYPE_ONE_OFF);
     }
 }

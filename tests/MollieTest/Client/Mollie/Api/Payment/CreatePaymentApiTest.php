@@ -16,15 +16,12 @@ use Mollie\Api\Fake\MockResponse;
 use Mollie\Api\Http\Requests\CreatePaymentRequest;
 use Mollie\Client\Mollie\MollieClientInterface;
 use MollieTest\Client\Mollie\AbstractClientTest;
-use MollieTest\Client\Mollie\MollieApiClientTester;
 
 class CreatePaymentApiTest extends AbstractClientTest
 {
-    protected MollieApiClientTester $tester;
-
-    /**
-     * @return void
-     */
+ /**
+  * @return void
+  */
     public function testCreatePaymentApi(): void
     {
         $quoteTransfer = new QuoteTransfer();

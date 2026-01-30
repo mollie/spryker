@@ -11,7 +11,7 @@ use Generated\Shared\Transfer\MollieApiRequestTransfer;
 use Generated\Shared\Transfer\MolliePaymentApiResponseTransfer;
 use Generated\Shared\Transfer\QuoteTransfer;
 use Mollie\Client\Mollie\MollieClientInterface;
-use Mollie\Shared\Mollie\MollieConfig as MollieMollieConfig;
+use Mollie\Shared\Mollie\MollieConstants;
 use Mollie\Zed\Mollie\Business\Writer\MolliePaymentWriterInterface;
 use Mollie\Zed\Mollie\Dependency\MollieToStorageClientInterface;
 use Mollie\Zed\Mollie\MollieConfig;
@@ -30,11 +30,13 @@ class MolliePaymentHandler implements MolliePaymentHandlerInterface
      * @param \Mollie\Client\Mollie\MollieClientInterface $mollieClient
      * @param \Mollie\Zed\Mollie\Dependency\MollieToStorageClientInterface $storageClient
      * @param \Mollie\Zed\Mollie\Business\Writer\MolliePaymentWriterInterface $molliePaymentWriter
+     * @param \Mollie\Zed\Mollie\MollieConfig $config
      */
     public function __construct(
         protected MollieClientInterface $mollieClient,
         protected MollieToStorageClientInterface $storageClient,
         protected MolliePaymentWriterInterface $molliePaymentWriter,
+        protected MollieConfig $config,
     ) {
     }
 
@@ -55,16 +57,19 @@ class MolliePaymentHandler implements MolliePaymentHandlerInterface
         if (!$molliePaymentApiResponseTransfer->getIsSuccessful()) {
             $this->getLogger()->error($molliePaymentApiResponseTransfer->getMessage());
             $errors = $this->createErrorMessages($molliePaymentApiResponseTransfer->getMessage());
+            $redirectUrl = $this->getFailedPaymentRedirectUrl($checkoutResponseTransfer->getSaveOrder()->getOrderReference());
             $checkoutResponseTransfer
                 ->setErrors($errors)
-                ->setIsSuccess(false);
+                ->setIsSuccess(false)
+                ->setIsExternalRedirect(true)
+                ->setRedirectUrl($redirectUrl);
 
             return $checkoutResponseTransfer;
         }
 
         $this->savePaymentIdToStorage($molliePaymentApiResponseTransfer->getMolliePayment()->getId(), $checkoutResponseTransfer->getSaveOrderOrFail()->getOrderReference());
         $this->molliePaymentWriter->addMolliePaymentData($checkoutResponseTransfer->getSaveOrder()->getIdSalesOrder(), $molliePaymentApiResponseTransfer->getMolliePayment());
-        $redirectUrl = $this->getRedirectUrl($molliePaymentApiResponseTransfer);
+        $redirectUrl = $this->getSuccessfulPaymentRedirectUrl($molliePaymentApiResponseTransfer);
 
         return $checkoutResponseTransfer
             ->setIsSuccess(true)
@@ -77,11 +82,21 @@ class MolliePaymentHandler implements MolliePaymentHandlerInterface
      *
      * @return string|null
      */
-    protected function getRedirectUrl(MolliePaymentApiResponseTransfer $molliePaymentApiResponseTransfer): ?string
+    protected function getSuccessfulPaymentRedirectUrl(MolliePaymentApiResponseTransfer $molliePaymentApiResponseTransfer): ?string
     {
         return $molliePaymentApiResponseTransfer
             ->getMolliePayment()
-            ->getLinks()[MollieConfig::RESPONSE_PARAMETER_CREATE_PAYMENT_LINKS_CHECKOUT][MollieConfig::RESPONSE_PARAMETER_CREATE_PAYMENT_LINKS_HREF] ?? null;
+            ->getLinks()[MollieConstants::RESPONSE_PARAMETER_CREATE_PAYMENT_LINKS_CHECKOUT][MollieConstants::RESPONSE_PARAMETER_CREATE_PAYMENT_LINKS_HREF] ?? null;
+    }
+
+    /**
+     * @param string $orderReference
+     *
+     * @return string
+     */
+    protected function getFailedPaymentRedirectUrl(string $orderReference): string
+    {
+        return $this->config->getMollieRedirectUrl() . '?orderReference=' . $orderReference;
     }
 
     /**
@@ -92,8 +107,8 @@ class MolliePaymentHandler implements MolliePaymentHandlerInterface
      */
     protected function savePaymentIdToStorage(string $paymentId, string $orderReference): void
     {
-        $key = sprintf('%s:%s', MollieMollieConfig::MOLLIE_PAYMENT_TRANSACTION_STORAGE_KEY_PREFIX, $orderReference);
-        $this->storageClient->set($key, $paymentId, MollieMollieConfig::MOLLIE_PAYMENT_TRANSACTION_STORAGE_TTL);
+        $key = sprintf('%s:%s', MollieConstants::MOLLIE_PAYMENT_TRANSACTION_STORAGE_KEY_PREFIX, $orderReference);
+        $this->storageClient->set($key, $paymentId, MollieConstants::MOLLIE_PAYMENT_TRANSACTION_STORAGE_TTL);
     }
 
     /**

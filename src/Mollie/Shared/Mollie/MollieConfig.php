@@ -130,16 +130,6 @@ class MollieConfig extends AbstractSharedConfig
     public const MOLLIE_PAYMENT_PAY_BY_BANK = 'molliePayByBankPayment';
 
     /**
-     * @var string
-     */
-    public const MOLLIE_PAYMENT_TRANSACTION_STORAGE_KEY_PREFIX = 'mollie:payment';
-
-    /**
-     * @var int
-     */
-    public const MOLLIE_PAYMENT_TRANSACTION_STORAGE_TTL = 300;
-
-    /**
      * @var array<string>
      */
     public const MOLLIE_PAYMENT_STATUS_FAILED = ['failed', 'expired', 'canceled'];
@@ -160,6 +150,14 @@ class MollieConfig extends AbstractSharedConfig
     public function getMollieApiKey(): string|null
     {
         return $this->get(MollieConstants::MOLLIE)[MollieConstants::MOLLIE_API_KEY];
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getMollieProfileId(): string|null
+    {
+        return $this->get(MollieConstants::MOLLIE)[MollieConstants::MOLLIE_PROFILE_ID];
     }
 
     /**

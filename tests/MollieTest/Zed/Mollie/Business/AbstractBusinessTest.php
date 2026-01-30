@@ -8,8 +8,8 @@ namespace MollieTest\Zed\Mollie\Business;
 use Codeception\Test\Unit;
 use Mollie\Zed\Mollie\Business\MollieFacade;
 use Mollie\Zed\Mollie\Business\MollieFacadeInterface;
-use Mollie\Zed\Mollie\Persistence\MollieEntityManager;
-use Mollie\Zed\Mollie\Persistence\MollieRepository;
+use Spryker\Service\Container\Container;
+use Spryker\Shared\Kernel\Container\GlobalContainer;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -20,11 +20,12 @@ abstract class AbstractBusinessTest extends Unit
      */
     protected const CLIENT_IP = '127.0.0.1';
 
+    /**
+     * @var string
+     */
+    public const TEST_STATE_MACHINE_NAME = 'Test01';
+
     protected MollieFacadeInterface $mollieFacade;
-
-    protected MollieEntityManager $mollieEntityManager;
-
-    protected MollieRepository $mollieRepository;
 
     /**
      * @var \Generated\Shared\Transfer\QuoteTransfer
@@ -44,6 +45,10 @@ abstract class AbstractBusinessTest extends Unit
         parent::setUp();
 
         $this->mollieFacade = new MollieFacade();
+        $globalContainer = new GlobalContainer();
+        $globalContainer->setContainer(new Container([
+            'request_stack' => $this->getRequestStackMock(),
+        ]));
     }
 
     /**
