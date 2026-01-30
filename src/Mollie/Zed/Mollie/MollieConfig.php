@@ -37,11 +37,6 @@ class MollieConfig extends AbstractBundleConfig
     /**
      * @var string
      */
-    public const MOLLIE_PAYMENT_METHOD_STATUS_ACTIVATED = 'activated';
-
-    /**
-     * @var string
-     */
     public const MOLLIE_PAYMENT_PROVIDER = 'mollie';
 
     /**
@@ -54,7 +49,7 @@ class MollieConfig extends AbstractBundleConfig
      */
     public function getMollieOmsToPaymentMethodMapping(): array
     {
-        return $this->get(MollieConstants::MOLLIE)[MollieConstants::MOLLIE_OMS_TO_PAYMENT_METHOD_MAPPING];
+        return $this->get(MollieConstants::MOLLIE)[MollieConstants::MOLLIE_OMS_TO_PAYMENT_METHOD_MAPPING] ?? [];
     }
 
     /**
@@ -75,5 +70,13 @@ class MollieConfig extends AbstractBundleConfig
     public function getMollieRedirectUrl(): string
     {
         return $this->get(MollieConstants::MOLLIE)[MollieConstants::MOLLIE_REDIRECT_URL];
+    }
+
+    /**
+     * @return array<string>
+     */
+    public function getMollieIncludeWallets(): array
+    {
+        return $this->get(MollieConstants::MOLLIE)[MollieConstants::MOLLIE_INCLUDE_WALLETS] ?? [];
     }
 }
