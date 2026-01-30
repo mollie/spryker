@@ -141,6 +141,20 @@
         <property name="code" type="int"/>
         <property name="message" type="string"/>
         <property name="timestamp" type="string"/>
+        <property name="url" type="string" />
+        <property name="request" type="array" />
+        <property name="requestIdentifier" type="string" />
+    </transfer>
+
+    <transfer name="MollieLogApi">
+        <property name="isSuccessful" type="bool"/>
+        <property name="payload" type="array"/>
+        <property name="code" type="int"/>
+        <property name="message" type="string"/>
+        <property name="timestamp" type="string"/>
+        <property name="request" type="array" />
+        <property name="url" type="string" />
+        <property name="requestIdentifier" type="string" />
     </transfer>
 
     <transfer name="Quote">
@@ -154,6 +168,5 @@
     <transfer name="SaveOrder">
         <property name="molliePaymentId" type="string"/>
     </transfer>
-
 
 </transfers>

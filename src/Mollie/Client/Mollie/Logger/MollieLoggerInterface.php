@@ -4,17 +4,21 @@ declare(strict_types=1);
 
 namespace Mollie\Client\Mollie\Logger;
 
-use Generated\Shared\Transfer\MollieApiResponseTransfer;
+use Generated\Shared\Transfer\MollieLogApiTransfer;
 
 interface MollieLoggerInterface
 {
     /**
-     * @param string $apiName
-     * @param string $url
-     * @param array<string, mixed> $requestData
-     * @param \Generated\Shared\Transfer\MollieApiResponseTransfer $responseTransfer
+     * @param \Generated\Shared\Transfer\MollieLogApiTransfer $logApiTransfer
      *
      * @return void
      */
-    public function logResponse(string $apiName, string $url, array $requestData, MollieApiResponseTransfer $responseTransfer): void;
+    public function logResponse(MollieLogApiTransfer $logApiTransfer): void;
+
+    /**
+     * @param \Generated\Shared\Transfer\MollieLogApiTransfer $logApiTransfer
+     *
+     * @return void
+     */
+    public function logMessage(MollieLogApiTransfer $logApiTransfer): void;
 }

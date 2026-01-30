@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Mollie\Client\Mollie\Logger;
 
-use Generated\Shared\Transfer\MollieApiResponseTransfer;
+use Generated\Shared\Transfer\MollieLogApiTransfer;
 use Mollie\Client\Mollie\MollieConfig;
 use Mollie\Shared\Mollie\MollieConstants;
 use Spryker\Shared\Log\LoggerTrait;
@@ -15,9 +15,9 @@ class MollieLogger implements MollieLoggerInterface
 
     private string $mode;
 
-    protected const string SUCCESS_MESSAGE = 'API call %s successful';
+    protected const string API_SUCCESS_MESSAGE = 'API call %s successful';
 
-    protected const string ERROR_MESSAGE = 'API call %s failed';
+    protected const string API_ERROR_MESSAGE = 'API call %s failed';
 
     /**
      * @param \Mollie\Client\Mollie\MollieConfig $config
@@ -28,72 +28,108 @@ class MollieLogger implements MollieLoggerInterface
     }
 
     /**
-     * @param string $apiName
-     * @param string $url
-     * @param array<string, mixed> $requestData
-     * @param \Generated\Shared\Transfer\MollieApiResponseTransfer $responseTransfer
+     * @param \Generated\Shared\Transfer\MollieLogApiTransfer $logApiTransfer
      *
      * @return void
      */
-    public function logResponse(string $apiName, string $url, array $requestData, MollieApiResponseTransfer $responseTransfer): void
+    public function logMessage(MollieLogApiTransfer $logApiTransfer): void
     {
         if ($this->mode === MollieConstants::MOLLIE_LOGGER_OFF) {
             return;
         }
 
-        if ($responseTransfer->getIsSuccessful()) {
-            $this->logSuccessfulResponse($apiName, $url, $requestData, $responseTransfer);
+        if ($logApiTransfer->getIsSuccessful()) {
+            $this->logSuccessMessage($logApiTransfer);
 
             return;
         }
 
-        $this->logFailedResponse($apiName, $url, $requestData, $responseTransfer);
+        $this->logErrorMessage($logApiTransfer);
     }
 
     /**
-     * @param string $apiName
-     * @param string $url
-     * @param array<string, mixed> $requestData
-     * @param \Generated\Shared\Transfer\MollieApiResponseTransfer $responseTransfer
+     * @param \Generated\Shared\Transfer\MollieLogApiTransfer $logApiTransfer
      *
      * @return void
      */
-    protected function logSuccessfulResponse(string $apiName, string $url, array $requestData, MollieApiResponseTransfer $responseTransfer): void
+    protected function logSuccessMessage(MollieLogApiTransfer $logApiTransfer): void
     {
-        $message = sprintf(static::SUCCESS_MESSAGE, $apiName);
+        $this->getLogger()->info(
+            $logApiTransfer->getMessage(),
+        );
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MollieLogApiTransfer $logApiTransfer
+     *
+     * @return void
+     */
+    protected function logErrorMessage(MollieLogApiTransfer $logApiTransfer): void
+    {
+        $this->getLogger()->error(
+            $logApiTransfer->getMessage(),
+        );
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MollieLogApiTransfer $logApiTransfer
+     *
+     * @return void
+     */
+    public function logResponse(MollieLogApiTransfer $logApiTransfer): void
+    {
+        if ($this->mode === MollieConstants::MOLLIE_LOGGER_OFF) {
+            return;
+        }
+
+        if ($logApiTransfer->getIsSuccessful()) {
+            $this->logSuccessfulResponse($logApiTransfer);
+
+            return;
+        }
+
+        $this->logFailedResponse($logApiTransfer);
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MollieLogApiTransfer $logApiTransfer
+     *
+     * @return void
+     */
+    protected function logSuccessfulResponse(MollieLogApiTransfer $logApiTransfer): void
+    {
+        $message = sprintf(static::API_SUCCESS_MESSAGE);
         $context = [
-            'url' => $url,
-            'requestBody' => $requestData,
-            'statusCode' => $responseTransfer->getCode(),
+            'requestIdentifier' => $logApiTransfer->getRequestIdentifier(),
+            'url' => $logApiTransfer->getUrl(),
+            'statusCode' => $logApiTransfer->getCode(),
         ];
 
         if ($this->mode === MollieConstants::MOLLIE_LOGGER_EXTENSIVE) {
-            $context['requestBody'] = $requestData;
-            $context['responseBody'] = $responseTransfer->getPayload();
+            $context['requestBody'] = $logApiTransfer->getRequest();
+            $context['responseBody'] = $logApiTransfer->getPayload();
         }
 
         $this->getLogger()->info($message, $context);
     }
 
     /**
-     * @param string $apiName
-     * @param string $url
-     * @param array<string, mixed> $requestData
-     * @param \Generated\Shared\Transfer\MollieApiResponseTransfer $responseTransfer
+     * @param \Generated\Shared\Transfer\MollieLogApiTransfer $logApiTransfer
      *
      * @return void
      */
-    protected function logFailedResponse(string $apiName, string $url, array $requestData, MollieApiResponseTransfer $responseTransfer): void
+    protected function logFailedResponse(MollieLogApiTransfer $logApiTransfer): void
     {
-        $message = sprintf(static::ERROR_MESSAGE, $apiName);
+        $message = sprintf(static::API_ERROR_MESSAGE);
         $context = [
-            'url' => $url,
-            'statusCode' => $responseTransfer->getCode(),
-            'errorMessage' => $responseTransfer->getMessage(),
+            'requestIdentifier' => $logApiTransfer->getRequestIdentifier(),
+            'url' => $logApiTransfer->getUrl(),
+            'statusCode' => $logApiTransfer->getCode(),
+            'errorMessage' => $logApiTransfer->getMessage(),
         ];
 
         if ($this->mode === MollieConstants::MOLLIE_LOGGER_EXTENSIVE) {
-            $context['requestBody'] = $requestData;
+            $context['requestBody'] = $logApiTransfer->getRequest();
         }
 
         $this->getLogger()->error($message, $context);

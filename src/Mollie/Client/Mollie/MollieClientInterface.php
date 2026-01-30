@@ -95,4 +95,11 @@ interface MollieClientInterface
      * @return void
      */
     public function deleteAllPaymentMethodsCache(MolliePaymentMethodQueryParametersTransfer $parameters): void;
+
+    /**
+     * @param \Generated\Shared\Transfer\MollieLogApiTransfer $mollieLogApiTransfer
+     *
+     * @return void
+     */
+    public function logMessage(MollieLogApiTransfer $mollieLogApiTransfer): void;
 }

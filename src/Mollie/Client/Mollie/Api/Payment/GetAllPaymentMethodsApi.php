@@ -6,6 +6,7 @@ namespace Mollie\Client\Mollie\Api\Payment;
 
 use Generated\Shared\Transfer\MollieApiRequestTransfer;
 use Generated\Shared\Transfer\MollieApiResponseTransfer;
+use Generated\Shared\Transfer\MollieLogApiTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodQueryParametersTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodsApiResponseTransfer;
 use Mollie\Api\Http\Data\Money;
@@ -62,11 +63,14 @@ class GetAllPaymentMethodsApi extends AbstractApiCall
     /**
      * @param \Generated\Shared\Transfer\MollieApiResponseTransfer $mollieApiResponseTransfer
      *
-     * @return \Generated\Shared\Transfer\MollieApiResponseTransfer
+     * @return \Generated\Shared\Transfer\MollieLogApiTransfer
      */
-    protected function maskResponseData(MollieApiResponseTransfer $mollieApiResponseTransfer): MollieApiResponseTransfer
+    protected function buildLogApiTransfer(MollieApiResponseTransfer $mollieApiResponseTransfer): MollieLogApiTransfer
     {
-        return $mollieApiResponseTransfer;
+        return (new MollieLogApiTransfer())
+            ->fromArray(
+                $mollieApiResponseTransfer->toArray(true, true),
+            );
     }
 
     /**

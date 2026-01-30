@@ -8,6 +8,7 @@ use Generated\Shared\Transfer\CheckoutResponseTransfer;
 use Generated\Shared\Transfer\MollieApiRequestTransfer;
 use Generated\Shared\Transfer\MollieApiResponseTransfer;
 use Generated\Shared\Transfer\MollieLinksTransfer;
+use Generated\Shared\Transfer\MollieLogApiTransfer;
 use Generated\Shared\Transfer\MolliePaymentApiResponseTransfer;
 use Generated\Shared\Transfer\MolliePaymentTransfer;
 use Mollie\Api\Http\Data\Money;
@@ -88,19 +89,19 @@ class CreatePaymentApi extends AbstractApiCall
     /**
      * @param \Generated\Shared\Transfer\MollieApiResponseTransfer $mollieApiResponseTransfer
      *
-     * @return \Generated\Shared\Transfer\MollieApiResponseTransfer
+     * @return \Generated\Shared\Transfer\MollieLogApiTransfer
      */
-    protected function maskResponseData(MollieApiResponseTransfer $mollieApiResponseTransfer): MollieApiResponseTransfer
+    protected function buildLogApiTransfer(MollieApiResponseTransfer $mollieApiResponseTransfer): MollieLogApiTransfer
     {
-        $maskedTransfer = (new MollieApiResponseTransfer())
+        $logApiTransfer = (new MollieLogApiTransfer())
             ->fromArray(
                 $mollieApiResponseTransfer->toArray(true, true),
             );
 
-        $payload = $maskedTransfer->getPayload();
+        $payload = $logApiTransfer->getPayload();
         $payload['profileId'] = static::MASKED;
 
-        return $maskedTransfer->setPayload($payload);
+        return $logApiTransfer->setPayload($payload);
     }
 
     /**
