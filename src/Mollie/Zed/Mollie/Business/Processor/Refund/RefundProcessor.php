@@ -70,7 +70,8 @@ class RefundProcessor implements RefundProcessorInterface
         }
 
         // zapisi record u bazu i vrati mapirani transfer radi testova
-        $this->refundWriter->addMollieRefundData($orderTransfer->getIdSalesOrder(), $mollieRefundApiResponseTransfer->getMollieRefund());
+        // foreach po itemu
+        $this->refundWriter->addMollieRefundData($orderTransfer, $molliePaymentTransfer, $mollieRefundApiResponseTransfer->getMollieRefund());
 
         return $mollieRefundApiResponseTransfer;
     }

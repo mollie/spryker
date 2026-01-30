@@ -93,7 +93,7 @@
         <property name="amount" type="MollieAmount"/>
         <property name="status" type="string"/>
         <property name="metadata" type="array" singular="metadata"/>
-        <property name="paymentId" type="string"/>
+        <property name="transactionId" type="string"/>
         <property name="createdAt" type="string"/>
         <property name="links" type="MollieLinks"/>
     </transfer>
@@ -153,6 +153,7 @@
         <property name="checkoutResponse" type="CheckoutResponse"/>
         <property name="molliePaymentMethodQueryParameters" type="MolliePaymentMethodQueryParameters" />
         <property name="transactionId" type="string"/>
+        <property name="refundId" type="string"/>
         <property name="description" type="string"/>
         <property name="metadata" type="array" singular="metadata"/>
     </transfer>
@@ -163,6 +164,16 @@
         <property name="code" type="int"/>
         <property name="message" type="string"/>
         <property name="timestamp" type="string"/>
+    </transfer>
+
+    <transfer name="MollieRefundRequest">
+        <property name="refund" type="MollieRefund"/>
+        <property name="isSuccess" type="bool" />
+    </transfer>
+
+    <transfer name="MollieRefundResponse">
+        <property name="refund" type="MollieRefund"/>
+        <property name="isSuccess" type="bool" />
     </transfer>
 
     <transfer name="Quote">
@@ -177,5 +188,9 @@
         <property name="molliePaymentId" type="string"/>
     </transfer>
 
+    <transfer name="MollieWebhookResponse">
+        <property name="statusCode" type="int"/>
+        <property name="message" type="string"/>
+    </transfer>
 
 </transfers>

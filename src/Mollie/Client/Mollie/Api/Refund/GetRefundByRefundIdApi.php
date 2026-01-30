@@ -1,15 +1,15 @@
 <?php
 
-namespace Mollie\Client\Mollie\Api\Payment;
+declare(strict_types=1);
+
+namespace Mollie\Client\Mollie\Api\Refund;
 
 use Generated\Shared\Transfer\MollieApiRequestTransfer;
 use Generated\Shared\Transfer\MollieApiResponseTransfer;
-use Generated\Shared\Transfer\MollieLinksTransfer;
 use Generated\Shared\Transfer\MollieRefundApiResponseTransfer;
 use Generated\Shared\Transfer\MollieRefundTransfer;
-use Mollie\Api\Http\Data\Money;
 use Mollie\Api\Http\Request;
-use Mollie\Api\Http\Requests\CreatePaymentRefundRequest;
+use Mollie\Api\Http\Requests\GetPaymentRefundRequest;
 use Mollie\Api\MollieApiClient;
 use Mollie\Client\Mollie\Api\AbstractApiCall;
 use Mollie\Client\Mollie\Dependency\Service\MollieToUtilEncodingServiceInterface;
@@ -18,7 +18,7 @@ use Mollie\Service\Mollie\MollieServiceInterface;
 use Spryker\Shared\Kernel\Transfer\AbstractTransfer;
 use Spryker\Shared\Log\LoggerTrait;
 
-class CreateRefundApi extends AbstractApiCall
+class GetRefundByRefundIdApi extends AbstractApiCall
 {
     use LoggerTrait;
 
@@ -38,29 +38,6 @@ class CreateRefundApi extends AbstractApiCall
     }
 
     /**
-     * @param \Generated\Shared\Transfer\MollieApiRequestTransfer|null $mollieApiRequestTransfer
-     *
-     * @return \Mollie\Api\Http\Request|null
-     */
-    protected function buildRequest(?MollieApiRequestTransfer $mollieApiRequestTransfer = null): ?Request
-    {
-        $orderItemsGrossAmount = $mollieApiRequestTransfer->getMolliePaymentMethodQueryParameters()->getAmount()->getValue();
-        $convertedOrderItemsGrossAmount = $this->convertAmountToString($orderItemsGrossAmount);
-
-        $amount = new Money(
-            currency: $mollieApiRequestTransfer->getMolliePaymentMethodQueryParameters()->getAmount()->getCurrency(),
-            value: $convertedOrderItemsGrossAmount,
-        );
-
-        return new CreatePaymentRefundRequest(
-            paymentId: $mollieApiRequestTransfer->getTransactionId(),
-            description: $mollieApiRequestTransfer->getDescription(),
-            amount: $amount,
-            metadata: $mollieApiRequestTransfer->getMetadata(),
-        );
-    }
-
-    /**
      * @param \Generated\Shared\Transfer\MollieApiResponseTransfer $mollieApiResponseTransfer
      *
      * @return \Spryker\Shared\Kernel\Transfer\AbstractTransfer
@@ -71,14 +48,8 @@ class CreateRefundApi extends AbstractApiCall
             ->setIsSuccessful($mollieApiResponseTransfer->getIsSuccessful())
             ->setMessage($mollieApiResponseTransfer->getMessage());
 
-        $mollieRefundTransfer = new MollieRefundTransfer();
-        $mollieRefundTransfer->fromArray($mollieApiResponseTransfer->getPayload(), true);
-
-        $links = $mollieApiResponseTransfer->getPayload()[MollieConfig::RESPONSE_PARAMETER_CREATE_PAYMENT_LINKS] ?? [];
-        $mollieLinksTransfer = new MollieLinksTransfer();
-        $mollieLinksTransfer->fromArray($links, true);
-        $mollieRefundTransfer
-            ->setLinks($mollieLinksTransfer);
+        $mollieRefundTransfer = (new MollieRefundTransfer())
+            ->fromArray($mollieApiResponseTransfer->getPayload(), true);
 
         $mollieRefundApiResponseTransfer->setMollieRefund($mollieRefundTransfer);
 
@@ -86,15 +57,15 @@ class CreateRefundApi extends AbstractApiCall
     }
 
     /**
-     * @param int $amount
+     * @param \Generated\Shared\Transfer\MollieApiRequestTransfer|null $mollieApiRequestTransfer
      *
-     * @return string
+     * @return \Mollie\Api\Http\Request|null
      */
-    protected function convertAmountToString(int $amount): string
+    protected function buildRequest(?MollieApiRequestTransfer $mollieApiRequestTransfer = null): ?Request
     {
-        $amount = $this->mollieService->convertIntegerToDecimal($amount);
-        $amount = number_format($amount, 2, '.', '');
-
-        return $amount;
+        return new GetPaymentRefundRequest(
+            paymentId: $mollieApiRequestTransfer->getTransactionId(),
+            refundId: $mollieApiRequestTransfer->getRefundId(),
+        );
     }
 }

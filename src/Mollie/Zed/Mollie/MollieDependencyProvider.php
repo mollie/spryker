@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Mollie\Zed\Mollie;
 
+use Mollie\Service\Mollie\MollieServiceInterface;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToLocaleFacadeBridge;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToLocaleFacadeInterface;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToOmsBridge;
@@ -48,6 +49,11 @@ class MollieDependencyProvider extends AbstractBundleDependencyProvider
     public const SERVICE_UTIL_ENCODING = 'SERVICE_UTIL_ENCODING';
 
     /**
+     * @var string
+     */
+    public const MOLLIE_SERVICE = 'MOLLIE_SERVICE';
+
+    /**
      * @param \Spryker\Zed\Kernel\Container $container
      *
      * @return \Spryker\Zed\Kernel\Container
@@ -86,6 +92,7 @@ class MollieDependencyProvider extends AbstractBundleDependencyProvider
     {
         $container = parent::providePersistenceLayerDependencies($container);
         $container = $this->addUtilEncodingService($container);
+        $container = $this->addMollieService($container);
 
         return $container;
     }
@@ -177,6 +184,20 @@ class MollieDependencyProvider extends AbstractBundleDependencyProvider
             return new MollieToLocaleFacadeBridge(
                 $container->getLocator()->locale()->facade(),
             );
+        });
+
+        return $container;
+    }
+
+    /**
+     * @param \Spryker\Zed\Kernel\Container $container
+     *
+     * @return \Spryker\Zed\Kernel\Container
+     */
+    protected function addMollieService(Container $container): Container
+    {
+        $container->set(static::MOLLIE_SERVICE, function (Container $container): MollieServiceInterface {
+            return $container->getLocator()->mollie()->service();
         });
 
         return $container;

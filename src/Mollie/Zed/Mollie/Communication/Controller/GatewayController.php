@@ -2,15 +2,27 @@
 
 namespace Mollie\Zed\Mollie\Communication\Controller;
 
+use Generated\Shared\Transfer\MollieRefundRequestTransfer;
+use Generated\Shared\Transfer\MollieRefundResponseTransfer;
 use Generated\Shared\Transfer\OrderCollectionRequestTransfer;
 use Generated\Shared\Transfer\OrderCollectionResponseTransfer;
 use Spryker\Zed\Kernel\Communication\Controller\AbstractGatewayController;
 
 /**
- * @method \Mollie\Zed\Mollie\Business\MollieFacadeInterface getFacade()()
+ * @method \Mollie\Zed\Mollie\Business\MollieFacadeInterface getFacade()
  */
 class GatewayController extends AbstractGatewayController
 {
+    /**
+     * @param \Generated\Shared\Transfer\MollieRefundRequestTransfer $mollieRefundRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieRefundResponseTransfer
+     */
+    public function getRefundRecordAction(MollieRefundRequestTransfer $mollieRefundRequestTransfer): MollieRefundResponseTransfer
+    {
+        return $this->getFacade()->getPersistedRefundById($mollieRefundRequestTransfer);
+    }
+
     /**
      * @param \Generated\Shared\Transfer\OrderCollectionRequestTransfer $updateOrderCollectionRequestTransfer
      *

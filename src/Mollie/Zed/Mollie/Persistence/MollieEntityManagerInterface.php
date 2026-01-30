@@ -7,6 +7,7 @@ namespace Mollie\Zed\Mollie\Persistence;
 use Generated\Shared\Transfer\MolliePaymentTransfer;
 use Generated\Shared\Transfer\MollieRefundTransfer;
 use Generated\Shared\Transfer\OrderCollectionRequestTransfer;
+use Generated\Shared\Transfer\OrderTransfer;
 
 interface MollieEntityManagerInterface
 {
@@ -26,10 +27,15 @@ interface MollieEntityManagerInterface
     public function addMolliePaymentData(int $idSalesOrder, MolliePaymentTransfer $molliePaymentTransfer): void;
 
     /**
-     * @param int $idSalesOrder
+     * @param \Generated\Shared\Transfer\OrderTransfer $orderTransfer
+     * @param \Generated\Shared\Transfer\MolliePaymentTransfer $molliePaymentTransfer
      * @param \Generated\Shared\Transfer\MollieRefundTransfer $mollieRefundTransfer
      *
      * @return void
      */
-    public function addMollieRefundData(int $idSalesOrder, MollieRefundTransfer $mollieRefundTransfer): void;
+    public function addMollieRefundData(
+        OrderTransfer $orderTransfer,
+        MolliePaymentTransfer $molliePaymentTransfer,
+        MollieRefundTransfer $mollieRefundTransfer,
+    ): void;
 }

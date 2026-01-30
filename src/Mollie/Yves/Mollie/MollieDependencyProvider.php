@@ -10,6 +10,8 @@ use Mollie\Yves\Mollie\Dependency\Client\MollieToQuoteClientInterface;
 use Mollie\Yves\Mollie\Dependency\Client\MollieToStorageClientBridge;
 use Mollie\Yves\Mollie\Dependency\Client\MollieToStorageClientInterface;
 use Mollie\Yves\Mollie\Dependency\Service\MollieToUtilEncodingServiceBridge;
+use Mollie\Yves\Mollie\Plugin\Webhook\MolliePaymentWebhookHandlerPlugin;
+use Mollie\Yves\Mollie\Plugin\Webhook\MollieRefundWebhookHandlerPlugin;
 use Spryker\Yves\Kernel\AbstractBundleDependencyProvider;
 use Spryker\Yves\Kernel\Container;
 
@@ -36,6 +38,11 @@ class MollieDependencyProvider extends AbstractBundleDependencyProvider
     public const SERVICE_UTIL_ENCODING = 'SERVICE_UTIL_ENCODING';
 
     /**
+     * @var string
+     */
+    public const PLUGINS_MOLLIE_WEBHOOK_HANDLER = 'PLUGINS_MOLLIE_WEBHOOK_HANDLER';
+
+    /**
      * @param \Spryker\Yves\Kernel\Container $container
      *
      * @return \Spryker\Yves\Kernel\Container
@@ -47,6 +54,7 @@ class MollieDependencyProvider extends AbstractBundleDependencyProvider
         $container = $this->addMollieClient($container);
         $container = $this->addQuoteClient($container);
         $container = $this->addUtilEncodingService($container);
+        $container = $this->addMollieWebhookHandlerPlugins($container);
 
         return $container;
     }
@@ -111,5 +119,30 @@ class MollieDependencyProvider extends AbstractBundleDependencyProvider
         });
 
         return $container;
+    }
+
+    /**
+     * @param \Spryker\Yves\Kernel\Container $container
+     *
+     * @return \Spryker\Yves\Kernel\Container
+     */
+    protected function addMollieWebhookHandlerPlugins(Container $container): Container
+    {
+        $container->set(static::PLUGINS_MOLLIE_WEBHOOK_HANDLER, function () {
+            return $this->getMollieWebhookHandlerPlugins();
+        });
+
+        return $container;
+    }
+
+    /**
+     * @return array<\Mollie\Yves\Mollie\Plugin\Webhook\MollieWebhookHandlerPluginInterface>
+     */
+    protected function getMollieWebhookHandlerPlugins(): array
+    {
+        return [
+            new MolliePaymentWebhookHandlerPlugin(),
+            new MollieRefundWebhookHandlerPlugin(),
+        ];
     }
 }
