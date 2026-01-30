@@ -45,6 +45,11 @@ class MollieConfig extends AbstractBundleConfig
     public const MOLLIE_PAYMENT_METHOD_AMOUNT_VALUE = 'value';
 
     /**
+     * @var string
+     */
+    public const MOLLIE_WALLET_APPLE_PAY = 'applepay';
+
+    /**
      * @return array<string, string>
      */
     public function getMollieOmsToPaymentMethodMapping(): array
@@ -78,5 +83,13 @@ class MollieConfig extends AbstractBundleConfig
     public function getMollieIncludeWallets(): array
     {
         return $this->get(MollieConstants::MOLLIE)[MollieConstants::MOLLIE_INCLUDE_WALLETS] ?? [];
+    }
+
+    /**
+     * @return bool
+     */
+    public function isTestMode(): bool
+    {
+        return $this->get(MollieConstants::MOLLIE)[MollieConstants::MOLLIE_TEST_MODE];
     }
 }
