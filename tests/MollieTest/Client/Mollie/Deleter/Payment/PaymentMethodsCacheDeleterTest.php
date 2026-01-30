@@ -1,6 +1,5 @@
 <?php
 
-
 declare(strict_types = 1);
 
 namespace MollieTest\Client\Mollie\Deleter\Payment;
@@ -8,26 +7,25 @@ namespace MollieTest\Client\Mollie\Deleter\Payment;
 use Generated\Shared\Transfer\MolliePaymentMethodQueryParametersTransfer;
 use Generated\Shared\Transfer\StorageScanResultTransfer;
 use Mollie\Client\Mollie\Dependency\Client\MollieToStorageClientBridge;
-use Mollie\Client\Mollie\MollieClient;
 use Mollie\Client\Mollie\MollieClientInterface;
+use Mollie\Client\Mollie\MollieFactory;
 use Mollie\Shared\Mollie\MollieConstants;
 use MollieTest\Client\Mollie\AbstractClientTest;
 use PHPUnit\Framework\MockObject\MockObject;
 
 class PaymentMethodsCacheDeleterTest extends AbstractClientTest
 {
-    protected ?string $cacheKey = null;
-
-    /**
-     * @return void
-     */
-    public function testDeleteEnabledPaymentMethodsCacheRemovesCachedStorageData(): void
+ /**
+  * @return void
+  */
+    public function testDeleteEnabledPaymentMethodsCacheRemovesItFromStorage(): void
     {
         // Arrange
         $parameters = $this->createMolliePaymentMethodQueryParametersTransfer();
         $factory = $this->createMollieFactoryMock();
-        $cacheKey = $this->getCacheKey($factory, $parameters);
-        $client = $this->createClientMock($factory);
+        $cacheKeyPrefix = $factory->getConfig()->getCacheKeyPrefixForEnabledPaymentMethods();
+        $cacheKey = $this->getCacheKey($factory, $parameters, $cacheKeyPrefix);
+        $client = $this->createClient($factory, $cacheKey);
 
         $this->tester->getStorageClient()->set($cacheKey, $this->tester->getMollieMockedEnabledPaymentMethodResponsePayload());
 
@@ -41,18 +39,19 @@ class PaymentMethodsCacheDeleterTest extends AbstractClientTest
       /**
        * @return void
        */
-    public function testDeleteAllPaymentMethodsCacheRemovesCachedStorageData(): void
+    public function testDeleteAllPaymentMethodsCacheRemovesItFromStorage(): void
     {
         // Arrange
         $parameters = $this->createMolliePaymentMethodQueryParametersTransfer();
         $factory = $this->createMollieFactoryMock();
-        $cacheKey = $this->getCacheKey($factory, $parameters);
-        $client = $this->createClientMock($factory);
+        $cacheKeyPrefix = $factory->getConfig()->getCacheKeyPrefixForAllPaymentMethods();
+        $cacheKey = $this->getCacheKey($factory, $parameters, $cacheKeyPrefix);
+        $client = $this->createClient($factory, $cacheKey);
 
         $this->tester->getStorageClient()->set($cacheKey, $this->tester->getMollieMockedAllPaymentMethodResponsePayload());
 
         // Act
-        $client->deleteEnabledPaymentMethodsCache($parameters);
+        $client->deleteAllPaymentMethodsCache($parameters);
 
         //Assert
         $this->tester->assertStorageNotHasKey($cacheKey);
@@ -60,35 +59,29 @@ class PaymentMethodsCacheDeleterTest extends AbstractClientTest
 
      /**
       * @param \Mollie\Client\Mollie\MollieFactory|null $mollieFactory
+      * @param string $cacheKey
       *
       * @return \Mollie\Client\Mollie\MollieClientInterface
       */
-    public function createClientMock(?MockObject $mollieFactory = null): MollieClientInterface
+    public function createClient(?MockObject $mollieFactory, string $cacheKey): MollieClientInterface
     {
-        $mollieFactory->method('getStorageClient')->willReturn($this->getMollieToStorageClientBridgeMock());
+        $mollieFactory->method('getStorageClient')->willReturn($this->getMollieToStorageClientBridgeMock($cacheKey));
 
-        $client = $this
-            ->getMockBuilder(MollieClient::class)
-            ->onlyMethods(['getFactory'])
-            ->getMock();
-
-        $client->expects($this->any())
-            ->method('getFactory')
-            ->willReturn($mollieFactory);
-
-        return $client;
+        return $this->createClientMock($mollieFactory);
     }
 
     /**
+     * @param string $cacheKey
+     *
      * @return \Mollie\Client\Mollie\Dependency\Client\MollieToStorageClientBridge
      */
-    public function getMollieToStorageClientBridgeMock(): MollieToStorageClientBridge
+    public function getMollieToStorageClientBridgeMock(string $cacheKey): MollieToStorageClientBridge
     {
         $mollieToStorageClientMock = $this->createMollieToStorageClientBridgeMock();
 
         $mollieToStorageClientMock->method('scanKeys')->willReturn(
             (new StorageScanResultTransfer())->setKeys([
-                sprintf('kv:%s', $this->cacheKey),
+                sprintf('kv:%s', $cacheKey),
             ]),
         );
 
@@ -98,16 +91,17 @@ class PaymentMethodsCacheDeleterTest extends AbstractClientTest
     /**
      * @param \Mollie\Client\Mollie\MollieFactory $mollieFactory
      * @param \Generated\Shared\Transfer\MolliePaymentMethodQueryParametersTransfer $parameters
+     * @param string $cacheKeyPrefix
      *
      * @return string
      */
-    protected function getCacheKey(MockObject $mollieFactory, MolliePaymentMethodQueryParametersTransfer $parameters): string
-    {
+    protected function getCacheKey(
+        MollieFactory $mollieFactory,
+        MolliePaymentMethodQueryParametersTransfer $parameters,
+        string $cacheKeyPrefix,
+    ): string {
         $keyGenerator = $mollieFactory->createPaymentMethodsCacheKeyGenerator();
-        $cacheKeyPrefix = $mollieFactory->getConfig()->getCacheKeyPrefixForEnabledPaymentMethods();
-
         $cacheKey = $keyGenerator->generateCacheKey($parameters, $cacheKeyPrefix);
-        $this->cacheKey = $cacheKey;
 
         return $cacheKey;
     }
