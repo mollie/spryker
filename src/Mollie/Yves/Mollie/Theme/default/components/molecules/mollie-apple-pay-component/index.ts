@@ -1,5 +1,4 @@
 import './mollie-apple-pay-component';
-import './mollie-apple-pay-component.scss';
 
 import register from 'ShopUi/app/registry';
 export default register(

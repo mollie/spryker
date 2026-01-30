@@ -1,47 +1,59 @@
 import Component from 'ShopUi/models/component';
 
-export default class MollieCreditCardComponent extends Component {
+export default class MollieApplePayComponent extends Component {
     protected applePayInput: HTMLInputElement | null = null;
-    protected listItem: HTMLElement | null = null;
+    protected checkoutList: HTMLElement | null = null;
+    protected heading: HTMLElement | null = null;
 
-    protected readyCallback(): void {
+    protected init(): void {
         this.checkApplePay();
     }
 
-    protected checkApplePay(): void {
-        // Apple Pay capability check
-        const applePaySupported: boolean =
-            typeof window.ApplePaySession !== 'undefined' &&
-            ApplePaySession.canMakePayments();
+    /**
+     * Check if the current OS supports Apple Pay.
+     * @protected
+     */
+    protected isApplePaySupportedOS(): boolean {
+        const platform = navigator.platform.toLowerCase();
+        const userAgent = navigator.userAgent.toLowerCase();
 
-        if (applePaySupported) {
-            console.log('Apple Pay is supported on this device');
-            return;
-        } else {
-            console.log('Apple Pay is not supported on this device');
+        return platform.includes('mac') || /iphone|ipad|ipod/.test(userAgent);
+    };
+
+    protected checkApplePay(): void {
+         const applePaySupported = this.isApplePaySupportedOS();
+
+        if (!applePaySupported) {
+            this.hideApplePay();
         }
 
-        // Find Apple Pay radio input by id or value
-        this.applePayInput =
-            document.getElementById('paymentForm_paymentSelection_mollieApplePayPayment');
+        return;
+    }
+
+    protected hideApplePay(): void {
+        this.applePayInput = document.getElementById(
+            'paymentForm_paymentSelection_mollieApplePayPayment',
+        ) as HTMLInputElement | null;
 
         if (!this.applePayInput) {
             return;
         }
 
-        // Walk up to <li class="checkout-list__item">
-        this.listItem = this.applePayInput.closest('li.checkout-list__item');
+        this.checkoutList = this.applePayInput.closest('ul.checkout-list');
 
-        if (!this.listItem) {
+        if (!this.checkoutList) {
             return;
         }
 
-        // Disable input to avoid accidental submission
-        this.applePayInput.disabled = true;
-        this.applePayInput.checked = false;
+        this.heading = this.checkoutList.previousElementSibling as HTMLElement | null;
 
-        // Hide entire payment method block
-        this.listItem.style.display = 'none';
-        console.log('Hidden Apple Pay option');
+        this.applePayInput.checked = false;
+        this.applePayInput.disabled = true;
+
+        this.checkoutList.style.display = 'none';
+
+        if (this.heading && this.heading.tagName === 'H5') {
+            this.heading.style.display = 'none';
+        }
     }
 }
