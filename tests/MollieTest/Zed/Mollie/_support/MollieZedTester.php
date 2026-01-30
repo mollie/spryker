@@ -4,10 +4,13 @@ declare(strict_types = 1);
 
 namespace MollieTest\Zed\Mollie;
 
+use ArrayObject;
 use Codeception\Actor;
 use DateTime;
 use Orm\Zed\Mollie\Persistence\SpyPaymentMollie;
 use Orm\Zed\Mollie\Persistence\SpyPaymentMollieQuery;
+use Orm\Zed\Mollie\Persistence\SpyRefundMollie;
+use Orm\Zed\Mollie\Persistence\SpyRefundMollieQuery;
 
 /**
  * Inherited Methods
@@ -60,6 +63,43 @@ class MollieZedTester extends Actor
     {
         return SpyPaymentMollieQuery::create()
             ->filterByFkSalesOrder($idSalesOrder)
+            ->findOne();
+    }
+
+    /**
+     * @param \ArrayObject $orderItems
+     *
+     * @return \Orm\Zed\Mollie\Persistence\SpyRefundMollie
+     */
+    public function createMollieRefund(ArrayObject $orderItems): SpyRefundMollie
+    {
+        foreach ($orderItems as $orderItem) {
+            $spyRefundMollieEntity = (new SpyRefundMollie())
+                ->setFkSalesOrderItem($orderItem->getIdSalesOrderItem())
+                ->setDescription('Test refund')
+                ->setCurrency('EUR')
+                ->setValue('22.22')
+                ->setStatus('pending')
+                ->setMetadata('[]')
+                ->setTransactionId('tr_7FQgLEW7ECECKWStSwTLJ')
+                ->setRefundId('re_yuj7TaDpm877xZQzP8ULJ')
+                ->setCreatedAt(new DateTime());
+
+            $spyRefundMollieEntity->save();
+        }
+
+        return $spyRefundMollieEntity;
+    }
+
+    /**
+     * @param string|int $refundId
+     *
+     * @return \Orm\Zed\Mollie\Persistence\SpyRefundMollie
+     */
+    public function findMollieRefund(string $refundId): SpyRefundMollie
+    {
+        return SpyRefundMollieQuery::create()
+            ->filterByRefundId($refundId)
             ->findOne();
     }
 }

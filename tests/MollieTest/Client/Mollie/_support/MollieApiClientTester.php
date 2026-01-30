@@ -43,6 +43,11 @@ class MollieApiClientTester extends Actor
     protected const MOLLIE_MOCKED_PAYMENT_TRANSACTION_RESPONSE_PAYLOAD = '{"resource":"payment","id":"tr_IUDAHSMGnU6qLbRaksas","mode":"live","amount":{"value":"10.00","currency":"EUR"},"description":"Order #12345","sequenceType":"oneoff","redirectUrl":"https://webshop.example.org/order/12345/","webhookUrl":"https://webshop.example.org/payments/webhook/","metadata":{"order_id":12345},"profileId":"pfl_QkEhN94Ba","status":"open","isCancelable":false,"createdAt":"2024-03-20T09:13:37+00:00","expiresAt":"2024-03-20T09:28:37+00:00","_links":{"self":{"href":"...","type":"application/hal+json"},"checkout":{"href":"https://www.mollie.com/checkout/select-method/7UhSN1zuXS","type":"text/html"},"dashboard":{"href":"https://www.mollie.com/dashboard/org_12345678/payments/tr_5B8cwPMGnU6qLbRvo7qEZo","type":"text/html"},"documentation":{"href":"...","type":"text/html"}}}';
 
     /**
+     * @var string
+     */
+    protected const MOLLIE_MOCKED_REFUND_TRANSACTION_RESPONSE_PAYLOAD = '{"resource":"refund","id":"re_yuj7TaDpm877xZQzP8ULJ","mode":"live","amount":{"value":"307.85","currency":"EUR"},"description":"Order #12345","metadata":{"order_id":12345},"status":"pending","createdAt":"2026-01-30T09:13:37+00:00","paymentId":"tr_7FQgLEW7ECECKWStSwTLJ","settlementAmount":{"value":"307.85","currency":"EUR"},"_links":{"self":{"href":"...","type":"application/hal+json"},"payment":{"href":"...","type":"application/hal+json"},"documentation":{"href":"...","type":"text/html"}}}';
+
+    /**
      * @return string
      */
     public function getMollieMockedEnabledPaymentMethodResponsePayload(): string
@@ -64,5 +69,13 @@ class MollieApiClientTester extends Actor
     public function getMollieMockedPaymentTransactionResponsePayload(): string
     {
         return static::MOLLIE_MOCKED_PAYMENT_TRANSACTION_RESPONSE_PAYLOAD;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMollieMockedRefundTransactionResponsePayload(): string
+    {
+        return static::MOLLIE_MOCKED_REFUND_TRANSACTION_RESPONSE_PAYLOAD;
     }
 }
