@@ -194,23 +194,23 @@ class CreatePaymentApi extends AbstractApiCall
 
         $payload = $createPaymentRequest->payload();
         $requestBody = $payload->all();
-        if (isset($requestBody['metadata']['orderReference'])) {
-            $requestBody['metadata']['orderReference'] = static::MASKED;
-        }
 
-        if (isset($requestBody['description'])) {
-            $requestBody['description'] = static::MASKED;
-        }
-        $mollieLogApiTransfer->setRequestBody($requestBody);
+        $fieldsToMaskForRequestBody = [
+            'description',
+            'metadata.orderReference',
+        ];
+        $fieldsToMaskForResponsePayload = [
+            'id',
+            'description',
+            'metadata.order_id',
+        ];
 
-        $payload = $mollieApiResponseTransfer->getPayload();
-        $payload['id'] = static::MASKED;
-        $payload['description'] = static::MASKED;
-        $payload['metadata']['order_id'] = static::MASKED;
+        $maskedRequestBody = $this->maskPayload($fieldsToMaskForRequestBody, $requestBody);
+        $maskedResponseBody = $this->maskPayload($fieldsToMaskForResponsePayload, $mollieApiResponseTransfer->getPayload());
 
         return $mollieLogApiTransfer
             ->setUrl($this->buildUrl())
-            ->setRequestBody($requestBody)
-            ->setPayload($payload);
+            ->setRequestBody($maskedRequestBody)
+            ->setPayload($maskedResponseBody);
     }
 }

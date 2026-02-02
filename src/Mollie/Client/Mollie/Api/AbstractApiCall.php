@@ -28,7 +28,7 @@ abstract class AbstractApiCall implements ApiCallInterface
 
     protected Request|null $request = null;
 
-    private static ?string $correlationId = null;
+    protected static ?string $correlationId = null;
 
     /**
      * @param \Mollie\Api\MollieApiClient $mollieApiClient
@@ -214,5 +214,41 @@ abstract class AbstractApiCall implements ApiCallInterface
         $reflection = new ReflectionClass($this);
 
         return sprintf('%s_%s', $reflection->getShortName(), static::$correlationId);
+    }
+
+     /**
+      * @param array<int, string> $fieldsToMask
+      * @param array<string, mixed> $payload
+      *
+      * @return array
+      */
+    protected function maskPayload(array $fieldsToMask, array $payload): array
+    {
+        foreach ($fieldsToMask as $field) {
+            $this->maskField($payload, $field);
+        }
+
+        return $payload;
+    }
+
+    /**
+     * @param array<string, mixed> $payload
+     * @param string $path
+     *
+     * @return void
+     */
+    protected function maskField(array &$payload, string $path): void
+    {
+        $keys = explode('.', $path);
+        $current = &$payload;
+
+        foreach ($keys as $key) {
+            if (!isset($current[$key])) {
+                return;
+            }
+            $current = &$current[$key];
+        }
+
+        $current = static::MASKED;
     }
 }

@@ -54,14 +54,19 @@ class GetPaymentByTransactionIdApi extends AbstractApiCall
         $requestBody = $getPaymentRequest->query()->all();
         $payload = $mollieApiResponseTransfer->getPayload();
 
-        $payload['id'] = static::MASKED;
-        $payload['description'] = static::MASKED;
-        $payload['metadata']['order_id'] = static::MASKED;
+        $fieldsToMaskForResponsePayload = [
+            'id',
+            'description',
+            'metadata.order_id',
+            '_links.dashboard.href',
+        ];
+
+        $maskedPayload = $this->maskPayload($fieldsToMaskForResponsePayload, $payload);
 
         return $mollieLogApiTransfer
             ->setUrl($this->buildUrl())
             ->setRequestBody($requestBody)
-            ->setPayload($payload);
+            ->setPayload($maskedPayload);
     }
 
     /**
