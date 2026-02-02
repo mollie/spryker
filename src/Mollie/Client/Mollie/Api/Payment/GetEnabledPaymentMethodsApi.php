@@ -6,6 +6,7 @@ namespace Mollie\Client\Mollie\Api\Payment;
 
 use Generated\Shared\Transfer\MollieApiRequestTransfer;
 use Generated\Shared\Transfer\MollieApiResponseTransfer;
+use Generated\Shared\Transfer\MollieLogApiTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodQueryParametersTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodsApiResponseTransfer;
 use Mollie\Api\Http\Data\Money;
@@ -15,28 +16,28 @@ use Mollie\Api\MollieApiClient;
 use Mollie\Api\Types\MethodQuery;
 use Mollie\Client\Mollie\Api\AbstractApiCall;
 use Mollie\Client\Mollie\Dependency\Service\MollieToUtilEncodingServiceInterface;
+use Mollie\Client\Mollie\Logger\MollieLoggerInterface;
 use Mollie\Client\Mollie\Mapper\PaymentMethodMapperInterface;
 use Mollie\Client\Mollie\MollieConfig;
 use Spryker\Shared\Kernel\Transfer\AbstractTransfer;
-use Spryker\Shared\Log\LoggerTrait;
 
 class GetEnabledPaymentMethodsApi extends AbstractApiCall
 {
-    use LoggerTrait;
-
     /**
      * @param \Mollie\Api\MollieApiClient $mollieApiClient
      * @param \Mollie\Client\Mollie\MollieConfig $mollieConfig
      * @param \Mollie\Client\Mollie\Dependency\Service\MollieToUtilEncodingServiceInterface $utilEncodingService
+     * @param \Mollie\Client\Mollie\Logger\MollieLoggerInterface $logger
      * @param \Mollie\Client\Mollie\Mapper\PaymentMethodMapperInterface $mapper
      */
     public function __construct(
         MollieApiClient $mollieApiClient,
         MollieConfig $mollieConfig,
         MollieToUtilEncodingServiceInterface $utilEncodingService,
+        MollieLoggerInterface $logger,
         protected PaymentMethodMapperInterface $mapper,
     ) {
-        parent::__construct($mollieApiClient, $mollieConfig, $utilEncodingService);
+        parent::__construct($mollieApiClient, $mollieConfig, $utilEncodingService, $logger);
     }
 
     /**
@@ -74,7 +75,7 @@ class GetEnabledPaymentMethodsApi extends AbstractApiCall
         $queryParametersTransfer = $mollieApiRequestTransfer->getMolliePaymentMethodQueryParameters();
         $amount = $this->getAmount($queryParametersTransfer);
 
-        return new GetEnabledMethodsRequest(
+        $this->request = new GetEnabledMethodsRequest(
             $queryParametersTransfer->getSequenceType(),
             MethodQuery::RESOURCE_PAYMENTS,
             $queryParametersTransfer->getLocale(),
@@ -85,6 +86,8 @@ class GetEnabledPaymentMethodsApi extends AbstractApiCall
             $queryParametersTransfer->getProfileId(),
             $queryParametersTransfer->getIncludeIssuers(),
         );
+
+        return $this->request;
     }
 
     /**
@@ -103,5 +106,25 @@ class GetEnabledPaymentMethodsApi extends AbstractApiCall
             $amountTransfer->getCurrency(),
             $amountTransfer->getValue(),
         );
+    }
+
+   /**
+    * @param \Generated\Shared\Transfer\MollieLogApiTransfer $mollieLogApiTransfer
+    * @param \Generated\Shared\Transfer\MollieApiResponseTransfer $mollieApiResponseTransfer
+    *
+    * @return \Generated\Shared\Transfer\MollieLogApiTransfer
+    */
+    protected function expandApiLogTransfer(
+        MollieLogApiTransfer $mollieLogApiTransfer,
+        MollieApiResponseTransfer $mollieApiResponseTransfer,
+    ): MollieLogApiTransfer {
+         /** @var \Mollie\Api\Http\Requests\GetEnabledMethodsRequest $getEnabledMethodsRequest */
+        $getEnabledMethodsRequest = $this->request;
+        $requestBody = $getEnabledMethodsRequest->query()->all();
+
+        return $mollieLogApiTransfer
+            ->setUrl($this->buildUrl())
+            ->setRequestBody($requestBody)
+            ->setPayload($mollieApiResponseTransfer->getPayload());
     }
 }

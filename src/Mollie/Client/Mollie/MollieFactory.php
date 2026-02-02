@@ -18,6 +18,8 @@ use Mollie\Client\Mollie\Dependency\Client\MollieToStorageClientInterface;
 use Mollie\Client\Mollie\Dependency\Service\MollieToUtilEncodingServiceInterface;
 use Mollie\Client\Mollie\Generator\Payment\PaymentMethodsCacheKeyGenerator;
 use Mollie\Client\Mollie\Generator\Payment\PaymentMethodsCacheKeyGeneratorInterface;
+use Mollie\Client\Mollie\Logger\MollieLogger;
+use Mollie\Client\Mollie\Logger\MollieLoggerInterface;
 use Mollie\Client\Mollie\Mapper\PaymentMethodMapper;
 use Mollie\Client\Mollie\Mapper\PaymentMethodMapperInterface;
 use Mollie\Client\Mollie\Provider\Payment\PaymentMethodsProvider;
@@ -79,6 +81,7 @@ class MollieFactory extends AbstractFactory
             $this->createMollieApiClient(),
             $this->getConfig(),
             $this->getUtilEncodingService(),
+            $this->createMollieLogger(),
             $this->createPaymentMethodMapper(),
         );
     }
@@ -92,6 +95,7 @@ class MollieFactory extends AbstractFactory
             $this->createMollieApiClient(),
             $this->getConfig(),
             $this->getUtilEncodingService(),
+            $this->createMollieLogger(),
             $this->createPaymentMethodMapper(),
         );
     }
@@ -117,6 +121,21 @@ class MollieFactory extends AbstractFactory
             $this->createMollieApiClient(),
             $this->getConfig(),
             $this->getUtilEncodingService(),
+            $this->createMollieLogger(),
+        );
+    }
+
+    /**
+     * @return \Mollie\Client\Mollie\Api\ApiCallInterface
+     */
+    public function createPaymentApi(): ApiCallInterface
+    {
+        return new CreatePaymentApi(
+            $this->createMollieApiClient(),
+            $this->getConfig(),
+            $this->getUtilEncodingService(),
+            $this->createMollieLogger(),
+            $this->getMollieService(),
         );
     }
 
@@ -147,24 +166,21 @@ class MollieFactory extends AbstractFactory
     }
 
     /**
-     * @return \Mollie\Client\Mollie\Api\ApiCallInterface
-     */
-    public function createPaymentApi(): ApiCallInterface
-    {
-        return new CreatePaymentApi(
-            $this->createMollieApiClient(),
-            $this->getConfig(),
-            $this->getUtilEncodingService(),
-            $this->getMollieService(),
-        );
-    }
-
-    /**
      * @return \Mollie\Client\Mollie\Mapper\PaymentMethodMapperInterface
      */
     public function createPaymentMethodMapper(): PaymentMethodMapperInterface
     {
         return new PaymentMethodMapper();
+    }
+
+    /**
+     * @return \Mollie\Client\Mollie\Logger\MollieLoggerInterface
+     */
+    public function createMollieLogger(): MollieLoggerInterface
+    {
+        return new MollieLogger(
+            $this->getConfig(),
+        );
     }
 
     /**

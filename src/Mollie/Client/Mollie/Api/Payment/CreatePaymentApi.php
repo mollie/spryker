@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Mollie\Client\Mollie\Api\Payment;
 
@@ -8,6 +8,7 @@ use Generated\Shared\Transfer\CheckoutResponseTransfer;
 use Generated\Shared\Transfer\MollieApiRequestTransfer;
 use Generated\Shared\Transfer\MollieApiResponseTransfer;
 use Generated\Shared\Transfer\MollieLinksTransfer;
+use Generated\Shared\Transfer\MollieLogApiTransfer;
 use Generated\Shared\Transfer\MolliePaymentApiResponseTransfer;
 use Generated\Shared\Transfer\MolliePaymentTransfer;
 use Mollie\Api\Http\Data\Money;
@@ -16,6 +17,7 @@ use Mollie\Api\Http\Requests\CreatePaymentRequest;
 use Mollie\Api\MollieApiClient;
 use Mollie\Client\Mollie\Api\AbstractApiCall;
 use Mollie\Client\Mollie\Dependency\Service\MollieToUtilEncodingServiceInterface;
+use Mollie\Client\Mollie\Logger\MollieLoggerInterface;
 use Mollie\Client\Mollie\MollieConfig;
 use Mollie\Service\Mollie\MollieServiceInterface;
 use Mollie\Shared\Mollie\MollieConfig as SharedConfig;
@@ -30,15 +32,17 @@ class CreatePaymentApi extends AbstractApiCall
      * @param \Mollie\Api\MollieApiClient $mollieApiClient
      * @param \Mollie\Client\Mollie\MollieConfig $mollieConfig
      * @param \Mollie\Client\Mollie\Dependency\Service\MollieToUtilEncodingServiceInterface $utilEncodingService
+     * @param \Mollie\Client\Mollie\Logger\MollieLoggerInterface $logger
      * @param \Mollie\Service\Mollie\MollieServiceInterface $mollieService
      */
     public function __construct(
         MollieApiClient $mollieApiClient,
         MollieConfig $mollieConfig,
         MollieToUtilEncodingServiceInterface $utilEncodingService,
+        MollieLoggerInterface $logger,
         protected MollieServiceInterface $mollieService,
     ) {
-        parent::__construct($mollieApiClient, $mollieConfig, $utilEncodingService);
+        parent::__construct($mollieApiClient, $mollieConfig, $utilEncodingService, $logger);
     }
 
     /**
@@ -69,7 +73,7 @@ class CreatePaymentApi extends AbstractApiCall
         $metadata = $this->addMetadata($checkoutResponseTransfer);
         $additionalParameters = $this->addAdditionalParameters($mollieApiRequestTransfer);
 
-        return new CreatePaymentRequest(
+        $this->request = new CreatePaymentRequest(
             description: $checkoutResponseTransfer->getSaveOrderOrFail()->getOrderReference(),
             amount: $amount,
             redirectUrl: $redirectUrl,
@@ -78,6 +82,8 @@ class CreatePaymentApi extends AbstractApiCall
             metadata: $metadata,
             additional: $additionalParameters,
         );
+
+        return $this->request;
     }
 
     /**
@@ -171,5 +177,40 @@ class CreatePaymentApi extends AbstractApiCall
         $molliePaymentApiResponseTransfer->setMolliePayment($molliePaymentTransfer);
 
         return $molliePaymentApiResponseTransfer;
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MollieLogApiTransfer $mollieLogApiTransfer
+     * @param \Generated\Shared\Transfer\MollieApiResponseTransfer $mollieApiResponseTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieLogApiTransfer
+     */
+    protected function expandApiLogTransfer(
+        MollieLogApiTransfer $mollieLogApiTransfer,
+        MollieApiResponseTransfer $mollieApiResponseTransfer,
+    ): MollieLogApiTransfer {
+         /** @var \Mollie\Api\Http\Requests\CreatePaymentRequest $createPaymentRequest */
+        $createPaymentRequest = $this->request;
+
+        $payload = $createPaymentRequest->payload();
+        $requestBody = $payload->all();
+
+        $fieldsToMaskForRequestBody = [
+            'description',
+            'metadata.orderReference',
+        ];
+        $fieldsToMaskForResponsePayload = [
+            'id',
+            'description',
+            'metadata.order_id',
+        ];
+
+        $maskedRequestBody = $this->maskPayload($fieldsToMaskForRequestBody, $requestBody);
+        $maskedResponseBody = $this->maskPayload($fieldsToMaskForResponsePayload, $mollieApiResponseTransfer->getPayload());
+
+        return $mollieLogApiTransfer
+            ->setUrl($this->buildUrl())
+            ->setRequestBody($maskedRequestBody)
+            ->setPayload($maskedResponseBody);
     }
 }
