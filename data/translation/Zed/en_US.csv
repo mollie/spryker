@@ -13,4 +13,5 @@ mollie.title.profile,Profile overview
 mollie.profile.information,Profile information
 mollie.profile.id,Profile ID:
 mollie.profile.status,Profile status:
-mollie.profile.error-message.not-verified,Zahlungen sind im Live-Modus möglicherweise erst nach der Verifizierung Ihres Profils möglich.
+mollie.profile.error-message.generic,Error contacting the mollie service to validate profile
+mollie.profile.error-message.not-verified,Payments may not work in live mode until your profile is verified.

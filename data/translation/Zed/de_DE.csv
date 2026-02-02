@@ -11,6 +11,7 @@ Images,Bilder
 Mollie payment methods,Mollie-Zahlungsmethoden
 mollie.title.profile,Profilübersicht
 mollie.profile.information,Profilinformationen
-mollie.profile.id,Profile ID:
-mollie.profile.status,Profile status:
+mollie.profile.id,Profil-ID:
+mollie.profile.status,Profilstatus:
+mollie.profile.error-message.generic,Fehler beim Kontaktieren des Mollie-Dienstes zur Profilvalidierung
 mollie.profile.error-message.not-verified,Zahlungen sind im Live-Modus möglicherweise erst nach der Verifizierung Ihres Profils möglich.
