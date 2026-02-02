@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Mollie\Client\Mollie\Api\Payment;
 
@@ -84,24 +84,6 @@ class CreatePaymentApi extends AbstractApiCall
         );
 
         return $this->request;
-    }
-
-    /**
-     * @param \Generated\Shared\Transfer\MollieApiResponseTransfer $mollieApiResponseTransfer
-     *
-     * @return \Generated\Shared\Transfer\MollieLogApiTransfer
-     */
-    protected function buildLogApiTransfer(MollieApiResponseTransfer $mollieApiResponseTransfer): MollieLogApiTransfer
-    {
-        $logApiTransfer = (new MollieLogApiTransfer())
-            ->fromArray(
-                $mollieApiResponseTransfer->toArray(true, true),
-            );
-
-        $payload = $logApiTransfer->getPayload();
-        $payload['profileId'] = static::MASKED;
-
-        return $logApiTransfer->setPayload($payload);
     }
 
     /**
@@ -198,23 +180,37 @@ class CreatePaymentApi extends AbstractApiCall
     }
 
     /**
-     * @return array
+     * @param \Generated\Shared\Transfer\MollieLogApiTransfer $mollieLogApiTransfer
+     * @param \Generated\Shared\Transfer\MollieApiResponseTransfer $mollieApiResponseTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieLogApiTransfer
      */
-    protected function buildLogRequestBody(): array
-    {
-        /** @var \Mollie\Api\Http\Requests\CreatePaymentRequest $createPaymentRequest */
+    protected function expandApiLogTransfer(
+        MollieLogApiTransfer $mollieLogApiTransfer,
+        MollieApiResponseTransfer $mollieApiResponseTransfer,
+    ): MollieLogApiTransfer {
+         /** @var \Mollie\Api\Http\Requests\CreatePaymentRequest $createPaymentRequest */
         $createPaymentRequest = $this->request;
 
         $payload = $createPaymentRequest->payload();
-        $data = $payload->all();
-        if (isset($data['metadata']['orderReference'])) {
-            $data['metadata']['orderReference'] = static::MASKED;
+        $requestBody = $payload->all();
+        if (isset($requestBody['metadata']['orderReference'])) {
+            $requestBody['metadata']['orderReference'] = static::MASKED;
         }
 
-        if (isset($data['description'])) {
-            $data['description'] = static::MASKED;
+        if (isset($requestBody['description'])) {
+            $requestBody['description'] = static::MASKED;
         }
+        $mollieLogApiTransfer->setRequestBody($requestBody);
 
-        return $data;
+        $payload = $mollieApiResponseTransfer->getPayload();
+        $payload['id'] = static::MASKED;
+        $payload['description'] = static::MASKED;
+        $payload['metadata']['order_id'] = static::MASKED;
+
+        return $mollieLogApiTransfer
+            ->setUrl($this->buildUrl())
+            ->setRequestBody($requestBody)
+            ->setPayload($payload);
     }
 }

@@ -1,6 +1,5 @@
 <?php
 
-
 declare(strict_types = 1);
 
 namespace Mollie\Client\Mollie\Api;
@@ -16,6 +15,7 @@ use Mollie\Api\MollieApiClient;
 use Mollie\Client\Mollie\Dependency\Service\MollieToUtilEncodingServiceInterface;
 use Mollie\Client\Mollie\Logger\MollieLoggerInterface;
 use Mollie\Client\Mollie\MollieConfig;
+use Ramsey\Uuid\Uuid;
 use ReflectionClass;
 use Spryker\Shared\Kernel\Transfer\AbstractTransfer;
 use Symfony\Component\HttpFoundation\Response;
@@ -27,6 +27,8 @@ abstract class AbstractApiCall implements ApiCallInterface
     public const string MASKED = '***';
 
     protected Request|null $request = null;
+
+    private static ?string $correlationId = null;
 
     /**
      * @param \Mollie\Api\MollieApiClient $mollieApiClient
@@ -57,9 +59,15 @@ abstract class AbstractApiCall implements ApiCallInterface
     abstract protected function mapApiResponse(MollieApiResponseTransfer $mollieApiResponseTransfer): AbstractTransfer;
 
     /**
-     * @return array
+     * @param \Generated\Shared\Transfer\MollieLogApiTransfer $mollieLogApiTransfer
+     * @param \Generated\Shared\Transfer\MollieApiResponseTransfer $mollieApiResponseTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieLogApiTransfer
      */
-    abstract protected function buildLogRequestBody(): array;
+    abstract protected function expandApiLogTransfer(
+        MollieLogApiTransfer $mollieLogApiTransfer,
+        MollieApiResponseTransfer $mollieApiResponseTransfer,
+    ): MollieLogApiTransfer;
 
     /**
      * @param \Generated\Shared\Transfer\MollieApiRequestTransfer|null $mollieApiRequestTransfer
@@ -91,7 +99,7 @@ abstract class AbstractApiCall implements ApiCallInterface
             $mollieApiResponseTransfer = $this->createExceptionResponse($exception->getMessage());
         }
 
-        $this->logApiResponse($mollieApiResponseTransfer);
+        $this->logApi($mollieApiResponseTransfer);
 
         return $this->mapApiResponse($mollieApiResponseTransfer);
     }
@@ -101,26 +109,37 @@ abstract class AbstractApiCall implements ApiCallInterface
      *
      * @return void
      */
-    protected function logApiResponse(MollieApiResponseTransfer $mollieApiResponseTransfer): void
+    protected function logApi(MollieApiResponseTransfer $mollieApiResponseTransfer): void
     {
-        $mollieApiLogTransfer = new MollieLogApiTransfer();
-        $apiClassName = (new ReflectionClass($this))->getShortName();
-        $mollieApiResponseTransfer->setRequestIdentifier($apiClassName);
+        $apiLogTransfer = $this->initializeApiLogTransfer($mollieApiResponseTransfer);
+        $apiLogTransfer = $this->expandApiLogTransfer($apiLogTransfer, $mollieApiResponseTransfer);
+        $this->logger->logResponse($apiLogTransfer);
+    }
 
-        if ($this->request) {
-            $url = sprintf(
-                static::URL_FORMAT,
-                $this->mollieApiClient->resolveBaseUrl(),
-                $this->request->resolveResourcePath(),
-            );
+    /**
+     * @param \Generated\Shared\Transfer\MollieApiResponseTransfer $mollieApiResponseTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieLogApiTransfer
+     */
+    protected function initializeApiLogTransfer(MollieApiResponseTransfer $mollieApiResponseTransfer): MollieLogApiTransfer
+    {
+        return (new MollieLogApiTransfer())
+            ->setRequestIdentifier($this->getCorrelationId())
+            ->setIsSuccessful($mollieApiResponseTransfer->getIsSuccessful())
+            ->setCode($mollieApiResponseTransfer->getCode())
+            ->setMessage($mollieApiResponseTransfer->getMessage());
+    }
 
-            $mollieApiLogTransfer->setUrl($url);
-        }
-
-        $requestBody = $this->buildLogRequestBody();
-        $mollieApiLogTransfer->setRequestBody($requestBody);
-
-        $this->logger->logResponse($mollieApiLogTransfer);
+    /**
+     * @return string
+     */
+    protected function buildUrl(): string
+    {
+        return sprintf(
+            static::URL_FORMAT,
+            $this->mollieApiClient->resolveBaseUrl(),
+            $this->request->resolveResourcePath(),
+        );
     }
 
     /**
@@ -182,5 +201,18 @@ abstract class AbstractApiCall implements ApiCallInterface
             ->setMessage($message);
 
         return $mollieResponseApiResponseTransfer;
+    }
+
+    /**
+     * @return string
+     */
+    protected function getCorrelationId(): string
+    {
+        if (static::$correlationId === null) {
+            static::$correlationId = Uuid::uuid4()->toString();
+        }
+        $reflection = new ReflectionClass($this);
+
+        return sprintf('%s_%s', $reflection->getShortName(), static::$correlationId);
     }
 }
