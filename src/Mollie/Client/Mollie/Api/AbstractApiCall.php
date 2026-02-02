@@ -220,7 +220,7 @@ abstract class AbstractApiCall implements ApiCallInterface
       * @param array<int, string> $fieldsToMask
       * @param array<string, mixed> $payload
       *
-      * @return array
+      * @return array<string, mixed>
       */
     protected function maskPayload(array $fieldsToMask, array $payload): array
     {
