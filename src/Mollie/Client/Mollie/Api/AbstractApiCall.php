@@ -145,7 +145,7 @@ abstract class AbstractApiCall implements ApiCallInterface
     /**
      * @param \Mollie\Api\Http\Response $response
      *
-     * @return array<string, string>
+     * @return array<string, mixed>
      */
     protected function formatApiResponse(MollieApiHttpResponse $response): array
     {
@@ -156,7 +156,7 @@ abstract class AbstractApiCall implements ApiCallInterface
 
     /**
      * @param int $statusCode
-     * @param array<string, string> $payload
+     * @param array<string, mixed> $payload
      *
      * @return \Generated\Shared\Transfer\MollieApiResponseTransfer
      */
@@ -173,7 +173,7 @@ abstract class AbstractApiCall implements ApiCallInterface
 
     /**
      * @param int $errorCode
-     * @param array<string, string> $payload
+     * @param array<string, mixed> $payload
      *
      * @return \Generated\Shared\Transfer\MollieApiResponseTransfer
      */

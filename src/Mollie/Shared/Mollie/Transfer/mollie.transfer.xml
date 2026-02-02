@@ -141,9 +141,6 @@
         <property name="code" type="int"/>
         <property name="message" type="string"/>
         <property name="timestamp" type="string"/>
-        <property name="url" type="string" />
-        <property name="request" type="array" />
-        <property name="requestIdentifier" type="string" />
     </transfer>
 
     <transfer name="MollieLogApi">
