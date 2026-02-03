@@ -350,8 +350,6 @@ class MolliePaymentMethodsFilterTest extends AbstractBusinessTest
     }
 
     /**
-     * Create a quote transfer with grand total and billing address
-     *
      * @param int $grandTotal
      * @param string $countryCode
      *
@@ -370,8 +368,6 @@ class MolliePaymentMethodsFilterTest extends AbstractBusinessTest
     }
 
     /**
-     * Create a Mollie payment method transfer
-     *
      * @param string $id
      * @param float|null $minAmount
      * @param float|null $maxAmount
@@ -415,7 +411,7 @@ class MolliePaymentMethodsFilterTest extends AbstractBusinessTest
     }
 
     /**
-     * @param array<string, string> $mapping Key => Mollie method ID
+     * @param array<string, string> $mapping
      *
      * @return void
      */
