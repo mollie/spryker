@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace Mollie\Client\Mollie;
 
 use Generated\Shared\Transfer\MollieApiRequestTransfer;
+use Generated\Shared\Transfer\MollieGetProfileApiResponseTransfer;
 use Generated\Shared\Transfer\MollieLogApiTransfer;
 use Generated\Shared\Transfer\MolliePaymentApiResponseTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodQueryParametersTransfer;
@@ -113,6 +114,14 @@ class MollieClient extends AbstractClient implements MollieClientInterface
     public function deleteAllPaymentMethodsCache(MolliePaymentMethodQueryParametersTransfer $parameters): void
     {
         $this->getFactory()->createPaymentMethodsCacheDeleter()->deleteAllPaymentMethodsCache($parameters);
+    }
+
+    /**
+     * @return \Generated\Shared\Transfer\MollieGetProfileApiResponseTransfer
+     */
+    public function getCurrentProfile(): MollieGetProfileApiResponseTransfer
+    {
+        return $this->getFactory()->createGetCurrentProfileApi()->execute();
     }
 
     /**

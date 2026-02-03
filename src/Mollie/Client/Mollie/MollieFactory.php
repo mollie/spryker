@@ -11,6 +11,7 @@ use Mollie\Client\Mollie\Api\Payment\CreatePaymentApi;
 use Mollie\Client\Mollie\Api\Payment\GetAllPaymentMethodsApi;
 use Mollie\Client\Mollie\Api\Payment\GetEnabledPaymentMethodsApi;
 use Mollie\Client\Mollie\Api\Payment\GetPaymentByTransactionIdApi;
+use Mollie\Client\Mollie\Api\Profile\GetCurrentProfileApi;
 use Mollie\Client\Mollie\Deleter\Payment\PaymentMethodsCacheDeleter;
 use Mollie\Client\Mollie\Deleter\Payment\PaymentMethodsCacheDeleterInterface;
 use Mollie\Client\Mollie\Dependency\Client\MollieToStorageClientInterface;
@@ -96,6 +97,19 @@ class MollieFactory extends AbstractFactory
             $this->getUtilEncodingService(),
             $this->createMollieLogger(),
             $this->createPaymentMethodMapper(),
+        );
+    }
+
+    /**
+     * @return \Mollie\Client\Mollie\Api\Profile\GetCurrentProfileApi
+     */
+    public function createGetCurrentProfileApi(): GetCurrentProfileApi
+    {
+        return new GetCurrentProfileApi(
+            $this->createMollieApiClient(),
+            $this->getConfig(),
+            $this->getUtilEncodingService(),
+            $this->createMollieLogger(),
         );
     }
 
