@@ -179,7 +179,7 @@ class CreatePaymentApi extends AbstractApiCall
     }
 
     /**
-     * @return array
+     * @return array<string, mixed>
      */
     protected function getRequestBody(): array
     {
