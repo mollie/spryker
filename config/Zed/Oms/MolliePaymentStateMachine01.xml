@@ -4,7 +4,7 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://static.spryker.com http://static.spryker.com/oms-01.xsd">
 
-    <process name="MollieCreditCardPayment" main="true">
+    <process name="MolliePaymentStateMachine01" main="true">
         <states>
             <state name="new" reserved="true"/>
             <state name="payment pending" reserved="true" display="oms.state.payment-pending"/>
