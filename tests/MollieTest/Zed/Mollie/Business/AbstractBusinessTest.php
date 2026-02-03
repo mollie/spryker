@@ -6,6 +6,8 @@ declare(strict_types = 1);
 namespace MollieTest\Zed\Mollie\Business;
 
 use Codeception\Test\Unit;
+use Mollie\Client\Mollie\MollieClientInterface;
+use Mollie\Zed\Mollie\Business\MollieBusinessFactory;
 use Mollie\Zed\Mollie\Business\MollieFacade;
 use Mollie\Zed\Mollie\Business\MollieFacadeInterface;
 use Spryker\Service\Container\Container;
@@ -27,6 +29,10 @@ abstract class AbstractBusinessTest extends Unit
 
     protected MollieFacadeInterface $mollieFacade;
 
+    protected MollieBusinessFactory $businessFactory;
+
+    protected MollieClientInterface $mollieClient;
+
     /**
      * @var \Generated\Shared\Transfer\QuoteTransfer
      */
@@ -45,6 +51,9 @@ abstract class AbstractBusinessTest extends Unit
         parent::setUp();
 
         $this->mollieFacade = new MollieFacade();
+        $this->businessFactory = $this->createMock(MollieBusinessFactory::class);
+        $this->mollieFacade->setFactory($this->businessFactory);
+        $this->mollieClient = $this->createMock(MollieClientInterface::class);
         $globalContainer = new GlobalContainer();
         $globalContainer->setContainer(new Container([
             'request_stack' => $this->getRequestStackMock(),
