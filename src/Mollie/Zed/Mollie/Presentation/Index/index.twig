@@ -28,7 +28,7 @@
                     {{ 'mollie.profile.status' | trans }} {{ status }}
                 </h4>
                 {% if status == 'unverified' or status == 'blocked' %}
-                    <h3 id="">
+                    <h3 id="mollie-error-message">
                         {{ 'mollie.profile.error-message.not-verified' | trans }}
                     </h3>
                 {% endif %}
