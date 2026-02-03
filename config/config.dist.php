@@ -31,9 +31,9 @@ $config[OmsConstants::PROCESS_LOCATION] = [
 ];
 
 $config[SalesConstants::PAYMENT_METHOD_STATEMACHINE_MAPPING] = [
-    MollieConfig::MOLLIE_PAYMENT_CREDIT_CARD => 'MolliePayment',
+    MollieConfig::MOLLIE_PAYMENT_CREDIT_CARD => 'MolliePaymentStateMachine01',
 ];
 
 $config[OmsConstants::ACTIVE_PROCESSES] = [
-    'MolliePayment',
+    'MolliePaymentStateMachine01',
 ];
