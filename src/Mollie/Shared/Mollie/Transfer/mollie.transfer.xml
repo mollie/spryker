@@ -166,6 +166,17 @@
         <property name="timestamp" type="string"/>
     </transfer>
 
+    <transfer name="MollieLogApi">
+        <property name="isSuccessful" type="bool"/>
+        <property name="payload" type="array"/>
+        <property name="code" type="int"/>
+        <property name="message" type="string"/>
+        <property name="timestamp" type="string"/>
+        <property name="requestBody" type="array" />
+        <property name="url" type="string" />
+        <property name="requestIdentifier" type="string" />
+    </transfer>
+
     <transfer name="MollieRefundRequest">
         <property name="refund" type="MollieRefund"/>
         <property name="isSuccess" type="bool" />

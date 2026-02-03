@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Mollie\Client\Mollie\Api\Payment;
 
@@ -16,6 +16,7 @@ use Mollie\Api\Http\Requests\CreatePaymentRequest;
 use Mollie\Api\MollieApiClient;
 use Mollie\Client\Mollie\Api\AbstractApiCall;
 use Mollie\Client\Mollie\Dependency\Service\MollieToUtilEncodingServiceInterface;
+use Mollie\Client\Mollie\Logger\MollieLoggerInterface;
 use Mollie\Client\Mollie\MollieConfig;
 use Mollie\Service\Mollie\MollieServiceInterface;
 use Mollie\Shared\Mollie\MollieConfig as SharedConfig;
@@ -30,15 +31,17 @@ class CreatePaymentApi extends AbstractApiCall
      * @param \Mollie\Api\MollieApiClient $mollieApiClient
      * @param \Mollie\Client\Mollie\MollieConfig $mollieConfig
      * @param \Mollie\Client\Mollie\Dependency\Service\MollieToUtilEncodingServiceInterface $utilEncodingService
+     * @param \Mollie\Client\Mollie\Logger\MollieLoggerInterface $logger
      * @param \Mollie\Service\Mollie\MollieServiceInterface $mollieService
      */
     public function __construct(
         MollieApiClient $mollieApiClient,
         MollieConfig $mollieConfig,
         MollieToUtilEncodingServiceInterface $utilEncodingService,
+        MollieLoggerInterface $logger,
         protected MollieServiceInterface $mollieService,
     ) {
-        parent::__construct($mollieApiClient, $mollieConfig, $utilEncodingService);
+        parent::__construct($mollieApiClient, $mollieConfig, $utilEncodingService, $logger);
     }
 
     /**
@@ -69,7 +72,7 @@ class CreatePaymentApi extends AbstractApiCall
         $metadata = $this->addMetadata($checkoutResponseTransfer);
         $additionalParameters = $this->addAdditionalParameters($mollieApiRequestTransfer);
 
-        return new CreatePaymentRequest(
+        $this->request = new CreatePaymentRequest(
             description: $checkoutResponseTransfer->getSaveOrderOrFail()->getOrderReference(),
             amount: $amount,
             redirectUrl: $redirectUrl,
@@ -78,6 +81,8 @@ class CreatePaymentApi extends AbstractApiCall
             metadata: $metadata,
             additional: $additionalParameters,
         );
+
+        return $this->request;
     }
 
     /**
@@ -171,5 +176,19 @@ class CreatePaymentApi extends AbstractApiCall
         $molliePaymentApiResponseTransfer->setMolliePayment($molliePaymentTransfer);
 
         return $molliePaymentApiResponseTransfer;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    protected function getRequestBody(): array
+    {
+         /** @var \Mollie\Api\Http\Requests\CreatePaymentRequest $createPaymentRequest */
+        $createPaymentRequest = $this->request;
+
+        $payload = $createPaymentRequest->payload();
+        $requestBody = $payload->all();
+
+        return $requestBody;
     }
 }

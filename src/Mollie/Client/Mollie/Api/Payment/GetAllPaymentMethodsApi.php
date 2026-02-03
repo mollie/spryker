@@ -14,6 +14,7 @@ use Mollie\Api\Http\Requests\GetAllMethodsRequest;
 use Mollie\Api\MollieApiClient;
 use Mollie\Client\Mollie\Api\AbstractApiCall;
 use Mollie\Client\Mollie\Dependency\Service\MollieToUtilEncodingServiceInterface;
+use Mollie\Client\Mollie\Logger\MollieLoggerInterface;
 use Mollie\Client\Mollie\Mapper\PaymentMethodMapperInterface;
 use Mollie\Client\Mollie\MollieConfig;
 use Spryker\Shared\Kernel\Transfer\AbstractTransfer;
@@ -27,15 +28,17 @@ class GetAllPaymentMethodsApi extends AbstractApiCall
      * @param \Mollie\Api\MollieApiClient $mollieApiClient
      * @param \Mollie\Client\Mollie\MollieConfig $mollieConfig
      * @param \Mollie\Client\Mollie\Dependency\Service\MollieToUtilEncodingServiceInterface $utilEncodingService
+     * @param \Mollie\Client\Mollie\Logger\MollieLoggerInterface $logger
      * @param \Mollie\Client\Mollie\Mapper\PaymentMethodMapperInterface $mapper
      */
     public function __construct(
         MollieApiClient $mollieApiClient,
         MollieConfig $mollieConfig,
         MollieToUtilEncodingServiceInterface $utilEncodingService,
+        MollieLoggerInterface $logger,
         protected PaymentMethodMapperInterface $mapper,
     ) {
-        parent::__construct($mollieApiClient, $mollieConfig, $utilEncodingService);
+        parent::__construct($mollieApiClient, $mollieConfig, $utilEncodingService, $logger);
     }
 
     /**
@@ -70,13 +73,15 @@ class GetAllPaymentMethodsApi extends AbstractApiCall
         $queryParametersTransfer = $mollieApiRequestTransfer->getMolliePaymentMethodQueryParameters();
         $amount = $this->getAmount($queryParametersTransfer);
 
-        return new GetAllMethodsRequest(
+        $this->request = new GetAllMethodsRequest(
             $queryParametersTransfer->getIncludeIssuers() ?? false,
             $queryParametersTransfer->getIncludePricing() ?? false,
             $queryParametersTransfer->getLocale(),
             $amount,
             $queryParametersTransfer->getProfileId(),
         );
+
+        return $this->request;
     }
 
     /**

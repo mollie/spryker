@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace Mollie\Client\Mollie;
 
 use Generated\Shared\Transfer\MollieApiRequestTransfer;
+use Generated\Shared\Transfer\MollieLogApiTransfer;
 use Generated\Shared\Transfer\MolliePaymentApiResponseTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodQueryParametersTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodsApiResponseTransfer;
@@ -171,5 +172,15 @@ class MollieClient extends AbstractClient implements MollieClientInterface
     public function processRefundData(MollieRefundTransfer $mollieRefundTransfer): MollieRefundResponseTransfer
     {
         return $this->getFactory()->createZedMollieStub()->processRefundData($mollieRefundTransfer);
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MollieLogApiTransfer $mollieLogApiTransfer
+     *
+     * @return void
+     */
+    public function logMessage(MollieLogApiTransfer $mollieLogApiTransfer): void
+    {
+        $this->getFactory()->createMollieLogger()->logMessage($mollieLogApiTransfer);
     }
 }

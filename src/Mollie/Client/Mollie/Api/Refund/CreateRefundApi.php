@@ -13,6 +13,7 @@ use Mollie\Api\Http\Requests\CreatePaymentRefundRequest;
 use Mollie\Api\MollieApiClient;
 use Mollie\Client\Mollie\Api\AbstractApiCall;
 use Mollie\Client\Mollie\Dependency\Service\MollieToUtilEncodingServiceInterface;
+use Mollie\Client\Mollie\Logger\MollieLoggerInterface;
 use Mollie\Client\Mollie\MollieConfig;
 use Mollie\Service\Mollie\MollieServiceInterface;
 use Spryker\Shared\Kernel\Transfer\AbstractTransfer;
@@ -26,15 +27,17 @@ class CreateRefundApi extends AbstractApiCall
      * @param \Mollie\Api\MollieApiClient $mollieApiClient
      * @param \Mollie\Client\Mollie\MollieConfig $mollieConfig
      * @param \Mollie\Client\Mollie\Dependency\Service\MollieToUtilEncodingServiceInterface $utilEncodingService
+     * @param \Mollie\Client\Mollie\Logger\MollieLoggerInterface $logger
      * @param \Mollie\Service\Mollie\MollieServiceInterface $mollieService
      */
     public function __construct(
         MollieApiClient $mollieApiClient,
         MollieConfig $mollieConfig,
         MollieToUtilEncodingServiceInterface $utilEncodingService,
+        MollieLoggerInterface $logger,
         protected MollieServiceInterface $mollieService,
     ) {
-        parent::__construct($mollieApiClient, $mollieConfig, $utilEncodingService);
+        parent::__construct($mollieApiClient, $mollieConfig, $utilEncodingService, $logger);
     }
 
     /**
@@ -52,12 +55,14 @@ class CreateRefundApi extends AbstractApiCall
             value: $convertedOrderItemsGrossAmount,
         );
 
-        return new CreatePaymentRefundRequest(
+        $this->request = new CreatePaymentRefundRequest(
             paymentId: $mollieApiRequestTransfer->getTransactionId(),
             description: $mollieApiRequestTransfer->getDescription(),
             amount: $amount,
             metadata: $mollieApiRequestTransfer->getMetadata(),
         );
+
+        return $this->request;
     }
 
     /**
@@ -83,6 +88,20 @@ class CreateRefundApi extends AbstractApiCall
         $mollieRefundApiResponseTransfer->setMollieRefund($mollieRefundTransfer);
 
         return $mollieRefundApiResponseTransfer;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    protected function getRequestBody(): array
+    {
+        /** @var \Mollie\Api\Http\Requests\CreatePaymentRefundRequest $createPaymentRefundRequest */
+        $createPaymentRefundRequest = $this->request;
+
+        $payload = $createPaymentRefundRequest->payload();
+        $requestBody = $payload->all();
+
+        return $requestBody;
     }
 
     /**

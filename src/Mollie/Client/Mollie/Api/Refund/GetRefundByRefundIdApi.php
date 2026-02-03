@@ -10,32 +10,13 @@ use Generated\Shared\Transfer\MollieRefundApiResponseTransfer;
 use Generated\Shared\Transfer\MollieRefundTransfer;
 use Mollie\Api\Http\Request;
 use Mollie\Api\Http\Requests\GetPaymentRefundRequest;
-use Mollie\Api\MollieApiClient;
 use Mollie\Client\Mollie\Api\AbstractApiCall;
-use Mollie\Client\Mollie\Dependency\Service\MollieToUtilEncodingServiceInterface;
-use Mollie\Client\Mollie\MollieConfig;
-use Mollie\Service\Mollie\MollieServiceInterface;
 use Spryker\Shared\Kernel\Transfer\AbstractTransfer;
 use Spryker\Shared\Log\LoggerTrait;
 
 class GetRefundByRefundIdApi extends AbstractApiCall
 {
     use LoggerTrait;
-
-    /**
-     * @param \Mollie\Api\MollieApiClient $mollieApiClient
-     * @param \Mollie\Client\Mollie\MollieConfig $mollieConfig
-     * @param \Mollie\Client\Mollie\Dependency\Service\MollieToUtilEncodingServiceInterface $utilEncodingService
-     * @param \Mollie\Service\Mollie\MollieServiceInterface $mollieService
-     */
-    public function __construct(
-        MollieApiClient $mollieApiClient,
-        MollieConfig $mollieConfig,
-        MollieToUtilEncodingServiceInterface $utilEncodingService,
-        protected MollieServiceInterface $mollieService,
-    ) {
-        parent::__construct($mollieApiClient, $mollieConfig, $utilEncodingService);
-    }
 
     /**
      * @param \Generated\Shared\Transfer\MollieApiResponseTransfer $mollieApiResponseTransfer
@@ -63,9 +44,11 @@ class GetRefundByRefundIdApi extends AbstractApiCall
      */
     protected function buildRequest(?MollieApiRequestTransfer $mollieApiRequestTransfer = null): ?Request
     {
-        return new GetPaymentRefundRequest(
+        $this->request = new GetPaymentRefundRequest(
             paymentId: $mollieApiRequestTransfer->getTransactionId(),
             refundId: $mollieApiRequestTransfer->getRefundId(),
         );
+
+        return $this->request;
     }
 }

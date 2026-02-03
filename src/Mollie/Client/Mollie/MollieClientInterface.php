@@ -4,6 +4,7 @@ declare(strict_types = 1);
 namespace Mollie\Client\Mollie;
 
 use Generated\Shared\Transfer\MollieApiRequestTransfer;
+use Generated\Shared\Transfer\MollieLogApiTransfer;
 use Generated\Shared\Transfer\MolliePaymentApiResponseTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodQueryParametersTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodsApiResponseTransfer;
@@ -147,4 +148,11 @@ interface MollieClientInterface
      * @return \Generated\Shared\Transfer\MollieRefundResponseTransfer
      */
     public function processRefundData(MollieRefundTransfer $mollieRefundTransfer): MollieRefundResponseTransfer;
+
+    /**
+     * @param \Generated\Shared\Transfer\MollieLogApiTransfer $mollieLogApiTransfer
+     *
+     * @return void
+     */
+    public function logMessage(MollieLogApiTransfer $mollieLogApiTransfer): void;
 }
