@@ -104,7 +104,6 @@ class PaymentMethodsProvider implements PaymentMethodsProviderInterface
         if (!$data) {
             return null;
         }
-
         $molliePaymentMethodsApiResponseTransfer = new MolliePaymentMethodsApiResponseTransfer();
         $molliePaymentMethodCollectionTransfer = new MolliePaymentMethodCollectionTransfer();
 
