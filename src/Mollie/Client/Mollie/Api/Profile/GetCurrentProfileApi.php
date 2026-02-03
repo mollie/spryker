@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Mollie\Client\Mollie\Api\Profile;
 
-use Generated\Shared\Transfer\MollieLogApiTransfer;
 use Generated\Shared\Transfer\MollieApiRequestTransfer;
 use Generated\Shared\Transfer\MollieApiResponseTransfer;
 use Generated\Shared\Transfer\MollieGetProfileApiResponseTransfer;
+use Generated\Shared\Transfer\MollieLogApiTransfer;
 use Generated\Shared\Transfer\MollieProfileTransfer;
 use Mollie\Api\Http\Request;
 use Mollie\Api\Http\Requests\GetCurrentProfileRequest;
@@ -17,6 +17,7 @@ use Spryker\Shared\Kernel\Transfer\AbstractTransfer;
 class GetCurrentProfileApi extends AbstractApiCall
 {
     protected Request|null $request;
+
     /**
      * @param \Generated\Shared\Transfer\MollieApiRequestTransfer|null $mollieApiRequestTransfer
      *
@@ -47,34 +48,28 @@ class GetCurrentProfileApi extends AbstractApiCall
     }
 
     /**
-     * @param \Generated\Shared\Transfer\MollieLogApiTransfer $mollieLogApiTransfer
      * @param \Generated\Shared\Transfer\MollieApiResponseTransfer $mollieApiResponseTransfer
      *
      * @return \Generated\Shared\Transfer\MollieLogApiTransfer
      */
-    protected function expandApiLogTransfer(
-        MollieLogApiTransfer $mollieLogApiTransfer,
-        MollieApiResponseTransfer $mollieApiResponseTransfer,
-    ): MollieLogApiTransfer {
-        /** @var \Mollie\Api\Http\Requests\GetEnabledMethodsRequest $getEnabledMethodsRequest */
-        $getEnabledMethodsRequest = $this->request;
-        $requestBody = $getEnabledMethodsRequest->query()->all();
-
+    protected function mapApiResponseToLogResponseTransfer(MollieApiResponseTransfer $mollieApiResponseTransfer): MollieLogApiTransfer
+    {
         $fieldsToMaskForResponsePayload = [
             'id',
             'name',
             'email',
             'phone',
-            '_links.self.href',
-            'metadata.order_id',
         ];
 
         $maskedResponseBody = $this->maskPayload($fieldsToMaskForResponsePayload, $mollieApiResponseTransfer->getPayload());
 
-
-        return $mollieLogApiTransfer
+        return (new MollieLogApiTransfer())
+            ->setIsSuccessful($mollieApiResponseTransfer->getIsSuccessful())
+            ->setRequestIdentifier($this->getCorrelationId())
             ->setUrl($this->buildUrl())
-            ->setRequestBody($requestBody)
-            ->setPayload($maskedResponseBody);
+            ->setRequestBody($this->getRequestBody())
+            ->setPayload($maskedResponseBody)
+            ->setCode($mollieApiResponseTransfer->getCode())
+            ->setMessage($mollieApiResponseTransfer->getMessage());
     }
 }

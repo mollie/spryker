@@ -21,14 +21,14 @@
                 </h2>
             </div>
             <div class="ibox-content">
-                <h4>
+                <h4 id="mollie-profile-id">
                    {{ 'mollie.profile.id' | trans }} {{ response.profile.id }}
                 </h4>
-                <h4>
+                <h4 id="mollie-profile-status">
                     {{ 'mollie.profile.status' | trans }} {{ status }}
                 </h4>
                 {% if status == 'unverified' or status == 'blocked' %}
-                    <h3>
+                    <h3 id="mollie-error-message-container">
                         {{ 'mollie.profile.error-message.not-verified' | trans }}
                     </h3>
                 {% endif %}
@@ -36,7 +36,7 @@
         </div>
     </div>
     {% else %}
-    <h3>
+    <h3 id="mollie-error-message-container">
         {{ 'mollie.profile.error-message.generic' | trans }}
     </h3>
     {% endif %}

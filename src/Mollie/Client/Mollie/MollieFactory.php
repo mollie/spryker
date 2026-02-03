@@ -109,6 +109,7 @@ class MollieFactory extends AbstractFactory
             $this->createMollieApiClient(),
             $this->getConfig(),
             $this->getUtilEncodingService(),
+            $this->createMollieLogger(),
         );
     }
 
