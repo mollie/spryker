@@ -8,7 +8,6 @@ use Generated\Shared\Transfer\CheckoutResponseTransfer;
 use Generated\Shared\Transfer\MollieApiRequestTransfer;
 use Generated\Shared\Transfer\MollieApiResponseTransfer;
 use Generated\Shared\Transfer\MollieLinksTransfer;
-use Generated\Shared\Transfer\MollieLogApiTransfer;
 use Generated\Shared\Transfer\MolliePaymentApiResponseTransfer;
 use Generated\Shared\Transfer\MolliePaymentTransfer;
 use Mollie\Api\Http\Data\Money;
@@ -180,37 +179,16 @@ class CreatePaymentApi extends AbstractApiCall
     }
 
     /**
-     * @param \Generated\Shared\Transfer\MollieLogApiTransfer $mollieLogApiTransfer
-     * @param \Generated\Shared\Transfer\MollieApiResponseTransfer $mollieApiResponseTransfer
-     *
-     * @return \Generated\Shared\Transfer\MollieLogApiTransfer
+     * @return array
      */
-    protected function expandApiLogTransfer(
-        MollieLogApiTransfer $mollieLogApiTransfer,
-        MollieApiResponseTransfer $mollieApiResponseTransfer,
-    ): MollieLogApiTransfer {
+    protected function getRequestBody(): array
+    {
          /** @var \Mollie\Api\Http\Requests\CreatePaymentRequest $createPaymentRequest */
         $createPaymentRequest = $this->request;
 
         $payload = $createPaymentRequest->payload();
         $requestBody = $payload->all();
 
-        $fieldsToMaskForRequestBody = [
-            'description',
-            'metadata.orderReference',
-        ];
-        $fieldsToMaskForResponsePayload = [
-            'id',
-            'description',
-            'metadata.order_id',
-        ];
-
-        $maskedRequestBody = $this->maskPayload($fieldsToMaskForRequestBody, $requestBody);
-        $maskedResponseBody = $this->maskPayload($fieldsToMaskForResponsePayload, $mollieApiResponseTransfer->getPayload());
-
-        return $mollieLogApiTransfer
-            ->setUrl($this->buildUrl())
-            ->setRequestBody($maskedRequestBody)
-            ->setPayload($maskedResponseBody);
+        return $requestBody;
     }
 }

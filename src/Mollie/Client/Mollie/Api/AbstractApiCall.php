@@ -59,17 +59,6 @@ abstract class AbstractApiCall implements ApiCallInterface
     abstract protected function mapApiResponse(MollieApiResponseTransfer $mollieApiResponseTransfer): AbstractTransfer;
 
     /**
-     * @param \Generated\Shared\Transfer\MollieLogApiTransfer $mollieLogApiTransfer
-     * @param \Generated\Shared\Transfer\MollieApiResponseTransfer $mollieApiResponseTransfer
-     *
-     * @return \Generated\Shared\Transfer\MollieLogApiTransfer
-     */
-    abstract protected function expandApiLogTransfer(
-        MollieLogApiTransfer $mollieLogApiTransfer,
-        MollieApiResponseTransfer $mollieApiResponseTransfer,
-    ): MollieLogApiTransfer;
-
-    /**
      * @param \Generated\Shared\Transfer\MollieApiRequestTransfer|null $mollieApiRequestTransfer
      *
      * @return \Spryker\Shared\Kernel\Transfer\AbstractTransfer
@@ -111,8 +100,7 @@ abstract class AbstractApiCall implements ApiCallInterface
      */
     protected function logApi(MollieApiResponseTransfer $mollieApiResponseTransfer): void
     {
-        $apiLogTransfer = $this->initializeApiLogTransfer($mollieApiResponseTransfer);
-        $apiLogTransfer = $this->expandApiLogTransfer($apiLogTransfer, $mollieApiResponseTransfer);
+        $apiLogTransfer = $this->mapApiResponseToLogResponseTransfer($mollieApiResponseTransfer);
         $this->logger->logResponse($apiLogTransfer);
     }
 
@@ -121,13 +109,26 @@ abstract class AbstractApiCall implements ApiCallInterface
      *
      * @return \Generated\Shared\Transfer\MollieLogApiTransfer
      */
-    protected function initializeApiLogTransfer(MollieApiResponseTransfer $mollieApiResponseTransfer): MollieLogApiTransfer
+    protected function mapApiResponseToLogResponseTransfer(MollieApiResponseTransfer $mollieApiResponseTransfer): MollieLogApiTransfer
     {
         return (new MollieLogApiTransfer())
-            ->setRequestIdentifier($this->getCorrelationId())
             ->setIsSuccessful($mollieApiResponseTransfer->getIsSuccessful())
+            ->setRequestIdentifier($this->getCorrelationId())
+            ->setUrl($this->buildUrl())
+            ->setRequestBody($this->getRequestBody())
+            ->setPayload($mollieApiResponseTransfer->getPayload())
             ->setCode($mollieApiResponseTransfer->getCode())
             ->setMessage($mollieApiResponseTransfer->getMessage());
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    protected function getRequestBody(): array
+    {
+        $requestBody = $this->request->query()->all();
+
+        return $requestBody;
     }
 
     /**
