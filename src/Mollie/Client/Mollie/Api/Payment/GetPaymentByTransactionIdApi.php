@@ -6,7 +6,6 @@ namespace Mollie\Client\Mollie\Api\Payment;
 
 use Generated\Shared\Transfer\MollieApiRequestTransfer;
 use Generated\Shared\Transfer\MollieApiResponseTransfer;
-use Generated\Shared\Transfer\MollieLogApiTransfer;
 use Generated\Shared\Transfer\MolliePaymentApiResponseTransfer;
 use Generated\Shared\Transfer\MolliePaymentTransfer;
 use Mollie\Api\Http\Request;
@@ -37,48 +36,6 @@ class GetPaymentByTransactionIdApi extends AbstractApiCall
         $molliePaymentApiResponseTransfer->setMolliePayment($molliePaymentTransfer);
 
         return $molliePaymentApiResponseTransfer;
-    }
-
-    /**
-     * @param \Generated\Shared\Transfer\MollieLogApiTransfer $mollieLogApiTransfer
-     * @param \Generated\Shared\Transfer\MollieApiResponseTransfer $mollieApiResponseTransfer
-     *
-     * @return \Generated\Shared\Transfer\MollieLogApiTransfer
-     */
-    protected function expandApiLogTransfer(
-        MollieLogApiTransfer $mollieLogApiTransfer,
-        MollieApiResponseTransfer $mollieApiResponseTransfer,
-    ): MollieLogApiTransfer {
-        /** @var \Mollie\Api\Http\Requests\GetPaymentRequest $getPaymentRequest */
-        $getPaymentRequest = $this->request;
-        $requestBody = $getPaymentRequest->query()->all();
-        $payload = $mollieApiResponseTransfer->getPayload();
-
-        $fieldsToMaskForResponsePayload = [
-            'id',
-            'description',
-            'metadata.order_id',
-            '_links.dashboard.href',
-        ];
-
-        $maskedPayload = $this->maskPayload($fieldsToMaskForResponsePayload, $payload);
-
-        return $mollieLogApiTransfer
-            ->setUrl($this->buildUrl())
-            ->setRequestBody($requestBody)
-            ->setPayload($maskedPayload);
-    }
-
-    /**
-     * @return string
-     */
-    protected function buildUrl(): string
-    {
-        return sprintf(
-            static::URL_FORMAT,
-            $this->mollieApiClient->resolveBaseUrl(),
-            static::MASKED,
-        );
     }
 
     /**

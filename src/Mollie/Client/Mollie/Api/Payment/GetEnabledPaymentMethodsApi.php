@@ -6,7 +6,6 @@ namespace Mollie\Client\Mollie\Api\Payment;
 
 use Generated\Shared\Transfer\MollieApiRequestTransfer;
 use Generated\Shared\Transfer\MollieApiResponseTransfer;
-use Generated\Shared\Transfer\MollieLogApiTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodQueryParametersTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodsApiResponseTransfer;
 use Mollie\Api\Http\Data\Money;
@@ -106,25 +105,5 @@ class GetEnabledPaymentMethodsApi extends AbstractApiCall
             $amountTransfer->getCurrency(),
             $amountTransfer->getValue(),
         );
-    }
-
-   /**
-    * @param \Generated\Shared\Transfer\MollieLogApiTransfer $mollieLogApiTransfer
-    * @param \Generated\Shared\Transfer\MollieApiResponseTransfer $mollieApiResponseTransfer
-    *
-    * @return \Generated\Shared\Transfer\MollieLogApiTransfer
-    */
-    protected function expandApiLogTransfer(
-        MollieLogApiTransfer $mollieLogApiTransfer,
-        MollieApiResponseTransfer $mollieApiResponseTransfer,
-    ): MollieLogApiTransfer {
-         /** @var \Mollie\Api\Http\Requests\GetEnabledMethodsRequest $getEnabledMethodsRequest */
-        $getEnabledMethodsRequest = $this->request;
-        $requestBody = $getEnabledMethodsRequest->query()->all();
-
-        return $mollieLogApiTransfer
-            ->setUrl($this->buildUrl())
-            ->setRequestBody($requestBody)
-            ->setPayload($mollieApiResponseTransfer->getPayload());
     }
 }
