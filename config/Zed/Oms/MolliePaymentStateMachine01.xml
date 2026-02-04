@@ -5,7 +5,6 @@
         xsi:schemaLocation="http://static.spryker.com http://static.spryker.com/oms-01.xsd">
 
     <process name="MolliePaymentStateMachine01" main="true">
-    <process name="MollieCreditCardPayment" main="true">
         <subprocesses>
             <process>MollieRefund</process>
         </subprocesses>
