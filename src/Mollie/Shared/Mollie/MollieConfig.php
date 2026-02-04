@@ -171,6 +171,14 @@ class MollieConfig extends AbstractSharedConfig
     /**
      * @return string
      */
+    public function getMollieLoggingMode(): string
+    {
+        return $this->get(MollieConstants::MOLLIE)[MollieConstants::MOLLIE_DEBUG_MODE];
+    }
+
+    /**
+     * @return string
+     */
     public function getCacheKeyIdentifierForAllPaymentMethods(): string
     {
         return static::CACHE_KEY_IDENTIFIER_FOR_ALL_PAYMENT_METHODS;

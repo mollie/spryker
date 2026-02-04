@@ -173,11 +173,6 @@ jobs:
       - name: Setup Spryker configuration
         working-directory: spryker-project
         run: |
-          # Copy environment configuration
-          if [ -f config/Shared/config_default.php ]; then
-            cp config/Shared/config_default.php config/Shared/config_local.php
-          fi
-          
           # Create test database configuration
           cat > config/Shared/config_local.php << 'EOF'
           <?php
@@ -233,7 +228,7 @@ jobs:
               MollieConstants::MOLLIE_PROFILE_ID => 'pfl_pD5UernhAv',
               MollieConstants::MOLLIE_TEST_MODE => true,
               MollieConstants::MOLLIE_API_KEY => getenv('MOLLIE_API_KEY') ?: 'test_jdkshfdsk1213sjkadsdasfdsafdsfdsfdsfds2qeqasx',
-          
+              MollieConstants::MOLLIE_DEBUG_MODE => 'Extensive',
               MollieConstants::MOLLIE_REDIRECT_URL => sprintf('https://%s%s', $sprykerFrontendHost, '/checkout/payment-redirect'),
               MollieConstants::MOLLIE_WEBHOOK_URL => sprintf('https://%s%s', $sprykerFrontendHost, '/mollie/webhook'),
               MollieConstants::MOLLIE_CREDIT_CARD_COMPONENTS_ENABLED => true,

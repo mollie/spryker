@@ -106,6 +106,23 @@
         <property name="isSuccess" type="bool" />
     </transfer>
 
+    <transfer name="MollieProfile">
+        <property name="id" type="string" />
+        <property name="mode" type="string" />
+        <property name="name" type="string" />
+        <property name="website" type="string" />
+        <property name="email" type="string" />
+        <property name="phone" type="string" />
+        <property name="status" type="string" />
+        <property name="createdAt" type="string" />
+    </transfer>
+
+    <transfer name="MollieGetProfileApiResponse">
+        <property name="isSuccessful" type="bool"/>
+        <property name="message" type="string"/>
+        <property name="profile" type="MollieProfile" />
+    </transfer>
+
     <transfer name="MolliePaymentMethodsApiResponse">
         <property name="isSuccessful" type="bool"/>
         <property name="message" type="string"/>
@@ -143,6 +160,17 @@
         <property name="timestamp" type="string"/>
     </transfer>
 
+    <transfer name="MollieLogApi">
+        <property name="isSuccessful" type="bool"/>
+        <property name="payload" type="array"/>
+        <property name="code" type="int"/>
+        <property name="message" type="string"/>
+        <property name="timestamp" type="string"/>
+        <property name="requestBody" type="array" />
+        <property name="url" type="string" />
+        <property name="requestIdentifier" type="string" />
+    </transfer>
+
     <transfer name="Quote">
         <property name="molliePaymentId" type="string"/>
     </transfer>
@@ -154,6 +182,5 @@
     <transfer name="SaveOrder">
         <property name="molliePaymentId" type="string"/>
     </transfer>
-
 
 </transfers>

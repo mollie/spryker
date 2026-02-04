@@ -1,6 +1,5 @@
 <?php
 
-
 declare(strict_types = 1);
 
 namespace Mollie\Client\Mollie\Api\Payment;
@@ -46,6 +45,8 @@ class GetPaymentByTransactionIdApi extends AbstractApiCall
      */
     protected function buildRequest(?MollieApiRequestTransfer $mollieApiRequestTransfer = null): ?Request
     {
-        return new GetPaymentRequest($mollieApiRequestTransfer->getTransactionId());
+        $this->request = new GetPaymentRequest($mollieApiRequestTransfer->getTransactionId());
+
+        return $this->request;
     }
 }
