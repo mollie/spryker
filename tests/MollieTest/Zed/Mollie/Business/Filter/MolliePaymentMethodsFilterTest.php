@@ -55,6 +55,15 @@ class MolliePaymentMethodsFilterTest extends AbstractBusinessTest
     /**
      * @return void
      */
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->mollieFacade->setFactory($this->businessFactory);
+    }
+
+    /**
+     * @return void
+     */
     public function testFilterActiveMolliePaymentMethodsReturnsFilteredMethods(): void
     {
         $paymentMethodsTransfer = new PaymentMethodsTransfer();
@@ -74,7 +83,7 @@ class MolliePaymentMethodsFilterTest extends AbstractBusinessTest
         $methods = new ArrayObject([$creditCardPaymentMethod, $payPalPaymentMethod]);
         $paymentMethodsTransfer->setMethods($methods);
 
-        $quoteTransfer = $this->createQuoteTransferWithGrandTotal(12000);
+        $quoteTransfer = $this->createQuoteTransfer(12000, 'DE');
 
         $filteredTransfer = new PaymentMethodsTransfer();
         $filteredMethods = new ArrayObject([$payPalPaymentMethod]);

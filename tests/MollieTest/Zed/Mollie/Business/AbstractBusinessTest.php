@@ -52,7 +52,6 @@ abstract class AbstractBusinessTest extends Unit
 
         $this->mollieFacade = new MollieFacade();
         $this->businessFactory = $this->createMock(MollieBusinessFactory::class);
-        $this->mollieFacade->setFactory($this->businessFactory);
         $this->mollieClient = $this->createMock(MollieClientInterface::class);
         $globalContainer = new GlobalContainer();
         $globalContainer->setContainer(new Container([
