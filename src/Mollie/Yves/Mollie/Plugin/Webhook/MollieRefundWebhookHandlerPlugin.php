@@ -80,7 +80,7 @@ class MollieRefundWebhookHandlerPlugin extends AbstractPlugin implements MollieW
 
         return $this->createWebhookResponseTransfer(
             Response::HTTP_OK,
-            'Payment webhook processed successfully',
+            'Refund webhook processed successfully',
         );
     }
 
