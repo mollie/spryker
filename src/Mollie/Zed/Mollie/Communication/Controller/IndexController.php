@@ -22,13 +22,16 @@ class IndexController extends AbstractController
      */
     public function indexAction(Request $request): array
     {
+        $profileResponseTransfer = $this->getFactory()->getMollieClient()->getCurrentProfile();
         $showOnlyEnabledPaymentMethods = $request->query->get(MollieConstants::MOLLIE_QUERY_PARAMETER_SHOW_ONLY_ENABLED);
         $table = $this->getFactory()->createMolliePaymentMethodsTable();
-
-        return $this->viewResponse([
+        $responseData = [
             'mollieTable' => $table->render(),
+            'response' => $profileResponseTransfer,
             MollieConstants::MOLLIE_QUERY_PARAMETER_SHOW_ONLY_ENABLED => $showOnlyEnabledPaymentMethods,
-        ]);
+        ];
+
+        return $this->viewResponse($responseData);
     }
 
     /**

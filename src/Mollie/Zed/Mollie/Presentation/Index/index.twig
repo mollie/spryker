@@ -5,14 +5,45 @@
 
     {% set filterButtonText = 'mollie.button.filter_all' %}
     {% set filterButtonValue = 0 %}
+
     {% if not showOnlyEnabledPaymentMethods %}
         {% set filterButtonText = 'mollie.button.filter_activated' %}
         {% set filterButtonValue = 1 %}
     {% endif %}
 
+    {% if response.isSuccessful %}
+    {% set status = response.profile.status %}
+    <div class="col-lg-12">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title clearfix">
+                <h2>
+                    {{ 'mollie.profile.information' | trans }}
+                </h2>
+            </div>
+            <div class="ibox-content">
+                <h4 id="mollie-profile-id">
+                   {{ 'mollie.profile.id' | trans }} {{ response.profile.id }}
+                </h4>
+                <h4 id="mollie-profile-status">
+                    {{ 'mollie.profile.status' | trans }} {{ status }}
+                </h4>
+                {% if status == 'unverified' or status == 'blocked' %}
+                    <h3 id="mollie-error-message">
+                        {{ 'mollie.profile.error-message.not-verified' | trans }}
+                    </h3>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <h3 id="mollie-error-message">
+        {{ 'mollie.profile.error-message.generic' | trans }}
+    </h3>
+    {% endif %}
+
     <div>
         <a class="btn btn-primary"
-           href="/mollie/index/clear-cache"
+           href="/mollie/clear-cache"
         >
             {{ 'mollie.button.clear_cache' | trans }}
         </a>

@@ -23,7 +23,9 @@ $config[MollieConstants::MOLLIE] = [
     MollieConstants::MOLLIE_CREDIT_CARD_COMPONENTS_JS_SRC => '', //Example: https://js.mollie.com/v1/mollie.js
     MollieConstants::MOLLIE_WEBHOOK_URL => '',
     MollieConstants::MOLLIE_TEST_ENVIRONMENT_WEBHOOK_URL => '',
-    MollieConstants::MOLLIE_OMS_TO_PAYMENT_METHOD_MAPPING => [],
+    MollieConstants::MOLLIE_OMS_TO_PAYMENT_METHOD_MAPPING => [
+        'mollieCreditCardPayment' => 'creditcard',
+    ],
 ];
 $config[OmsConstants::PROCESS_LOCATION] = [
     OmsConfig::DEFAULT_PROCESS_LOCATION,
@@ -31,9 +33,9 @@ $config[OmsConstants::PROCESS_LOCATION] = [
 ];
 
 $config[SalesConstants::PAYMENT_METHOD_STATEMACHINE_MAPPING] = [
-    MollieConfig::MOLLIE_PAYMENT_CREDIT_CARD => 'MollieCreditCardPayment',
+    MollieConfig::MOLLIE_PAYMENT_CREDIT_CARD => 'MolliePaymentStateMachine01',
 ];
 
 $config[OmsConstants::ACTIVE_PROCESSES] = [
-    'MollieCreditCardPayment',
+    'MolliePaymentStateMachine01',
 ];
