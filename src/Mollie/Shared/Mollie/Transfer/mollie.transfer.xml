@@ -97,6 +97,18 @@
         <property name="createdAt" type="string"/>
         <property name="links" type="MollieLinks"/>
     </transfer>
+    
+    <transfer name="MollieRefundSave">
+        <property name="order" type="Order"/>
+        <property name="description" type="string"/>
+        <property name="currency" type="string"/>
+        <property name="value" type="string"/>
+        <property name="status" type="string"/>
+        <property name="metadata" type="array" singular="metadata"/>
+        <property name="transactionId" type="string"/>
+        <property name="refundId" type="string"/>
+        <property name="createdAt" type="string"/>
+    </transfer>
 
     <transfer name="MollieAmount">
         <property name="value" type="string"/>
@@ -153,9 +165,7 @@
         <property name="checkoutResponse" type="CheckoutResponse"/>
         <property name="molliePaymentMethodQueryParameters" type="MolliePaymentMethodQueryParameters" />
         <property name="transactionId" type="string"/>
-        <property name="refundId" type="string"/>
-        <property name="description" type="string"/>
-        <property name="metadata" type="array" singular="metadata"/>
+        <property name="refund" type="MollieRefund"/>
     </transfer>
 
     <transfer name="MollieApiResponse">

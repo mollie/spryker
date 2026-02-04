@@ -47,19 +47,20 @@ class CreateRefundApi extends AbstractApiCall
      */
     protected function buildRequest(?MollieApiRequestTransfer $mollieApiRequestTransfer = null): ?Request
     {
-        $orderItemsGrossAmount = $mollieApiRequestTransfer->getMolliePaymentMethodQueryParameters()->getAmount()->getValue();
-        $convertedOrderItemsGrossAmount = $this->convertAmountToString($orderItemsGrossAmount);
+        $orderItemsRefundableAmount = $mollieApiRequestTransfer->getRefund()->getAmount()->getValue();
+        $convertedOrderItemsRefundableAmount = $this->convertAmountToString($orderItemsRefundableAmount);
+        $currency = $mollieApiRequestTransfer->getRefund()->getAmount()->getCurrency();
 
         $amount = new Money(
-            currency: $mollieApiRequestTransfer->getMolliePaymentMethodQueryParameters()->getAmount()->getCurrency(),
-            value: $convertedOrderItemsGrossAmount,
+            currency: $currency,
+            value: $convertedOrderItemsRefundableAmount,
         );
 
         $this->request = new CreatePaymentRefundRequest(
-            paymentId: $mollieApiRequestTransfer->getTransactionId(),
-            description: $mollieApiRequestTransfer->getDescription(),
+            paymentId: $mollieApiRequestTransfer->getRefund()->getTransactionId(),
+            description: $mollieApiRequestTransfer->getRefund()->getDescription(),
             amount: $amount,
-            metadata: $mollieApiRequestTransfer->getMetadata(),
+            metadata: $mollieApiRequestTransfer->getRefund()->getMetadata(),
         );
 
         return $this->request;

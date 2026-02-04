@@ -58,9 +58,12 @@ class MollieRefundWebhookHandlerPlugin extends AbstractPlugin implements MollieW
 
         $mollieRefundResponseTransfer = $this->getClient()->getPersistedRefundById($mollieRefundRequestTransfer);
 
-        $mollieApiRequestTransfer = (new MollieApiRequestTransfer())
-            ->setRefundId($refundId)
+        $mollieRefundTransfer
+            ->setId($refundId)
             ->setTransactionId($mollieRefundResponseTransfer->getRefund()->getTransactionId());
+
+        $mollieApiRequestTransfer = (new MollieApiRequestTransfer())
+            ->setRefund($mollieRefundTransfer);
 
         $mollieRefundApiResponseTransfer = $this->getFactory()
             ->getMollieApiClient()

@@ -45,8 +45,8 @@ class GetRefundByRefundIdApi extends AbstractApiCall
     protected function buildRequest(?MollieApiRequestTransfer $mollieApiRequestTransfer = null): ?Request
     {
         $this->request = new GetPaymentRefundRequest(
-            paymentId: $mollieApiRequestTransfer->getTransactionId(),
-            refundId: $mollieApiRequestTransfer->getRefundId(),
+            paymentId: $mollieApiRequestTransfer->getRefund()->getTransactionId(),
+            refundId: $mollieApiRequestTransfer->getRefund()->getId(),
         );
 
         return $this->request;

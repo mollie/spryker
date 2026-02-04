@@ -11,9 +11,9 @@ class OrderItemGrossAmountCalculator implements OrderItemGrossAmountCalculatorIn
      *
      * @return int
      */
-    public function calculateOrderItemsGrossAmount(OrderTransfer $orderTransfer): int
+    public function calculateTotalRefundableAmount(OrderTransfer $orderTransfer): int
     {
-        $refundableAmount = null;
+        $refundableAmount = 0;
 
         foreach ($orderTransfer->getItems() as $orderItem) {
             $refundableAmount += $orderItem->getRefundableAmount();

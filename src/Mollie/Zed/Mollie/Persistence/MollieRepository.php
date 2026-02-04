@@ -81,7 +81,7 @@ class MollieRepository extends AbstractRepository implements MollieRepositoryInt
         $spyRefundMollieRecord = $this->getFactory()
             ->createSpyRefundMollieQuery()
             ->filterByRefundId($mollieRefundRequestTransfer->getRefund()->getId())
-            ->find();
+            ->findOne();
 
         return $this->getFactory()
             ->createMollieRefundMapper()

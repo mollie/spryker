@@ -47,7 +47,7 @@ class OrderUpdater implements OrderUpdaterInterface
 
         $this->entityManager->updateMolliePaymentWithStatus($updateOrderCollectionRequestTransfer);
 
-        $omsEvent = $this->molleOmsStatusMapper->mapMollieStatusToOmsStatus($updateOrderCollectionRequestTransfer->getStatus());
+        $omsEvent = $this->molleOmsStatusMapper->mapMolliePaymentStatusToOmsStatus($updateOrderCollectionRequestTransfer->getStatus());
 
         $this->omsFacade->triggerEvent($omsEvent, $orderItems, []);
 

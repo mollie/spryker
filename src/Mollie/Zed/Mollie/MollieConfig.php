@@ -37,6 +37,11 @@ class MollieConfig extends AbstractBundleConfig
     /**
      * @var string
      */
+    public const PROCESSING = 'processing';
+
+    /**
+     * @var string
+     */
     public const REFUNDED = 'refunded';
 
     /**

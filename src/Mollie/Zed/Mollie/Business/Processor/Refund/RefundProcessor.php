@@ -4,7 +4,6 @@ namespace Mollie\Zed\Mollie\Business\Processor\Refund;
 
 use Generated\Shared\Transfer\MollieAmountTransfer;
 use Generated\Shared\Transfer\MollieApiRequestTransfer;
-use Generated\Shared\Transfer\MolliePaymentMethodQueryParametersTransfer;
 use Generated\Shared\Transfer\MollieRefundApiResponseTransfer;
 use Generated\Shared\Transfer\MollieRefundResponseTransfer;
 use Generated\Shared\Transfer\MollieRefundTransfer;
@@ -12,33 +11,35 @@ use Generated\Shared\Transfer\OrderTransfer;
 use Mollie\Client\Mollie\MollieClientInterface;
 use Mollie\Zed\Mollie\Business\Calculator\OrderItem\OrderItemGrossAmountCalculatorInterface;
 use Mollie\Zed\Mollie\Business\Mapper\Oms\MolleOmsStatusMapperInterface;
-use Mollie\Zed\Mollie\Business\Writer\MollieRefundWriterInterface;
+use Mollie\Zed\Mollie\Business\Mapper\Refund\MollieRefundMapperInterface;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToOmsInterface;
 use Mollie\Zed\Mollie\Persistence\MollieEntityManagerInterface;
 use Mollie\Zed\Mollie\Persistence\MollieRepositoryInterface;
 use Spryker\Shared\Log\LoggerTrait;
+use Spryker\Zed\Kernel\Persistence\EntityManager\TransactionTrait;
 
 class RefundProcessor implements RefundProcessorInterface
 {
     use LoggerTrait;
+    use TransactionTrait;
 
     /**
      * @param \Mollie\Zed\Mollie\Business\Calculator\OrderItem\OrderItemGrossAmountCalculatorInterface $grossAmountCalculator
      * @param \Mollie\Zed\Mollie\Persistence\MollieRepositoryInterface $repository
      * @param \Mollie\Client\Mollie\MollieClientInterface $mollieClient
-     * @param \Mollie\Zed\Mollie\Business\Writer\MollieRefundWriterInterface $refundWriter
      * @param \Mollie\Zed\Mollie\Persistence\MollieEntityManagerInterface $entityManager
      * @param \Mollie\Zed\Mollie\Business\Mapper\Oms\MolleOmsStatusMapperInterface $molleOmsStatusMapper
      * @param \Mollie\Zed\Mollie\Dependency\Facade\MollieToOmsInterface $omsFacade
+     * @param \Mollie\Zed\Mollie\Business\Mapper\Refund\MollieRefundMapperInterface $refundMapper
      */
     public function __construct(
         protected OrderItemGrossAmountCalculatorInterface $grossAmountCalculator,
         protected MollieRepositoryInterface $repository,
         protected MollieClientInterface $mollieClient,
-        protected MollieRefundWriterInterface $refundWriter,
         protected MollieEntityManagerInterface $entityManager,
         protected MolleOmsStatusMapperInterface $molleOmsStatusMapper,
         protected MollieToOmsInterface $omsFacade,
+        protected MollieRefundMapperInterface $refundMapper,
     ) {
     }
 
@@ -49,7 +50,7 @@ class RefundProcessor implements RefundProcessorInterface
      */
     public function processOrderItemsRefund(OrderTransfer $orderTransfer): MollieRefundApiResponseTransfer
     {
-        $orderItemsGrossAmount = $this->grossAmountCalculator->calculateOrderItemsGrossAmount($orderTransfer);
+        $orderItemsGrossAmount = $this->grossAmountCalculator->calculateTotalRefundableAmount($orderTransfer);
 
         $molliePaymentTransfer = $this->repository->getPaymentByOrderId($orderTransfer->getIdSalesOrder());
 
@@ -57,14 +58,14 @@ class RefundProcessor implements RefundProcessorInterface
             ->setValue($orderItemsGrossAmount)
             ->setCurrency($orderTransfer->getCurrencyIsoCode());
 
-        $molliePaymentMethodQueryParameters = (new MolliePaymentMethodQueryParametersTransfer())
-            ->setAmount($mollieAmount);
-
-        $mollieApiRequestTransfer = (new MollieApiRequestTransfer())
+        $refundTransfer = (new MollieRefundTransfer())
             ->setTransactionId($molliePaymentTransfer->getId())
-            ->setMolliePaymentMethodQueryParameters($molliePaymentMethodQueryParameters)
+            ->setAmount($mollieAmount)
             ->setDescription($molliePaymentTransfer->getDescription())
             ->setMetadata($molliePaymentTransfer->getMetadata());
+
+        $mollieApiRequestTransfer = (new MollieApiRequestTransfer())
+            ->setRefund($refundTransfer);
 
         $mollieRefundApiResponseTransfer = $this->mollieClient->createRefund($mollieApiRequestTransfer);
 
@@ -74,7 +75,11 @@ class RefundProcessor implements RefundProcessorInterface
             return $mollieRefundApiResponseTransfer;
         }
 
-        $this->refundWriter->addMollieRefundData($orderTransfer, $molliePaymentTransfer, $mollieRefundApiResponseTransfer->getMollieRefund());
+        $mollieRefundSaveTransfer = $this->refundMapper->mapRefundDataToMollieRefundSaveTransfer($orderTransfer, $molliePaymentTransfer, $mollieRefundApiResponseTransfer->getMollieRefund());
+
+        $this->getTransactionHandler()->handleTransaction(function () use ($mollieRefundSaveTransfer): void {
+            $this->entityManager->createRefund($mollieRefundSaveTransfer);
+        });
 
         return $mollieRefundApiResponseTransfer;
     }
@@ -96,7 +101,7 @@ class RefundProcessor implements RefundProcessorInterface
 
         $this->entityManager->updateMollieRefundWithStatus($mollieRefundTransfer);
 
-        $omsEvent = $this->molleOmsStatusMapper->mapMollieStatusToOmsStatus($mollieRefundTransfer->getStatus());
+        $omsEvent = $this->molleOmsStatusMapper->mapMollieRefundStatusToOmsStatus($mollieRefundTransfer->getStatus());
 
         $this->omsFacade->triggerEvent($omsEvent, $orderItems, []);
 

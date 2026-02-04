@@ -7,6 +7,7 @@ namespace MollieTest\Client\Mollie\Api\Refund;
 use Generated\Shared\Transfer\MollieAmountTransfer;
 use Generated\Shared\Transfer\MollieApiRequestTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodQueryParametersTransfer;
+use Generated\Shared\Transfer\MollieRefundTransfer;
 use Mollie\Api\Fake\MockMollieClient;
 use Mollie\Api\Fake\MockResponse;
 use Mollie\Api\Http\Requests\CreatePaymentRefundRequest;
@@ -27,11 +28,14 @@ class CreateRefundApiTest extends AbstractClientTest
         $molliePaymentMethodQueryParameters = (new MolliePaymentMethodQueryParametersTransfer())
             ->setAmount($mollieAmount);
 
-        $mollieApiRequestTransfer = (new MollieApiRequestTransfer())
+        $mollieRefundTransfer = (new MollieRefundTransfer())
             ->setTransactionId('tr_7FQgLEW7ECECKWStSwTLJ')
-            ->setMolliePaymentMethodQueryParameters($molliePaymentMethodQueryParameters)
+            ->setAmount($mollieAmount)
             ->setDescription('DE--341657-131173-6871')
             ->setMetadata(['{"orderReference"' => '"DE--341657-131173-6871"}']);
+
+        $mollieApiRequestTransfer = (new MollieApiRequestTransfer())
+            ->setRefund($mollieRefundTransfer);
 
         $client = $this->createClient();
 
@@ -40,7 +44,8 @@ class CreateRefundApiTest extends AbstractClientTest
 
         $this->assertEquals('refund', $mollieRefundTransfer->getResource());
         $this->assertEquals('re_yuj7TaDpm877xZQzP8ULJ', $mollieRefundTransfer->getId());
-        $this->assertEquals('pending', $mollieRefundTransfer->getStatus());
+        $this->assertEquals('refunded', $mollieRefundTransfer->getStatus());
+        $this->assertEquals('307.85', $mollieRefundTransfer->getAmount()->getValue());
     }
 
     /**

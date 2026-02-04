@@ -11,5 +11,5 @@ interface OrderItemGrossAmountCalculatorInterface
      *
      * @return int
      */
-    public function calculateOrderItemsGrossAmount(OrderTransfer $orderTransfer): int;
+    public function calculateTotalRefundableAmount(OrderTransfer $orderTransfer): int;
 }

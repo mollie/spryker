@@ -45,7 +45,7 @@ class MollieApiClientTester extends Actor
     /**
      * @var string
      */
-    protected const MOLLIE_MOCKED_REFUND_TRANSACTION_RESPONSE_PAYLOAD = '{"resource":"refund","id":"re_yuj7TaDpm877xZQzP8ULJ","mode":"live","amount":{"value":"307.85","currency":"EUR"},"description":"Order #12345","metadata":{"order_id":12345},"status":"pending","createdAt":"2026-01-30T09:13:37+00:00","paymentId":"tr_7FQgLEW7ECECKWStSwTLJ","settlementAmount":{"value":"307.85","currency":"EUR"},"_links":{"self":{"href":"...","type":"application/hal+json"},"payment":{"href":"...","type":"application/hal+json"},"documentation":{"href":"...","type":"text/html"}}}';
+    protected const MOLLIE_MOCKED_REFUND_TRANSACTION_RESPONSE_PAYLOAD = '{"resource":"refund","id":"re_yuj7TaDpm877xZQzP8ULJ","mode":"live","amount":{"value":"307.85","currency":"EUR"},"description":"Order #12345","metadata":{"order_id":12345},"status":"refunded","createdAt":"2026-01-30T09:13:37+00:00","paymentId":"tr_7FQgLEW7ECECKWStSwTLJ","settlementAmount":{"value":"307.85","currency":"EUR"},"_links":{"self":{"href":"...","type":"application/hal+json"},"payment":{"href":"...","type":"application/hal+json"},"documentation":{"href":"...","type":"text/html"}}}';
 
     /**
      * @return string

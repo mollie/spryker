@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Mollie\Zed\Mollie\Persistence;
 
 use Generated\Shared\Transfer\MolliePaymentTransfer;
+use Generated\Shared\Transfer\MollieRefundSaveTransfer;
 use Generated\Shared\Transfer\MollieRefundTransfer;
 use Generated\Shared\Transfer\OrderCollectionRequestTransfer;
-use Generated\Shared\Transfer\OrderTransfer;
 
 interface MollieEntityManagerInterface
 {
@@ -34,15 +34,9 @@ interface MollieEntityManagerInterface
     public function updateMollieRefundWithStatus(MollieRefundTransfer $mollieRefundTransfer): void;
 
     /**
-     * @param \Generated\Shared\Transfer\OrderTransfer $orderTransfer
-     * @param \Generated\Shared\Transfer\MolliePaymentTransfer $molliePaymentTransfer
-     * @param \Generated\Shared\Transfer\MollieRefundTransfer $mollieRefundTransfer
+     * @param \Generated\Shared\Transfer\MollieRefundSaveTransfer $mollieRefundSaveTransfer
      *
      * @return void
      */
-    public function addMollieRefundData(
-        OrderTransfer $orderTransfer,
-        MolliePaymentTransfer $molliePaymentTransfer,
-        MollieRefundTransfer $mollieRefundTransfer,
-    ): void;
+    public function createRefund(MollieRefundSaveTransfer $mollieRefundSaveTransfer): void;
 }

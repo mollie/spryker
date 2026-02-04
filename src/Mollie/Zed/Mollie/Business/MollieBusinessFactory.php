@@ -16,14 +16,14 @@ use Mollie\Zed\Mollie\Business\Mapper\Oms\MolleOmsStatusMapper;
 use Mollie\Zed\Mollie\Business\Mapper\Oms\MolleOmsStatusMapperInterface;
 use Mollie\Zed\Mollie\Business\Mapper\Order\OrderMapper;
 use Mollie\Zed\Mollie\Business\Mapper\Order\OrderMapperInterface;
+use Mollie\Zed\Mollie\Business\Mapper\Refund\MollieRefundMapper;
+use Mollie\Zed\Mollie\Business\Mapper\Refund\MollieRefundMapperInterface;
 use Mollie\Zed\Mollie\Business\Order\OrderUpdater;
 use Mollie\Zed\Mollie\Business\Order\OrderUpdaterInterface;
 use Mollie\Zed\Mollie\Business\Processor\Refund\RefundProcessor;
 use Mollie\Zed\Mollie\Business\Processor\Refund\RefundProcessorInterface;
 use Mollie\Zed\Mollie\Business\Writer\MolliePaymentWriter;
 use Mollie\Zed\Mollie\Business\Writer\MolliePaymentWriterInterface;
-use Mollie\Zed\Mollie\Business\Writer\MollieRefundWriter;
-use Mollie\Zed\Mollie\Business\Writer\MollieRefundWriterInterface;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToLocaleFacadeInterface;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToOmsInterface;
 use Mollie\Zed\Mollie\Dependency\MollieToStorageClientInterface;
@@ -79,20 +79,10 @@ class MollieBusinessFactory extends AbstractBusinessFactory
             $this->createOrderItemGrossAmountCalculator(),
             $this->getRepository(),
             $this->getMollieClient(),
-            $this->createMollieRefundWritter(),
             $this->getEntityManager(),
             $this->createMollieOmsStatusMapper(),
             $this->getOmsFacade(),
-        );
-    }
-
-    /**
-     * @return \Mollie\Zed\Mollie\Business\Writer\MollieRefundWriterInterface
-     */
-    public function createMollieRefundWritter(): MollieRefundWriterInterface
-    {
-        return new MollieRefundWriter(
-            $this->getEntityManager(),
+            $this->createMollieRefundMapper(),
         );
     }
 
@@ -102,6 +92,14 @@ class MollieBusinessFactory extends AbstractBusinessFactory
     public function createOrderMapper(): OrderMapperInterface
     {
         return new OrderMapper();
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Business\Mapper\Refund\MollieRefundMapperInterface
+     */
+    public function createMollieRefundMapper(): MollieRefundMapperInterface
+    {
+        return new MollieRefundMapper();
     }
 
     /**
