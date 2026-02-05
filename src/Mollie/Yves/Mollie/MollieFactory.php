@@ -400,4 +400,12 @@ class MollieFactory extends AbstractFactory
     {
         return $this->getProvidedDependency(MollieDependencyProvider::SERVICE_UTIL_ENCODING);
     }
+
+    /**
+     * @return array<\Mollie\Yves\Mollie\Plugin\Webhook\MollieWebhookHandlerPluginInterface>
+     */
+    public function getMollieWebhookHandlerPlugins(): array
+    {
+        return $this->getProvidedDependency(MollieDependencyProvider::PLUGINS_MOLLIE_WEBHOOK_HANDLER);
+    }
 }

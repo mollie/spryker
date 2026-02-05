@@ -141,6 +141,14 @@ class MollieConfig extends AbstractBundleConfig
     }
 
     /**
+     * @return string
+     */
+    public function getMollieLoggingMode(): string
+    {
+        return $this->getSharedConfig()->getMollieLoggingMode();
+    }
+
+    /**
      * @return int
      */
     public function getMolliePaymentMethodsStorageKeyTTL(): int

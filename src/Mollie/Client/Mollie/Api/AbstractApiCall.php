@@ -1,6 +1,5 @@
 <?php
 
-
 declare(strict_types = 1);
 
 namespace Mollie\Client\Mollie\Api;
@@ -8,26 +7,40 @@ namespace Mollie\Client\Mollie\Api;
 use Exception;
 use Generated\Shared\Transfer\MollieApiRequestTransfer;
 use Generated\Shared\Transfer\MollieApiResponseTransfer;
+use Generated\Shared\Transfer\MollieLogApiTransfer;
 use Mollie\Api\Exceptions\ApiException;
 use Mollie\Api\Http\Request;
 use Mollie\Api\Http\Response as MollieApiHttpResponse;
 use Mollie\Api\MollieApiClient;
 use Mollie\Client\Mollie\Dependency\Service\MollieToUtilEncodingServiceInterface;
+use Mollie\Client\Mollie\Logger\MollieLoggerInterface;
 use Mollie\Client\Mollie\MollieConfig;
+use Ramsey\Uuid\Uuid;
+use ReflectionClass;
 use Spryker\Shared\Kernel\Transfer\AbstractTransfer;
 use Symfony\Component\HttpFoundation\Response;
 
 abstract class AbstractApiCall implements ApiCallInterface
 {
+    public const string URL_FORMAT = '%s/%s';
+
+    public const string MASKED = '***';
+
+    protected Request|null $request = null;
+
+    protected static ?string $correlationId = null;
+
     /**
      * @param \Mollie\Api\MollieApiClient $mollieApiClient
      * @param \Mollie\Client\Mollie\MollieConfig $mollieConfig
      * @param \Mollie\Client\Mollie\Dependency\Service\MollieToUtilEncodingServiceInterface $utilEncodingService
+     * @param \Mollie\Client\Mollie\Logger\MollieLoggerInterface $logger
      */
     public function __construct(
         protected MollieApiClient $mollieApiClient,
         protected MollieConfig $mollieConfig,
         protected MollieToUtilEncodingServiceInterface $utilEncodingService,
+        protected MollieLoggerInterface $logger,
     ) {
     }
 
@@ -60,26 +73,80 @@ abstract class AbstractApiCall implements ApiCallInterface
 
             $result = $this->mollieApiClient->send($request);
             $response = $result->getResponse();
+            $statusCode = $response->status();
 
-            if ($response->status() === Response::HTTP_OK || $response->status() === Response::HTTP_CREATED) {
+            if ($statusCode === Response::HTTP_OK || $statusCode === Response::HTTP_CREATED) {
                 $payload = $this->formatApiResponse($response);
-                $mollieApiResponseTransfer = $this->createSuccessResponse($payload);
+                $mollieApiResponseTransfer = $this->createSuccessResponse($statusCode, $payload);
             }
         } catch (ApiException $exception) {
             $response = $exception->getResponse();
             $payload = $this->formatApiResponse($response);
-            $mollieApiResponseTransfer = $this->createErrorResponse($payload);
+            $errorCode = $response->status();
+            $mollieApiResponseTransfer = $this->createErrorResponse($errorCode, $payload);
         } catch (Exception $exception) {
             $mollieApiResponseTransfer = $this->createExceptionResponse($exception->getMessage());
         }
+
+        $this->logApi($mollieApiResponseTransfer);
 
         return $this->mapApiResponse($mollieApiResponseTransfer);
     }
 
     /**
+     * @param \Generated\Shared\Transfer\MollieApiResponseTransfer $mollieApiResponseTransfer
+     *
+     * @return void
+     */
+    protected function logApi(MollieApiResponseTransfer $mollieApiResponseTransfer): void
+    {
+        $apiLogTransfer = $this->mapApiResponseToLogResponseTransfer($mollieApiResponseTransfer);
+        $this->logger->logResponse($apiLogTransfer);
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MollieApiResponseTransfer $mollieApiResponseTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieLogApiTransfer
+     */
+    protected function mapApiResponseToLogResponseTransfer(MollieApiResponseTransfer $mollieApiResponseTransfer): MollieLogApiTransfer
+    {
+        return (new MollieLogApiTransfer())
+            ->setIsSuccessful($mollieApiResponseTransfer->getIsSuccessful())
+            ->setRequestIdentifier($this->getCorrelationId())
+            ->setUrl($this->buildUrl())
+            ->setRequestBody($this->getRequestBody())
+            ->setPayload($mollieApiResponseTransfer->getPayload())
+            ->setCode($mollieApiResponseTransfer->getCode())
+            ->setMessage($mollieApiResponseTransfer->getMessage());
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    protected function getRequestBody(): array
+    {
+        $requestBody = $this->request?->query()->all() ?? [];
+
+        return $requestBody;
+    }
+
+    /**
+     * @return string
+     */
+    protected function buildUrl(): string
+    {
+        return sprintf(
+            static::URL_FORMAT,
+            $this->mollieApiClient->resolveBaseUrl(),
+            $this->request?->resolveResourcePath(),
+        );
+    }
+
+    /**
      * @param \Mollie\Api\Http\Response $response
      *
-     * @return array<string, string>
+     * @return array<string, mixed>
      */
     protected function formatApiResponse(MollieApiHttpResponse $response): array
     {
@@ -89,30 +156,34 @@ abstract class AbstractApiCall implements ApiCallInterface
     }
 
     /**
-     * @param array<string, string> $payload
+     * @param int $statusCode
+     * @param array<string, mixed> $payload
      *
      * @return \Generated\Shared\Transfer\MollieApiResponseTransfer
      */
-    protected function createSuccessResponse(array $payload): MollieApiResponseTransfer
+    protected function createSuccessResponse(int $statusCode, array $payload): MollieApiResponseTransfer
     {
         $mollieResponseApiResponseTransfer = new MollieApiResponseTransfer();
         $mollieResponseApiResponseTransfer
             ->setIsSuccessful(true)
+            ->setCode($statusCode)
             ->setPayload($payload);
 
         return $mollieResponseApiResponseTransfer;
     }
 
     /**
-     * @param array<string, string> $payload
+     * @param int $errorCode
+     * @param array<string, mixed> $payload
      *
      * @return \Generated\Shared\Transfer\MollieApiResponseTransfer
      */
-    protected function createErrorResponse(array $payload): MollieApiResponseTransfer
+    protected function createErrorResponse(int $errorCode, array $payload): MollieApiResponseTransfer
     {
         $mollieResponseApiResponseTransfer = new MollieApiResponseTransfer();
         $mollieResponseApiResponseTransfer
             ->setIsSuccessful(false)
+            ->setCode($errorCode)
             ->setMessage($payload['detail'] ?? '');
 
         return $mollieResponseApiResponseTransfer;
@@ -131,5 +202,54 @@ abstract class AbstractApiCall implements ApiCallInterface
             ->setMessage($message);
 
         return $mollieResponseApiResponseTransfer;
+    }
+
+    /**
+     * @return string
+     */
+    protected function getCorrelationId(): string
+    {
+        if (static::$correlationId === null) {
+            static::$correlationId = Uuid::uuid4()->toString();
+        }
+        $reflection = new ReflectionClass($this);
+
+        return sprintf('%s_%s', $reflection->getShortName(), static::$correlationId);
+    }
+
+     /**
+      * @param array<int, string> $fieldsToMask
+      * @param array<string, mixed> $payload
+      *
+      * @return array<string, mixed>
+      */
+    protected function maskPayload(array $fieldsToMask, array $payload): array
+    {
+        foreach ($fieldsToMask as $field) {
+            $this->maskField($payload, $field);
+        }
+
+        return $payload;
+    }
+
+    /**
+     * @param array<string, mixed> $payload
+     * @param string $path
+     *
+     * @return void
+     */
+    protected function maskField(array &$payload, string $path): void
+    {
+        $keys = explode('.', $path);
+        $current = &$payload;
+
+        foreach ($keys as $key) {
+            if (!isset($current[$key])) {
+                return;
+            }
+            $current = &$current[$key];
+        }
+
+        $current = static::MASKED;
     }
 }

@@ -32,6 +32,21 @@ interface MollieStateMachineEvents
     /**
      * @var string
      */
+    public const OMS_MOLLIE_PAYMENT_REFUNDED = 'payment refunded';
+
+    /**
+     * @var string
+     */
+    public const OMS_MOLLIE_REFUND_PROCESSING = 'refund processing';
+
+    /**
+     * @var string
+     */
+    public const OMS_MOLLIE_REFUND_FAILED = 'refund failed';
+
+    /**
+     * @var string
+     */
     public const OMS_MOLLIE_PAYMENT_READY_FOR_SHIPMENT = 'ready for shipment';
 
     /**

@@ -62,6 +62,11 @@ interface MollieConstants
     /**
      * @var string
      */
+    public const MOLLIE_DEBUG_MODE = 'MOLLIE:MOLLIE_DEBUG_MODE';
+
+    /**
+     * @var string
+     */
     public const MOLLIE_INCLUDE_WALLETS = 'MOLLIE:MOLLIE_INCLUDE_WALLETS';
 
     // Payment statuses from Mollie
@@ -145,6 +150,12 @@ interface MollieConstants
      * @var string
      */
     public const RESPONSE_PARAMETER_CREATE_PAYMENT_LINKS_HREF = 'href';
+
+    public const string MOLLIE_LOGGER_OFF = 'Off';
+
+    public const string MOLLIE_LOGGER_BASIC = 'Basic';
+
+    public const string MOLLIE_LOGGER_EXTENSIVE = 'Extensive';
 
     public const string MOLLIE_QUERY_PARAMETER_SHOW_ONLY_ENABLED = 'showOnlyEnabledPaymentMethods';
 

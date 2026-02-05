@@ -5,8 +5,11 @@ declare(strict_types=1);
 namespace Mollie\Zed\Mollie\Persistence;
 
 use Generated\Shared\Transfer\MolliePaymentTransfer;
+use Generated\Shared\Transfer\MollieRefundSaveTransfer;
+use Generated\Shared\Transfer\MollieRefundTransfer;
 use Generated\Shared\Transfer\OrderCollectionRequestTransfer;
 use Orm\Zed\Mollie\Persistence\SpyPaymentMollie;
+use Orm\Zed\Mollie\Persistence\SpyRefundMollie;
 use Spryker\Zed\Kernel\Persistence\AbstractEntityManager;
 
 /**
@@ -55,5 +58,42 @@ class MollieEntityManager extends AbstractEntityManager implements MollieEntityM
             ->setCreatedAt($molliePaymentTransfer->getCreatedAt());
 
         $spyPaymentMollieEntity->save();
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MollieRefundTransfer $mollieRefundTransfer
+     *
+     * @return void
+     */
+    public function updateMollieRefundWithStatus(MollieRefundTransfer $mollieRefundTransfer): void
+    {
+        $spyRefundMollieEntityCollection = $this->getFactory()
+            ->createSpyRefundMollieQuery()
+            ->findByRefundId($mollieRefundTransfer->getId());
+
+        if (!$spyRefundMollieEntityCollection) {
+            return;
+        }
+
+        foreach ($spyRefundMollieEntityCollection as $spyRefundMollieEntity) {
+            $spyRefundMollieEntity->setStatus($mollieRefundTransfer->getStatus());
+            $spyRefundMollieEntity->save();
+        }
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MollieRefundSaveTransfer $mollieRefundSaveTransfer
+     *
+     * @return void
+     */
+    public function createRefund(MollieRefundSaveTransfer $mollieRefundSaveTransfer): void
+    {
+            $spyRefundMollieEntity = new SpyRefundMollie();
+
+            $spyRefundMollieEntity = $this->getFactory()
+                ->createMollieRefundMapper()
+                ->mapToSpyRefundMollieEntity($mollieRefundSaveTransfer, $spyRefundMollieEntity);
+
+            $spyRefundMollieEntity->save();
     }
 }

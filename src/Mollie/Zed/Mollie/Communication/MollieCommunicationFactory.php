@@ -12,7 +12,6 @@ use Mollie\Zed\Mollie\Communication\Mapper\MollieCommunicationMapperInterface;
 use Mollie\Zed\Mollie\Communication\Table\MolliePaymentMethodsTable;
 use Mollie\Zed\Mollie\Communication\Table\TableDataProvider\MolliePaymentMethodsDataProvider;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToLocaleFacadeInterface;
-use Mollie\Zed\Mollie\Dependency\MollieToStorageClientInterface;
 use Mollie\Zed\Mollie\MollieDependencyProvider;
 use Spryker\Zed\Kernel\Communication\AbstractCommunicationFactory;
 
@@ -61,14 +60,6 @@ class MollieCommunicationFactory extends AbstractCommunicationFactory
     public function createMollieCommunicationMapper(): MollieCommunicationMapperInterface
     {
         return new MollieCommunicationMapper();
-    }
-
-    /**
-     * @return \Mollie\Zed\Mollie\Dependency\MollieToStorageClientInterface
-     */
-    public function getStorageClient(): MollieToStorageClientInterface
-    {
-        return $this->getProvidedDependency(MollieDependencyProvider::CLIENT_STORAGE);
     }
 
     /**

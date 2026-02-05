@@ -37,6 +37,21 @@ class MollieConfig extends AbstractBundleConfig
     /**
      * @var string
      */
+    public const PROCESSING = 'processing';
+
+    /**
+     * @var string
+     */
+    public const REFUNDED = 'refunded';
+
+    /**
+     * @var string
+     */
+    public const MOLLIE_PAYMENT_METHOD_STATUS_ACTIVATED = 'activated';
+
+    /**
+     * @var string
+     */
     public const MOLLIE_PAYMENT_PROVIDER = 'mollie';
 
     /**
