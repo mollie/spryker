@@ -126,7 +126,7 @@ abstract class AbstractApiCall implements ApiCallInterface
      */
     protected function getRequestBody(): array
     {
-        $requestBody = $this->request->query()->all();
+        $requestBody = $this->request?->query()->all() ?? [];
 
         return $requestBody;
     }
@@ -139,7 +139,7 @@ abstract class AbstractApiCall implements ApiCallInterface
         return sprintf(
             static::URL_FORMAT,
             $this->mollieApiClient->resolveBaseUrl(),
-            $this->request->resolveResourcePath(),
+            $this->request?->resolveResourcePath(),
         );
     }
 

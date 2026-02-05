@@ -38,13 +38,13 @@ class GetCurrentProfileApi extends AbstractApiCall
     protected function mapApiResponse(MollieApiResponseTransfer $mollieApiResponseTransfer): AbstractTransfer
     {
         $payload = $mollieApiResponseTransfer->getPayload();
-        $molliePaymentMethodsApiResponseTransfer = new MollieGetProfileApiResponseTransfer();
-        $molliePaymentMethodsApiResponseTransfer
+        $mollieGetProfileApiResponseTransfer = new MollieGetProfileApiResponseTransfer();
+        $mollieGetProfileApiResponseTransfer
             ->setIsSuccessful($mollieApiResponseTransfer->getIsSuccessful())
             ->setMessage($mollieApiResponseTransfer->getMessage())
             ->setProfile((new MollieProfileTransfer())->fromArray($payload, true));
 
-        return $molliePaymentMethodsApiResponseTransfer;
+        return $mollieGetProfileApiResponseTransfer;
     }
 
     /**
