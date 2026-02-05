@@ -5,7 +5,6 @@ namespace MollieTest\Zed\Mollie\Business\Filter;
 use ArrayObject;
 use Faker\Factory;
 use Generated\Shared\Transfer\AddressTransfer;
-use Generated\Shared\Transfer\LocaleTransfer;
 use Generated\Shared\Transfer\MollieApiRequestTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodCollectionTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodsApiResponseTransfer;
@@ -15,24 +14,11 @@ use Generated\Shared\Transfer\PaymentMethodTransfer;
 use Generated\Shared\Transfer\PaymentProviderTransfer;
 use Generated\Shared\Transfer\QuoteTransfer;
 use Generated\Shared\Transfer\TotalsTransfer;
-use Mollie\Service\Mollie\MollieServiceInterface;
-use Mollie\Zed\Mollie\Business\Filter\MolliePaymentMethodsFilter;
-use Mollie\Zed\Mollie\Business\Filter\MolliePaymentMethodsFilterInterface;
-use Mollie\Zed\Mollie\Dependency\Facade\MollieToLocaleFacadeInterface;
 use Mollie\Zed\Mollie\MollieConfig;
 use MollieTest\Zed\Mollie\Business\AbstractBusinessTest;
-use PHPUnit\Framework\MockObject\MockObject;
 
 class MolliePaymentMethodsFilterTest extends AbstractBusinessTest
 {
-    protected MockObject $filterMock;
-
-    protected MockObject $mollieServiceMock;
-
-    protected MockObject $localeFacadeMock;
-
-    protected MockObject $mollieConfigMock;
-
     /**
      * @var \Faker\Factory
      */
@@ -41,23 +27,14 @@ class MolliePaymentMethodsFilterTest extends AbstractBusinessTest
     /**
      * @return void
      */
-    protected function _before(): void
-    {
-        parent::_before();
-
-        $this->faker = Factory::create();
-        $this->filterMock = $this->createMock(MolliePaymentMethodsFilterInterface::class);
-        $this->mollieServiceMock = $this->createMock(MollieServiceInterface::class);
-        $this->localeFacadeMock = $this->createMock(MollieToLocaleFacadeInterface::class);
-        $this->mollieConfigMock = $this->createMock(MollieConfig::class);
-    }
-
-    /**
-     * @return void
-     */
     protected function setUp(): void
     {
         parent::setUp();
+
+        $this->faker = Factory::create();
+
+        $this->mollieClient = $this->createMollieClientMock();
+        $this->businessFactory = $this->createMollieBusinessFactory();
         $this->mollieFacade->setFactory($this->businessFactory);
     }
 
@@ -66,8 +43,6 @@ class MolliePaymentMethodsFilterTest extends AbstractBusinessTest
      */
     public function testFilterActiveMolliePaymentMethodsReturnsFilteredMethods(): void
     {
-        $paymentMethodsTransfer = new PaymentMethodsTransfer();
-
         $creditCardPaymentMethod = $this->createPaymentMethod(
             'mollieCreditCardPayment',
             'MollieCreditCardPayment',
@@ -81,30 +56,31 @@ class MolliePaymentMethodsFilterTest extends AbstractBusinessTest
         );
 
         $methods = new ArrayObject([$creditCardPaymentMethod, $payPalPaymentMethod]);
+        $paymentMethodsTransfer = new PaymentMethodsTransfer();
         $paymentMethodsTransfer->setMethods($methods);
 
         $quoteTransfer = $this->createQuoteTransfer(12000, 'DE');
 
         $filteredTransfer = new PaymentMethodsTransfer();
-        $filteredMethods = new ArrayObject([$payPalPaymentMethod]);
+        $filteredMethods = new ArrayObject([$creditCardPaymentMethod, $payPalPaymentMethod]);
         $filteredTransfer->setMethods($filteredMethods);
 
-        $this->businessFactory
-            ->expects($this->once())
-            ->method('createMolliePaymentMethodsFilter')
-            ->willReturn($this->filterMock);
+        $mollieApiResponse = $this->createMollieApiResponse([
+            $this->createMollieMethod('creditcard', 1.00, 10000.00),
+            $this->createMollieMethod('paypal', 0.01, 8000.00),
+        ]);
 
-        $this->filterMock
+        $this->mollieClient
             ->expects($this->once())
-            ->method('applyFilter')
-            ->with($paymentMethodsTransfer, $quoteTransfer)
-            ->willReturn($filteredTransfer);
+            ->method('getEnabledPaymentMethods')
+            ->with($this->isInstanceOf(MollieApiRequestTransfer::class))
+            ->willReturn($mollieApiResponse);
 
         $result = $this->mollieFacade->filterActiveMolliePaymentMethods($paymentMethodsTransfer, $quoteTransfer);
 
-        $this->assertSame($filteredTransfer, $result);
-        $this->assertCount(1, $result->getMethods());
-        $this->assertEquals('molliePayPalPayment', $result->getMethods()[0]->getPaymentMethodKey());
+        $this->assertCount(2, $result->getMethods());
+        $this->assertEquals('mollieCreditCardPayment', $result->getMethods()[0]->getPaymentMethodKey());
+        $this->assertEquals('molliePayPalPayment', $result->getMethods()[1]->getPaymentMethodKey());
     }
 
     /**
@@ -112,8 +88,6 @@ class MolliePaymentMethodsFilterTest extends AbstractBusinessTest
      */
     public function testApplyFilterRemovesInactiveMollieMethods(): void
     {
-        $filter = $this->createFilterInstance();
-
         $paymentMethodsTransfer = new PaymentMethodsTransfer();
         $creditCardMethod = $this->createPaymentMethod('mollieCreditCardPayment', 'MollieCreditCardPayment', 'Mollie Credit Card Payment');
         $payPalMethod = $this->createPaymentMethod('molliePayPalPayment', 'MolliePayPalPayment', 'Mollie PayPal Payment');
@@ -138,17 +112,7 @@ class MolliePaymentMethodsFilterTest extends AbstractBusinessTest
             ->with($this->isInstanceOf(MollieApiRequestTransfer::class))
             ->willReturn($mollieApiResponse);
 
-        $this->setupMollieConfigMapping([
-            'mollieCreditCardPayment' => 'creditcard',
-            'molliePayPalPayment' => 'paypal',
-            'mollieIdealPayment' => 'ideal',
-        ]);
-
-        $this->mollieServiceMock
-            ->method('convertIntegerToDecimal')
-            ->willReturnCallback(fn ($amount) => $amount / 100);
-
-        $result = $filter->applyFilter($paymentMethodsTransfer, $quoteTransfer);
+        $result = $this->mollieFacade->filterActiveMolliePaymentMethods($paymentMethodsTransfer, $quoteTransfer);
 
         $this->assertCount(2, $result->getMethods());
         $resultKeys = array_map(
@@ -165,8 +129,6 @@ class MolliePaymentMethodsFilterTest extends AbstractBusinessTest
      */
     public function testApplyFilterRemovesMethodsBelowMinimumAmount(): void
     {
-        $filter = $this->createFilterInstance();
-
         $paymentMethodsTransfer = new PaymentMethodsTransfer();
         $creditCardMethod = $this->createPaymentMethod('mollieCreditCardPayment', 'MollieCreditCardPayment', 'Mollie Credit Card Payment');
         $paymentMethodsTransfer->setMethods(new ArrayObject([$creditCardMethod]));
@@ -182,13 +144,7 @@ class MolliePaymentMethodsFilterTest extends AbstractBusinessTest
             ->method('getEnabledPaymentMethods')
             ->willReturn($mollieApiResponse);
 
-        $this->setupMollieConfigMapping(['mollieCreditCardPayment' => 'creditcard']);
-
-        $this->mollieServiceMock
-            ->method('convertIntegerToDecimal')
-            ->willReturn(50.00);
-
-        $result = $filter->applyFilter($paymentMethodsTransfer, $quoteTransfer);
+        $result = $this->mollieFacade->filterActiveMolliePaymentMethods($paymentMethodsTransfer, $quoteTransfer);
 
         $this->assertCount(0, $result->getMethods());
     }
@@ -198,8 +154,6 @@ class MolliePaymentMethodsFilterTest extends AbstractBusinessTest
      */
     public function testApplyFilterRemovesMethodsAboveMaximumAmount(): void
     {
-        $filter = $this->createFilterInstance();
-
         $paymentMethodsTransfer = new PaymentMethodsTransfer();
         $idealMethod = $this->createPaymentMethod('mollieIdealPayment', 'MollieIdealPayment', 'Mollie iDEAL Payment');
         $paymentMethodsTransfer->setMethods(new ArrayObject([$idealMethod]));
@@ -215,13 +169,7 @@ class MolliePaymentMethodsFilterTest extends AbstractBusinessTest
             ->method('getEnabledPaymentMethods')
             ->willReturn($mollieApiResponse);
 
-        $this->setupMollieConfigMapping(['mollieIdealPayment' => 'ideal']);
-
-        $this->mollieServiceMock
-            ->method('convertIntegerToDecimal')
-            ->willReturn(60000.00);
-
-        $result = $filter->applyFilter($paymentMethodsTransfer, $quoteTransfer);
+        $result = $this->mollieFacade->filterActiveMolliePaymentMethods($paymentMethodsTransfer, $quoteTransfer);
 
         $this->assertCount(0, $result->getMethods());
     }
@@ -231,8 +179,6 @@ class MolliePaymentMethodsFilterTest extends AbstractBusinessTest
      */
     public function testApplyFilterKeepsMethodsWithinAmountRange(): void
     {
-        $filter = $this->createFilterInstance();
-
         $paymentMethodsTransfer = new PaymentMethodsTransfer();
         $creditCardMethod = $this->createPaymentMethod('mollieCreditCardPayment', 'MollieCreditCardPayment', 'Mollie Credit Card Payment');
         $paymentMethodsTransfer->setMethods(new ArrayObject([$creditCardMethod]));
@@ -248,13 +194,7 @@ class MolliePaymentMethodsFilterTest extends AbstractBusinessTest
             ->method('getEnabledPaymentMethods')
             ->willReturn($mollieApiResponse);
 
-        $this->setupMollieConfigMapping(['mollieCreditCardPayment' => 'creditcard']);
-
-        $this->mollieServiceMock
-            ->method('convertIntegerToDecimal')
-            ->willReturn(150.00);
-
-        $result = $filter->applyFilter($paymentMethodsTransfer, $quoteTransfer);
+        $result = $this->mollieFacade->filterActiveMolliePaymentMethods($paymentMethodsTransfer, $quoteTransfer);
 
         $this->assertCount(1, $result->getMethods());
         $this->assertEquals('mollieCreditCardPayment', $result->getMethods()[0]->getPaymentMethodKey());
@@ -265,8 +205,6 @@ class MolliePaymentMethodsFilterTest extends AbstractBusinessTest
      */
     public function testApplyFilterKeepsNonMolliePaymentMethods(): void
     {
-        $filter = $this->createFilterInstance();
-
         $paymentMethodsTransfer = new PaymentMethodsTransfer();
         $mollieMethod = $this->createPaymentMethod('mollieCreditCardPayment', 'MollieCreditCardPayment', 'Mollie Credit Card Payment');
         $sprykerMethod = $this->createPaymentMethod('dummyPayment', 'Spryker', 'Spryker');
@@ -287,13 +225,7 @@ class MolliePaymentMethodsFilterTest extends AbstractBusinessTest
             ->method('getEnabledPaymentMethods')
             ->willReturn($mollieApiResponse);
 
-        $this->setupMollieConfigMapping(['mollieCreditCardPayment' => 'creditcard']);
-
-        $this->mollieServiceMock
-            ->method('convertIntegerToDecimal')
-            ->willReturn(100.00);
-
-        $result = $filter->applyFilter($paymentMethodsTransfer, $quoteTransfer);
+        $result = $this->mollieFacade->filterActiveMolliePaymentMethods($paymentMethodsTransfer, $quoteTransfer);
 
         $this->assertCount(2, $result->getMethods());
         $resultKeys = array_map(
@@ -310,8 +242,6 @@ class MolliePaymentMethodsFilterTest extends AbstractBusinessTest
      */
     public function testApplyFilterHandlesMethodsWithoutAmountLimits(): void
     {
-        $filter = $this->createFilterInstance();
-
         $paymentMethodsTransfer = new PaymentMethodsTransfer();
         $payPalMethod = $this->createPaymentMethod('molliePayPalPayment', 'MolliePayPalPayment', 'Mollie PayPal Payment');
         $paymentMethodsTransfer->setMethods(new ArrayObject([$payPalMethod]));
@@ -327,35 +257,9 @@ class MolliePaymentMethodsFilterTest extends AbstractBusinessTest
             ->method('getEnabledPaymentMethods')
             ->willReturn($mollieApiResponse);
 
-        $this->setupMollieConfigMapping(['molliePayPalPayment' => 'paypal']);
-
-        $this->mollieServiceMock
-            ->method('convertIntegerToDecimal')
-            ->willReturn(9999999.99);
-
-        $result = $filter->applyFilter($paymentMethodsTransfer, $quoteTransfer);
+        $result = $this->mollieFacade->filterActiveMolliePaymentMethods($paymentMethodsTransfer, $quoteTransfer);
 
         $this->assertCount(1, $result->getMethods());
-    }
-
-    /**
-     * @return \Mollie\Zed\Mollie\Business\Filter\MolliePaymentMethodsFilter
-     */
-    private function createFilterInstance(): MolliePaymentMethodsFilter
-    {
-        $localeMock = new LocaleTransfer();
-        $localeMock->setLocaleName('de_DE');
-
-        $this->localeFacadeMock
-            ->method('getCurrentLocale')
-            ->willReturn($localeMock);
-
-        return new MolliePaymentMethodsFilter(
-            $this->mollieClient,
-            $this->mollieServiceMock,
-            $this->localeFacadeMock,
-            $this->mollieConfigMock,
-        );
     }
 
     /**
@@ -420,20 +324,6 @@ class MolliePaymentMethodsFilterTest extends AbstractBusinessTest
     }
 
     /**
-     * @param array<string, string> $mapping
-     *
-     * @return void
-     */
-    private function setupMollieConfigMapping(array $mapping): void
-    {
-        $this->mollieConfigMock
-            ->method('getMolliePaymentMethod')
-            ->willReturnCallback(function ($key) use ($mapping) {
-                return $mapping[$key] ?? null;
-            });
-    }
-
-    /**
      * @param string $methodKey
      * @param string $providerKey
      * @param string $providerName
@@ -452,18 +342,5 @@ class MolliePaymentMethodsFilterTest extends AbstractBusinessTest
         return (new PaymentMethodTransfer())
             ->setPaymentMethodKey($methodKey)
             ->setPaymentProvider($providerTransfer);
-    }
-
-    /**
-     * @param int $grandTotal
-     *
-     * @return \Generated\Shared\Transfer\QuoteTransfer
-     */
-    private function createQuoteTransferWithGrandTotal(int $grandTotal): QuoteTransfer
-    {
-        return (new QuoteTransfer())
-            ->setTotals(
-                (new TotalsTransfer())->setGrandTotal($grandTotal),
-            );
     }
 }

@@ -10,8 +10,11 @@ use Mollie\Client\Mollie\MollieClientInterface;
 use Mollie\Zed\Mollie\Business\MollieBusinessFactory;
 use Mollie\Zed\Mollie\Business\MollieFacade;
 use Mollie\Zed\Mollie\Business\MollieFacadeInterface;
+use Mollie\Zed\Mollie\MollieConfig;
+use Mollie\Zed\Mollie\MollieDependencyProvider;
 use Spryker\Service\Container\Container;
 use Spryker\Shared\Kernel\Container\GlobalContainer;
+use Spryker\Zed\Kernel\Container as ZedContainer;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -51,8 +54,7 @@ abstract class AbstractBusinessTest extends Unit
         parent::setUp();
 
         $this->mollieFacade = new MollieFacade();
-        $this->businessFactory = $this->createMock(MollieBusinessFactory::class);
-        $this->mollieClient = $this->createMock(MollieClientInterface::class);
+
         $globalContainer = new GlobalContainer();
         $globalContainer->setContainer(new Container([
             'request_stack' => $this->getRequestStackMock(),
@@ -84,5 +86,35 @@ abstract class AbstractBusinessTest extends Unit
         $mock->method('getClientIp')->willReturn(self::CLIENT_IP);
 
         return $mock;
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Business\MollieBusinessFactory
+     */
+    protected function createMollieBusinessFactory(): MollieBusinessFactory
+    {
+        $businessFactory = $this->getMockBuilder(MollieBusinessFactory::class)
+            ->onlyMethods(['getMollieClient'])
+            ->getMock();
+
+        $businessFactory->setConfig(new MollieConfig());
+
+        $dependencyProvider = new MollieDependencyProvider();
+        $container = new ZedContainer();
+        $dependencyProvider->provideBusinessLayerDependencies($container);
+        $businessFactory->setContainer($container);
+
+        $businessFactory->method('getMollieClient')
+            ->willReturn($this->mollieClient);
+
+        return $businessFactory;
+    }
+
+    /**
+     * @return \Mollie\Client\Mollie\MollieClientInterface
+     */
+    protected function createMollieClientMock(): MollieClientInterface
+    {
+        return $this->getMockBuilder(MollieClientInterface::class)->getMock();
     }
 }
