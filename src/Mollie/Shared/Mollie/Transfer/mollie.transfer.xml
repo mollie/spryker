@@ -99,7 +99,7 @@
     </transfer>
     
     <transfer name="MollieRefundSave">
-        <property name="order" type="Order"/>
+        <property name="item" type="Item"/>
         <property name="description" type="string"/>
         <property name="currency" type="string"/>
         <property name="value" type="string"/>

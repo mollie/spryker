@@ -3,26 +3,20 @@
 namespace Mollie\Zed\Mollie\Persistence\Propel\Mapper;
 
 use Generated\Shared\Transfer\MolliePaymentTransfer;
-use Propel\Runtime\Collection\ObjectCollection;
+use Orm\Zed\Mollie\Persistence\SpyPaymentMollie;
 
 class MollieOrderMapper implements MollieOrderMapperInterface
 {
- /**
-  * @param \Propel\Runtime\Collection\ObjectCollection $spyPaymentMollieEntity
-  *
-  * @return \Generated\Shared\Transfer\MolliePaymentTransfer
-  */
-    public function mapFromSpyPaymentMollieEntityToMolliePaymentTransfer(ObjectCollection $spyPaymentMollieEntity): MolliePaymentTransfer
+    /**
+     * @param \Orm\Zed\Mollie\Persistence\SpyPaymentMollie $spyPaymentMollieEntity
+     *
+     * @return \Generated\Shared\Transfer\MolliePaymentTransfer
+     */
+    public function mapFromSpyPaymentMollieEntityToMolliePaymentTransfer(SpyPaymentMollie $spyPaymentMollieEntity): MolliePaymentTransfer
     {
-        $spyPaymentMollieRecord = null;
+        $molliePaymentTransfer = (new MolliePaymentTransfer())
+            ->fromArray($spyPaymentMollieEntity->toArray(), true);
 
-        foreach ($spyPaymentMollieEntity->getData() as $spyPaymentMollie) {
-            $spyPaymentMollieRecord = $spyPaymentMollie;
-        }
-
-        return (new MolliePaymentTransfer())
-            ->setId($spyPaymentMollieRecord->getTransactionId())
-            ->setDescription($spyPaymentMollieRecord->getDescription())
-            ->setMetadata([$spyPaymentMollieRecord->getMetadata()]);
+        return $molliePaymentTransfer->setId($spyPaymentMollieEntity->getTransactionId());
     }
 }

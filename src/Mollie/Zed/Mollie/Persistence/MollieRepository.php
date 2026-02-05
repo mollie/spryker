@@ -64,7 +64,7 @@ class MollieRepository extends AbstractRepository implements MollieRepositoryInt
         $spyPaymentMollieRecord = $this->getFactory()
             ->createSpyPaymentMollieQuery()
             ->filterByFkSalesOrder($orderId)
-            ->find();
+            ->findOne();
 
         return $this->getFactory()
             ->createMollieOrderMapper()

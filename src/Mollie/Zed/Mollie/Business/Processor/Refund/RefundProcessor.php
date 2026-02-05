@@ -62,7 +62,7 @@ class RefundProcessor implements RefundProcessorInterface
             ->setTransactionId($molliePaymentTransfer->getId())
             ->setAmount($mollieAmount)
             ->setDescription($molliePaymentTransfer->getDescription())
-            ->setMetadata($molliePaymentTransfer->getMetadata());
+            ->setMetadata([$molliePaymentTransfer->getMetadata()]);
 
         $mollieApiRequestTransfer = (new MollieApiRequestTransfer())
             ->setRefund($refundTransfer);
@@ -75,10 +75,14 @@ class RefundProcessor implements RefundProcessorInterface
             return $mollieRefundApiResponseTransfer;
         }
 
-        $mollieRefundSaveTransfer = $this->refundMapper->mapRefundDataToMollieRefundSaveTransfer($orderTransfer, $molliePaymentTransfer, $mollieRefundApiResponseTransfer->getMollieRefund());
+        $mollieRefundSaveTransfer = $this->refundMapper->mapRefundDataToMollieRefundSaveTransfer($molliePaymentTransfer, $mollieRefundApiResponseTransfer->getMollieRefund());
 
-        $this->getTransactionHandler()->handleTransaction(function () use ($mollieRefundSaveTransfer): void {
-            $this->entityManager->createRefund($mollieRefundSaveTransfer);
+        $this->getTransactionHandler()->handleTransaction(function () use ($mollieRefundSaveTransfer, $orderTransfer): void {
+            foreach ($orderTransfer->getItems() as $itemTransfer) {
+                $mollieRefundSaveTransfer->setItem($itemTransfer);
+
+                $this->entityManager->createRefund($mollieRefundSaveTransfer);
+            }
         });
 
         return $mollieRefundApiResponseTransfer;

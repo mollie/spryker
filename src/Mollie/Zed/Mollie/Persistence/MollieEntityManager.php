@@ -88,14 +88,12 @@ class MollieEntityManager extends AbstractEntityManager implements MollieEntityM
      */
     public function createRefund(MollieRefundSaveTransfer $mollieRefundSaveTransfer): void
     {
-        foreach ($mollieRefundSaveTransfer->getOrder()->getItems() as $itemTransfer) {
             $spyRefundMollieEntity = new SpyRefundMollie();
 
             $spyRefundMollieEntity = $this->getFactory()
                 ->createMollieRefundMapper()
-                ->mapToSpyRefundMollieEntity($itemTransfer, $mollieRefundSaveTransfer, $spyRefundMollieEntity);
+                ->mapToSpyRefundMollieEntity($mollieRefundSaveTransfer, $spyRefundMollieEntity);
 
             $spyRefundMollieEntity->save();
-        }
     }
 }

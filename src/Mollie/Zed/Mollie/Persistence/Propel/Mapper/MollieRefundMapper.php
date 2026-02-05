@@ -2,7 +2,6 @@
 
 namespace Mollie\Zed\Mollie\Persistence\Propel\Mapper;
 
-use Generated\Shared\Transfer\ItemTransfer;
 use Generated\Shared\Transfer\MollieRefundResponseTransfer;
 use Generated\Shared\Transfer\MollieRefundSaveTransfer;
 use Generated\Shared\Transfer\MollieRefundTransfer;
@@ -37,24 +36,22 @@ class MollieRefundMapper implements MollieRefundMapperInterface
     }
 
     /**
-     * @param \Generated\Shared\Transfer\ItemTransfer $itemTransfer
      * @param \Generated\Shared\Transfer\MollieRefundSaveTransfer $mollieRefundSaveTransfer
      * @param \Orm\Zed\Mollie\Persistence\SpyRefundMollie $spyRefundMollieEntity
      *
      * @return \Orm\Zed\Mollie\Persistence\SpyRefundMollie
      */
     public function mapToSpyRefundMollieEntity(
-        ItemTransfer $itemTransfer,
         MollieRefundSaveTransfer $mollieRefundSaveTransfer,
         SpyRefundMollie $spyRefundMollieEntity,
     ): SpyRefundMollie {
         $metadata = $this->utilEncodingService->encodeJson($mollieRefundSaveTransfer->getMetadata());
 
         $spyRefundMollieEntity
-            ->setFkSalesOrderItem($itemTransfer->getIdSalesOrderItem())
+            ->setFkSalesOrderItem($mollieRefundSaveTransfer->getItem()->getIdSalesOrderItem())
             ->setDescription($mollieRefundSaveTransfer->getDescription())
             ->setCurrency($mollieRefundSaveTransfer->getCurrency())
-            ->setValue($this->convertAmountToString($itemTransfer->getRefundableAmount()))
+            ->setValue($this->convertAmountToString($mollieRefundSaveTransfer->getItem()->getRefundableAmount()))
             ->setStatus($mollieRefundSaveTransfer->getStatus())
             ->setMetadata($metadata)
             ->setTransactionId($mollieRefundSaveTransfer->getTransactionId())

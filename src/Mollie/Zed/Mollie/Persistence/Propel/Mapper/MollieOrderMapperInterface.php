@@ -3,14 +3,14 @@
 namespace Mollie\Zed\Mollie\Persistence\Propel\Mapper;
 
 use Generated\Shared\Transfer\MolliePaymentTransfer;
-use Propel\Runtime\Collection\ObjectCollection;
+use Orm\Zed\Mollie\Persistence\SpyPaymentMollie;
 
 interface MollieOrderMapperInterface
 {
     /**
-     * @param \Propel\Runtime\Collection\ObjectCollection $spyPaymentMollieEntity
+     * @param \Orm\Zed\Mollie\Persistence\SpyPaymentMollie $spyPaymentMollieEntity
      *
      * @return \Generated\Shared\Transfer\MolliePaymentTransfer
      */
-    public function mapFromSpyPaymentMollieEntityToMolliePaymentTransfer(ObjectCollection $spyPaymentMollieEntity): MolliePaymentTransfer;
+    public function mapFromSpyPaymentMollieEntityToMolliePaymentTransfer(SpyPaymentMollie $spyPaymentMollieEntity): MolliePaymentTransfer;
 }
