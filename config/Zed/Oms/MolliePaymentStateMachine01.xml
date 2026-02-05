@@ -5,6 +5,10 @@
         xsi:schemaLocation="http://static.spryker.com http://static.spryker.com/oms-01.xsd">
 
     <process name="MolliePaymentStateMachine01" main="true">
+        <subprocesses>
+            <process>MollieRefund</process>
+        </subprocesses>
+
         <states>
             <state name="new" reserved="true"/>
             <state name="payment pending" reserved="true" display="oms.state.payment-pending"/>
@@ -107,5 +111,7 @@
         </events>
 
     </process>
+
+    <process name="MollieRefund" file="RefundSubprocess/Refund01.xml"/>
 
 </statemachine>

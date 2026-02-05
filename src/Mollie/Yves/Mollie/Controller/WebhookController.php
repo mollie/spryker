@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace Mollie\Yves\Mollie\Controller;
 
-use Generated\Shared\Transfer\MollieApiRequestTransfer;
-use Generated\Shared\Transfer\MolliePaymentApiResponseTransfer;
-use Generated\Shared\Transfer\OrderCollectionRequestTransfer;
 use Spryker\Shared\Log\LoggerTrait;
 use SprykerShop\Yves\ShopApplication\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -27,50 +24,36 @@ class WebhookController extends AbstractController
      */
     public function webhookAction(Request $request): Response
     {
-        $response = new Response();
+        $mollieResponseId = $request->request->get('id', '');
 
-        $paymentId = $request->request->get('id') ?? '';
-
-        if (!$paymentId) {
-            return $response
-                ->setStatusCode(Response::HTTP_OK)
-                ->setContent('Missing payment ID');
+        if (!$mollieResponseId) {
+            return $this->createResponse(Response::HTTP_BAD_REQUEST, 'Missing ID parameter');
         }
 
-        $mollieApiRequestTransfer = (new MollieApiRequestTransfer())
-            ->setTransactionId($paymentId);
+        foreach ($this->getFactory()->getMollieWebhookHandlerPlugins() as $webhookHandlerPlugin) {
+            if ($webhookHandlerPlugin->isApplicable($request)) {
+                $webhookResponseTransfer = $webhookHandlerPlugin->handle($request);
 
-        $molliePaymentApiResponseTransfer = $this->getFactory()->getMollieApiClient()->getPaymentByTransactionId($mollieApiRequestTransfer);
-
-        if (!$molliePaymentApiResponseTransfer->getIsSuccessful()) {
-            return $response
-                ->setStatusCode(Response::HTTP_OK)
-                ->setContent($molliePaymentApiResponseTransfer->getMessage());
+                return $this->createResponse(
+                    $webhookResponseTransfer->getStatusCode(),
+                    $webhookResponseTransfer->getMessage(),
+                );
+            }
         }
 
-        $orderCollectionRequestTransfer = $this->createOrderCollectionRequestTransfer($molliePaymentApiResponseTransfer);
-
-        $this->getClient()->updateOrderCollection($orderCollectionRequestTransfer);
-
-        return $response
-            ->setStatusCode(Response::HTTP_OK)
-            ->setContent($molliePaymentApiResponseTransfer->getMessage());
+        return $this->createResponse(Response::HTTP_BAD_REQUEST, 'No applicable webhook handler found');
     }
 
     /**
-     * @param \Generated\Shared\Transfer\MolliePaymentApiResponseTransfer $molliePaymentApiResponseTransfer
+     * @param int $statusCode
+     * @param string $content
      *
-     * @return \Generated\Shared\Transfer\OrderCollectionRequestTransfer
+     * @return \Symfony\Component\HttpFoundation\Response
      */
-    protected function createOrderCollectionRequestTransfer(
-        MolliePaymentApiResponseTransfer $molliePaymentApiResponseTransfer,
-    ): OrderCollectionRequestTransfer {
-        $orderCollectionRequestTransfer = new OrderCollectionRequestTransfer();
-        $molliePaymentTransfer = $molliePaymentApiResponseTransfer->getMolliePayment();
-        $orderCollectionRequestTransfer
-            ->setId($molliePaymentTransfer->getId())
-            ->setStatus($molliePaymentTransfer->getStatus());
-
-        return $orderCollectionRequestTransfer;
+    protected function createResponse(int $statusCode, string $content): Response
+    {
+        return (new Response())
+            ->setStatusCode($statusCode)
+            ->setContent($content);
     }
 }

@@ -12,6 +12,8 @@ use Mollie\Client\Mollie\Api\Payment\GetAllPaymentMethodsApi;
 use Mollie\Client\Mollie\Api\Payment\GetEnabledPaymentMethodsApi;
 use Mollie\Client\Mollie\Api\Payment\GetPaymentByTransactionIdApi;
 use Mollie\Client\Mollie\Api\Profile\GetCurrentProfileApi;
+use Mollie\Client\Mollie\Api\Refund\CreateRefundApi;
+use Mollie\Client\Mollie\Api\Refund\GetRefundByRefundIdApi;
 use Mollie\Client\Mollie\Deleter\Payment\PaymentMethodsCacheDeleter;
 use Mollie\Client\Mollie\Deleter\Payment\PaymentMethodsCacheDeleterInterface;
 use Mollie\Client\Mollie\Dependency\Client\MollieToStorageClientInterface;
@@ -164,6 +166,33 @@ class MollieFactory extends AbstractFactory
     public function getUtilEncodingService(): MollieToUtilEncodingServiceInterface
     {
         return $this->getProvidedDependency(MollieDependencyProvider::UTIL_ENCODING_SERVICE);
+    }
+
+    /**
+     * @return \Mollie\Client\Mollie\Api\ApiCallInterface
+     */
+    public function createRefundApi(): ApiCallInterface
+    {
+        return new CreateRefundApi(
+            $this->createMollieApiClient(),
+            $this->getConfig(),
+            $this->getUtilEncodingService(),
+            $this->createMollieLogger(),
+            $this->getMollieService(),
+        );
+    }
+
+    /**
+     * @return \Mollie\Client\Mollie\Api\ApiCallInterface
+     */
+    public function createGetRefundByRefundIdApi(): ApiCallInterface
+    {
+        return new GetRefundByRefundIdApi(
+            $this->createMollieApiClient(),
+            $this->getConfig(),
+            $this->getUtilEncodingService(),
+            $this->createMollieLogger(),
+        );
     }
 
     /**

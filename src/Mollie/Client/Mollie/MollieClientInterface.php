@@ -9,6 +9,10 @@ use Generated\Shared\Transfer\MollieLogApiTransfer;
 use Generated\Shared\Transfer\MolliePaymentApiResponseTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodQueryParametersTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodsApiResponseTransfer;
+use Generated\Shared\Transfer\MollieRefundApiResponseTransfer;
+use Generated\Shared\Transfer\MollieRefundRequestTransfer;
+use Generated\Shared\Transfer\MollieRefundResponseTransfer;
+use Generated\Shared\Transfer\MollieRefundTransfer;
 use Generated\Shared\Transfer\OrderCollectionRequestTransfer;
 use Generated\Shared\Transfer\OrderCollectionResponseTransfer;
 
@@ -64,6 +68,42 @@ interface MollieClientInterface
 
     /**
      * Specification:
+     * - Creates a refund in Mollie system
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\MollieApiRequestTransfer $mollieApiRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieRefundApiResponseTransfer
+     */
+    public function createRefund(MollieApiRequestTransfer $mollieApiRequestTransfer): MollieRefundApiResponseTransfer;
+
+    /**
+     * Specification:
+     * - Gets refund by refund id from Mollie
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\MollieApiRequestTransfer $mollieApiRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieRefundApiResponseTransfer
+     */
+    public function getRefundByRefundId(MollieApiRequestTransfer $mollieApiRequestTransfer): MollieRefundApiResponseTransfer;
+
+    /**
+     * Specification:
+     * - Gets persisted refund by refund id
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\MollieRefundRequestTransfer $mollieRefundRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieRefundResponseTransfer
+     */
+    public function getPersistedRefundById(MollieRefundRequestTransfer $mollieRefundRequestTransfer): MollieRefundResponseTransfer;
+
+    /**
+     * Specification:
      *  - Updates payment status in mollie record
      *
      * @api
@@ -102,6 +142,18 @@ interface MollieClientInterface
      * @return \Generated\Shared\Transfer\MollieGetProfileApiResponseTransfer
      */
     public function getCurrentProfile(): MollieGetProfileApiResponseTransfer;
+
+    /**
+     * Specification:
+     * - Processes refund data
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\MollieRefundTransfer $mollieRefundTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieRefundResponseTransfer
+     */
+    public function processRefundData(MollieRefundTransfer $mollieRefundTransfer): MollieRefundResponseTransfer;
 
     /**
      * @param \Generated\Shared\Transfer\MollieLogApiTransfer $mollieLogApiTransfer

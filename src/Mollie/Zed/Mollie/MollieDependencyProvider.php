@@ -93,6 +93,7 @@ class MollieDependencyProvider extends AbstractBundleDependencyProvider
     {
         $container = parent::providePersistenceLayerDependencies($container);
         $container = $this->addUtilEncodingService($container);
+        $container = $this->addMollieService($container);
 
         return $container;
     }

@@ -23,6 +23,7 @@ parameters:
         - '#Method .+ has invalid return type.+#'
         - '#Call to .+ on an unknown class Orm\\.+\\.+\\Persistence\\.+#'
         - '#Instantiated class Orm\\.+\\.+\\Persistence\\.+ not found#'
+        - '#Parameter .+ of method .+ has invalid type .+#'
 
     reportUnmatchedIgnoredErrors: false
 
