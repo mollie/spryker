@@ -20,6 +20,8 @@ use Mollie\Zed\Mollie\Business\Mapper\Refund\MollieRefundMapper;
 use Mollie\Zed\Mollie\Business\Mapper\Refund\MollieRefundMapperInterface;
 use Mollie\Zed\Mollie\Business\Order\OrderUpdater;
 use Mollie\Zed\Mollie\Business\Order\OrderUpdaterInterface;
+use Mollie\Zed\Mollie\Business\Payment\RequestSender\MolliePaymentCaptureRequestSender;
+use Mollie\Zed\Mollie\Business\Payment\RequestSender\MolliePaymentCaptureRequestSenderInterface;
 use Mollie\Zed\Mollie\Business\Processor\Refund\RefundProcessor;
 use Mollie\Zed\Mollie\Business\Processor\Refund\RefundProcessorInterface;
 use Mollie\Zed\Mollie\Business\Writer\MolliePaymentWriter;
@@ -100,6 +102,14 @@ class MollieBusinessFactory extends AbstractBusinessFactory
     public function createMollieRefundMapper(): MollieRefundMapperInterface
     {
         return new MollieRefundMapper();
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Business\Payment\RequestSender\MolliePaymentCaptureRequestSenderInterface
+     */
+    public function createMolliePaymentCaptureRequestSender(): MolliePaymentCaptureRequestSenderInterface
+    {
+        return new MolliePaymentCaptureRequestSender();
     }
 
     /**

@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Mollie\Zed\Mollie\Business;
 
 use Generated\Shared\Transfer\CheckoutResponseTransfer;
+use Generated\Shared\Transfer\MolliePaymentCaptureRequestTransfer;
+use Generated\Shared\Transfer\MolliePaymentCaptureResponseTransfer;
 use Generated\Shared\Transfer\MollieRefundApiResponseTransfer;
 use Generated\Shared\Transfer\MollieRefundRequestTransfer;
 use Generated\Shared\Transfer\MollieRefundResponseTransfer;
@@ -82,6 +84,18 @@ class MollieFacade extends AbstractFacade implements MollieFacadeInterface
 
     /**
      * @param \Generated\Shared\Transfer\OrderTransfer $orderTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieRefundApiResponseTransfer
+     */
+    public function captureOrder(OrderTransfer $orderTransfer): MollieRefundApiResponseTransfer
+    {
+        return $this->getFactory()
+            ->createRefundProcessor()
+            ->processOrderItemsRefund($orderTransfer);
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\OrderTransfer $orderTransfer
      * @param array<int, mixed> $orderItems
      *
      * @return \Generated\Shared\Transfer\OrderTransfer
@@ -101,5 +115,15 @@ class MollieFacade extends AbstractFacade implements MollieFacadeInterface
     public function processRefundData(MollieRefundTransfer $mollieRefundTransfer): MollieRefundResponseTransfer
     {
         return $this->getFactory()->createRefundProcessor()->processRefundData($mollieRefundTransfer);
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MolliePaymentCaptureRequestTransfer $molliePaymentCaptureRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\MolliePaymentCaptureResponseTransfer
+     */
+    public function capturePayment(MolliePaymentCaptureRequestTransfer $molliePaymentCaptureRequestTransfer): MolliePaymentCaptureResponseTransfer
+    {
+        return $this->getFactory()->createMolliePaymentCaptureRequestSender()->capturePayment($molliePaymentCaptureRequestTransfer);
     }
 }

@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Mollie\Zed\Mollie\Business;
 
 use Generated\Shared\Transfer\CheckoutResponseTransfer;
+use Generated\Shared\Transfer\MolliePaymentCaptureRequestTransfer;
+use Generated\Shared\Transfer\MolliePaymentCaptureResponseTransfer;
 use Generated\Shared\Transfer\MollieRefundApiResponseTransfer;
 use Generated\Shared\Transfer\MollieRefundRequestTransfer;
 use Generated\Shared\Transfer\MollieRefundResponseTransfer;
@@ -75,4 +77,11 @@ interface MollieFacadeInterface
      * @return \Generated\Shared\Transfer\MollieRefundResponseTransfer
      */
     public function processRefundData(MollieRefundTransfer $mollieRefundTransfer): MollieRefundResponseTransfer;
+
+    /**
+     * @param \Generated\Shared\Transfer\MolliePaymentCaptureRequestTransfer $molliePaymentCaptureRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\MolliePaymentCaptureResponseTransfer
+     */
+    public function capturePayment(MolliePaymentCaptureRequestTransfer $molliePaymentCaptureRequestTransfer): MolliePaymentCaptureResponseTransfer;
 }
