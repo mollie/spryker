@@ -1,13 +1,15 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Mollie\Zed\Mollie\Persistence;
 
+use Generated\Shared\Transfer\MollieItemPaymentCaptureTransfer;
 use Generated\Shared\Transfer\MolliePaymentTransfer;
 use Generated\Shared\Transfer\MollieRefundSaveTransfer;
 use Generated\Shared\Transfer\MollieRefundTransfer;
 use Generated\Shared\Transfer\OrderCollectionRequestTransfer;
+use Orm\Zed\Mollie\Persistence\SpyMolliePaymentCapture;
 use Orm\Zed\Mollie\Persistence\SpyPaymentMollie;
 use Orm\Zed\Mollie\Persistence\SpyRefundMollie;
 use Spryker\Zed\Kernel\Persistence\AbstractEntityManager;
@@ -88,12 +90,28 @@ class MollieEntityManager extends AbstractEntityManager implements MollieEntityM
      */
     public function createRefund(MollieRefundSaveTransfer $mollieRefundSaveTransfer): void
     {
-            $spyRefundMollieEntity = new SpyRefundMollie();
+        $spyRefundMollieEntity = new SpyRefundMollie();
 
-            $spyRefundMollieEntity = $this->getFactory()
-                ->createMollieRefundMapper()
-                ->mapToSpyRefundMollieEntity($mollieRefundSaveTransfer, $spyRefundMollieEntity);
+        $spyRefundMollieEntity = $this->getFactory()
+            ->createMollieRefundMapper()
+            ->mapToSpyRefundMollieEntity($mollieRefundSaveTransfer, $spyRefundMollieEntity);
 
-            $spyRefundMollieEntity->save();
+        $spyRefundMollieEntity->save();
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MollieItemPaymentCaptureTransfer $mollieItemPaymentCaptureTransfer
+     *
+     * @return void
+     */
+    public function createCapture(MollieItemPaymentCaptureTransfer $mollieItemPaymentCaptureTransfer): void
+    {
+        $spyMolliePaymentCaptureEntity = new SpyMolliePaymentCapture();
+
+        $spyMolliePaymentCaptureEntity = $this->getFactory()
+            ->createMolliePaymentCaptureMapper()
+            ->mapMollieOrderItemPaymentCaptureTransferToEntity($mollieItemPaymentCaptureTransfer, $spyMolliePaymentCaptureEntity);
+
+        $spyMolliePaymentCaptureEntity->save();
     }
 }

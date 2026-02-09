@@ -122,8 +122,9 @@ class MollieFacade extends AbstractFacade implements MollieFacadeInterface
      *
      * @return \Generated\Shared\Transfer\MolliePaymentCaptureResponseTransfer
      */
-    public function capturePayment(MolliePaymentCaptureRequestTransfer $molliePaymentCaptureRequestTransfer): MolliePaymentCaptureResponseTransfer
-    {
+    public function capturePayment(
+        MolliePaymentCaptureRequestTransfer $molliePaymentCaptureRequestTransfer,
+    ): MolliePaymentCaptureResponseTransfer {
         return $this->getFactory()->createMolliePaymentCaptureRequestSender()->capturePayment($molliePaymentCaptureRequestTransfer);
     }
 }

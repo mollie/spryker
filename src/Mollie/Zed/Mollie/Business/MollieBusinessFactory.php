@@ -109,7 +109,10 @@ class MollieBusinessFactory extends AbstractBusinessFactory
      */
     public function createMolliePaymentCaptureRequestSender(): MolliePaymentCaptureRequestSenderInterface
     {
-        return new MolliePaymentCaptureRequestSender();
+        return new MolliePaymentCaptureRequestSender(
+            $this->getMollieClient(),
+            $this->getMollieService(),
+        );
     }
 
     /**

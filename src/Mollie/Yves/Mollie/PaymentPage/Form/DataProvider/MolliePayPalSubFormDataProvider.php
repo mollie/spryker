@@ -26,6 +26,8 @@ class MolliePayPalSubFormDataProvider implements StepEngineFormDataProviderInter
      */
     public function getOptions(AbstractTransfer $dataTransfer): array
     {
-        return [];
+        return [
+            'logoUrl' => $dataTransfer->getLogoUrl(),
+        ];
     }
 }

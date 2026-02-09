@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace Mollie\Client\Mollie;
 
 use Generated\Shared\Transfer\MollieApiRequestTransfer;
+use Generated\Shared\Transfer\MollieCreateCaptureApiResponseTransfer;
 use Generated\Shared\Transfer\MollieGetProfileApiResponseTransfer;
 use Generated\Shared\Transfer\MollieLogApiTransfer;
 use Generated\Shared\Transfer\MolliePaymentApiResponseTransfer;
@@ -120,11 +121,9 @@ class MollieClient extends AbstractClient implements MollieClientInterface
      */
     public function getPersistedRefundById(MollieRefundRequestTransfer $mollieRefundRequestTransfer): MollieRefundResponseTransfer
     {
-        $mollieRefundResponseTransfer = $this->getFactory()
+        return $this->getFactory()
             ->createZedMollieStub()
             ->getPersistedRefundById($mollieRefundRequestTransfer);
-
-        return $mollieRefundResponseTransfer;
     }
 
     /**
@@ -180,7 +179,23 @@ class MollieClient extends AbstractClient implements MollieClientInterface
      */
     public function getCurrentProfile(): MollieGetProfileApiResponseTransfer
     {
-        return $this->getFactory()->createGetCurrentProfileApi()->execute();
+        /** @var \Generated\Shared\Transfer\MollieGetProfileApiResponseTransfer $mollieGetProfileApiResponseTransfer */
+        $mollieGetProfileApiResponseTransfer = $this->getFactory()->createGetCurrentProfileApi()->execute();
+
+        return $mollieGetProfileApiResponseTransfer;
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MollieApiRequestTransfer $mollieApiRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieCreateCaptureApiResponseTransfer
+     */
+    public function createCapture(MollieApiRequestTransfer $mollieApiRequestTransfer): MollieCreateCaptureApiResponseTransfer
+    {
+        /** @var \Generated\Shared\Transfer\MollieCreateCaptureApiResponseTransfer $mollieCreateCaptureApiResponseTransfer */
+        $mollieCreateCaptureApiResponseTransfer = $this->getFactory()->createPaymentCaptureApi()->execute($mollieApiRequestTransfer);
+
+        return $mollieCreateCaptureApiResponseTransfer;
     }
 
     /**

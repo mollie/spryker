@@ -55,15 +55,15 @@ class MollieRepository extends AbstractRepository implements MollieRepositoryInt
     }
 
     /**
-     * @param string $orderId
+     * @param int $fkSalesOrder
      *
      * @return \Generated\Shared\Transfer\MolliePaymentTransfer
      */
-    public function getPaymentByOrderId(string $orderId): MolliePaymentTransfer
+    public function getPaymentByFkSalesOrder(int $fkSalesOrder): MolliePaymentTransfer
     {
         $spyPaymentMollieRecord = $this->getFactory()
             ->createSpyPaymentMollieQuery()
-            ->filterByFkSalesOrder($orderId)
+            ->filterByFkSalesOrder($fkSalesOrder)
             ->findOne();
 
         return $this->getFactory()

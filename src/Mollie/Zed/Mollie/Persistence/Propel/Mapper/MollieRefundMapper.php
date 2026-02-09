@@ -68,9 +68,8 @@ class MollieRefundMapper implements MollieRefundMapperInterface
      */
     protected function convertAmountToString(int $amount): string
     {
-        $amount = $this->mollieService->convertIntegerToDecimal($amount);
-        $amount = number_format($amount, 2, '.', '');
+        $mollieAmountTransfer = $this->mollieService->convertIntegerToMollieAmount($amount);
 
-        return $amount;
+        return $mollieAmountTransfer->getValue();
     }
 }

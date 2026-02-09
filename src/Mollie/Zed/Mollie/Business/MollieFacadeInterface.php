@@ -83,5 +83,7 @@ interface MollieFacadeInterface
      *
      * @return \Generated\Shared\Transfer\MolliePaymentCaptureResponseTransfer
      */
-    public function capturePayment(MolliePaymentCaptureRequestTransfer $molliePaymentCaptureRequestTransfer): MolliePaymentCaptureResponseTransfer;
+    public function capturePayment(
+        MolliePaymentCaptureRequestTransfer $molliePaymentCaptureRequestTransfer,
+    ): MolliePaymentCaptureResponseTransfer;
 }

@@ -26,7 +26,7 @@ class CreatePaymentCaptureApi extends AbstractApiCall
 
         $this->request = new CreatePaymentCaptureRequest(
             paymentId: $mollieCapturePayment->getPaymentId(),
-            description: sprintf('Capture for: %s', $mollieCapturePayment->getPaymentId()),
+            description: $mollieCapturePayment->getDescription(),
             metadata: [
                 'bookkeeping_id' => $mollieCapturePayment->getPaymentId(),
             ],

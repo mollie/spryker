@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Mollie\Service\Mollie;
 
+use Generated\Shared\Transfer\MollieAmountTransfer;
 use Spryker\Service\Kernel\AbstractService;
 
 /**
@@ -23,6 +24,20 @@ class MollieService extends AbstractService implements MollieServiceInterface
     public function convertIntegerToDecimal(int $value): float
     {
         return $this->getFactory()->createIntegerToDecimalConverter()->convert($value);
+    }
+
+    /**
+     * Converts Spryker integer amount into Mollie amount format
+     *
+     * @api
+     *
+     * @param int $value
+     *
+     * @return \Generated\Shared\Transfer\MollieAmountTransfer
+     */
+    public function convertIntegerToMollieAmount(int $value): MollieAmountTransfer
+    {
+        return $this->getFactory()->createMollieAmountConverter()->convertIntegerToMollieAmount($value);
     }
 
     /**

@@ -53,9 +53,8 @@
         <id-method-parameter value="spy_refund_mollie_pk_seq"/>
     </table>
 
-
-    <table name="spy_capture_mollie_order_item" phpName="SpyCaptureMollieOrderItem">
-        <column name="id_capture_mollie_order_item" required="true" type="INTEGER" autoIncrement="true" primaryKey="true"/>
+    <table name="spy_mollie_order_item_payment_capture" phpName="SpyMollieOrderItemPaymentCapture">
+        <column name="id_mollie_order_item_payment_capture" required="true" type="INTEGER" autoIncrement="true" primaryKey="true"/>
         <column name="fk_sales_order_item" required="true" type="INTEGER"/>
         <column name="capture_id" type="VARCHAR" size="255"/>
         <column name="transaction_id" type="VARCHAR" size="255"/>

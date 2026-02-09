@@ -52,7 +52,7 @@ class RefundProcessor implements RefundProcessorInterface
     {
         $orderItemsGrossAmount = $this->grossAmountCalculator->calculateTotalRefundableAmount($orderTransfer);
 
-        $molliePaymentTransfer = $this->repository->getPaymentByOrderId($orderTransfer->getIdSalesOrder());
+        $molliePaymentTransfer = $this->repository->getPaymentByFkSalesOrder($orderTransfer->getIdSalesOrder());
 
         $mollieAmount = (new MollieAmountTransfer())
             ->setValue($orderItemsGrossAmount)
