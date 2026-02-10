@@ -1,60 +1,93 @@
 import Component from 'ShopUi/models/component';
+import { EVENT_UPDATE_DYNAMIC_MESSAGES } from 'ShopUi/components/organisms/dynamic-notification-area/dynamic-notification-area';
 
 export default class MollieApplePayComponent extends Component {
     protected applePayInput: HTMLInputElement | null = null;
-    protected checkoutList: HTMLElement | null = null;
-    protected heading: HTMLElement | null = null;
+    protected appleToggler: HTMLElement | null = null;
 
     protected init(): void {
-        this.checkApplePay();
+        this.findApplePayInput();
+        this.toggleApplePayAvailability();
+        this.preventUnsupportedApplePayOnSubmit();
     }
 
-    /**
-     * Check if the current OS supports Apple Pay.
-     * @protected
-     */
-    protected isApplePaySupportedOS(): boolean {
+    protected findApplePayInput(): void {
+        this.appleToggler = document.querySelector(
+            'toggler-radio#paymentForm_paymentSelection_mollieApplePayPayment'
+        ) as HTMLElement | null;
+
+        if (!this.appleToggler) {
+            return;
+        }
+
+        const inputs = this.appleToggler.getElementsByTagName('input');
+
+        if (!inputs || inputs.length === 0) {
+            return;
+        }
+
+        this.applePayInput = inputs[0] as HTMLInputElement;
+    }
+
+    protected isApplePaySupported(): boolean {
         const platform = navigator.platform.toLowerCase();
         const userAgent = navigator.userAgent.toLowerCase();
 
         return platform.includes('mac') || /iphone|ipad|ipod/.test(userAgent);
     };
 
-    protected checkApplePay(): void {
-         const applePaySupported = this.isApplePaySupportedOS();
+    protected toggleApplePayAvailability(): void {
+        if (!this.applePayInput) return;
 
-        if (!applePaySupported) {
-            console.warn('Apple Pay is not supported on this OS. Hiding Apple Pay option.');
-            this.hideApplePay();
+        if (!this.isApplePaySupported()) {
+            this.applePayInput.checked = false;
+            this.applePayInput.disabled = true;
+
+            if (this.appleToggler) {
+                this.appleToggler.classList.add('mollie-apple-pay-component__is-disabled');
+            }
         }
-
-        return;
     }
 
-    protected hideApplePay(): void {
-        this.applePayInput = document.getElementById(
-            'paymentForm_paymentSelection_mollieApplePayPayment',
-        ) as HTMLInputElement | null;
+    protected preventUnsupportedApplePayOnSubmit(): void {
+        const form = document.querySelector('form[name="paymentForm"]') as HTMLFormElement | null;
 
-        if (!this.applePayInput) {
+        if (!form) {
             return;
         }
 
-        this.checkoutList = this.applePayInput.closest('ul.checkout-list');
+        form.addEventListener('submit', (event) => {
+            if (!this.applePayInput) return;
 
-        if (!this.checkoutList) {
-            return;
-        }
+            if (!this.isApplePaySupported() && this.applePayInput.checked) {
+                event.preventDefault();
+                this.applePayInput.checked = false;
+                this.showFlashMessage('Apple Pay is not supported on your device/browser.', 'alert');
+            }
+        });
+    }
 
-        this.heading = this.checkoutList.previousElementSibling as HTMLElement | null;
+    protected showFlashMessage(message: string, type: 'alert' | 'success' | 'warning' = 'alert'): void {
+        try {
+            const htmlMessage =
+                `<section class="flash-message-list" data-qa="component flash-message-list">
+                    <flash-message class="custom-element flash-message flash-message--${type}" data-qa="component flash-message">
+                        <div class="flash-message__message container grid">
+                            <div class="col flash-message__content">
+                                <div class="flash-message__text">${message}</div>
+                                <span class="flash-message__static-link">Ok!</span>
+                            </div>
+                        </div>
+                    </flash-message>
+                </section>`;
 
-        this.applePayInput.checked = false;
-        this.applePayInput.disabled = true;
+            const dynamicNotificationCustomEvent = new CustomEvent(EVENT_UPDATE_DYNAMIC_MESSAGES, {
+                detail: htmlMessage,
+            });
 
-        this.checkoutList.style.display = 'none';
-
-        if (this.heading && this.heading.tagName === 'H5') {
-            this.heading.style.display = 'none';
+            document.dispatchEvent(dynamicNotificationCustomEvent);
+        } catch (err) {
+            console.error(err);
         }
     }
 }

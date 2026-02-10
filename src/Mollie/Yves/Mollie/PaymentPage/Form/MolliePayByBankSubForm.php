@@ -26,9 +26,6 @@ class MolliePayByBankSubForm extends AbstractSubFormType implements SubFormInter
     {
         parent::configureOptions($resolver);
         $resolver
-            ->setDefaults([
-                'data_class' => null,
-            ])
             ->setRequired(static::OPTIONS_FIELD_NAME);
     }
 
