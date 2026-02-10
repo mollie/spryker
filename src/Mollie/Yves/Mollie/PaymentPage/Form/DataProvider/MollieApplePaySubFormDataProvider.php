@@ -4,11 +4,20 @@ declare(strict_types=1);
 
 namespace Mollie\Yves\Mollie\PaymentPage\Form\DataProvider;
 
+use Mollie\Shared\Mollie\MollieConfig;
+use Mollie\Yves\Mollie\PaymentPage\Cache\MollieCachedOptionsExpander;
 use Spryker\Shared\Kernel\Transfer\AbstractTransfer;
 use Spryker\Yves\StepEngine\Dependency\Form\StepEngineFormDataProviderInterface;
 
 class MollieApplePaySubFormDataProvider implements StepEngineFormDataProviderInterface
 {
+    /**
+     * @param \Mollie\Yves\Mollie\PaymentPage\Cache\MollieCachedOptionsExpander $optionsResolver
+     */
+    public function __construct(
+        protected MollieCachedOptionsExpander $optionsResolver,
+    ) {
+    }
     /**
      * @param \Spryker\Shared\Kernel\Transfer\AbstractTransfer $dataTransfer
      *
@@ -26,6 +35,10 @@ class MollieApplePaySubFormDataProvider implements StepEngineFormDataProviderInt
      */
     public function getOptions(AbstractTransfer $dataTransfer): array
     {
-        return [];
+        /** @var \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer */
+        $quoteTransfer = $dataTransfer;
+        $paymentMethod = MollieConfig::MOLLIE_PAYMENT_BANCONTACT;
+
+        return $this->optionsResolver->expandOptions($paymentMethod, $quoteTransfer, []);
     }
 }

@@ -311,7 +311,9 @@ class MollieFactory extends AbstractFactory
      */
     public function createMollieApplePaySubFormDataProvider(): StepEngineFormDataProviderInterface
     {
-        return new MollieApplePaySubFormDataProvider();
+        return new MollieApplePaySubFormDataProvider(
+            $this->createMollieCachedOptionsExpander(),
+        );
     }
 
     /**
