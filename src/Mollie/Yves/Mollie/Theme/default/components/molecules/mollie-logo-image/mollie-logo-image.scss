@@ -1,0 +1,15 @@
+@mixin mollie-logo-image($name: '.mollie-logo-image') {
+    #{$name} {
+    }
+
+    .lazy-image__image--mollie-payment-logo {
+        position: absolute;
+        z-index:9999;
+        top: rem(27);
+        right: rem(20);
+        width: rem(52);
+        height: rem(35);
+    }
+}
+
+@include mollie-logo-image()
