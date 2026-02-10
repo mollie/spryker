@@ -22,6 +22,8 @@ mollieKbcPayment,KBC,de_DE
 mollieKbcPayment,KBC,en_US
 molliePayByBankPayment,Per Banküberweisung bezahlen,de_DE
 molliePayByBankPayment,Pay by bank transfer,en_US
+mollieApplePayPayment,Apple Pay,de_DE
+mollieApplePayPayment,Apple Pay,en_US
 checkout.payment.provider.MollieCreditCardPayment,Mollie Kreditkarte,de_DE
 checkout.payment.provider.MollieCreditCardPayment,Mollie Credit Card,en_US
 checkout.payment.provider.MolliePayPalPayment,Mollie PayPal,de_DE
@@ -46,6 +48,8 @@ checkout.payment.provider.MollieKbcPayment,Mollie KBC,de_DE
 checkout.payment.provider.MollieKbcPayment,Mollie KBC,en_US
 checkout.payment.provider.MolliePayByBankPayment,Mollie per Bank bezahlen,de_DE
 checkout.payment.provider.MolliePayByBankPayment,Mollie Pay By Bank,en_US
+checkout.payment.provider.MollieApplePayPayment,Mollie Apple Pay,de_DE
+checkout.payment.provider.MollieApplePayPayment,Mollie Apple Pay,en_US
 checkout.payment.provider.molliePaypal.descriptionText,Schließen Sie Ihren Einkauf sicher mit Ihrem PayPal-Konto ab.,de_DE
 checkout.payment.provider.molliePaypal.descriptionText,Complete your purchase securely using your PayPal account.,en_US
 checkout.payment.provider.mollieBankTransfer.descriptionText,Schließen Sie Ihren Einkauf sicher per Banküberweisung ab.,de_DE
@@ -70,3 +74,5 @@ checkout.payment.provider.molliePayByBank.descriptionText,Bezahlen Sie per siche
 checkout.payment.provider.molliePayByBank.descriptionText,Pay using a secure bank transfer.,en_US
 checkout.payment.provider.mollieCreditCard.descriptionText,Schließen Sie Ihren Einkauf sicher mit Ihren Kreditkartendaten ab.,de_DE
 checkout.payment.provider.mollieCreditCard.descriptionText,Complete your purchase securely using your credit card credentials.,en_US
+checkout.payment.provider.mollieApplePay.descriptionText,Schließen Sie Ihren Einkauf sicher mit Apple Pay ab.,de_DE
+checkout.payment.provider.mollieApplePay.descriptionText,Complete your purchase securely using Apple Pay.,en_US

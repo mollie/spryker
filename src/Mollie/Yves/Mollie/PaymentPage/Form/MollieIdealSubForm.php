@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Mollie\Yves\Mollie\PaymentPage\Form;
 
-use Generated\Shared\Transfer\MollieIdealPaymentTransfer;
 use Mollie\Shared\Mollie\MollieConfig;
 use Spryker\Yves\StepEngine\Dependency\Form\AbstractSubFormType;
 use Spryker\Yves\StepEngine\Dependency\Form\SubFormInterface;
@@ -27,9 +26,6 @@ class MollieIdealSubForm extends AbstractSubFormType implements SubFormInterface
     {
         parent::configureOptions($resolver);
         $resolver
-            ->setDefaults([
-                'data_class' => MollieIdealPaymentTransfer::class,
-            ])
             ->setRequired(static::OPTIONS_FIELD_NAME);
     }
 
