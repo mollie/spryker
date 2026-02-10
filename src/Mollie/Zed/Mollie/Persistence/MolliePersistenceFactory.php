@@ -15,6 +15,7 @@ use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MolliePaymentCaptureMapper;
 use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MolliePaymentCaptureMapperInterface;
 use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MollieRefundMapper;
 use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MollieRefundMapperInterface;
+use Orm\Zed\Mollie\Persistence\SpyMollieOrderItemPaymentCaptureQuery;
 use Orm\Zed\Mollie\Persistence\SpyPaymentMollieQuery;
 use Orm\Zed\Mollie\Persistence\SpyRefundMollieQuery;
 use Spryker\Zed\Kernel\Persistence\AbstractPersistenceFactory;
@@ -62,6 +63,14 @@ class MolliePersistenceFactory extends AbstractPersistenceFactory
     public function createSpyPaymentMollieQuery(): SpyPaymentMollieQuery
     {
         return SpyPaymentMollieQuery::create();
+    }
+
+    /**
+     * @return \Orm\Zed\Mollie\Persistence\SpyMollieOrderItemPaymentCaptureQuery
+     */
+    public function createSpyMollieOrderItemPaymentCaptureQuery(): SpyMollieOrderItemPaymentCaptureQuery
+    {
+        return SpyMollieOrderItemPaymentCaptureQuery::create();
     }
 
     /**

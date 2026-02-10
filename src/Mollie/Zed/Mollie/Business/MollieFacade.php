@@ -127,4 +127,64 @@ class MollieFacade extends AbstractFacade implements MollieFacadeInterface
     ): MolliePaymentCaptureResponseTransfer {
         return $this->getFactory()->createMolliePaymentCaptureRequestSender()->capturePayment($molliePaymentCaptureRequestTransfer);
     }
+
+    /**
+     * @param int $idSalesOrder
+     *
+     * @return bool
+     */
+    public function isAuthorizationFailed(int $idSalesOrder): bool
+    {
+        return $this->getFactory()->createMolliePaymentStatus()->isAuthorizationFailed($idSalesOrder);
+    }
+
+    /**
+     * @param int $idSalesOrder
+     *
+     * @return bool
+     */
+    public function isAuthorizationCanceled(int $idSalesOrder): bool
+    {
+        return $this->getFactory()->createMolliePaymentStatus()->isAuthorizationCanceled($idSalesOrder);
+    }
+
+    /**
+     * @param int $idSalesOrder
+     *
+     * @return bool
+     */
+    public function isAuthorizationExpired(int $idSalesOrder): bool
+    {
+        return $this->getFactory()->createMolliePaymentStatus()->isAuthorizationExpired($idSalesOrder);
+    }
+
+    /**
+     * @param int $idSalesOrder
+     *
+     * @return bool
+     */
+    public function isAuthorized(int $idSalesOrder): bool
+    {
+        return $this->getFactory()->createMolliePaymentStatus()->isAuthorized($idSalesOrder);
+    }
+
+    /**
+     * @param int $idSalesOrderItem
+     *
+     * @return bool
+     */
+    public function isCaptured(int $idSalesOrderItem): bool
+    {
+        return $this->getFactory()->createMolliePaymentStatus()->isCaptured($idSalesOrderItem);
+    }
+
+    /**
+     * @param int $idSalesOrderItem
+     *
+     * @return bool
+     */
+    public function isCaptureFailed(int $idSalesOrderItem): bool
+    {
+        return $this->getFactory()->createMolliePaymentStatus()->isCaptureFailed($idSalesOrderItem);
+    }
 }

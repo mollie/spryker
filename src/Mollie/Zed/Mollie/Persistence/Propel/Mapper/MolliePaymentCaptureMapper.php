@@ -21,4 +21,16 @@ class MolliePaymentCaptureMapper implements MolliePaymentCaptureMapperInterface
     ): SpyMollieOrderItemPaymentCapture {
         return $mollieOrderItemPaymentCaptureEntity->fromArray($mollieItemPaymentCaptureTransfer->toArray());
     }
+
+    /**
+     * @param \Orm\Zed\Mollie\Persistence\SpyMollieOrderItemPaymentCapture $mollieOrderItemPaymentCaptureEntity
+     *
+     * @return \Generated\Shared\Transfer\MollieItemPaymentCaptureTransfer
+     */
+    public function mapFromSpyMollieOrderItemPaymentCaptureEntityToTransfer(
+        SpyMollieOrderItemPaymentCapture $mollieOrderItemPaymentCaptureEntity,
+    ): MollieItemPaymentCaptureTransfer {
+        return (new MollieItemPaymentCaptureTransfer())
+            ->fromArray($mollieOrderItemPaymentCaptureEntity->toArray(), true);
+    }
 }

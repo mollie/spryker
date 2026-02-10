@@ -17,4 +17,13 @@ interface MolliePaymentCaptureMapperInterface
         MollieItemPaymentCaptureTransfer $mollieItemPaymentCaptureTransfer,
         SpyMollieOrderItemPaymentCapture $mollieOrderItemPaymentCaptureEntity,
     ): SpyMollieOrderItemPaymentCapture;
+
+    /**
+     * @param \Orm\Zed\Mollie\Persistence\SpyMollieOrderItemPaymentCapture $mollieOrderItemPaymentCaptureEntity
+     *
+     * @return \Generated\Shared\Transfer\MollieItemPaymentCaptureTransfer
+     */
+    public function mapFromSpyMollieOrderItemPaymentCaptureEntityToTransfer(
+        SpyMollieOrderItemPaymentCapture $mollieOrderItemPaymentCaptureEntity,
+    ): MollieItemPaymentCaptureTransfer;
 }

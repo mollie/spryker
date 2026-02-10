@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Mollie\Zed\Mollie\Persistence;
 
+use Generated\Shared\Transfer\MollieItemPaymentCaptureTransfer;
 use Generated\Shared\Transfer\MolliePaymentTransfer;
 use Generated\Shared\Transfer\MollieRefundRequestTransfer;
 use Generated\Shared\Transfer\MollieRefundResponseTransfer;
@@ -86,5 +87,22 @@ class MollieRepository extends AbstractRepository implements MollieRepositoryInt
         return $this->getFactory()
             ->createMollieRefundMapper()
             ->mapFromSpyRefundMollieEntityToMollieRefundTransfer($spyRefundMollieRecord);
+    }
+
+    /**
+     * @param int $idSalesOrderItem
+     *
+     * @return \Generated\Shared\Transfer\MollieItemPaymentCaptureTransfer
+     */
+    public function getOrderItemPaymentCapture(int $idSalesOrderItem): MollieItemPaymentCaptureTransfer
+    {
+         $spyMollieOrderItemPaymentCaptureEntity = $this->getFactory()
+            ->createSpyMollieOrderItemPaymentCaptureQuery()
+            ->filterByFkSalesOrderItem($idSalesOrderItem)
+            ->findOne();
+
+        return $this->getFactory()
+            ->createMolliePaymentCaptureMapper()
+            ->mapFromSpyMollieOrderItemPaymentCaptureEntityToTransfer($spyMollieOrderItemPaymentCaptureEntity);
     }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Mollie\Zed\Mollie\Persistence;
 
+use Generated\Shared\Transfer\MollieItemPaymentCaptureTransfer;
 use Generated\Shared\Transfer\MolliePaymentTransfer;
 use Generated\Shared\Transfer\MollieRefundRequestTransfer;
 use Generated\Shared\Transfer\MollieRefundResponseTransfer;
@@ -38,4 +39,11 @@ interface MollieRepositoryInterface
      * @return \Generated\Shared\Transfer\MollieRefundResponseTransfer
      */
     public function getPersistedRefundById(MollieRefundRequestTransfer $mollieRefundRequestTransfer): MollieRefundResponseTransfer;
+
+    /**
+     * @param int $idSalesOrderItem
+     *
+     * @return \Generated\Shared\Transfer\MollieItemPaymentCaptureTransfer
+     */
+    public function getOrderItemPaymentCapture(int $idSalesOrderItem): MollieItemPaymentCaptureTransfer;
 }

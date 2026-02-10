@@ -156,7 +156,7 @@
         </transitions>
 
        <events>
-           <event name="start authorization" onEnter="true"/>
+           <event name="start authorization" onEnter="true" timeout=" 1 minute"/>
            <event name="authorize" onEnter="true"/>
            <event name="check authorization" timeout="5 minute"/>
 

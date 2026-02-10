@@ -2,13 +2,16 @@
 
 declare(strict_types = 1);
 
-namespace Mollie\Zed\Mollie\Communication\Plugin\Oms\Condition;
+namespace Mollie\Zed\Mollie\Communication\Plugin\Oms\Condition\Authorization;
 
 use Orm\Zed\Sales\Persistence\SpySalesOrderItem;
-use Spryker\Zed\Oms\Communication\Plugin\Oms\Condition\AbstractCondition;
+use Spryker\Zed\Kernel\Communication\AbstractPlugin;
 use Spryker\Zed\Oms\Dependency\Plugin\Condition\ConditionInterface;
 
-class IsAuthorizedConditionPlugin extends AbstractCondition implements ConditionInterface
+/**
+ * @method \Mollie\Zed\Mollie\Business\MollieFacadeInterface getFacade()
+ */
+class IsAuthorizedConditionPlugin extends AbstractPlugin implements ConditionInterface
 {
     /**
      * @param \Orm\Zed\Sales\Persistence\SpySalesOrderItem $orderItem
@@ -17,6 +20,6 @@ class IsAuthorizedConditionPlugin extends AbstractCondition implements Condition
      */
     public function check(SpySalesOrderItem $orderItem): bool
     {
-        return false;
+        return $this->getFacade()->isAuthorized($orderItem->getFkSalesOrder());
     }
 }
