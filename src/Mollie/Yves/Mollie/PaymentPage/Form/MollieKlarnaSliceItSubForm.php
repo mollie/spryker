@@ -34,9 +34,6 @@ class MollieKlarnaSliceItSubForm extends AbstractSubFormType implements SubFormI
     {
         parent::configureOptions($resolver);
         $resolver
-            ->setDefaults([
-                'data_class' => null,
-            ])
             ->setRequired(static::OPTIONS_FIELD_NAME);
     }
 

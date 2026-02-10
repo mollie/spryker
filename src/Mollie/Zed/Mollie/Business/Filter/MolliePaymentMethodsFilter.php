@@ -15,9 +15,12 @@ use Mollie\Service\Mollie\MollieServiceInterface;
 use Mollie\Shared\Mollie\MollieConstants;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToLocaleFacadeInterface;
 use Mollie\Zed\Mollie\MollieConfig;
+use Spryker\Shared\Log\LoggerTrait;
 
 class MolliePaymentMethodsFilter implements MolliePaymentMethodsFilterInterface
 {
+    use LoggerTrait;
+
     /**
      * @param \Mollie\Client\Mollie\MollieClientInterface $mollieClient
      * @param \Mollie\Service\Mollie\MollieServiceInterface $mollieService
@@ -44,6 +47,12 @@ class MolliePaymentMethodsFilter implements MolliePaymentMethodsFilterInterface
         $molliePaymentMethodsApiResponseTransfer = $this->mollieClient->getEnabledPaymentMethods($requestTransfer);
         $molliePaymentMethods = $molliePaymentMethodsApiResponseTransfer->getCollection()->getMethods();
 
+        $this->addIncludeWalletLogs($requestTransfer);
+
+        if ($this->mollieConfig->isTestMode()) {
+            return $paymentMethodsTransfer;
+        }
+
         $paymentMethodsTransfer = $this->filterMolliePaymentMethods($paymentMethodsTransfer, $quoteTransfer, $molliePaymentMethods);
 
         return $paymentMethodsTransfer;
@@ -62,8 +71,26 @@ class MolliePaymentMethodsFilter implements MolliePaymentMethodsFilterInterface
                     ->setLocale($this->localeFacade->getCurrentLocale()->getLocaleName())
                     ->setBillingCountry($quoteTransfer->getBillingAddress()->getIso2Code())
                     ->setIncludeIssuers(true)
+                    ->setIncludeWallets($this->mollieConfig->getMollieIncludeWallets())
                     ->setSequenceType(MollieConstants::MOLLIE_SEQUENCE_TYPE_ONE_OFF),
             );
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MollieApiRequestTransfer $requestTransfer
+     *
+     * @return void
+     */
+    protected function addIncludeWalletLogs(MollieApiRequestTransfer $requestTransfer): void
+    {
+        $includeWallets = $requestTransfer->getMolliePaymentMethodQueryParameters()->getIncludeWallets() ?? [];
+        $hasApplePay = in_array(MollieConfig::MOLLIE_WALLET_APPLE_PAY, $includeWallets, true);
+
+        if (!$hasApplePay) {
+            $this->getLogger()->info('Mollie Apple Pay not included in includeWallets.', [
+                'includeWallets' => $includeWallets,
+            ]);
+        }
     }
 
     /**

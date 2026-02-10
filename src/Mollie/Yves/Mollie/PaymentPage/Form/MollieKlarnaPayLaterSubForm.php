@@ -34,9 +34,6 @@ class MollieKlarnaPayLaterSubForm extends AbstractSubFormType implements SubForm
     {
         parent::configureOptions($resolver);
         $resolver
-            ->setDefaults([
-                'data_class' => null,
-            ])
             ->setRequired(static::OPTIONS_FIELD_NAME);
     }
 

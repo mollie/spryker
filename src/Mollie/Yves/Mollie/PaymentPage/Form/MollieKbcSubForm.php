@@ -34,9 +34,6 @@ class MollieKbcSubForm extends AbstractSubFormType implements SubFormInterface, 
     {
         parent::configureOptions($resolver);
         $resolver
-            ->setDefaults([
-                'data_class' => null,
-            ])
             ->setRequired(static::OPTIONS_FIELD_NAME);
     }
 

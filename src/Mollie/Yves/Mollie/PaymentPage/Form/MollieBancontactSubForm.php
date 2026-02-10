@@ -34,9 +34,6 @@ class MollieBancontactSubForm extends AbstractSubFormType implements SubFormInte
     {
         parent::configureOptions($resolver);
         $resolver
-            ->setDefaults([
-                'data_class' => null,
-            ])
             ->setRequired(static::OPTIONS_FIELD_NAME);
     }
 

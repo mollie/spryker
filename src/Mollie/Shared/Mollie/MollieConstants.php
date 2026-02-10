@@ -64,6 +64,11 @@ interface MollieConstants
      */
     public const MOLLIE_DEBUG_MODE = 'MOLLIE:MOLLIE_DEBUG_MODE';
 
+    /**
+     * @var string
+     */
+    public const MOLLIE_INCLUDE_WALLETS = 'MOLLIE:MOLLIE_INCLUDE_WALLETS';
+
     // Payment statuses from Mollie
     /**
      * @var string

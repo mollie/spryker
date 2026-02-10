@@ -11,3 +11,4 @@ mollieIdealPayment,iDEAL,MollieIdealPayment,Mollie iDEAL Payment,1
 mollieBancontactPayment,Bancontact,MollieBancontactPayment,Mollie Bancontact Payment,1
 mollieKbcPayment,KBC,MollieKbcPayment,Mollie KBC Payment,1
 molliePayByBankPayment,Pay By Bank,MolliePayByBankPayment,Mollie Pay By Bank Payment,1
+mollieApplePayPayment,Apple Pay,MollieApplePayPayment,Mollie Apple Pay Payment,1

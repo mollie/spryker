@@ -113,6 +113,10 @@ class CreatePaymentApi extends AbstractApiCall
                 $additionalData[MollieConfig::REQUEST_PARAMETER_CREATE_PAYMENT_KLARNA_EXTRA_MERCHANT_DATA] = $paymentTransfer->getMollieKlarnaPayment()->getExtraMerchantData() ?? '';
 
                 break;
+            case SharedConfig::MOLLIE_PAYMENT_APPLE_PAY:
+                $additionalData[MollieConfig::REQUEST_PARAMETER_CREATE_PAYMENT_APPLE_PAY_PAYMENT_TOKEN] = $paymentTransfer->getMollieApplePayPayment()->getApplePayPaymentToken() ?? '';
+
+                break;
             default:
                 break;
         }

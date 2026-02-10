@@ -24,8 +24,8 @@
         <property name="extraMerchantData" type="string"/>
     </transfer>
 
-    <transfer name="MollieIdealPayment">
-        <property name="consumerDateOfBirth" type="string"/>
+    <transfer name="MollieApplePayPayment">
+        <property name="applePayPaymentToken" type="string"/>
     </transfer>
 
     <transfer name="Payment">
@@ -37,10 +37,11 @@
         <property name="mollieKlarnaPayNowPayment" type="[]"/>
         <property name="mollieKlarnaSliceItPayment" type="[]"/>
         <property name="mollieEpsPayment" type="[]"/>
-        <property name="mollieIdealPayment" type="MollieIdealPayment"/>
+        <property name="mollieIdealPayment" type="[]"/>
         <property name="mollieBancontactPayment" type="[]"/>
         <property name="mollieKbcPayment" type="[]"/>
         <property name="molliePayByBankPayment" type="[]"/>
+        <property name="mollieApplePayPayment" type="MollieApplePayPayment"/>
     </transfer>
 
     <transfer name="MolliePaymentMethod">

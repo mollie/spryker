@@ -9,19 +9,21 @@ use Mollie\Yves\Mollie\Dependency\Client\MollieToLocaleClientInterface;
 use Mollie\Yves\Mollie\Dependency\Client\MollieToQuoteClientInterface;
 use Mollie\Yves\Mollie\Dependency\Client\MollieToStorageClientInterface;
 use Mollie\Yves\Mollie\Dependency\Service\MollieToUtilEncodingServiceInterface;
-use Mollie\Yves\Mollie\Handler\MolliePaymentBancontactHandler;
-use Mollie\Yves\Mollie\Handler\MolliePaymentBankTransferHandler;
-use Mollie\Yves\Mollie\Handler\MolliePaymentCreditCardHandler;
-use Mollie\Yves\Mollie\Handler\MolliePaymentEpsHandler;
-use Mollie\Yves\Mollie\Handler\MolliePaymentHandlerInterface;
-use Mollie\Yves\Mollie\Handler\MolliePaymentIdealHandler;
-use Mollie\Yves\Mollie\Handler\MolliePaymentKbcHandler;
-use Mollie\Yves\Mollie\Handler\MolliePaymentKlarnaHandler;
-use Mollie\Yves\Mollie\Handler\MolliePaymentKlarnaPayLaterHandler;
-use Mollie\Yves\Mollie\Handler\MolliePaymentKlarnaPayNowHandler;
-use Mollie\Yves\Mollie\Handler\MolliePaymentKlarnaSliceItHandler;
-use Mollie\Yves\Mollie\Handler\MolliePaymentPayByBankHandler;
-use Mollie\Yves\Mollie\Handler\MolliePaymentPayPalHandler;
+use Mollie\Yves\Mollie\Handler\Payment\MolliePaymentApplePayHandler;
+use Mollie\Yves\Mollie\Handler\Payment\MolliePaymentBancontactHandler;
+use Mollie\Yves\Mollie\Handler\Payment\MolliePaymentBankTransferHandler;
+use Mollie\Yves\Mollie\Handler\Payment\MolliePaymentCreditCardHandler;
+use Mollie\Yves\Mollie\Handler\Payment\MolliePaymentEpsHandler;
+use Mollie\Yves\Mollie\Handler\Payment\MolliePaymentHandlerInterface;
+use Mollie\Yves\Mollie\Handler\Payment\MolliePaymentIdealHandler;
+use Mollie\Yves\Mollie\Handler\Payment\MolliePaymentKbcHandler;
+use Mollie\Yves\Mollie\Handler\Payment\MolliePaymentKlarnaHandler;
+use Mollie\Yves\Mollie\Handler\Payment\MolliePaymentKlarnaPayLaterHandler;
+use Mollie\Yves\Mollie\Handler\Payment\MolliePaymentKlarnaPayNowHandler;
+use Mollie\Yves\Mollie\Handler\Payment\MolliePaymentKlarnaSliceItHandler;
+use Mollie\Yves\Mollie\Handler\Payment\MolliePaymentPayByBankHandler;
+use Mollie\Yves\Mollie\Handler\Payment\MolliePaymentPayPalHandler;
+use Mollie\Yves\Mollie\PaymentPage\Form\DataProvider\MollieApplePaySubFormDataProvider;
 use Mollie\Yves\Mollie\Mapper\MollieMapper;
 use Mollie\Yves\Mollie\Mapper\MollieMapperInterface;
 use Mollie\Yves\Mollie\PaymentPage\Cache\MollieCachedOptionsExpander;
@@ -37,6 +39,7 @@ use Mollie\Yves\Mollie\PaymentPage\Form\DataProvider\MollieKlarnaSliceItSubFormD
 use Mollie\Yves\Mollie\PaymentPage\Form\DataProvider\MollieKlarnaSubFormDataProvider;
 use Mollie\Yves\Mollie\PaymentPage\Form\DataProvider\MolliePayByBankSubFormDataProvider;
 use Mollie\Yves\Mollie\PaymentPage\Form\DataProvider\MolliePayPalSubFormDataProvider;
+use Mollie\Yves\Mollie\PaymentPage\Form\MollieApplePaySubForm;
 use Mollie\Yves\Mollie\PaymentPage\Form\MollieBancontactSubForm;
 use Mollie\Yves\Mollie\PaymentPage\Form\MollieBankTransferSubForm;
 use Mollie\Yves\Mollie\PaymentPage\Form\MollieCreditCardSubForm;
@@ -176,6 +179,14 @@ class MollieFactory extends AbstractFactory
     }
 
     /**
+     * @return \Spryker\Yves\StepEngine\Dependency\Form\SubFormInterface
+     */
+    public function createMollieApplePaySubForm(): SubFormInterface
+    {
+        return new MollieApplePaySubForm();
+    }
+
+    /**
      * @return \Spryker\Yves\StepEngine\Dependency\Form\StepEngineFormDataProviderInterface
      */
     public function createMollieCreditCardSubFormDataProvider(): StepEngineFormDataProviderInterface
@@ -296,7 +307,15 @@ class MollieFactory extends AbstractFactory
     }
 
     /**
-     * @return \Mollie\Yves\Mollie\Handler\MolliePaymentHandlerInterface
+     * @return \Spryker\Yves\StepEngine\Dependency\Form\StepEngineFormDataProviderInterface
+     */
+    public function createMollieApplePaySubFormDataProvider(): StepEngineFormDataProviderInterface
+    {
+        return new MollieApplePaySubFormDataProvider();
+    }
+
+    /**
+     * @return \Mollie\Yves\Mollie\Handler\Payment\MolliePaymentHandlerInterface
      */
     public function createMollieCreditCardPaymentHandler(): MolliePaymentHandlerInterface
     {
@@ -304,7 +323,7 @@ class MollieFactory extends AbstractFactory
     }
 
     /**
-     * @return \Mollie\Yves\Mollie\Handler\MolliePaymentHandlerInterface
+     * @return \Mollie\Yves\Mollie\Handler\Payment\MolliePaymentHandlerInterface
      */
     public function createMolliePayPalPaymentHandler(): MolliePaymentHandlerInterface
     {
@@ -312,7 +331,7 @@ class MollieFactory extends AbstractFactory
     }
 
     /**
-     * @return \Mollie\Yves\Mollie\Handler\MolliePaymentHandlerInterface
+     * @return \Mollie\Yves\Mollie\Handler\Payment\MolliePaymentHandlerInterface
      */
     public function createMollieBankTransferPaymentHandler(): MolliePaymentHandlerInterface
     {
@@ -320,7 +339,7 @@ class MollieFactory extends AbstractFactory
     }
 
     /**
-     * @return \Mollie\Yves\Mollie\Handler\MolliePaymentHandlerInterface
+     * @return \Mollie\Yves\Mollie\Handler\Payment\MolliePaymentHandlerInterface
      */
     public function createMollieKlarnaPaymentHandler(): MolliePaymentHandlerInterface
     {
@@ -328,7 +347,7 @@ class MollieFactory extends AbstractFactory
     }
 
     /**
-     * @return \Mollie\Yves\Mollie\Handler\MolliePaymentHandlerInterface
+     * @return \Mollie\Yves\Mollie\Handler\Payment\MolliePaymentHandlerInterface
      */
     public function createMollieKlarnaPayLaterPaymentHandler(): MolliePaymentHandlerInterface
     {
@@ -336,7 +355,7 @@ class MollieFactory extends AbstractFactory
     }
 
     /**
-     * @return \Mollie\Yves\Mollie\Handler\MolliePaymentHandlerInterface
+     * @return \Mollie\Yves\Mollie\Handler\Payment\MolliePaymentHandlerInterface
      */
     public function createMollieKlarnaPayNowPaymentHandler(): MolliePaymentHandlerInterface
     {
@@ -344,7 +363,7 @@ class MollieFactory extends AbstractFactory
     }
 
     /**
-     * @return \Mollie\Yves\Mollie\Handler\MolliePaymentHandlerInterface
+     * @return \Mollie\Yves\Mollie\Handler\Payment\MolliePaymentHandlerInterface
      */
     public function createMollieKlarnaSliceItPaymentHandler(): MolliePaymentHandlerInterface
     {
@@ -352,7 +371,7 @@ class MollieFactory extends AbstractFactory
     }
 
     /**
-     * @return \Mollie\Yves\Mollie\Handler\MolliePaymentHandlerInterface
+     * @return \Mollie\Yves\Mollie\Handler\Payment\MolliePaymentHandlerInterface
      */
     public function createMollieEpsPaymentHandler(): MolliePaymentHandlerInterface
     {
@@ -360,7 +379,7 @@ class MollieFactory extends AbstractFactory
     }
 
     /**
-     * @return \Mollie\Yves\Mollie\Handler\MolliePaymentHandlerInterface
+     * @return \Mollie\Yves\Mollie\Handler\Payment\MolliePaymentHandlerInterface
      */
     public function createMollieIdealPaymentHandler(): MolliePaymentHandlerInterface
     {
@@ -368,7 +387,7 @@ class MollieFactory extends AbstractFactory
     }
 
     /**
-     * @return \Mollie\Yves\Mollie\Handler\MolliePaymentHandlerInterface
+     * @return \Mollie\Yves\Mollie\Handler\Payment\MolliePaymentHandlerInterface
      */
     public function createMollieBancontactPaymentHandler(): MolliePaymentHandlerInterface
     {
@@ -376,7 +395,7 @@ class MollieFactory extends AbstractFactory
     }
 
     /**
-     * @return \Mollie\Yves\Mollie\Handler\MolliePaymentHandlerInterface
+     * @return \Mollie\Yves\Mollie\Handler\Payment\MolliePaymentHandlerInterface
      */
     public function createMollieKbcPaymentHandler(): MolliePaymentHandlerInterface
     {
@@ -384,11 +403,19 @@ class MollieFactory extends AbstractFactory
     }
 
     /**
-     * @return \Mollie\Yves\Mollie\Handler\MolliePaymentHandlerInterface
+     * @return \Mollie\Yves\Mollie\Handler\Payment\MolliePaymentHandlerInterface
      */
     public function createMolliePayByBankPaymentHandler(): MolliePaymentHandlerInterface
     {
         return new MolliePaymentPayByBankHandler();
+    }
+
+    /**
+     * @return \Mollie\Yves\Mollie\Handler\Payment\MolliePaymentHandlerInterface
+     */
+    public function createMollieApplePayPaymentHandler(): MolliePaymentHandlerInterface
+    {
+        return new MolliePaymentApplePayHandler();
     }
 
     /**
