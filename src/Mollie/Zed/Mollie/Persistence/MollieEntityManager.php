@@ -9,7 +9,7 @@ use Generated\Shared\Transfer\MolliePaymentTransfer;
 use Generated\Shared\Transfer\MollieRefundSaveTransfer;
 use Generated\Shared\Transfer\MollieRefundTransfer;
 use Generated\Shared\Transfer\OrderCollectionRequestTransfer;
-use Orm\Zed\Mollie\Persistence\SpyMolliePaymentCapture;
+use Orm\Zed\Mollie\Persistence\SpyMollieOrderItemPaymentCapture;
 use Orm\Zed\Mollie\Persistence\SpyPaymentMollie;
 use Orm\Zed\Mollie\Persistence\SpyRefundMollie;
 use Spryker\Zed\Kernel\Persistence\AbstractEntityManager;
@@ -106,12 +106,12 @@ class MollieEntityManager extends AbstractEntityManager implements MollieEntityM
      */
     public function createCapture(MollieItemPaymentCaptureTransfer $mollieItemPaymentCaptureTransfer): void
     {
-        $spyMolliePaymentCaptureEntity = new SpyMolliePaymentCapture();
+        $spyMollieOrderItemPaymentCaptureEntity = new SpyMollieOrderItemPaymentCapture();
 
-        $spyMolliePaymentCaptureEntity = $this->getFactory()
+        $spyMollieOrderItemPaymentCaptureEntity = $this->getFactory()
             ->createMolliePaymentCaptureMapper()
-            ->mapMollieOrderItemPaymentCaptureTransferToEntity($mollieItemPaymentCaptureTransfer, $spyMolliePaymentCaptureEntity);
+            ->mapMollieOrderItemPaymentCaptureTransferToEntity($mollieItemPaymentCaptureTransfer, $spyMollieOrderItemPaymentCaptureEntity);
 
-        $spyMolliePaymentCaptureEntity->save();
+        $spyMollieOrderItemPaymentCaptureEntity->save();
     }
 }

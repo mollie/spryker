@@ -5,20 +5,20 @@ declare(strict_types = 1);
 namespace Mollie\Zed\Mollie\Persistence\Propel\Mapper;
 
 use Generated\Shared\Transfer\MollieItemPaymentCaptureTransfer;
-use Orm\Zed\Mollie\Persistence\SpyMolliePaymentCapture;
+use Orm\Zed\Mollie\Persistence\SpyMollieOrderItemPaymentCapture;
 
 class MolliePaymentCaptureMapper implements MolliePaymentCaptureMapperInterface
 {
     /**
      * @param \Generated\Shared\Transfer\MollieItemPaymentCaptureTransfer $mollieItemPaymentCaptureTransfer
-     * @param \Orm\Zed\Mollie\Persistence\SpyMolliePaymentCapture $molliePaymentCaptureEntity
+     * @param \Orm\Zed\Mollie\Persistence\SpyMollieOrderItemPaymentCapture $mollieOrderItemPaymentCaptureEntity
      *
-     * @return \Orm\Zed\Mollie\Persistence\SpyMolliePaymentCapture
+     * @return \Orm\Zed\Mollie\Persistence\SpyMollieOrderItemPaymentCapture
      */
     public function mapMollieOrderItemPaymentCaptureTransferToEntity(
         MollieItemPaymentCaptureTransfer $mollieItemPaymentCaptureTransfer,
-        SpyMolliePaymentCapture $molliePaymentCaptureEntity,
-    ): SpyMolliePaymentCapture {
-        return $molliePaymentCaptureEntity->fromArray($mollieItemPaymentCaptureTransfer->toArray());
+        SpyMollieOrderItemPaymentCapture $mollieOrderItemPaymentCaptureEntity,
+    ): SpyMollieOrderItemPaymentCapture {
+        return $mollieOrderItemPaymentCaptureEntity->fromArray($mollieItemPaymentCaptureTransfer->toArray());
     }
 }

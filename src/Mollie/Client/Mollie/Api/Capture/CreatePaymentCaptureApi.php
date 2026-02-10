@@ -22,13 +22,13 @@ class CreatePaymentCaptureApi extends AbstractApiCall
      */
     protected function buildRequest(?MollieApiRequestTransfer $mollieApiRequestTransfer = null): ?Request
     {
-        $mollieCapturePayment = $mollieApiRequestTransfer->getPaymentCapture();
+        $mollieCapturePaymentTransfer = $mollieApiRequestTransfer->getPaymentCapture();
 
         $this->request = new CreatePaymentCaptureRequest(
-            paymentId: $mollieCapturePayment->getPaymentId(),
-            description: $mollieCapturePayment->getDescription(),
+            paymentId: $mollieCapturePaymentTransfer->getTransactionId(),
+            description: $mollieCapturePaymentTransfer->getDescription(),
             metadata: [
-                'bookkeeping_id' => $mollieCapturePayment->getPaymentId(),
+                'bookkeeping_id' => $mollieCapturePaymentTransfer->getTransactionId(),
             ],
         );
 

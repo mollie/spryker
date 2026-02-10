@@ -3,18 +3,18 @@
 namespace Mollie\Zed\Mollie\Persistence\Propel\Mapper;
 
 use Generated\Shared\Transfer\MollieItemPaymentCaptureTransfer;
-use Orm\Zed\Mollie\Persistence\SpyMolliePaymentCapture;
+use Orm\Zed\Mollie\Persistence\SpyMollieOrderItemPaymentCapture;
 
 interface MolliePaymentCaptureMapperInterface
 {
-     /**
-      * @param \Generated\Shared\Transfer\MollieItemPaymentCaptureTransfer $mollieItemPaymentCaptureTransfer
-      * @param \Orm\Zed\Mollie\Persistence\SpyMolliePaymentCapture $molliePaymentCaptureEntity
-      *
-      * @return \Orm\Zed\Mollie\Persistence\SpyMolliePaymentCapture
-      */
+    /**
+     * @param \Generated\Shared\Transfer\MollieItemPaymentCaptureTransfer $mollieItemPaymentCaptureTransfer
+     * @param \Orm\Zed\Mollie\Persistence\SpyMollieOrderItemPaymentCapture $mollieOrderItemPaymentCaptureEntity
+     *
+     * @return \Orm\Zed\Mollie\Persistence\SpyMollieOrderItemPaymentCapture
+     */
     public function mapMollieOrderItemPaymentCaptureTransferToEntity(
         MollieItemPaymentCaptureTransfer $mollieItemPaymentCaptureTransfer,
-        SpyMolliePaymentCapture $molliePaymentCaptureEntity,
-    ): SpyMolliePaymentCapture;
+        SpyMollieOrderItemPaymentCapture $mollieOrderItemPaymentCaptureEntity,
+    ): SpyMollieOrderItemPaymentCapture;
 }

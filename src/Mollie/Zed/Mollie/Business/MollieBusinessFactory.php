@@ -12,6 +12,8 @@ use Mollie\Zed\Mollie\Business\Filter\MolliePaymentMethodsFilter;
 use Mollie\Zed\Mollie\Business\Filter\MolliePaymentMethodsFilterInterface;
 use Mollie\Zed\Mollie\Business\Handler\MolliePaymentHandler;
 use Mollie\Zed\Mollie\Business\Handler\MolliePaymentHandlerInterface;
+use Mollie\Zed\Mollie\Business\Mapper\Capture\CaptureMapper;
+use Mollie\Zed\Mollie\Business\Mapper\Capture\CaptureMapperInterface;
 use Mollie\Zed\Mollie\Business\Mapper\Oms\MolleOmsStatusMapper;
 use Mollie\Zed\Mollie\Business\Mapper\Oms\MolleOmsStatusMapperInterface;
 use Mollie\Zed\Mollie\Business\Mapper\Order\OrderMapper;
@@ -112,7 +114,18 @@ class MollieBusinessFactory extends AbstractBusinessFactory
         return new MolliePaymentCaptureRequestSender(
             $this->getMollieClient(),
             $this->getMollieService(),
+            $this->getRepository(),
+            $this->getEntityManager(),
+            $this->createCaptureMapper(),
         );
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Business\Mapper\Capture\CaptureMapperInterface
+     */
+    public function createCaptureMapper(): CaptureMapperInterface
+    {
+        return new CaptureMapper();
     }
 
     /**

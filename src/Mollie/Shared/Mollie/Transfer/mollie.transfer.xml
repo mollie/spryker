@@ -110,7 +110,7 @@
         <property name="captureId" type="string"/>
         <property name="transactionId" type="string"/>
         <property name="description" type="string"/>
-        <property name="value" type="string"/>
+        <property name="value" type="int"/>
         <property name="currency" type="string"/>
         <property name="metadata" type="array" singular="metadata"/>
         <property name="status" type="string"/>

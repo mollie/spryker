@@ -8,21 +8,19 @@ namespace Mollie\Zed\Mollie\Business\Payment\RequestSender;
 use Generated\Shared\Transfer\ItemCollectionTransfer;
 use Generated\Shared\Transfer\MollieAmountTransfer;
 use Generated\Shared\Transfer\MollieApiRequestTransfer;
-use Generated\Shared\Transfer\MollieItemPaymentCaptureTransfer;
 use Generated\Shared\Transfer\MolliePaymentCaptureRequestTransfer;
 use Generated\Shared\Transfer\MolliePaymentCaptureResponseTransfer;
 use Generated\Shared\Transfer\MolliePaymentCaptureTransfer;
 use Generated\Shared\Transfer\OrderTransfer;
 use Mollie\Client\Mollie\MollieClientInterface;
 use Mollie\Service\Mollie\MollieServiceInterface;
+use Mollie\Zed\Mollie\Business\Mapper\Capture\CaptureMapperInterface;
 use Mollie\Zed\Mollie\Persistence\MollieEntityManagerInterface;
 use Mollie\Zed\Mollie\Persistence\MollieRepositoryInterface;
-use Spryker\Shared\Log\LoggerTrait;
 use Spryker\Zed\Kernel\Persistence\EntityManager\TransactionTrait;
 
 class MolliePaymentCaptureRequestSender implements MolliePaymentCaptureRequestSenderInterface
 {
-    use LoggerTrait;
     use TransactionTrait;
 
     /**
@@ -30,12 +28,14 @@ class MolliePaymentCaptureRequestSender implements MolliePaymentCaptureRequestSe
      * @param \Mollie\Service\Mollie\MollieServiceInterface $mollieService
      * @param \Mollie\Zed\Mollie\Persistence\MollieRepositoryInterface $mollieRepository
      * @param \Mollie\Zed\Mollie\Persistence\MollieEntityManagerInterface $mollieEntityManager
+     * @param \Mollie\Zed\Mollie\Business\Mapper\Capture\CaptureMapperInterface $captureMapper
      */
     public function __construct(
         protected MollieClientInterface $mollieClient,
         protected MollieServiceInterface $mollieService,
         protected MollieRepositoryInterface $mollieRepository,
         protected MollieEntityManagerInterface $mollieEntityManager,
+        protected CaptureMapperInterface $captureMapper,
     ) {
     }
 
@@ -73,8 +73,8 @@ class MolliePaymentCaptureRequestSender implements MolliePaymentCaptureRequestSe
              return $molliePaymentCaptureResponseTransfer;
         }
 
-        $molliePaymentCaptureTransfer = $mollieCreateCaptureApiResponseTransfer->getPaymentCapture();
-        $this->persistCapturePayment($itemCollectionTransfer, $molliePaymentCaptureTransfer);
+        $mollieResponsePaymentCaptureTransfer = $mollieCreateCaptureApiResponseTransfer->getPaymentCapture();
+        $this->persistCapturePayment($itemCollectionTransfer, $mollieResponsePaymentCaptureTransfer);
 
         return $molliePaymentCaptureResponseTransfer;
     }
@@ -91,14 +91,13 @@ class MolliePaymentCaptureRequestSender implements MolliePaymentCaptureRequestSe
     ): void {
         $this->getTransactionHandler()->handleTransaction(function () use ($itemCollectionTransfer, $molliePaymentCaptureTransfer): void {
             foreach ($itemCollectionTransfer->getItems() as $itemTransfer) {
-                $mollieItemPaymentCaptureTransfer = new MollieItemPaymentCaptureTransfer();
-                $mollieItemPaymentCaptureTransfer->setFkSalesOrderItem($itemTransfer->getIdSalesOrderItem());
-                $mollieAmountTransfer = $molliePaymentCaptureTransfer->getAmount();
-                $mollieItemPaymentCaptureTransfer
-                    ->setCurrency($mollieAmountTransfer->getCurrency())
-                    ->setValue($mollieAmountTransfer->getValue());
+                $mollieItemPaymentCaptureTransfer = $this->captureMapper
+                    ->mapPaymentCaptureToItemPaymentCaptureTransfer($molliePaymentCaptureTransfer);
 
-                $mollieItemPaymentCaptureTransfer->fromArray($molliePaymentCaptureTransfer->toArray(), true);
+                $mollieItemPaymentCaptureTransfer
+                    ->setCurrency($itemTransfer->getCurrencyIsoCode())
+                    ->setValue($itemTransfer->getSumPriceToPayAggregation())
+                    ->setFkSalesOrderItem($itemTransfer->getIdSalesOrderItem());
 
                 $this->mollieEntityManager->createCapture($mollieItemPaymentCaptureTransfer);
             }
