@@ -12,12 +12,13 @@ use Spryker\Yves\StepEngine\Dependency\Form\StepEngineFormDataProviderInterface;
 class MollieApplePaySubFormDataProvider implements StepEngineFormDataProviderInterface
 {
     /**
-     * @param \Mollie\Yves\Mollie\PaymentPage\Cache\MollieCachedOptionsExpander $optionsResolver
+     * @param \Mollie\Yves\Mollie\PaymentPage\Cache\MollieCachedOptionsExpander $optionsExpander
      */
     public function __construct(
-        protected MollieCachedOptionsExpander $optionsResolver,
+        protected MollieCachedOptionsExpander $optionsExpander,
     ) {
     }
+
     /**
      * @param \Spryker\Shared\Kernel\Transfer\AbstractTransfer $dataTransfer
      *
@@ -37,8 +38,8 @@ class MollieApplePaySubFormDataProvider implements StepEngineFormDataProviderInt
     {
         /** @var \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer */
         $quoteTransfer = $dataTransfer;
-        $paymentMethod = MollieConfig::MOLLIE_PAYMENT_BANCONTACT;
+        $paymentMethod = MollieConfig::MOLLIE_PAYMENT_APPLE_PAY;
 
-        return $this->optionsResolver->expandOptions($paymentMethod, $quoteTransfer, []);
+        return $this->optionsExpander->expandOptions($paymentMethod, $quoteTransfer, []);
     }
 }

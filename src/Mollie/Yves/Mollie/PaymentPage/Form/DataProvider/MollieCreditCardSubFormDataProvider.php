@@ -12,10 +12,10 @@ use Spryker\Yves\StepEngine\Dependency\Form\StepEngineFormDataProviderInterface;
 class MollieCreditCardSubFormDataProvider implements StepEngineFormDataProviderInterface
 {
     /**
-     * @param \Mollie\Yves\Mollie\PaymentPage\Cache\MollieCachedOptionsExpander $optionsResolver
+     * @param \Mollie\Yves\Mollie\PaymentPage\Cache\MollieCachedOptionsExpander $optionsExpander
      */
     public function __construct(
-        protected MollieCachedOptionsExpander $optionsResolver,
+        protected MollieCachedOptionsExpander $optionsExpander,
     ) {
     }
 
@@ -40,6 +40,6 @@ class MollieCreditCardSubFormDataProvider implements StepEngineFormDataProviderI
         $quoteTransfer = $dataTransfer;
         $paymentMethod = MollieConfig::MOLLIE_PAYMENT_CREDIT_CARD;
 
-        return $this->optionsResolver->expandOptions($paymentMethod, $quoteTransfer, []);
+        return $this->optionsExpander->expandOptions($paymentMethod, $quoteTransfer, []);
     }
 }

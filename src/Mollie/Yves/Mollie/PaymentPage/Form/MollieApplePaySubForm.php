@@ -10,6 +10,8 @@ use Mollie\Shared\Mollie\MollieConstants;
 use Spryker\Yves\StepEngine\Dependency\Form\AbstractSubFormType;
 use Spryker\Yves\StepEngine\Dependency\Form\SubFormInterface;
 use Spryker\Yves\StepEngine\Dependency\Form\SubFormProviderNameInterface;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class MollieApplePaySubForm extends AbstractSubFormType implements SubFormInterface, SubFormProviderNameInterface
