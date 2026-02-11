@@ -6,7 +6,7 @@ use Codeception\Test\Unit;
 use Generated\Shared\Transfer\PaymentTransfer;
 use Generated\Shared\Transfer\QuoteTransfer;
 use Mollie\Shared\Mollie\MollieConfig;
-use Mollie\Yves\Mollie\Handler\MolliePaymentCreditCardHandler;
+use Mollie\Yves\Mollie\Handler\Payment\MolliePaymentCreditCardHandler;
 
 class MolliePaymentCreditCardHandlerTest extends Unit
 {
@@ -23,6 +23,7 @@ class MolliePaymentCreditCardHandlerTest extends Unit
         $result = $paymentHandler->addPaymentToQuote($quoteTransfer);
         $paymentTransfer = $result->getPayment();
 
+        $this->assertSame(MollieConfig::MOLLIE_PROVIDER_CREDIT_CARD, $paymentTransfer->getPaymentProvider());
         $this->assertSame(MollieConfig::MOLLIE_PAYMENT_CREDIT_CARD, $paymentTransfer->getPaymentMethod());
     }
 }
