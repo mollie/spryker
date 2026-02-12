@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Mollie\Zed\Mollie\Persistence;
 
 use Generated\Shared\Transfer\MolliePaymentTransfer;
-use Generated\Shared\Transfer\MollieRefundRequestTransfer;
 use Generated\Shared\Transfer\MollieRefundResponseTransfer;
 use Propel\Runtime\Collection\ObjectCollection;
 use Spryker\Zed\Kernel\Persistence\AbstractRepository;
@@ -37,24 +36,6 @@ class MollieRepository extends AbstractRepository implements MollieRepositoryInt
     }
 
     /**
-     * @param string $refundId
-     *
-     * @return \Propel\Runtime\Collection\ObjectCollection|null
-     */
-    public function getOrderItemsFromSpyMollieRefund(string $refundId): ObjectCollection|null
-    {
-        $spyRefundMollieCollection = $this->getFactory()
-            ->createSpyRefundMollieQuery()
-            ->filterByRefundId($refundId)
-            ->joinWithSpySalesOrderItem()
-            ->find();
-
-        return $this->getFactory()
-            ->createMollieOrderItemMapper()
-            ->extractOrderItemsFromSpyRefundMollieEntity($spyRefundMollieCollection);
-    }
-
-    /**
      * @param string $orderId
      *
      * @return \Generated\Shared\Transfer\MolliePaymentTransfer
@@ -72,15 +53,15 @@ class MollieRepository extends AbstractRepository implements MollieRepositoryInt
     }
 
     /**
-     * @param \Generated\Shared\Transfer\MollieRefundRequestTransfer $mollieRefundRequestTransfer
+     * @param int $orderItemId
      *
      * @return \Generated\Shared\Transfer\MollieRefundResponseTransfer
      */
-    public function getPersistedRefundById(MollieRefundRequestTransfer $mollieRefundRequestTransfer): MollieRefundResponseTransfer
+    public function findRefundByOrderItem(int $orderItemId): MollieRefundResponseTransfer
     {
         $spyRefundMollieRecord = $this->getFactory()
             ->createSpyRefundMollieQuery()
-            ->filterByRefundId($mollieRefundRequestTransfer->getRefund()->getId())
+            ->filterByFkSalesOrderItem($orderItemId)
             ->findOne();
 
         return $this->getFactory()

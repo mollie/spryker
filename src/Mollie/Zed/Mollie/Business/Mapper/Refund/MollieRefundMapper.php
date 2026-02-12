@@ -3,11 +3,26 @@
 namespace Mollie\Zed\Mollie\Business\Mapper\Refund;
 
 use Generated\Shared\Transfer\MolliePaymentTransfer;
+use Generated\Shared\Transfer\MollieRefundCollectionTransfer;
 use Generated\Shared\Transfer\MollieRefundSaveTransfer;
 use Generated\Shared\Transfer\MollieRefundTransfer;
+use Mollie\Zed\Mollie\Business\Filter\MollieRefundFilterInterface;
 
 class MollieRefundMapper implements MollieRefundMapperInterface
 {
+    /**
+     * @var string
+     */
+    protected const REFUNDS = 'refunds';
+
+    /**
+     * @param \Mollie\Zed\Mollie\Business\Filter\MollieRefundFilterInterface $mollieRefundFilter
+     */
+    public function __construct(
+        protected MollieRefundFilterInterface $mollieRefundFilter,
+    ) {
+    }
+
     /**
      * @param \Generated\Shared\Transfer\MolliePaymentTransfer $molliePaymentTransfer
      * @param \Generated\Shared\Transfer\MollieRefundTransfer $mollieRefundTransfer
@@ -27,5 +42,26 @@ class MollieRefundMapper implements MollieRefundMapperInterface
             ->setTransactionId($molliePaymentTransfer->getId())
             ->setRefundId($mollieRefundTransfer->getId())
             ->setCreatedAt($mollieRefundTransfer->getCreatedAt());
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MolliePaymentTransfer $molliePaymentTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieRefundCollectionTransfer
+     */
+    public function mapMolliePaymentRefundsToMollieRefundCollectionTransfer(MolliePaymentTransfer $molliePaymentTransfer): MollieRefundCollectionTransfer
+    {
+        $mollieRefundCollectionTransfer = new MollieRefundCollectionTransfer();
+        $mollieRefunds = $molliePaymentTransfer->getEmbedded()[static::REFUNDS];
+
+        $filteredMollieRefunds = $this->mollieRefundFilter->filterRefundsByStatus($mollieRefunds);
+
+        foreach ($filteredMollieRefunds as $mollieRefund) {
+            $mollieRefundTransfer = (new MollieRefundTransfer())->fromArray($mollieRefund, true);
+
+            $mollieRefundCollectionTransfer->addRefunds($mollieRefundTransfer);
+        }
+
+        return $mollieRefundCollectionTransfer;
     }
 }

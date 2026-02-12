@@ -76,6 +76,7 @@
         <property name="isCancelable" type="bool"/>
         <property name="createdAt" type="string"/>
         <property name="expiresAt" type="string"/>
+        <property name="embedded" type="array"/>
         <property name="links" type="MollieLinks"/>
     </transfer>
 
@@ -96,6 +97,10 @@
         <property name="transactionId" type="string"/>
         <property name="createdAt" type="string"/>
         <property name="links" type="MollieLinks"/>
+    </transfer>
+
+    <transfer name="MollieRefundCollection">
+        <property name="refunds" type="[]"/>
     </transfer>
     
     <transfer name="MollieRefundSave">

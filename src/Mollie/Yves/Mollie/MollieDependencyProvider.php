@@ -141,8 +141,8 @@ class MollieDependencyProvider extends AbstractBundleDependencyProvider
     protected function getMollieWebhookHandlerPlugins(): array
     {
         return [
-            new MolliePaymentWebhookHandlerPlugin(),
             new MollieRefundWebhookHandlerPlugin(),
+            new MolliePaymentWebhookHandlerPlugin(),
         ];
     }
 }

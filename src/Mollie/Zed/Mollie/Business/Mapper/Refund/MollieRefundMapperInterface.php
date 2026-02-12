@@ -3,6 +3,7 @@
 namespace Mollie\Zed\Mollie\Business\Mapper\Refund;
 
 use Generated\Shared\Transfer\MolliePaymentTransfer;
+use Generated\Shared\Transfer\MollieRefundCollectionTransfer;
 use Generated\Shared\Transfer\MollieRefundSaveTransfer;
 use Generated\Shared\Transfer\MollieRefundTransfer;
 
@@ -18,4 +19,11 @@ interface MollieRefundMapperInterface
         MolliePaymentTransfer $molliePaymentTransfer,
         MollieRefundTransfer $mollieRefundTransfer,
     ): MollieRefundSaveTransfer;
+
+    /**
+     * @param \Generated\Shared\Transfer\MolliePaymentTransfer $molliePaymentTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieRefundCollectionTransfer
+     */
+    public function mapMolliePaymentRefundsToMollieRefundCollectionTransfer(MolliePaymentTransfer $molliePaymentTransfer): MollieRefundCollectionTransfer;
 }

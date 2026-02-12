@@ -10,10 +10,9 @@ use Generated\Shared\Transfer\MollieLogApiTransfer;
 use Generated\Shared\Transfer\MolliePaymentApiResponseTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodQueryParametersTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodsApiResponseTransfer;
+use Generated\Shared\Transfer\MolliePaymentTransfer;
 use Generated\Shared\Transfer\MollieRefundApiResponseTransfer;
-use Generated\Shared\Transfer\MollieRefundRequestTransfer;
 use Generated\Shared\Transfer\MollieRefundResponseTransfer;
-use Generated\Shared\Transfer\MollieRefundTransfer;
 use Generated\Shared\Transfer\OrderCollectionRequestTransfer;
 use Generated\Shared\Transfer\OrderCollectionResponseTransfer;
 use Spryker\Client\Kernel\AbstractClient;
@@ -114,20 +113,6 @@ class MollieClient extends AbstractClient implements MollieClientInterface
     }
 
     /**
-     * @param \Generated\Shared\Transfer\MollieRefundRequestTransfer $mollieRefundRequestTransfer
-     *
-     * @return \Generated\Shared\Transfer\MollieRefundResponseTransfer
-     */
-    public function getPersistedRefundById(MollieRefundRequestTransfer $mollieRefundRequestTransfer): MollieRefundResponseTransfer
-    {
-        $mollieRefundResponseTransfer = $this->getFactory()
-            ->createZedMollieStub()
-            ->getPersistedRefundById($mollieRefundRequestTransfer);
-
-        return $mollieRefundResponseTransfer;
-    }
-
-    /**
      * @param \Generated\Shared\Transfer\OrderCollectionRequestTransfer $updateOrderCollectionRequestTransfer
      *
      * @return \Generated\Shared\Transfer\OrderCollectionResponseTransfer
@@ -166,13 +151,13 @@ class MollieClient extends AbstractClient implements MollieClientInterface
     }
 
     /**
-     * @param \Generated\Shared\Transfer\MollieRefundTransfer $mollieRefundTransfer
+     * @param \Generated\Shared\Transfer\MolliePaymentTransfer $molliePaymentTransfer
      *
      * @return \Generated\Shared\Transfer\MollieRefundResponseTransfer
      */
-    public function processRefundData(MollieRefundTransfer $mollieRefundTransfer): MollieRefundResponseTransfer
+    public function processRefundData(MolliePaymentTransfer $molliePaymentTransfer): MollieRefundResponseTransfer
     {
-        return $this->getFactory()->createZedMollieStub()->processRefundData($mollieRefundTransfer);
+        return $this->getFactory()->createZedMollieStub()->processRefundData($molliePaymentTransfer);
     }
 
     /**

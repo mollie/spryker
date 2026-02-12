@@ -10,6 +10,8 @@ use Mollie\Zed\Mollie\Business\Calculator\OrderItem\OrderItemGrossAmountCalculat
 use Mollie\Zed\Mollie\Business\Calculator\OrderItem\OrderItemGrossAmountCalculatorInterface;
 use Mollie\Zed\Mollie\Business\Filter\MolliePaymentMethodsFilter;
 use Mollie\Zed\Mollie\Business\Filter\MolliePaymentMethodsFilterInterface;
+use Mollie\Zed\Mollie\Business\Filter\MollieRefundFilter;
+use Mollie\Zed\Mollie\Business\Filter\MollieRefundFilterInterface;
 use Mollie\Zed\Mollie\Business\Handler\MolliePaymentHandler;
 use Mollie\Zed\Mollie\Business\Handler\MolliePaymentHandlerInterface;
 use Mollie\Zed\Mollie\Business\Mapper\Oms\MolleOmsStatusMapper;
@@ -99,7 +101,17 @@ class MollieBusinessFactory extends AbstractBusinessFactory
      */
     public function createMollieRefundMapper(): MollieRefundMapperInterface
     {
-        return new MollieRefundMapper();
+        return new MollieRefundMapper(
+            $this->createMollieRefundFilter(),
+        );
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Business\Filter\MollieRefundFilterInterface
+     */
+    public function createMollieRefundFilter(): MollieRefundFilterInterface
+    {
+        return new MollieRefundFilter();
     }
 
     /**
