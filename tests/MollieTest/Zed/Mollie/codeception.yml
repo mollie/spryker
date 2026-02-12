@@ -28,3 +28,4 @@ suites:
         - \SprykerTest\Shared\Testify\Helper\DataCleanupHelper
         - \SprykerTest\Shared\Sales\Helper\SalesDataHelper
         - \SprykerTest\Zed\Oms\Helper\OmsHelper
+        - \SprykerTest\Shared\Testify\Helper\LocatorHelper
