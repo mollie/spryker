@@ -29,9 +29,9 @@ interface MollieRepositoryInterface
     /**
      * @param int $fkSalesOrder
      *
-     * @return \Generated\Shared\Transfer\MolliePaymentTransfer
+     * @return \Generated\Shared\Transfer\MolliePaymentTransfer|null
      */
-    public function getPaymentByFkSalesOrder(int $fkSalesOrder): MolliePaymentTransfer;
+    public function getPaymentByFkSalesOrder(int $fkSalesOrder): ?MolliePaymentTransfer;
 
     /**
      * @param \Generated\Shared\Transfer\MollieRefundRequestTransfer $mollieRefundRequestTransfer
@@ -43,7 +43,7 @@ interface MollieRepositoryInterface
     /**
      * @param int $idSalesOrderItem
      *
-     * @return \Generated\Shared\Transfer\MollieItemPaymentCaptureTransfer
+     * @return \Generated\Shared\Transfer\MollieItemPaymentCaptureTransfer|null
      */
-    public function getOrderItemPaymentCapture(int $idSalesOrderItem): MollieItemPaymentCaptureTransfer;
+    public function getOrderItemPaymentCapture(int $idSalesOrderItem): ?MollieItemPaymentCaptureTransfer;
 }

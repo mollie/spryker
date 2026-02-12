@@ -58,14 +58,18 @@ class MollieRepository extends AbstractRepository implements MollieRepositoryInt
     /**
      * @param int $fkSalesOrder
      *
-     * @return \Generated\Shared\Transfer\MolliePaymentTransfer
+     * @return \Generated\Shared\Transfer\MolliePaymentTransfer|null
      */
-    public function getPaymentByFkSalesOrder(int $fkSalesOrder): MolliePaymentTransfer
+    public function getPaymentByFkSalesOrder(int $fkSalesOrder): ?MolliePaymentTransfer
     {
         $spyPaymentMollieRecord = $this->getFactory()
             ->createSpyPaymentMollieQuery()
             ->filterByFkSalesOrder($fkSalesOrder)
             ->findOne();
+
+        if (!$spyPaymentMollieRecord) {
+            return null;
+        }
 
         return $this->getFactory()
             ->createMollieOrderMapper()
@@ -92,14 +96,18 @@ class MollieRepository extends AbstractRepository implements MollieRepositoryInt
     /**
      * @param int $idSalesOrderItem
      *
-     * @return \Generated\Shared\Transfer\MollieItemPaymentCaptureTransfer
+     * @return \Generated\Shared\Transfer\MollieItemPaymentCaptureTransfer|null
      */
-    public function getOrderItemPaymentCapture(int $idSalesOrderItem): MollieItemPaymentCaptureTransfer
+    public function getOrderItemPaymentCapture(int $idSalesOrderItem): ?MollieItemPaymentCaptureTransfer
     {
          $spyMollieOrderItemPaymentCaptureEntity = $this->getFactory()
             ->createSpyMollieOrderItemPaymentCaptureQuery()
             ->filterByFkSalesOrderItem($idSalesOrderItem)
             ->findOne();
+
+        if (!$spyMollieOrderItemPaymentCaptureEntity) {
+            return null;
+        }
 
         return $this->getFactory()
             ->createMolliePaymentCaptureMapper()

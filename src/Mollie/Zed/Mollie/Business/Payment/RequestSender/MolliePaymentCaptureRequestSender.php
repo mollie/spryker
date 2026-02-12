@@ -68,6 +68,8 @@ class MolliePaymentCaptureRequestSender implements MolliePaymentCaptureRequestSe
         $mollieCreateCaptureApiResponseTransfer = $this->mollieClient->createCapture($mollieApiRequestTransfer);
         if (!$mollieCreateCaptureApiResponseTransfer->getIsSuccessful()) {
             $molliePaymentCaptureResponseTransfer->setIsSuccessful(false);
+
+            return $molliePaymentCaptureResponseTransfer;
         }
 
         $this->persistCapturePayment($itemCollectionTransfer, $mollieCreateCaptureApiResponseTransfer->getPaymentCapture());
@@ -90,9 +92,13 @@ class MolliePaymentCaptureRequestSender implements MolliePaymentCaptureRequestSe
                 $mollieItemPaymentCaptureTransfer = $this->captureMapper
                     ->mapPaymentCaptureToItemPaymentCaptureTransfer($molliePaymentCaptureTransfer);
 
+                $amountTransfer = $this->mollieService->convertIntegerToMollieAmount(
+                    $itemTransfer->getSumPriceToPayAggregation(),
+                );
+
                 $mollieItemPaymentCaptureTransfer
                     ->setCurrency($itemTransfer->getCurrencyIsoCode())
-                    ->setValue($itemTransfer->getSumPriceToPayAggregation())
+                    ->setValue($amountTransfer->getValue())
                     ->setFkSalesOrderItem($itemTransfer->getIdSalesOrderItem());
 
                 $this->mollieEntityManager->createCapture($mollieItemPaymentCaptureTransfer);

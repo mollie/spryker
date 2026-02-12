@@ -49,6 +49,8 @@ class CreatePaymentCaptureApi extends AbstractApiCall
 
         $molliePaymentCaptureTransfer = new MolliePaymentCaptureTransfer();
         $molliePaymentCaptureTransfer->fromArray($mollieApiResponseTransfer->getPayload(), true);
+        $paymentId = $mollieApiResponseTransfer->getPayload()['paymentId'] ?? null;
+        $molliePaymentCaptureTransfer->setTransactionId($paymentId);
 
         $mollieCreateCaptureApiResponseTransfer->setPaymentCapture($molliePaymentCaptureTransfer);
 

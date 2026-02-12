@@ -3,7 +3,7 @@
 namespace Mollie\Zed\Mollie\Communication\Plugin\Oms\Condition\Authorization;
 
 use Orm\Zed\Sales\Persistence\SpySalesOrderItem;
-use Spryker\Client\Kernel\AbstractPlugin;
+use Spryker\Zed\Kernel\Communication\AbstractPlugin;
 use Spryker\Zed\Oms\Dependency\Plugin\Condition\ConditionInterface;
 
 /**

@@ -73,6 +73,7 @@ class MollieDependencyProvider extends AbstractBundleDependencyProvider
         $container = $this->addStorageClient($container);
         $container = $this->addMollieService($container);
         $container = $this->addLocaleFacade($container);
+        $container = $this->addUtilEncodingService($container);
 
         return $container;
     }

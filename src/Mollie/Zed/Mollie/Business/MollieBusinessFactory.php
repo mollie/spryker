@@ -33,6 +33,7 @@ use Mollie\Zed\Mollie\Business\Writer\MolliePaymentWriterInterface;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToLocaleFacadeInterface;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToOmsInterface;
 use Mollie\Zed\Mollie\Dependency\MollieToStorageClientInterface;
+use Mollie\Zed\Mollie\Dependency\Service\MollieToUtilEncodingServiceInterface;
 use Mollie\Zed\Mollie\MollieDependencyProvider;
 use Psr\Log\LoggerInterface;
 use Spryker\Zed\Kernel\Business\AbstractBusinessFactory;
@@ -137,7 +138,17 @@ class MollieBusinessFactory extends AbstractBusinessFactory
      */
     public function createCaptureMapper(): CaptureMapperInterface
     {
-        return new CaptureMapper();
+        return new CaptureMapper(
+            $this->getUtilEncodingService(),
+        );
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Dependency\Service\MollieToUtilEncodingServiceInterface
+     */
+    public function getUtilEncodingService(): MollieToUtilEncodingServiceInterface
+    {
+        return $this->getProvidedDependency(MollieDependencyProvider::SERVICE_UTIL_ENCODING);
     }
 
     /**

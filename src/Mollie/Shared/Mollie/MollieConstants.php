@@ -139,6 +139,11 @@ interface MollieConstants
     /**
      * @var string
      */
+    public const MOLLIE_PAYMENT_METHOD_MANUAL_CAPTURE = 'MOLLIE:MOLLIE_PAYMENT_METHOD_MANUAL_CAPTURE';
+
+    /**
+     * @var string
+     */
     public const SUCCESS_MESSAGE = 'success';
 
     /**

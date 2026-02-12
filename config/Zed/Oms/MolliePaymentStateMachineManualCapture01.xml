@@ -23,6 +23,7 @@
             <!-- Failure/Cancel states -->
             <state name="authorization failed" display="oms.state.authorization-failed"/>
             <state name="authorization expired" display="oms.state.authorization-expired"/>
+            <state name="authorized check expiry" display="oms.state.authorization-check-expiry"/>
             <state name="authorization canceled" display="oms.state.authorization-canceled"/>
             <state name="capture failed" display="oms.state.capture-failed"/>
             <state name="closed" display="oms.state.closed"/>
@@ -80,6 +81,24 @@
                 <source>authorized</source>
                 <target>capture pending</target>
                 <event>start capture</event>
+            </transition>
+
+            <transition condition="Mollie/IsAuthorizationExpired">
+                <source>authorized</source>
+                <target>authorization expired</target>
+                <event>check authorization expiry</event>  <!-- 1 day check -->
+            </transition>
+
+            <transition>
+                <source>authorized</source>
+                <target>authorized check expiry</target>
+                <event>check authorization expiry</event>
+            </transition>
+
+            <transition happy="true">
+                <source>authorized check expiry</source>
+                <target>authorized</target>
+                <event>pass</event>
             </transition>
 
             <!-- Immediate check for capture success (happy path) -->
@@ -159,7 +178,7 @@
            <event name="start authorization" timeout=" 1 minute"/>
            <event name="authorize" onEnter="true"/>
            <event name="check authorization" timeout="5 minute"/>
-
+           <event name="check authorization expiry" timeout="1 day"/>
            <event name="start capture" manual="true" command="Mollie/MolliePaymentCapture"/>
            <event name="capture" onEnter="true"/>
            <event name="check capture" timeout="5 minute"/>
