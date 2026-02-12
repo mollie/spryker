@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Mollie\Yves\Mollie;
 
 use Mollie\Client\Mollie\MollieClientInterface;
+use Mollie\Yves\Mollie\Dependency\Client\MollieToLocaleClientBridge;
+use Mollie\Yves\Mollie\Dependency\Client\MollieToLocaleClientInterface;
 use Mollie\Yves\Mollie\Dependency\Client\MollieToQuoteClientBridge;
 use Mollie\Yves\Mollie\Dependency\Client\MollieToQuoteClientInterface;
 use Mollie\Yves\Mollie\Dependency\Client\MollieToStorageClientBridge;
@@ -21,6 +23,11 @@ class MollieDependencyProvider extends AbstractBundleDependencyProvider
      * @var string
      */
     public const CLIENT_STORAGE = 'CLIENT_STORAGE';
+
+    /**
+     * @var string
+     */
+    public const CLIENT_LOCALE = 'CLIENT_LOCALE';
 
     /**
      * @var string
@@ -55,6 +62,7 @@ class MollieDependencyProvider extends AbstractBundleDependencyProvider
         $container = $this->addQuoteClient($container);
         $container = $this->addUtilEncodingService($container);
         $container = $this->addMollieWebhookHandlerPlugins($container);
+        $container = $this->addLocaleClient($container);
 
         return $container;
     }
@@ -144,5 +152,21 @@ class MollieDependencyProvider extends AbstractBundleDependencyProvider
             new MolliePaymentWebhookHandlerPlugin(),
             new MollieRefundWebhookHandlerPlugin(),
         ];
+    }
+
+    /**
+     * @param \Spryker\Yves\Kernel\Container $container
+     *
+     * @return \Spryker\Yves\Kernel\Container
+     */
+    protected function addLocaleClient(Container $container): Container
+    {
+        $container->set(static::CLIENT_LOCALE, function (Container $container): MollieToLocaleClientInterface {
+            return new MollieToLocaleClientBridge(
+                $container->getLocator()->locale()->client(),
+            );
+        });
+
+        return $container;
     }
 }
