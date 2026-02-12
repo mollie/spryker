@@ -14,11 +14,4 @@ interface MollieOrderItemMapperInterface
      * @return \Propel\Runtime\Collection\ObjectCollection|null
      */
     public function extractOrderItemsFromSpyPaymentMollieEntity(ObjectCollection $spyPaymentMollieCollection): ObjectCollection|null;
-
-    /**
-     * @param \Propel\Runtime\Collection\ObjectCollection $spyRefundMollieCollection
-     *
-     * @return \Propel\Runtime\Collection\ObjectCollection
-     */
-    public function extractOrderItemsFromSpyRefundMollieEntity(ObjectCollection $spyRefundMollieCollection): ObjectCollection;
 }

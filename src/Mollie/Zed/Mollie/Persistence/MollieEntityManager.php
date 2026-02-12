@@ -6,19 +6,22 @@ namespace Mollie\Zed\Mollie\Persistence;
 
 use Generated\Shared\Transfer\MollieItemPaymentCaptureTransfer;
 use Generated\Shared\Transfer\MolliePaymentTransfer;
+use Generated\Shared\Transfer\MollieRefundCollectionTransfer;
 use Generated\Shared\Transfer\MollieRefundSaveTransfer;
-use Generated\Shared\Transfer\MollieRefundTransfer;
 use Generated\Shared\Transfer\OrderCollectionRequestTransfer;
 use Orm\Zed\Mollie\Persistence\SpyMollieOrderItemPaymentCapture;
 use Orm\Zed\Mollie\Persistence\SpyPaymentMollie;
 use Orm\Zed\Mollie\Persistence\SpyRefundMollie;
 use Spryker\Zed\Kernel\Persistence\AbstractEntityManager;
+use Spryker\Zed\Kernel\Persistence\EntityManager\TransactionTrait;
 
 /**
  * @method \Mollie\Zed\Mollie\Persistence\MolliePersistenceFactory getFactory()
  */
 class MollieEntityManager extends AbstractEntityManager implements MollieEntityManagerInterface
 {
+    use TransactionTrait;
+
     /**
      * @param \Generated\Shared\Transfer\OrderCollectionRequestTransfer $updateOrderCollectionRequestTransfer
      *
@@ -63,24 +66,22 @@ class MollieEntityManager extends AbstractEntityManager implements MollieEntityM
     }
 
     /**
-     * @param \Generated\Shared\Transfer\MollieRefundTransfer $mollieRefundTransfer
+     * @param \Generated\Shared\Transfer\MollieRefundCollectionTransfer $mollieRefundCollectionTransfer
      *
      * @return void
      */
-    public function updateMollieRefundWithStatus(MollieRefundTransfer $mollieRefundTransfer): void
+    public function updateMollieRefundWithStatus(MollieRefundCollectionTransfer $mollieRefundCollectionTransfer): void
     {
-        $spyRefundMollieEntityCollection = $this->getFactory()
-            ->createSpyRefundMollieQuery()
-            ->findByRefundId($mollieRefundTransfer->getId());
-
-        if (!$spyRefundMollieEntityCollection) {
-            return;
-        }
-
-        foreach ($spyRefundMollieEntityCollection as $spyRefundMollieEntity) {
-            $spyRefundMollieEntity->setStatus($mollieRefundTransfer->getStatus());
-            $spyRefundMollieEntity->save();
-        }
+        $this->getTransactionHandler()->handleTransaction(function () use ($mollieRefundCollectionTransfer): void {
+            foreach ($mollieRefundCollectionTransfer->getRefunds() as $mollieRefundTransfer) {
+                $this->getFactory()
+                    ->createSpyRefundMollieQuery()
+                    ->filterByRefundId($mollieRefundTransfer->getId())
+                    ->update([
+                        'Status' => $mollieRefundTransfer->getStatus(),
+                    ]);
+            }
+        });
     }
 
     /**

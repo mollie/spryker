@@ -165,4 +165,6 @@ interface MollieConstants
     public const string MOLLIE_QUERY_PARAMETER_SHOW_ONLY_ENABLED = 'showOnlyEnabledPaymentMethods';
 
     public const string MOLLIE_SEQUENCE_TYPE_ONE_OFF = 'oneoff';
+
+    public const string LOGO_URL = 'LogoUrl';
 }

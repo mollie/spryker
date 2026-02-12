@@ -1,0 +1,21 @@
+{% extends model('component') %}
+
+{% define config = {
+    name: 'mollie-logo-image',
+} %}
+
+{% define data = {
+    logoUrl: required,
+    paymentName: required
+} %}
+
+{% block body %}
+    {% include molecule('lazy-image', 'ShopUi') with {
+        modifiers: ['mollie-payment-logo'],
+        data: {
+            imageSrc: data.logoUrl,
+            imageTitle: data.paymentName
+        }
+    } only %}
+
+{%  endblock %}

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Mollie\Yves\Mollie\Controller;
 
+use Generated\Shared\Transfer\MollieApiRequestTransfer;
+use Generated\Shared\Transfer\MollieWebhookResponseTransfer;
 use Spryker\Shared\Log\LoggerTrait;
 use SprykerShop\Yves\ShopApplication\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -30,9 +32,21 @@ class WebhookController extends AbstractController
             return $this->createResponse(Response::HTTP_BAD_REQUEST, 'Missing ID parameter');
         }
 
+        $mollieApiRequestTransfer = (new MollieApiRequestTransfer())
+            ->setTransactionId($mollieResponseId);
+
+        $molliePaymentApiResponseTransfer = $this->getClient()->getPaymentByTransactionId($mollieApiRequestTransfer);
+
+        if (!$molliePaymentApiResponseTransfer->getIsSuccessful()) {
+            return $this->createWebhookResponseTransfer(
+                Response::HTTP_OK,
+                $molliePaymentApiResponseTransfer->getMessage(),
+            );
+        }
+
         foreach ($this->getFactory()->getMollieWebhookHandlerPlugins() as $webhookHandlerPlugin) {
-            if ($webhookHandlerPlugin->isApplicable($request)) {
-                $webhookResponseTransfer = $webhookHandlerPlugin->handle($request);
+            if ($webhookHandlerPlugin->isApplicable($molliePaymentApiResponseTransfer->getMolliePayment())) {
+                $webhookResponseTransfer = $webhookHandlerPlugin->handle($molliePaymentApiResponseTransfer->getMolliePayment());
 
                 return $this->createResponse(
                     $webhookResponseTransfer->getStatusCode(),
@@ -55,5 +69,18 @@ class WebhookController extends AbstractController
         return (new Response())
             ->setStatusCode($statusCode)
             ->setContent($content);
+    }
+
+    /**
+     * @param int $statusCode
+     * @param string $message
+     *
+     * @return \Generated\Shared\Transfer\MollieWebhookResponseTransfer
+     */
+    protected function createWebhookResponseTransfer(int $statusCode, string $message): MollieWebhookResponseTransfer
+    {
+        return (new MollieWebhookResponseTransfer())
+            ->setStatusCode($statusCode)
+            ->setMessage($message);
     }
 }

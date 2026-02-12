@@ -2,34 +2,22 @@
 
 namespace Mollie\Yves\Mollie\Plugin\Webhook;
 
+use Generated\Shared\Transfer\MolliePaymentTransfer;
 use Generated\Shared\Transfer\MollieWebhookResponseTransfer;
-use Symfony\Component\HttpFoundation\Request;
 
 interface MollieWebhookHandlerPluginInterface
 {
     /**
-     * Specification:
-     * - Checks if this plugin can handle the webhook request.
-     * - Returns true if the plugin is applicable for the given request.
-     *
-     * @api
-     *
-     * @param \Symfony\Component\HttpFoundation\Request $request
+     * @param \Generated\Shared\Transfer\MolliePaymentTransfer $molliePaymentTransfer
      *
      * @return bool
      */
-    public function isApplicable(Request $request): bool;
+    public function isApplicable(MolliePaymentTransfer $molliePaymentTransfer): bool;
 
     /**
-     * Specification:
-     * - Processes the webhook request.
-     * - Returns response transfer with status code and message.
-     *
-     * @api
-     *
-     * @param \Symfony\Component\HttpFoundation\Request $request
+     * @param \Generated\Shared\Transfer\MolliePaymentTransfer $molliePaymentTransfer
      *
      * @return \Generated\Shared\Transfer\MollieWebhookResponseTransfer
      */
-    public function handle(Request $request): MollieWebhookResponseTransfer;
+    public function handle(MolliePaymentTransfer $molliePaymentTransfer): MollieWebhookResponseTransfer;
 }
