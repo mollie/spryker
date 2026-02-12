@@ -14,8 +14,6 @@ use Mollie\Zed\Mollie\Business\Filter\MollieRefundFilter;
 use Mollie\Zed\Mollie\Business\Filter\MollieRefundFilterInterface;
 use Mollie\Zed\Mollie\Business\Handler\MolliePaymentHandler;
 use Mollie\Zed\Mollie\Business\Handler\MolliePaymentHandlerInterface;
-use Mollie\Zed\Mollie\Business\Mapper\Oms\MolleOmsStatusMapper;
-use Mollie\Zed\Mollie\Business\Mapper\Oms\MolleOmsStatusMapperInterface;
 use Mollie\Zed\Mollie\Business\Mapper\Order\OrderMapper;
 use Mollie\Zed\Mollie\Business\Mapper\Order\OrderMapperInterface;
 use Mollie\Zed\Mollie\Business\Mapper\Refund\MollieRefundMapper;
@@ -46,21 +44,7 @@ class MollieBusinessFactory extends AbstractBusinessFactory
     public function createPaymentStatusUpdater(): OrderUpdaterInterface
     {
         return new OrderUpdater(
-            $this->getRepository(),
             $this->getEntityManager(),
-            $this->getOmsFacade(),
-            $this->getLogger(),
-            $this->createMollieOmsStatusMapper(),
-        );
-    }
-
-    /**
-     * @return \Mollie\Zed\Mollie\Business\Mapper\Oms\MolleOmsStatusMapperInterface
-     */
-    public function createMollieOmsStatusMapper(): MolleOmsStatusMapperInterface
-    {
-        return new MolleOmsStatusMapper(
-            $this->getConfig(),
         );
     }
 
@@ -82,8 +66,6 @@ class MollieBusinessFactory extends AbstractBusinessFactory
             $this->getRepository(),
             $this->getMollieClient(),
             $this->getEntityManager(),
-            $this->createMollieOmsStatusMapper(),
-            $this->getOmsFacade(),
             $this->createMollieRefundMapper(),
         );
     }

@@ -7,8 +7,6 @@ namespace Mollie\Zed\Mollie\Persistence;
 use Mollie\Service\Mollie\MollieServiceInterface;
 use Mollie\Zed\Mollie\Dependency\Service\MollieToUtilEncodingServiceInterface;
 use Mollie\Zed\Mollie\MollieDependencyProvider;
-use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MollieOrderItemMapper;
-use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MollieOrderItemMapperInterface;
 use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MollieOrderMapper;
 use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MollieOrderMapperInterface;
 use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MollieRefundMapper;
@@ -19,14 +17,6 @@ use Spryker\Zed\Kernel\Persistence\AbstractPersistenceFactory;
 
 class MolliePersistenceFactory extends AbstractPersistenceFactory
 {
-    /**
-     * @return \Mollie\Zed\Mollie\Persistence\Propel\Mapper\MollieOrderItemMapperInterface
-     */
-    public function createMollieOrderItemMapper(): MollieOrderItemMapperInterface
-    {
-        return new MollieOrderItemMapper();
-    }
-
     /**
      * @return \Mollie\Zed\Mollie\Persistence\Propel\Mapper\MollieOrderMapperInterface
      */
