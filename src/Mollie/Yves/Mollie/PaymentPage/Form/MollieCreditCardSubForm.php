@@ -6,6 +6,7 @@ namespace Mollie\Yves\Mollie\PaymentPage\Form;
 
 use Generated\Shared\Transfer\MollieCreditCardPaymentTransfer;
 use Mollie\Shared\Mollie\MollieConfig;
+use Mollie\Shared\Mollie\MollieConstants;
 use Spryker\Yves\StepEngine\Dependency\Form\AbstractSubFormType;
 use Spryker\Yves\StepEngine\Dependency\Form\SubFormInterface;
 use Spryker\Yves\StepEngine\Dependency\Form\SubFormProviderNameInterface;
@@ -30,6 +31,11 @@ class MollieCreditCardSubForm extends AbstractSubFormType implements SubFormInte
      * @var string
      */
     protected const CARD_TOKEN = 'cardToken';
+
+    /**
+     * @var string
+     */
+    protected const LOGO_URL = 'logoUrl';
 
  /**
   * @param \Symfony\Component\OptionsResolver\OptionsResolver $resolver
@@ -75,7 +81,7 @@ class MollieCreditCardSubForm extends AbstractSubFormType implements SubFormInte
     /**
      * @param \Symfony\Component\Form\FormView $view
      * @param \Symfony\Component\Form\FormInterface $form
-     * @param array<string, string> $options
+     * @param array<string, mixed> $options
      *
      * @return void
      */
@@ -86,6 +92,9 @@ class MollieCreditCardSubForm extends AbstractSubFormType implements SubFormInte
         $view->vars['profileId'] = $this->getConfig()->getProfileId();
         $view->vars['testMode'] = $this->getConfig()->isTestMode() ? 'true' : 'false';
         $view->vars['jsSrc'] = $this->getConfig()->getMollieCreditCardComponentsJsSrc();
+
+        $optionLogoKey = $this->getPropertyPath() . MollieConstants::LOGO_URL;
+        $view->vars[static::LOGO_URL] = $options['select_options'][$optionLogoKey];
     }
 
     /**

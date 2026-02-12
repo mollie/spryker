@@ -113,6 +113,10 @@ class CreatePaymentApi extends AbstractApiCall
                 $additionalData[MollieConfig::REQUEST_PARAMETER_CREATE_PAYMENT_KLARNA_EXTRA_MERCHANT_DATA] = $paymentTransfer->getMollieKlarnaPayment()->getExtraMerchantData() ?? '';
 
                 break;
+            case SharedConfig::MOLLIE_PAYMENT_APPLE_PAY:
+                $additionalData[MollieConfig::REQUEST_PARAMETER_CREATE_PAYMENT_APPLE_PAY_PAYMENT_TOKEN] = $paymentTransfer->getMollieApplePayPayment()->getApplePayPaymentToken() ?? '';
+
+                break;
             default:
                 break;
         }
@@ -183,8 +187,12 @@ class CreatePaymentApi extends AbstractApiCall
      */
     protected function getRequestBody(): array
     {
-         /** @var \Mollie\Api\Http\Requests\CreatePaymentRequest $createPaymentRequest */
+         /** @var \Mollie\Api\Http\Requests\CreatePaymentRequest|null $createPaymentRequest */
         $createPaymentRequest = $this->request;
+
+        if (!$createPaymentRequest) {
+            return [];
+        }
 
         $payload = $createPaymentRequest->payload();
         $requestBody = $payload->all();

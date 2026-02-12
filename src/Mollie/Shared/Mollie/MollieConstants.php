@@ -64,6 +64,11 @@ interface MollieConstants
      */
     public const MOLLIE_DEBUG_MODE = 'MOLLIE:MOLLIE_DEBUG_MODE';
 
+    /**
+     * @var string
+     */
+    public const MOLLIE_INCLUDE_WALLETS = 'MOLLIE:MOLLIE_INCLUDE_WALLETS';
+
     // Payment statuses from Mollie
     /**
      * @var string
@@ -155,4 +160,6 @@ interface MollieConstants
     public const string MOLLIE_QUERY_PARAMETER_SHOW_ONLY_ENABLED = 'showOnlyEnabledPaymentMethods';
 
     public const string MOLLIE_SEQUENCE_TYPE_ONE_OFF = 'oneoff';
+
+    public const string LOGO_URL = 'LogoUrl';
 }

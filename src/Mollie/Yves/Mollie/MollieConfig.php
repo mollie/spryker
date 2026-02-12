@@ -57,6 +57,14 @@ class MollieConfig extends AbstractBundleConfig
     }
 
     /**
+     * @return array<string, string>
+     */
+    public function getMollieOmsToPaymentMethodMapping(): array
+    {
+        return $this->get(MollieConstants::MOLLIE)[MollieConstants::MOLLIE_OMS_TO_PAYMENT_METHOD_MAPPING];
+    }
+
+    /**
      * @return string
      */
     public function getOrderReferenceQueryParamName(): string
