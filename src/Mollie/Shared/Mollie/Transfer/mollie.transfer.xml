@@ -71,7 +71,7 @@
         <property name="sequenceType" type="string"/>
         <property name="redirectUrl" type="string"/>
         <property name="webhookUrl" type="string"/>
-        <property name="metadata" type="string" singular="metadata"/>
+        <property name="metadata" type="array" singular="metadata"/>
         <property name="profileId" type="string"/>
         <property name="status" type="string"/>
         <property name="isCancelable" type="bool"/>
