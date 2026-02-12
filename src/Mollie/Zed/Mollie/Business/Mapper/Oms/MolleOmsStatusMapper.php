@@ -25,15 +25,6 @@ class MolleOmsStatusMapper implements MolleOmsStatusMapperInterface
     ];
 
     /**
-     * @var array<string, string>
-     */
-    protected const REFUND_STATUS_TO_EVENT_MAP = [
-        MollieConfig::PROCESSING => MollieStateMachineEvents::OMS_MOLLIE_REFUND_PROCESSING,
-        MollieConfig::REFUNDED => MollieStateMachineEvents::OMS_MOLLIE_PAYMENT_REFUNDED,
-        MollieConfig::FAILED => MollieStateMachineEvents::OMS_MOLLIE_REFUND_FAILED,
-    ];
-
-    /**
      * @param string $mollieStatus
      *
      * @return string|null
@@ -41,15 +32,5 @@ class MolleOmsStatusMapper implements MolleOmsStatusMapperInterface
     public function mapMolliePaymentStatusToOmsStatus(string $mollieStatus): string|null
     {
         return static::STATUS_TO_EVENT_MAP[$mollieStatus] ?? null;
-    }
-
-    /**
-     * @param string $mollieStatus
-     *
-     * @return string|null
-     */
-    public function mapMollieRefundStatusToOmsStatus(string $mollieStatus): string|null
-    {
-        return static::REFUND_STATUS_TO_EVENT_MAP[$mollieStatus] ?? null;
     }
 }

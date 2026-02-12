@@ -79,7 +79,7 @@ class MollieZedTester extends Actor
                 ->setDescription('Test refund')
                 ->setCurrency('EUR')
                 ->setValue('22.22')
-                ->setStatus('pending')
+                ->setStatus('refunded')
                 ->setMetadata('[]')
                 ->setTransactionId('tr_7FQgLEW7ECECKWStSwTLJ')
                 ->setRefundId('re_yuj7TaDpm877xZQzP8ULJ')
@@ -101,5 +101,13 @@ class MollieZedTester extends Actor
         return SpyRefundMollieQuery::create()
             ->filterByRefundId($refundId)
             ->findOne();
+    }
+
+    /**
+     * @return string
+     */
+    public function getMollieRefunds(): string
+    {
+        return '{"refunds":[{"resource":"refund","id":"re_YBgXAPCDySfoay4KCpuLJ","mode":"test","amount":{"value":"102.90","currency":"EUR"},"status":"refunded","createdAt":"2026-02-09T11:55:23+00:00","description":"DE--119598-176413-5285","metadata":["{\"orderReference\":\"DE--119598-176413-5285\"}"],"paymentId":"tr_R3UACHQ7EiUdZwt9UouLJ","_links":{"self":{"href":"https://api.mollie.com/v2/payments/tr_R3UACHQ7EiUdZwt9UouLJ/refunds/re_YBgXAPCDySfoay4KCpuLJ","type":"application/hal+json"},"payment":{"href":"https://api.mollie.com/v2/payments/tr_R3UACHQ7EiUdZwt9UouLJ","type":"application/hal+json"},"documentation":{"href":"https://docs.mollie.com/reference/get-refund","type":"text/html"}}}]}';
     }
 }

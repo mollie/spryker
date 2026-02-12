@@ -1,6 +1,6 @@
 <?php
 
-namespace Mollie\Zed\Mollie\Communication\Plugin\Oms;
+namespace Mollie\Zed\Mollie\Communication\Plugin\Oms\Command;
 
 use Exception;
 use Generated\Shared\Transfer\OrderTransfer;

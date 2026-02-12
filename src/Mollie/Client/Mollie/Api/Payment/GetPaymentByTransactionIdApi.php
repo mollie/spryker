@@ -20,6 +20,11 @@ class GetPaymentByTransactionIdApi extends AbstractApiCall
     use LoggerTrait;
 
     /**
+     * @var string
+     */
+    protected const EMBEDDED = '_embedded';
+
+    /**
      * @param \Generated\Shared\Transfer\MollieApiResponseTransfer $mollieApiResponseTransfer
      *
      * @return \Generated\Shared\Transfer\MolliePaymentApiResponseTransfer
@@ -33,6 +38,8 @@ class GetPaymentByTransactionIdApi extends AbstractApiCall
         $molliePaymentTransfer = (new MolliePaymentTransfer())
             ->fromArray($mollieApiResponseTransfer->getPayload(), true);
 
+        $molliePaymentTransfer->setEmbedded($mollieApiResponseTransfer->getPayload()[static::EMBEDDED] ?? []);
+
         $molliePaymentApiResponseTransfer->setMolliePayment($molliePaymentTransfer);
 
         return $molliePaymentApiResponseTransfer;
@@ -45,7 +52,10 @@ class GetPaymentByTransactionIdApi extends AbstractApiCall
      */
     protected function buildRequest(?MollieApiRequestTransfer $mollieApiRequestTransfer = null): ?Request
     {
-        $this->request = new GetPaymentRequest($mollieApiRequestTransfer->getTransactionId());
+        $this->request = new GetPaymentRequest(
+            $mollieApiRequestTransfer->getTransactionId(),
+            embedRefunds: true,
+        );
 
         return $this->request;
     }

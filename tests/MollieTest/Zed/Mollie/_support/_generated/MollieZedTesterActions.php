@@ -1,4 +1,4 @@
-<?php  //[STAMP] f8456fabc83ef9d538cec4593527e6ff
+<?php  //[STAMP] af0cba1853ee9220c697bf1df9002bb4
 // phpcs:ignoreFile
 namespace MollieTest\Zed\Mollie\_generated;
 

@@ -2,9 +2,9 @@
 
 namespace Mollie\Zed\Mollie\Business\Processor\Refund;
 
+use Generated\Shared\Transfer\MolliePaymentTransfer;
 use Generated\Shared\Transfer\MollieRefundApiResponseTransfer;
 use Generated\Shared\Transfer\MollieRefundResponseTransfer;
-use Generated\Shared\Transfer\MollieRefundTransfer;
 use Generated\Shared\Transfer\OrderTransfer;
 
 interface RefundProcessorInterface
@@ -17,9 +17,9 @@ interface RefundProcessorInterface
     public function processOrderItemsRefund(OrderTransfer $orderTransfer): MollieRefundApiResponseTransfer;
 
     /**
-     * @param \Generated\Shared\Transfer\MollieRefundTransfer $mollieRefundTransfer
+     * @param \Generated\Shared\Transfer\MolliePaymentTransfer $molliePaymentTransfer
      *
      * @return \Generated\Shared\Transfer\MollieRefundResponseTransfer
      */
-    public function processRefundData(MollieRefundTransfer $mollieRefundTransfer): MollieRefundResponseTransfer;
+    public function processRefundData(MolliePaymentTransfer $molliePaymentTransfer): MollieRefundResponseTransfer;
 }

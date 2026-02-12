@@ -46,7 +46,7 @@
         </index>
 
         <index name="index-spy_refund_mollie-refund_id">
-            <index-column name="transaction_id"/>
+            <index-column name="refund_id"/>
         </index>
 
         <behavior name="timestampable"/>

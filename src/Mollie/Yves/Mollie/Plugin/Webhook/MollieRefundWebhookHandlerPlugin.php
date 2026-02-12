@@ -2,12 +2,9 @@
 
 namespace Mollie\Yves\Mollie\Plugin\Webhook;
 
-use Generated\Shared\Transfer\MollieApiRequestTransfer;
-use Generated\Shared\Transfer\MollieRefundRequestTransfer;
-use Generated\Shared\Transfer\MollieRefundTransfer;
+use Generated\Shared\Transfer\MolliePaymentTransfer;
 use Generated\Shared\Transfer\MollieWebhookResponseTransfer;
 use Spryker\Yves\Kernel\AbstractPlugin;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -19,64 +16,26 @@ class MollieRefundWebhookHandlerPlugin extends AbstractPlugin implements MollieW
     /**
      * @var string
      */
-    protected const REFUND_ID_PREFIX = 're_';
+    protected const REFUNDS = 'refunds';
 
     /**
-     * {@inheritDoc}
-     *
-     * @api
-     *
-     * @param \Symfony\Component\HttpFoundation\Request $request
+     * @param \Generated\Shared\Transfer\MolliePaymentTransfer $molliePaymentTransfer
      *
      * @return bool
      */
-    public function isApplicable(Request $request): bool
+    public function isApplicable(MolliePaymentTransfer $molliePaymentTransfer): bool
     {
-        $refundId = $request->request->get('id', '');
-
-        return str_starts_with($refundId, static::REFUND_ID_PREFIX);
+        return array_key_exists(static::REFUNDS, $molliePaymentTransfer->getEmbedded());
     }
 
     /**
-     * {@inheritDoc}
-     *
-     * @api
-     *
-     * @param \Symfony\Component\HttpFoundation\Request $request
+     * @param \Generated\Shared\Transfer\MolliePaymentTransfer $molliePaymentTransfer
      *
      * @return \Generated\Shared\Transfer\MollieWebhookResponseTransfer
      */
-    public function handle(Request $request): MollieWebhookResponseTransfer
+    public function handle(MolliePaymentTransfer $molliePaymentTransfer): MollieWebhookResponseTransfer
     {
-        $refundId = $request->request->get('id');
-
-        $mollieRefundTransfer = (new MollieRefundTransfer())
-            ->setId($refundId);
-
-        $mollieRefundRequestTransfer = (new MollieRefundRequestTransfer())
-            ->setRefund($mollieRefundTransfer);
-
-        $mollieRefundResponseTransfer = $this->getClient()->getPersistedRefundById($mollieRefundRequestTransfer);
-
-        $mollieRefundTransfer
-            ->setId($refundId)
-            ->setTransactionId($mollieRefundResponseTransfer->getRefund()->getTransactionId());
-
-        $mollieApiRequestTransfer = (new MollieApiRequestTransfer())
-            ->setRefund($mollieRefundTransfer);
-
-        $mollieRefundApiResponseTransfer = $this->getFactory()
-            ->getMollieApiClient()
-            ->getRefundByRefundId($mollieApiRequestTransfer);
-
-        if (!$mollieRefundApiResponseTransfer->getIsSuccessful()) {
-            return $this->createWebhookResponseTransfer(
-                Response::HTTP_OK,
-                $mollieRefundApiResponseTransfer->getMessage(),
-            );
-        }
-
-        $this->getClient()->processRefundData($mollieRefundApiResponseTransfer->getMollieRefund());
+        $this->getClient()->processRefundData($molliePaymentTransfer);
 
         return $this->createWebhookResponseTransfer(
             Response::HTTP_OK,

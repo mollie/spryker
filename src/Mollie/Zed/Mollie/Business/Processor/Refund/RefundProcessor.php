@@ -4,6 +4,7 @@ namespace Mollie\Zed\Mollie\Business\Processor\Refund;
 
 use Generated\Shared\Transfer\MollieAmountTransfer;
 use Generated\Shared\Transfer\MollieApiRequestTransfer;
+use Generated\Shared\Transfer\MolliePaymentTransfer;
 use Generated\Shared\Transfer\MollieRefundApiResponseTransfer;
 use Generated\Shared\Transfer\MollieRefundResponseTransfer;
 use Generated\Shared\Transfer\MollieRefundTransfer;
@@ -89,25 +90,16 @@ class RefundProcessor implements RefundProcessorInterface
     }
 
     /**
-     * @param \Generated\Shared\Transfer\MollieRefundTransfer $mollieRefundTransfer
+     * @param \Generated\Shared\Transfer\MolliePaymentTransfer $molliePaymentTransfer
      *
      * @return \Generated\Shared\Transfer\MollieRefundResponseTransfer
      */
-    public function processRefundData(MollieRefundTransfer $mollieRefundTransfer): MollieRefundResponseTransfer
+    public function processRefundData(MolliePaymentTransfer $molliePaymentTransfer): MollieRefundResponseTransfer
     {
         $mollieRefundResponseTransfer = new MollieRefundResponseTransfer();
 
-        $orderItems = $this->repository->getOrderItemsFromSpyMollieRefund($mollieRefundTransfer->getId());
-
-        if (!$orderItems) {
-            return $mollieRefundResponseTransfer->setIsSuccess(false);
-        }
-
-        $this->entityManager->updateMollieRefundWithStatus($mollieRefundTransfer);
-
-        $omsEvent = $this->molleOmsStatusMapper->mapMollieRefundStatusToOmsStatus($mollieRefundTransfer->getStatus());
-
-        $this->omsFacade->triggerEvent($omsEvent, $orderItems, []);
+        $mollieRefundCollectionTransfer = $this->refundMapper->mapMolliePaymentRefundsToMollieRefundCollectionTransfer($molliePaymentTransfer);
+        $this->entityManager->updateMollieRefundWithStatus($mollieRefundCollectionTransfer);
 
         $mollieRefundResponseTransfer->setIsSuccess(true);
 

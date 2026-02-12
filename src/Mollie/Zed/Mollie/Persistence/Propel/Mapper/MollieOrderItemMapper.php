@@ -23,24 +23,4 @@ class MollieOrderItemMapper implements MollieOrderItemMapperInterface
 
         return $spySalesOrderItems;
     }
-
-    /**
-     * @param \Propel\Runtime\Collection\ObjectCollection $spyRefundMollieCollection
-     *
-     * @return \Propel\Runtime\Collection\ObjectCollection
-     */
-    public function extractOrderItemsFromSpyRefundMollieEntity(ObjectCollection $spyRefundMollieCollection): ObjectCollection
-    {
-        $spySalesOrderItems = new ObjectCollection();
-
-        foreach ($spyRefundMollieCollection->getData() as $spyRefundMollie) {
-            $orderItem = $spyRefundMollie->getSpySalesOrderItem();
-
-            if ($orderItem !== null) {
-                $spySalesOrderItems->append($orderItem);
-            }
-        }
-
-        return $spySalesOrderItems;
-    }
 }
