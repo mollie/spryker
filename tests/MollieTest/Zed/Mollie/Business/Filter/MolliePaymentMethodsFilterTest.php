@@ -34,6 +34,7 @@ class MolliePaymentMethodsFilterTest extends AbstractBusinessTest
         $this->faker = Factory::create();
 
         $this->mollieClient = $this->createMollieClientMock();
+        $this->mollieConfig = $this->createMollieConfigMock(false);
         $this->businessFactory = $this->createMollieBusinessFactory();
         $this->mollieFacade->setFactory($this->businessFactory);
     }
