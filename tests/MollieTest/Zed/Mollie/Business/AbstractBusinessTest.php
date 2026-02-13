@@ -37,7 +37,7 @@ abstract class AbstractBusinessTest extends Unit
 
     protected MollieClientInterface $mollieClient;
 
-    protected MollieConfig|MockObject $mollieConfig;
+    protected MollieConfig $mollieConfig;
 
     /**
      * @var \Generated\Shared\Transfer\QuoteTransfer
@@ -100,7 +100,7 @@ abstract class AbstractBusinessTest extends Unit
             ->onlyMethods(['getMollieClient'])
             ->getMock();
 
-        $businessFactory->setConfig($this->mollieConfig ?? new MollieConfig());
+        $businessFactory->setConfig($this->mollieConfig);
 
         $dependencyProvider = new MollieDependencyProvider();
         $container = new ZedContainer();
