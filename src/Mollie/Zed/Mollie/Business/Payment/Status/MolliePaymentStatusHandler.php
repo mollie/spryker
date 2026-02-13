@@ -7,7 +7,7 @@ namespace Mollie\Zed\Mollie\Business\Payment\Status;
 use Mollie\Shared\Mollie\MolliePaymentStatusConstants;
 use Mollie\Zed\Mollie\Persistence\MollieRepositoryInterface;
 
-class MolliePaymentStatus implements MolliePaymentStatusInterface
+class MolliePaymentStatusHandler implements MolliePaymentStatusHandlerInterface
 {
     /**
      * @param \Mollie\Zed\Mollie\Persistence\MollieRepositoryInterface $mollieRepository

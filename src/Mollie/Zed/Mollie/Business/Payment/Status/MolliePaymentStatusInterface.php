@@ -4,7 +4,7 @@ declare(strict_types = 1);
 
 namespace Mollie\Zed\Mollie\Business\Payment\Status;
 
-interface MolliePaymentStatusInterface
+interface MolliePaymentStatusHandlerInterface
 {
     /**
      * @param int $idSalesOrder

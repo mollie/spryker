@@ -36,7 +36,7 @@ class CreatePaymentApiTest extends AbstractClientTest
 
         $paymentTransfer = new PaymentTransfer();
         $paymentTransfer
-            ->setPaymentMethod('creditcard')
+            ->setPaymentMethod('mollieCreditCardPayment')
             ->setMollieCreditCardPayment($mollieCreditCardPaymentTransfer)
             ->setAmount(100000);
 
