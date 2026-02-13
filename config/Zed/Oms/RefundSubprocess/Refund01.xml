@@ -8,7 +8,7 @@
         <states>
             <state name="refund pending" display="oms.state.refund-pending"/>
             <state name="refund failed" display="oms.state.refund-failed"/>
-            <state name="refund pending next try" display="oms.state.refund-failed"/>
+            <state name="refund pending next try" display="oms.state.refund-pending-next-try"/>
             <state name="refunded" display="oms.state.refunded"/>
             <state name="closed" display="oms.state.refund-closed"/>
         </states>

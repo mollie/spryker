@@ -11,9 +11,7 @@ use Generated\Shared\Transfer\MollieRefundTransfer;
 use Generated\Shared\Transfer\OrderTransfer;
 use Mollie\Client\Mollie\MollieClientInterface;
 use Mollie\Zed\Mollie\Business\Calculator\OrderItem\OrderItemGrossAmountCalculatorInterface;
-use Mollie\Zed\Mollie\Business\Mapper\Oms\MolleOmsStatusMapperInterface;
 use Mollie\Zed\Mollie\Business\Mapper\Refund\MollieRefundMapperInterface;
-use Mollie\Zed\Mollie\Dependency\Facade\MollieToOmsInterface;
 use Mollie\Zed\Mollie\Persistence\MollieEntityManagerInterface;
 use Mollie\Zed\Mollie\Persistence\MollieRepositoryInterface;
 use Spryker\Shared\Log\LoggerTrait;
@@ -29,8 +27,6 @@ class RefundProcessor implements RefundProcessorInterface
      * @param \Mollie\Zed\Mollie\Persistence\MollieRepositoryInterface $repository
      * @param \Mollie\Client\Mollie\MollieClientInterface $mollieClient
      * @param \Mollie\Zed\Mollie\Persistence\MollieEntityManagerInterface $entityManager
-     * @param \Mollie\Zed\Mollie\Business\Mapper\Oms\MolleOmsStatusMapperInterface $molleOmsStatusMapper
-     * @param \Mollie\Zed\Mollie\Dependency\Facade\MollieToOmsInterface $omsFacade
      * @param \Mollie\Zed\Mollie\Business\Mapper\Refund\MollieRefundMapperInterface $refundMapper
      */
     public function __construct(
@@ -38,8 +34,6 @@ class RefundProcessor implements RefundProcessorInterface
         protected MollieRepositoryInterface $repository,
         protected MollieClientInterface $mollieClient,
         protected MollieEntityManagerInterface $entityManager,
-        protected MolleOmsStatusMapperInterface $molleOmsStatusMapper,
-        protected MollieToOmsInterface $omsFacade,
         protected MollieRefundMapperInterface $refundMapper,
     ) {
     }
