@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Mollie\Zed\Mollie\Communication\Plugin\Oms\Condition\Capture;
 
 use Orm\Zed\Sales\Persistence\SpySalesOrderItem;

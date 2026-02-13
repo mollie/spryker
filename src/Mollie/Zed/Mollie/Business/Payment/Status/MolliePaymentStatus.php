@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Mollie\Zed\Mollie\Business\Payment\Status;
 
 use Mollie\Shared\Mollie\MolliePaymentStatusConstants;

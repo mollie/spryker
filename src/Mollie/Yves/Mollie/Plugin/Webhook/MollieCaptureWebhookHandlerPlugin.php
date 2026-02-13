@@ -39,10 +39,10 @@ class MollieCaptureWebhookHandlerPlugin extends AbstractPlugin implements Mollie
     {
         $this->getClient()->updatePaymentCaptureCollection($molliePaymentTransfer);
 
-         return $this->createWebhookResponseTransfer(
-             Response::HTTP_OK,
-             'Payment webhook processed successfully',
-         );
+        return $this->createWebhookResponseTransfer(
+            Response::HTTP_OK,
+            'Payment webhook processed successfully',
+        );
     }
 
     /**

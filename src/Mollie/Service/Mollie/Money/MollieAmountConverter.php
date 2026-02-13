@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types = 1);
 
 namespace Mollie\Service\Mollie\Money;
@@ -8,6 +9,9 @@ use Spryker\Shared\Money\Converter\IntegerToDecimalConverterInterface;
 
 class MollieAmountConverter implements MollieAmountConverterInterface
 {
+    /**
+     * @param \Spryker\Shared\Money\Converter\IntegerToDecimalConverterInterface $integerToDecimalConverter
+     */
     public function __construct(protected IntegerToDecimalConverterInterface $integerToDecimalConverter)
     {
     }

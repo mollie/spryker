@@ -107,14 +107,6 @@ class MolliePaymentCaptureRequestSender implements MolliePaymentCaptureRequestSe
     }
 
     /**
-     * @return \Generated\Shared\Transfer\MolliePaymentCaptureTransfer
-     */
-    protected function buildMolliePaymentCaptureTransfer(): MolliePaymentCaptureTransfer
-    {
-        return new MolliePaymentCaptureTransfer();
-    }
-
-    /**
      * @param \Generated\Shared\Transfer\ItemCollectionTransfer $itemCollectionTransfer
      *
      * @return \Generated\Shared\Transfer\MollieAmountTransfer

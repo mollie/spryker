@@ -73,18 +73,6 @@ class MollieFacade extends AbstractFacade implements MollieFacadeInterface
 
     /**
      * @param \Generated\Shared\Transfer\OrderTransfer $orderTransfer
-     *
-     * @return \Generated\Shared\Transfer\MollieRefundApiResponseTransfer
-     */
-    public function captureOrder(OrderTransfer $orderTransfer): MollieRefundApiResponseTransfer
-    {
-        return $this->getFactory()
-            ->createRefundProcessor()
-            ->processOrderItemsRefund($orderTransfer);
-    }
-
-    /**
-     * @param \Generated\Shared\Transfer\OrderTransfer $orderTransfer
      * @param array<int, mixed> $orderItems
      *
      * @return \Generated\Shared\Transfer\OrderTransfer
