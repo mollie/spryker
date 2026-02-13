@@ -4,7 +4,7 @@ declare(strict_types = 1);
 
 namespace Mollie\Shared\Mollie;
 
-class MolliePaymentStatusConstants
+interface MolliePaymentStatusConstants
 {
     /**
      * @var string
