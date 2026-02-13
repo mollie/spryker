@@ -207,8 +207,8 @@ class CreatePaymentApi extends AbstractApiCall
      */
     protected function getCaptureModeForMethod(string $method): string
     {
-        $molliePaymentMethodManualCapture = $this->mollieConfig->getMolliePaymentMethodManualCapture();
-        if (in_array($method, $molliePaymentMethodManualCapture)) {
+        $molliePaymentMethodsManualCapture = $this->mollieConfig->getMolliePaymentMethodsManualCapture();
+        if (in_array($method, $molliePaymentMethodsManualCapture)) {
             return $this->mollieConfig->getMollieManualCaptureMode();
         }
 

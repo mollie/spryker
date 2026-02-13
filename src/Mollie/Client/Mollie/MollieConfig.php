@@ -117,7 +117,7 @@ class MollieConfig extends AbstractBundleConfig
     /**
      * @return array<string, string>
      */
-    public function getMolliePaymentMethodManualCapture(): array
+    public function getMolliePaymentMethodsManualCapture(): array
     {
         return $this->get(MollieConstants::MOLLIE)[MollieConstants::MOLLIE_PAYMENT_METHOD_MANUAL_CAPTURE];
     }
