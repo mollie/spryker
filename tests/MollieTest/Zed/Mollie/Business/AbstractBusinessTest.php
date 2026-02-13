@@ -12,6 +12,7 @@ use Mollie\Zed\Mollie\Business\MollieFacade;
 use Mollie\Zed\Mollie\Business\MollieFacadeInterface;
 use Mollie\Zed\Mollie\MollieConfig;
 use Mollie\Zed\Mollie\MollieDependencyProvider;
+use PHPUnit\Framework\MockObject\MockObject;
 use Spryker\Service\Container\Container;
 use Spryker\Shared\Kernel\Container\GlobalContainer;
 use Spryker\Zed\Kernel\Container as ZedContainer;
@@ -35,6 +36,8 @@ abstract class AbstractBusinessTest extends Unit
     protected MollieBusinessFactory $businessFactory;
 
     protected MollieClientInterface $mollieClient;
+
+    protected MollieConfig|MockObject $mollieConfig;
 
     /**
      * @var \Generated\Shared\Transfer\QuoteTransfer
@@ -97,7 +100,7 @@ abstract class AbstractBusinessTest extends Unit
             ->onlyMethods(['getMollieClient'])
             ->getMock();
 
-        $businessFactory->setConfig(new MollieConfig());
+        $businessFactory->setConfig($this->mollieConfig ?? new MollieConfig());
 
         $dependencyProvider = new MollieDependencyProvider();
         $container = new ZedContainer();
@@ -116,5 +119,22 @@ abstract class AbstractBusinessTest extends Unit
     protected function createMollieClientMock(): MollieClientInterface
     {
         return $this->getMockBuilder(MollieClientInterface::class)->getMock();
+    }
+
+    /**
+     * @param bool $isTestMode
+     *
+     * @return \Mollie\Zed\Mollie\MollieConfig|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected function createMollieConfigMock(bool $isTestMode = false): MollieConfig|MockObject
+    {
+        $configMock = $this->getMockBuilder(MollieConfig::class)
+            ->onlyMethods(['isTestMode'])
+            ->getMock();
+
+        $configMock->method('isTestMode')
+            ->willReturn($isTestMode);
+
+        return $configMock;
     }
 }
