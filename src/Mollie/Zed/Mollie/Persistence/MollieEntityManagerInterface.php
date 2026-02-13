@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Mollie\Zed\Mollie\Persistence;
 
 use Generated\Shared\Transfer\MollieItemPaymentCaptureTransfer;
+use Generated\Shared\Transfer\MolliePaymentCaptureTransfer;
 use Generated\Shared\Transfer\MolliePaymentTransfer;
 use Generated\Shared\Transfer\MollieRefundCollectionTransfer;
 use Generated\Shared\Transfer\MollieRefundSaveTransfer;
@@ -49,9 +50,9 @@ interface MollieEntityManagerInterface
     public function createCapture(MollieItemPaymentCaptureTransfer $mollieItemPaymentCaptureTransfer): void;
 
     /**
-     * @param \Generated\Shared\Transfer\MollieItemPaymentCaptureTransfer $mollieItemPaymentCaptureTransfer
+     * @param \Generated\Shared\Transfer\MolliePaymentCaptureTransfer $molliePaymentCaptureTransfer
      *
      * @return void
      */
-    public function updateCapture(MollieItemPaymentCaptureTransfer $mollieItemPaymentCaptureTransfer): void;
+    public function updateCapture(MolliePaymentCaptureTransfer $molliePaymentCaptureTransfer): void;
 }

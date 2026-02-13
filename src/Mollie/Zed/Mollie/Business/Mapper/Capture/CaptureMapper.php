@@ -4,8 +4,8 @@ declare(strict_types = 1);
 
 namespace Mollie\Zed\Mollie\Business\Mapper\Capture;
 
-use Generated\Shared\Transfer\MollieItemPaymentCaptureCollectionTransfer;
 use Generated\Shared\Transfer\MollieItemPaymentCaptureTransfer;
+use Generated\Shared\Transfer\MolliePaymentCaptureCollectionTransfer;
 use Generated\Shared\Transfer\MolliePaymentCaptureTransfer;
 use Generated\Shared\Transfer\MolliePaymentTransfer;
 use Mollie\Zed\Mollie\Dependency\Service\MollieToUtilEncodingServiceInterface;
@@ -42,24 +42,23 @@ class CaptureMapper implements CaptureMapperInterface
     /**
      * @param \Generated\Shared\Transfer\MolliePaymentTransfer $molliePaymentTransfer
      *
-     * @return \Generated\Shared\Transfer\MollieItemPaymentCaptureCollectionTransfer
+     * @return \Generated\Shared\Transfer\MolliePaymentCaptureCollectionTransfer
      */
-    public function mapMolliePaymentToMollieItemPaymentCaptureCollection(
+    public function mapMollieCapturesArrayToMolliePaymentCaptureCollection(
         MolliePaymentTransfer $molliePaymentTransfer,
-    ): MollieItemPaymentCaptureCollectionTransfer {
+    ): MolliePaymentCaptureCollectionTransfer {
         $captureCollection = $molliePaymentTransfer->getEmbedded()['captures'] ?? [];
-        $itemPaymentCaptureCollectionTransfer = new MollieItemPaymentCaptureCollectionTransfer();
+        $molliePaymentCaptureCollectionTransfer = new MolliePaymentCaptureCollectionTransfer();
         foreach ($captureCollection as $capture) {
-            $itemPaymentCaptureTransfer = (new MollieItemPaymentCaptureTransfer())
+            $molliePaymentCaptureTransfer = (new MolliePaymentCaptureTransfer())
                 ->fromArray($capture, true);
 
-            $itemPaymentCaptureTransfer
-                ->setCaptureId($capture['id'])
+            $molliePaymentCaptureTransfer
                 ->setTransactionId($molliePaymentTransfer->getId());
 
-            $itemPaymentCaptureCollectionTransfer->addCapture($itemPaymentCaptureTransfer);
+            $molliePaymentCaptureCollectionTransfer->addCapture($molliePaymentCaptureTransfer);
         }
 
-        return $itemPaymentCaptureCollectionTransfer;
+        return $molliePaymentCaptureCollectionTransfer;
     }
 }

@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace Mollie\Zed\Mollie\Persistence;
 
 use Generated\Shared\Transfer\MollieItemPaymentCaptureTransfer;
+use Generated\Shared\Transfer\MolliePaymentCaptureTransfer;
 use Generated\Shared\Transfer\MolliePaymentTransfer;
 use Generated\Shared\Transfer\MollieRefundCollectionTransfer;
 use Generated\Shared\Transfer\MollieRefundSaveTransfer;
@@ -117,24 +118,22 @@ class MollieEntityManager extends AbstractEntityManager implements MollieEntityM
     }
 
     /**
-     * @param \Generated\Shared\Transfer\MollieItemPaymentCaptureTransfer $mollieItemPaymentCaptureTransfer
+     * @param \Generated\Shared\Transfer\MolliePaymentCaptureTransfer $molliePaymentCaptureTransfer
      *
      * @return void
      */
-    public function updateCapture(MollieItemPaymentCaptureTransfer $mollieItemPaymentCaptureTransfer): void
+    public function updateCapture(MolliePaymentCaptureTransfer $molliePaymentCaptureTransfer): void
     {
         $spyMollieOrderItemPaymentCaptureQuery = $this->getFactory()->createSpyMollieOrderItemPaymentCaptureQuery();
 
-        $spyMollieOrderItemPaymentCaptureEntity = $spyMollieOrderItemPaymentCaptureQuery
-            ->filterByCaptureId($mollieItemPaymentCaptureTransfer->getCaptureId())
-            ->filterByTransactionId($mollieItemPaymentCaptureTransfer->getTransactionId())
-            ->findOne();
+        $spyMollieOrderItemPaymentCaptureEntities = $spyMollieOrderItemPaymentCaptureQuery
+            ->filterByCaptureId($molliePaymentCaptureTransfer->getId())
+            ->filterByTransactionId($molliePaymentCaptureTransfer->getTransactionId())
+            ->find();
 
-        if (!$spyMollieOrderItemPaymentCaptureEntity) {
-            return;
+        foreach ($spyMollieOrderItemPaymentCaptureEntities as $spyMollieOrderItemPaymentCaptureEntity) {
+             $spyMollieOrderItemPaymentCaptureEntity->setStatus($molliePaymentCaptureTransfer->getStatus());
+             $spyMollieOrderItemPaymentCaptureEntity->save();
         }
-
-        $spyMollieOrderItemPaymentCaptureEntity->setStatus($mollieItemPaymentCaptureTransfer->getStatus());
-        $spyMollieOrderItemPaymentCaptureEntity->save();
     }
 }
