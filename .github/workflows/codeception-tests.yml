@@ -254,6 +254,9 @@ jobs:
                   'mollieKbcPayment' => 'kbc',
                   'molliePayByBankPayment' => 'paybybank',
               ],
+              MollieConstants::MOLLIE_PAYMENT_METHOD_MANUAL_CAPTURE => [
+                  'creditcard',
+              ],
           ];
           
           EOF
