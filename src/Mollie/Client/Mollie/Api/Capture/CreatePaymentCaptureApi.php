@@ -8,6 +8,7 @@ use Generated\Shared\Transfer\MollieApiRequestTransfer;
 use Generated\Shared\Transfer\MollieApiResponseTransfer;
 use Generated\Shared\Transfer\MollieCreateCaptureApiResponseTransfer;
 use Generated\Shared\Transfer\MolliePaymentCaptureTransfer;
+use Mollie\Api\Http\Data\Money;
 use Mollie\Api\Http\Request;
 use Mollie\Api\Http\Requests\CreatePaymentCaptureRequest;
 use Mollie\Client\Mollie\Api\AbstractApiCall;
@@ -24,9 +25,15 @@ class CreatePaymentCaptureApi extends AbstractApiCall
     {
         $mollieCapturePaymentTransfer = $mollieApiRequestTransfer->getPaymentCapture();
 
+        $amount = new Money(
+            currency: $mollieCapturePaymentTransfer->getAmount()->getCurrency(),
+            value: $mollieCapturePaymentTransfer->getAmount()->getValue(),
+        );
+
         $this->request = new CreatePaymentCaptureRequest(
             paymentId: $mollieCapturePaymentTransfer->getTransactionId(),
             description: $mollieCapturePaymentTransfer->getDescription(),
+            amount: $amount,
             metadata: [
                 'bookkeeping_id' => $mollieCapturePaymentTransfer->getTransactionId(),
             ],
