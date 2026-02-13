@@ -71,6 +71,13 @@ interface MollieFacadeInterface
     public function processRefundData(MolliePaymentTransfer $molliePaymentTransfer): MollieRefundResponseTransfer;
 
     /**
+     * @param \Generated\Shared\Transfer\MolliePaymentTransfer $molliePaymentTransfer
+     *
+     * @return \Generated\Shared\Transfer\MolliePaymentCaptureResponseTransfer
+     */
+    public function updatePaymentCaptureCollection(MolliePaymentTransfer $molliePaymentTransfer): MolliePaymentCaptureResponseTransfer;
+
+    /**
      * @param \Generated\Shared\Transfer\MolliePaymentCaptureRequestTransfer $molliePaymentCaptureRequestTransfer
      *
      * @return \Generated\Shared\Transfer\MolliePaymentCaptureResponseTransfer

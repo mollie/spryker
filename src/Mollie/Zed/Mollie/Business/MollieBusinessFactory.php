@@ -26,6 +26,8 @@ use Mollie\Zed\Mollie\Business\Payment\RequestSender\MolliePaymentCaptureRequest
 use Mollie\Zed\Mollie\Business\Payment\RequestSender\MolliePaymentCaptureRequestSenderInterface;
 use Mollie\Zed\Mollie\Business\Payment\Status\MolliePaymentStatus;
 use Mollie\Zed\Mollie\Business\Payment\Status\MolliePaymentStatusInterface;
+use Mollie\Zed\Mollie\Business\Processor\Capture\CaptureProcessor;
+use Mollie\Zed\Mollie\Business\Processor\Capture\CaptureProcessorInterface;
 use Mollie\Zed\Mollie\Business\Processor\Refund\RefundProcessor;
 use Mollie\Zed\Mollie\Business\Processor\Refund\RefundProcessorInterface;
 use Mollie\Zed\Mollie\Business\Writer\MolliePaymentWriter;
@@ -74,6 +76,18 @@ class MollieBusinessFactory extends AbstractBusinessFactory
             $this->getMollieClient(),
             $this->getEntityManager(),
             $this->createMollieRefundMapper(),
+        );
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Business\Processor\Capture\CaptureProcessorInterface
+     */
+    public function createCaptureProcessor(): CaptureProcessorInterface
+    {
+        return new CaptureProcessor(
+            $this->getRepository(),
+            $this->getEntityManager(),
+            $this->createCaptureMapper(),
         );
     }
 

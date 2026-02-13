@@ -9,6 +9,7 @@ use Generated\Shared\Transfer\MollieCreateCaptureApiResponseTransfer;
 use Generated\Shared\Transfer\MollieGetProfileApiResponseTransfer;
 use Generated\Shared\Transfer\MollieLogApiTransfer;
 use Generated\Shared\Transfer\MolliePaymentApiResponseTransfer;
+use Generated\Shared\Transfer\MolliePaymentCaptureResponseTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodQueryParametersTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodsApiResponseTransfer;
 use Generated\Shared\Transfer\MolliePaymentTransfer;
@@ -121,6 +122,16 @@ class MollieClient extends AbstractClient implements MollieClientInterface
     public function updateOrderCollection(OrderCollectionRequestTransfer $updateOrderCollectionRequestTransfer): OrderCollectionResponseTransfer
     {
         return $this->getFactory()->createZedMollieStub()->updateOrderCollection($updateOrderCollectionRequestTransfer);
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MolliePaymentTransfer $molliePaymentTransfer
+     *
+     * @return \Generated\Shared\Transfer\MolliePaymentCaptureResponseTransfer
+     */
+    public function updatePaymentCaptureCollection(MolliePaymentTransfer $molliePaymentTransfer): MolliePaymentCaptureResponseTransfer
+    {
+        return $this->getFactory()->createZedMollieStub()->updatePaymentCaptureCollection($molliePaymentTransfer);
     }
 
     /**
