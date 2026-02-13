@@ -2,8 +2,10 @@
 
 namespace Mollie\Zed\Mollie\Business\Mapper\Capture;
 
+use Generated\Shared\Transfer\MollieItemPaymentCaptureCollectionTransfer;
 use Generated\Shared\Transfer\MollieItemPaymentCaptureTransfer;
 use Generated\Shared\Transfer\MolliePaymentCaptureTransfer;
+use Generated\Shared\Transfer\MolliePaymentTransfer;
 use Mollie\Zed\Mollie\Dependency\Service\MollieToUtilEncodingServiceInterface;
 
 class CaptureMapper implements CaptureMapperInterface
@@ -33,5 +35,29 @@ class CaptureMapper implements CaptureMapperInterface
             ->setMetadata($metadata);
 
         return $mollieItemPaymentCaptureTransfer;
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MolliePaymentTransfer $molliePaymentTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieItemPaymentCaptureCollectionTransfer
+     */
+    public function mapMolliePaymentToMollieItemPaymentCaptureCollection(
+        MolliePaymentTransfer $molliePaymentTransfer,
+    ): MollieItemPaymentCaptureCollectionTransfer {
+        $captureCollection = $molliePaymentTransfer->getEmbedded()['captures'] ?? [];
+        $itemPaymentCaptureCollectionTransfer = new MollieItemPaymentCaptureCollectionTransfer();
+        foreach ($captureCollection as $capture) {
+            $itemPaymentCaptureTransfer = (new MollieItemPaymentCaptureTransfer())
+                ->fromArray($capture, true);
+
+            $itemPaymentCaptureTransfer
+                ->setCaptureId($capture['id'])
+                ->setTransactionId($molliePaymentTransfer->getId());
+
+            $itemPaymentCaptureCollectionTransfer->addCapture($itemPaymentCaptureTransfer);
+        }
+
+        return $itemPaymentCaptureCollectionTransfer;
     }
 }

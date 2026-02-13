@@ -47,4 +47,11 @@ interface MollieEntityManagerInterface
      * @return void
      */
     public function createCapture(MollieItemPaymentCaptureTransfer $mollieItemPaymentCaptureTransfer): void;
+
+    /**
+     * @param \Generated\Shared\Transfer\MollieItemPaymentCaptureTransfer $mollieItemPaymentCaptureTransfer
+     *
+     * @return void
+     */
+    public function updateCapture(MollieItemPaymentCaptureTransfer $mollieItemPaymentCaptureTransfer): void;
 }

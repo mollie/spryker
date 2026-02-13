@@ -42,13 +42,14 @@ class MollieStub implements MollieStubInterface
         return $mollieRefundResponseTransfer;
     }
 
-    /**
-     * @param \Generated\Shared\Transfer\MolliePaymentTransfer $molliePaymentTransfer
-     *
-     * @return \Generated\Shared\Transfer\MolliePaymentCaptureResponseTransfer
-     */
+     /**
+      * @param \Generated\Shared\Transfer\MolliePaymentTransfer $molliePaymentTransfer
+      *
+      * @return \Generated\Shared\Transfer\MolliePaymentCaptureResponseTransfer
+      */
     public function updatePaymentCaptureCollection(MolliePaymentTransfer $molliePaymentTransfer): MolliePaymentCaptureResponseTransfer
     {
+        /** @var \Generated\Shared\Transfer\MolliePaymentCaptureResponseTransfer $molliePaymentCaptureResponseTransfer */
         $molliePaymentCaptureResponseTransfer = $this->zedStub
             ->call('/mollie/gateway/update-payment-capture-collection', $molliePaymentTransfer);
 

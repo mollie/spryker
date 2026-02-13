@@ -118,6 +118,10 @@
         <property name="status" type="string"/>
     </transfer>
 
+    <transfer name="MollieItemPaymentCaptureCollection">
+        <property name="captures" type="MollieItemPaymentCapture[]" singular="capture"/>
+    </transfer>
+
     <transfer name="MollieRefundApiResponse">
         <property name="isSuccessful" type="bool"/>
         <property name="message" type="string"/>

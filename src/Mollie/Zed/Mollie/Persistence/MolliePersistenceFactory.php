@@ -29,14 +29,6 @@ class MolliePersistenceFactory extends AbstractPersistenceFactory
     }
 
     /**
-     * @return \Mollie\Zed\Mollie\Persistence\Propel\Mapper\MollieOrderItemMapperInterface
-     */
-    public function createMollieOrderItemMapper(): MollieOrderItemMapperInterface
-    {
-        return new MollieOrderItemMapper();
-    }
-
-    /**
      * @return \Mollie\Zed\Mollie\Persistence\Propel\Mapper\MollieOrderMapperInterface
      */
     public function createMollieOrderMapper(): MollieOrderMapperInterface

@@ -7,10 +7,10 @@ use Generated\Shared\Transfer\MolliePaymentTransfer;
 
 interface CaptureProcessorInterface
 {
-/**
- * @param \Generated\Shared\Transfer\MolliePaymentTransfer $molliePaymentTransfer
- *
- * @return \Generated\Shared\Transfer\MolliePaymentCaptureResponseTransfer
- */
+    /**
+     * @param \Generated\Shared\Transfer\MolliePaymentTransfer $molliePaymentTransfer
+     *
+     * @return \Generated\Shared\Transfer\MolliePaymentCaptureResponseTransfer
+     */
     public function updatePaymentCaptureCollection(MolliePaymentTransfer $molliePaymentTransfer): MolliePaymentCaptureResponseTransfer;
 }

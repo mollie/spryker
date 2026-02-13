@@ -115,4 +115,26 @@ class MollieEntityManager extends AbstractEntityManager implements MollieEntityM
 
         $spyMollieOrderItemPaymentCaptureEntity->save();
     }
+
+    /**
+     * @param \Generated\Shared\Transfer\MollieItemPaymentCaptureTransfer $mollieItemPaymentCaptureTransfer
+     *
+     * @return void
+     */
+    public function updateCapture(MollieItemPaymentCaptureTransfer $mollieItemPaymentCaptureTransfer): void
+    {
+        $spyMollieOrderItemPaymentCaptureQuery = $this->getFactory()->createSpyMollieOrderItemPaymentCaptureQuery();
+
+        $spyMollieOrderItemPaymentCaptureEntity = $spyMollieOrderItemPaymentCaptureQuery
+            ->filterByCaptureId($mollieItemPaymentCaptureTransfer->getCaptureId())
+            ->filterByTransactionId($mollieItemPaymentCaptureTransfer->getTransactionId())
+            ->findOne();
+
+        if (!$spyMollieOrderItemPaymentCaptureEntity) {
+            return;
+        }
+
+        $spyMollieOrderItemPaymentCaptureEntity->setStatus($mollieItemPaymentCaptureTransfer->getStatus());
+        $spyMollieOrderItemPaymentCaptureEntity->save();
+    }
 }
