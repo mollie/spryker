@@ -12,12 +12,12 @@
         <states>
             <state name="new" reserved="true"/>
             <state name="payment pending" reserved="true" display="oms.state.payment-pending"/>
+            <state name="payment pending next try" display="oms.state.payment-pending-next-try"/>
             <state name="paid" reserved="true" display="oms.state.paid"/>
             <state name="ready for shipment" reserved="true" display="oms.state.ready-for-shipment"/>
             <state name="shipped" display="oms.state.shipped"/>
             <state name="delivered" display="oms.state.delivered"/>
             <state name="closed" display="oms.state.closed"/>
-
             <state name="canceled" display="oms.state.canceled"/>
             <state name="expired" display="oms.state.expired"/>
             <state name="failed" display="oms.state.failed"/>
@@ -30,10 +30,10 @@
                 <event>start payment</event>
             </transition>
 
-            <transition happy="true">
+            <transition happy="true" condition="Mollie/IsPaymentStatusPaid">
                 <source>payment pending</source>
                 <target>paid</target>
-                <event>payment paid</event>
+                <event>check payment</event>
             </transition>
 
             <transition happy="true">
@@ -60,22 +60,34 @@
                 <event>close</event>
             </transition>
 
-            <transition>
+            <transition condition="Mollie/IsPaymentStatusFailed">
                 <source>payment pending</source>
                 <target>failed</target>
-                <event>payment failed</event>
+                <event>check payment</event>
             </transition>
 
-            <transition>
+            <transition condition="Mollie/IsPaymentStatusCancelled">
                 <source>payment pending</source>
                 <target>canceled</target>
-                <event>payment canceled</event>
+                <event>check payment</event>
+            </transition>
+
+            <transition condition="Mollie/IsPaymentStatusExpired">
+                <source>payment pending</source>
+                <target>expired</target>
+                <event>check payment</event>
             </transition>
 
             <transition>
                 <source>payment pending</source>
-                <target>expired</target>
-                <event>payment expired</event>
+                <target>payment pending next try</target>
+                <event>return to payment pending</event>
+            </transition>
+
+            <transition>
+                <source>payment pending next try</source>
+                <target>payment pending</target>
+                <event>pass</event>
             </transition>
 
             <transition>
@@ -100,13 +112,12 @@
 
         <events>
             <event name="start payment" onEnter="true" />
-            <event name="payment paid"/>
-            <event name="payment canceled"/>
-            <event name="payment expired"/>
-            <event name="payment failed"/>
+            <event name="check payment" onEnter="true"/>
             <event name="ready for shipment" onEnter="true"/>
             <event name="ship order" onEnter="true" />
             <event name="confirm delivery" onEnter="true"/>
+            <event name="return to payment pending" timeout="1 minute"/>
+            <event name="pass" onEnter="true"/>
             <event name="close" timeout="5 days"/>
         </events>
 

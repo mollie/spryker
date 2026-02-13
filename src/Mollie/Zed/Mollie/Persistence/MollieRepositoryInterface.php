@@ -7,17 +7,9 @@ namespace Mollie\Zed\Mollie\Persistence;
 use Generated\Shared\Transfer\MollieItemPaymentCaptureTransfer;
 use Generated\Shared\Transfer\MolliePaymentTransfer;
 use Generated\Shared\Transfer\MollieRefundResponseTransfer;
-use Propel\Runtime\Collection\ObjectCollection;
 
 interface MollieRepositoryInterface
 {
-    /**
-     * @param string $paymentId
-     *
-     * @return \Propel\Runtime\Collection\ObjectCollection|null
-     */
-    public function getOrderItemsByPaymentId(string $paymentId): ObjectCollection|null;
-
     /**
      * @param int $fkSalesOrder
      *

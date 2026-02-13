@@ -7,8 +7,6 @@ namespace Mollie\Zed\Mollie\Persistence;
 use Mollie\Service\Mollie\MollieServiceInterface;
 use Mollie\Zed\Mollie\Dependency\Service\MollieToUtilEncodingServiceInterface;
 use Mollie\Zed\Mollie\MollieDependencyProvider;
-use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MollieOrderItemMapper;
-use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MollieOrderItemMapperInterface;
 use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MollieOrderMapper;
 use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MollieOrderMapperInterface;
 use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MolliePaymentCaptureMapper;
