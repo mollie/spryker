@@ -25,7 +25,7 @@ class GetPaymentCaptureApi extends AbstractApiCall
         $molliePaymentCaptureTransfer = $mollieApiRequestTransfer->getPaymentCapture();
 
         $this->request = new GetPaymentCaptureRequest(
-            paymentId: $molliePaymentCaptureTransfer->getPaymentId(),
+            paymentId: $molliePaymentCaptureTransfer->getTransactionId(),
             captureId: $molliePaymentCaptureTransfer->getId(),
         );
 

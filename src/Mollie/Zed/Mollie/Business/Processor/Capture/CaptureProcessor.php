@@ -35,11 +35,11 @@ class CaptureProcessor implements CaptureProcessorInterface
     public function updatePaymentCaptureCollection(MolliePaymentTransfer $molliePaymentTransfer): MolliePaymentCaptureResponseTransfer
     {
         $molliePaymentCaptureResponseTransfer = new MolliePaymentCaptureResponseTransfer();
-        $molliePaymentCollectionTransfer = $this->captureMapper
+        $molliePaymentCaptureCollectionTransfer = $this->captureMapper
             ->mapMollieCapturesArrayToMolliePaymentCaptureCollection($molliePaymentTransfer);
 
-        $this->getTransactionHandler()->handleTransaction(function () use ($molliePaymentCollectionTransfer): void {
-            foreach ($molliePaymentCollectionTransfer->getCaptures() as $molliePaymentCaptureTransfer) {
+        $this->getTransactionHandler()->handleTransaction(function () use ($molliePaymentCaptureCollectionTransfer): void {
+            foreach ($molliePaymentCaptureCollectionTransfer->getCaptures() as $molliePaymentCaptureTransfer) {
                 $this->mollieEntityManager->updateCapture($molliePaymentCaptureTransfer);
             }
         });

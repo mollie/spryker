@@ -19,9 +19,9 @@ use MollieTest\Client\Mollie\AbstractClientTest;
 
 class CreatePaymentApiTest extends AbstractClientTest
 {
- /**
-  * @return void
-  */
+    /**
+     * @return void
+     */
     public function testCreatePaymentApi(): void
     {
         $quoteTransfer = new QuoteTransfer();
@@ -65,9 +65,9 @@ class CreatePaymentApiTest extends AbstractClientTest
         $this->assertEquals('open', $molliePaymentTransfer->getStatus());
     }
 
-      /**
-       * @return \Mollie\Client\Mollie\MollieClientInterface
-       */
+    /**
+     * @return \Mollie\Client\Mollie\MollieClientInterface
+     */
     protected function createClient(): MollieClientInterface
     {
          $mollieFactoryMock = $this->createMollieFactoryMock();
@@ -77,9 +77,9 @@ class CreatePaymentApiTest extends AbstractClientTest
          return $this->createClientMock($mollieFactoryMock);
     }
 
-     /**
-      * @return \Mollie\Api\Fake\MockMollieClient
-      */
+    /**
+     * @return \Mollie\Api\Fake\MockMollieClient
+     */
     public function createMockApiClientForCreatePaymentRequest(): MockMollieClient
     {
         $response = [
