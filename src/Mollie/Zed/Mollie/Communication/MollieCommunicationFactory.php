@@ -12,6 +12,7 @@ use Mollie\Zed\Mollie\Communication\Mapper\MollieCommunicationMapperInterface;
 use Mollie\Zed\Mollie\Communication\Table\MolliePaymentMethodsTable;
 use Mollie\Zed\Mollie\Communication\Table\TableDataProvider\MolliePaymentMethodsDataProvider;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToLocaleFacadeInterface;
+use Mollie\Zed\Mollie\Dependency\Facade\MollieToMailFacadeInterface;
 use Mollie\Zed\Mollie\MollieDependencyProvider;
 use Spryker\Zed\Kernel\Communication\AbstractCommunicationFactory;
 
@@ -76,5 +77,13 @@ class MollieCommunicationFactory extends AbstractCommunicationFactory
     public function getLocaleFacade(): MollieToLocaleFacadeInterface
     {
         return $this->getProvidedDependency(MollieDependencyProvider::FACADE_LOCALE);
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Dependency\Facade\MollieToMailFacadeInterface
+     */
+    public function getMailFacade(): MollieToMailFacadeInterface
+    {
+        return $this->getProvidedDependency(MollieDependencyProvider::FACADE_MAIL);
     }
 }
