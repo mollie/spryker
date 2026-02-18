@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Mollie\Yves\Mollie\Controller;
 
@@ -18,6 +18,8 @@ use Symfony\Component\HttpFoundation\Response;
 class WebhookController extends AbstractController
 {
     use LoggerTrait;
+
+    public const string NO_APPLICABLE_WEBHOOK_HANDLERS_FOUND = 'No applicable webhook handlers found';
 
     /**
      * @param \Symfony\Component\HttpFoundation\Request $request
@@ -38,24 +40,28 @@ class WebhookController extends AbstractController
         $molliePaymentApiResponseTransfer = $this->getClient()->getPaymentByTransactionId($mollieApiRequestTransfer);
 
         if (!$molliePaymentApiResponseTransfer->getIsSuccessful()) {
-            return $this->createWebhookResponseTransfer(
+            return $this->createResponse(
                 Response::HTTP_OK,
                 $molliePaymentApiResponseTransfer->getMessage(),
             );
         }
 
-        foreach ($this->getFactory()->getMollieWebhookHandlerPlugins() as $webhookHandlerPlugin) {
-            if ($webhookHandlerPlugin->isApplicable($molliePaymentApiResponseTransfer->getMolliePayment())) {
-                $webhookResponseTransfer = $webhookHandlerPlugin->handle($molliePaymentApiResponseTransfer->getMolliePayment());
+        $webhookResponseTransfer = (new MollieWebhookResponseTransfer())
+            ->setStatusCode(Response::HTTP_OK)
+            ->setMessage(static::NO_APPLICABLE_WEBHOOK_HANDLERS_FOUND);
 
-                return $this->createResponse(
-                    $webhookResponseTransfer->getStatusCode(),
-                    $webhookResponseTransfer->getMessage(),
-                );
+        foreach ($this->getFactory()->getMollieWebhookHandlerPlugins() as $webhookHandlerPlugin) {
+            if (!$webhookHandlerPlugin->isApplicable($molliePaymentApiResponseTransfer->getMolliePayment())) {
+                continue;
             }
+
+            $webhookResponseTransfer = $webhookHandlerPlugin->handle($molliePaymentApiResponseTransfer->getMolliePayment());
         }
 
-        return $this->createResponse(Response::HTTP_BAD_REQUEST, 'No applicable webhook handler found');
+        return $this->createResponse(
+            $webhookResponseTransfer->getStatusCode(),
+            $webhookResponseTransfer->getMessage(),
+        );
     }
 
     /**

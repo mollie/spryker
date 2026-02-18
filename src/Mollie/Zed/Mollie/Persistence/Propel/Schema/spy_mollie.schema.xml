@@ -53,4 +53,31 @@
         <id-method-parameter value="spy_refund_mollie_pk_seq"/>
     </table>
 
+    <table name="spy_mollie_order_item_payment_capture" phpName="SpyMollieOrderItemPaymentCapture">
+        <column name="id_mollie_order_item_payment_capture" required="true" type="INTEGER" autoIncrement="true" primaryKey="true"/>
+        <column name="fk_sales_order_item" required="true" type="INTEGER"/>
+        <column name="capture_id" type="VARCHAR" size="255"/>
+        <column name="transaction_id" type="VARCHAR" size="255"/>
+        <column name="value" type="VARCHAR" size="32"/>
+        <column name="currency" type="VARCHAR" size="32"/>
+        <column name="status" required="true" type="VARCHAR" size="64"/>
+        <column name="description" type="VARCHAR" size="255"/>
+        <column name="metadata" type="LONGVARCHAR"/>
+
+        <foreign-key name="spy_capture_mollie_order_item-fk_sales_order_item" foreignTable="spy_sales_order_item" phpName="SpySalesOrderItem">
+            <reference foreign="id_sales_order_item" local="fk_sales_order_item"/>
+        </foreign-key>
+
+        <index name="index-spy_capture_mollie_order_item-transaction_id">
+            <index-column name="transaction_id"/>
+        </index>
+
+        <index name="index-spy_capture_mollie_order_item-capture_id">
+            <index-column name="capture_id"/>
+        </index>
+
+        <behavior name="timestampable"/>
+        <id-method-parameter value="spy_capture_mollie_order_item_pk_seq"/>
+    </table>
+
 </database>

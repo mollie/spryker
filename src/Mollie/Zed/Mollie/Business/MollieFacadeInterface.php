@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Mollie\Zed\Mollie\Business;
 
 use Generated\Shared\Transfer\CheckoutResponseTransfer;
+use Generated\Shared\Transfer\MolliePaymentCaptureRequestTransfer;
+use Generated\Shared\Transfer\MolliePaymentCaptureResponseTransfer;
 use Generated\Shared\Transfer\MolliePaymentTransfer;
 use Generated\Shared\Transfer\MollieRefundApiResponseTransfer;
 use Generated\Shared\Transfer\MollieRefundResponseTransfer;
@@ -67,4 +69,62 @@ interface MollieFacadeInterface
      * @return \Generated\Shared\Transfer\MollieRefundResponseTransfer
      */
     public function processRefundData(MolliePaymentTransfer $molliePaymentTransfer): MollieRefundResponseTransfer;
+
+    /**
+     * @param \Generated\Shared\Transfer\MolliePaymentTransfer $molliePaymentTransfer
+     *
+     * @return \Generated\Shared\Transfer\MolliePaymentCaptureResponseTransfer
+     */
+    public function updatePaymentCaptureCollection(MolliePaymentTransfer $molliePaymentTransfer): MolliePaymentCaptureResponseTransfer;
+
+    /**
+     * @param \Generated\Shared\Transfer\MolliePaymentCaptureRequestTransfer $molliePaymentCaptureRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\MolliePaymentCaptureResponseTransfer
+     */
+    public function capturePayment(
+        MolliePaymentCaptureRequestTransfer $molliePaymentCaptureRequestTransfer,
+    ): MolliePaymentCaptureResponseTransfer;
+
+    /**
+     * @param int $idSalesOrder
+     *
+     * @return bool
+     */
+    public function isAuthorizationFailed(int $idSalesOrder): bool;
+
+    /**
+     * @param int $idSalesOrder
+     *
+     * @return bool
+     */
+    public function isAuthorizationCanceled(int $idSalesOrder): bool;
+
+    /**
+     * @param int $idSalesOrder
+     *
+     * @return bool
+     */
+    public function isAuthorizationExpired(int $idSalesOrder): bool;
+
+    /**
+     * @param int $idSalesOrder
+     *
+     * @return bool
+     */
+    public function isAuthorized(int $idSalesOrder): bool;
+
+    /**
+     * @param int $idSalesOrderItem
+     *
+     * @return bool
+     */
+    public function isCaptured(int $idSalesOrderItem): bool;
+
+    /**
+     * @param int $idSalesOrderItem
+     *
+     * @return bool
+     */
+    public function isCaptureFailed(int $idSalesOrderItem): bool;
 }

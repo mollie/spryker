@@ -81,6 +81,47 @@
         <property name="links" type="MollieLinks"/>
     </transfer>
 
+
+    <transfer name="MollieCreateCaptureApiResponse">
+        <property name="isSuccessful" type="bool"/>
+        <property name="message" type="string"/>
+        <property name="paymentCapture" type="MolliePaymentCapture"/>
+    </transfer>
+
+    <transfer name="MollieGetCaptureApiResponse">
+        <property name="isSuccessful" type="bool"/>
+        <property name="message" type="string"/>
+        <property name="paymentCapture" type="MolliePaymentCapture"/>
+    </transfer>
+
+    <transfer name="MolliePaymentCapture">
+        <property name="resource" type="string"/>
+        <property name="id" type="string"/>
+        <property name="transactionId" type="string"/>
+        <property name="mode" type="string"/>
+        <property name="description" type="string"/>
+        <property name="amount" type="MollieAmount"/>
+        <property name="metadata" type="array"/>
+        <property name="status" type="string"/>
+        <property name="createdAt" type="string"/>
+        <property name="links" type="MollieLinks"/>
+    </transfer>
+
+    <transfer name="MollieItemPaymentCapture">
+        <property name="fkSalesOrderItem" type="int"/>
+        <property name="captureId" type="string"/>
+        <property name="transactionId" type="string"/>
+        <property name="description" type="string"/>
+        <property name="value" type="string"/>
+        <property name="currency" type="string"/>
+        <property name="metadata" type="string"/>
+        <property name="status" type="string"/>
+    </transfer>
+
+    <transfer name="MolliePaymentCaptureCollection">
+        <property name="captures" type="MolliePaymentCapture[]" singular="capture"/>
+    </transfer>
+
     <transfer name="MollieRefundApiResponse">
         <property name="isSuccessful" type="bool"/>
         <property name="message" type="string"/>
@@ -103,7 +144,7 @@
     <transfer name="MollieRefundCollection">
         <property name="refunds" type="[]"/>
     </transfer>
-    
+
     <transfer name="MollieRefundSave">
         <property name="item" type="Item"/>
         <property name="description" type="string"/>
@@ -189,6 +230,16 @@
         <property name="molliePaymentMethodQueryParameters" type="MolliePaymentMethodQueryParameters" />
         <property name="transactionId" type="string"/>
         <property name="refund" type="MollieRefund"/>
+        <property name="paymentCapture" type="MolliePaymentCapture"/>
+    </transfer>
+
+    <transfer name="MolliePaymentCaptureRequest">
+        <property name="order" type="Order"/>
+        <property name="items" type="ItemCollection"/>
+    </transfer>
+
+    <transfer name="MolliePaymentCaptureResponse">
+        <property name="isSuccessful" type="bool"/>
     </transfer>
 
     <transfer name="MollieApiResponse">

@@ -5,6 +5,8 @@ declare(strict_types = 1);
 namespace Mollie\Client\Mollie;
 
 use Generated\Shared\Transfer\MollieApiRequestTransfer;
+use Generated\Shared\Transfer\MollieCreateCaptureApiResponseTransfer;
+use Generated\Shared\Transfer\MollieGetCaptureApiResponseTransfer;
 use Generated\Shared\Transfer\MollieGetProfileApiResponseTransfer;
 use Generated\Shared\Transfer\MollieLogApiTransfer;
 use Generated\Shared\Transfer\MolliePaymentApiResponseTransfer;
@@ -123,6 +125,16 @@ class MollieClient extends AbstractClient implements MollieClientInterface
     }
 
     /**
+     * @param \Generated\Shared\Transfer\MolliePaymentTransfer $molliePaymentTransfer
+     *
+     * @return void
+     */
+    public function updatePaymentCaptureCollection(MolliePaymentTransfer $molliePaymentTransfer): void
+    {
+        $this->getFactory()->createZedMollieStub()->updatePaymentCaptureCollection($molliePaymentTransfer);
+    }
+
+    /**
      *  Specification:
      *  - Deletes cache for enabled payment methods API
      *
@@ -165,7 +177,36 @@ class MollieClient extends AbstractClient implements MollieClientInterface
      */
     public function getCurrentProfile(): MollieGetProfileApiResponseTransfer
     {
-        return $this->getFactory()->createGetCurrentProfileApi()->execute();
+        /** @var \Generated\Shared\Transfer\MollieGetProfileApiResponseTransfer $mollieGetProfileApiResponseTransfer */
+        $mollieGetProfileApiResponseTransfer = $this->getFactory()->createGetCurrentProfileApi()->execute();
+
+        return $mollieGetProfileApiResponseTransfer;
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MollieApiRequestTransfer $mollieApiRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieCreateCaptureApiResponseTransfer
+     */
+    public function createCapture(MollieApiRequestTransfer $mollieApiRequestTransfer): MollieCreateCaptureApiResponseTransfer
+    {
+        /** @var \Generated\Shared\Transfer\MollieCreateCaptureApiResponseTransfer $mollieCreateCaptureApiResponseTransfer */
+        $mollieCreateCaptureApiResponseTransfer = $this->getFactory()->createPaymentCaptureApi()->execute($mollieApiRequestTransfer);
+
+        return $mollieCreateCaptureApiResponseTransfer;
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MollieApiRequestTransfer $mollieApiRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieGetCaptureApiResponseTransfer
+     */
+    public function getCapture(MollieApiRequestTransfer $mollieApiRequestTransfer): MollieGetCaptureApiResponseTransfer
+    {
+        /** @var \Generated\Shared\Transfer\MollieGetCaptureApiResponseTransfer $mollieGetCaptureApiResponseTransfer */
+        $mollieGetCaptureApiResponseTransfer = $this->getFactory()->createGetPaymentCaptureApi()->execute($mollieApiRequestTransfer);
+
+        return $mollieGetCaptureApiResponseTransfer;
     }
 
     /**

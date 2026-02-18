@@ -1,21 +1,34 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Mollie\Service\Mollie;
 
+use Generated\Shared\Transfer\MollieAmountTransfer;
+
 interface MollieServiceInterface
 {
+     /**
+      * Calls IntegerToDecimalConverter class from shared layer
+      *
+      * @api
+      *
+      * @param int $value
+      *
+      * @return float
+      */
+    public function convertIntegerToDecimal(int $value): float;
+
     /**
-     * Calls IntegerToDecimalConverter class from shared layer
+     * Converts Spryker integer amount into Mollie amount format
      *
      * @api
      *
      * @param int $value
      *
-     * @return float
+     * @return \Generated\Shared\Transfer\MollieAmountTransfer
      */
-    public function convertIntegerToDecimal(int $value): float;
+    public function convertIntegerToMollieAmount(int $value): MollieAmountTransfer;
 
     /**
      * Calls UrlResolver class from client layer
