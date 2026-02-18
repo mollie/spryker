@@ -177,11 +177,11 @@
        <events>
            <event name="start authorization" timeout=" 1 minute"/>
            <event name="authorize" onEnter="true"/>
-           <event name="check authorization" timeout="5 minute"/>
+           <event name="check authorization" timeout="1 minute"/>
            <event name="check authorization expiry" timeout="1 day"/>
            <event name="start capture" manual="true" command="Mollie/MolliePaymentCapture"/>
            <event name="capture" onEnter="true"/>
-           <event name="check capture" timeout="2 minute"/>
+           <event name="check capture" timeout="1 minute"/>
 
            <event name="ship order" onEnter="true"/>
            <event name="confirm delivery" onEnter="true"/>
