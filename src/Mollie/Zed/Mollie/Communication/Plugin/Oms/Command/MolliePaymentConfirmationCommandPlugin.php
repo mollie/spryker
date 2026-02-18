@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
 
-namespace Mollie\Zed\Mollie\Communication\Plugin\Oms;
+namespace Mollie\Zed\Mollie\Communication\Plugin\Oms\Command;
 
-use Exception;
+use Generated\Shared\Transfer\LocaleTransfer;
 use Generated\Shared\Transfer\OrderTransfer;
+use Generated\Shared\Transfer\TotalsTransfer;
 use Orm\Zed\Sales\Persistence\SpySalesOrder;
 use Spryker\Zed\Kernel\Communication\AbstractPlugin;
 use Spryker\Zed\Oms\Business\Util\ReadOnlyArrayObject;
@@ -14,7 +16,7 @@ use Spryker\Zed\Oms\Dependency\Plugin\Command\CommandByOrderInterface;
  * @method \Mollie\Zed\Mollie\Communication\MollieCommunicationFactory getFactory()
  * @method \Mollie\Zed\Mollie\Business\MollieFacadeInterface getFacade()
  */
-class PaymentConfirmationCommandPlugin extends AbstractPlugin implements CommandByOrderInterface
+class MolliePaymentConfirmationCommandPlugin extends AbstractPlugin implements CommandByOrderInterface
 {
     /**
      * @param array<int, object> $orderItems
@@ -22,16 +24,27 @@ class PaymentConfirmationCommandPlugin extends AbstractPlugin implements Command
      * @param \Spryker\Zed\Oms\Business\Util\ReadOnlyArrayObject $data
      *
      * @return array<int, mixed>
-     * @throws \Exception
-     *
      */
     public function run(array $orderItems, SpySalesOrder $orderEntity, ReadOnlyArrayObject $data): array
     {
+        $localeTransfer = (new LocaleTransfer())
+            ->setIdLocale($orderEntity->getFkLocale());
+
+        $totalsTransfer = (new TotalsTransfer())
+            ->fromArray($orderEntity->getLastOrderTotals()->toArray(), true);
+
         $orderTransfer = (new OrderTransfer())
+            ->setFirstName($orderEntity->getFirstName())
+            ->setLastName($orderEntity->getLastName())
+            ->setOrderReference($orderEntity->getOrderReference())
+            ->setEmail($orderEntity->getEmail())
             ->setIdSalesOrder($orderEntity->getIdSalesOrder())
+            ->setLocale($localeTransfer)
+            ->setTotals($totalsTransfer)
+            ->setCreatedAt($orderEntity->getCreatedAt())
             ->setCurrencyIsoCode($orderEntity->getCurrencyIsoCode());
 
-        $this->getFactory()->getMailFacade()->handleMail($orderTransfer);
+        $this->getFacade()->sendPaymentConfirmationMail($orderTransfer);
 
         return [];
     }

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Mollie\Zed\Mollie\Communication\Plugin\Oms;
+namespace Mollie\Zed\Mollie\Communication\Plugin\Oms\Command;
 
 use Generated\Shared\Transfer\MailRecipientTransfer;
 use Generated\Shared\Transfer\MailTemplateTransfer;
@@ -10,22 +10,22 @@ use Generated\Shared\Transfer\MailTransfer;
 use Spryker\Zed\Kernel\Communication\AbstractPlugin;
 use Spryker\Zed\MailExtension\Dependency\Plugin\MailTypeBuilderPluginInterface;
 
-class PaymentConfirmationMailTypeBuilderPlugin  extends AbstractPlugin implements MailTypeBuilderPluginInterface
+class MolliePaymentConfirmationMailTypeBuilderPlugin extends AbstractPlugin implements MailTypeBuilderPluginInterface
 {
     /**
      * @var string
      */
-    protected const MAIL_TYPE = 'payment confirmation mail';
+    public const MAIL_TYPE = 'payment confirmation mail';
 
     /**
      * @var string
      */
-    protected const MAIL_TEMPLATE_HTML = 'oms/mail/payment_confirmation.html.twig';
+    protected const MAIL_TEMPLATE_HTML = 'mollie/mail/payment_confirmation.html.twig';
 
     /**
      * @var string
      */
-    protected const MAIL_TEMPLATE_TEXT = 'oms/mail/payment_confirmation.text.twig';
+    protected const MAIL_TEMPLATE_TEXT = 'mollie/mail/payment_confirmation.text.twig';
 
     /**
      * @var string
@@ -79,4 +79,3 @@ class PaymentConfirmationMailTypeBuilderPlugin  extends AbstractPlugin implement
             );
     }
 }
-

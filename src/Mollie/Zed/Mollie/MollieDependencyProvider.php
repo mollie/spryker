@@ -73,6 +73,7 @@ class MollieDependencyProvider extends AbstractBundleDependencyProvider
         $container = $this->addStorageClient($container);
         $container = $this->addMollieService($container);
         $container = $this->addLocaleFacade($container);
+        $container = $this->addMailFacade($container);
 
         return $container;
     }
@@ -87,7 +88,6 @@ class MollieDependencyProvider extends AbstractBundleDependencyProvider
         $container = $this->addStorageClient($container);
         $container = $this->addMollieClient($container);
         $container = $this->addLocaleFacade($container);
-        $container = $this->addMailFacade($container);
 
         return $container;
     }

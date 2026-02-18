@@ -67,4 +67,11 @@ interface MollieFacadeInterface
      * @return \Generated\Shared\Transfer\MollieRefundResponseTransfer
      */
     public function processRefundData(MolliePaymentTransfer $molliePaymentTransfer): MollieRefundResponseTransfer;
+
+    /**
+     * @param \Generated\Shared\Transfer\OrderTransfer $orderTransfer
+     *
+     * @return void
+     */
+    public function sendPaymentConfirmationMail(OrderTransfer $orderTransfer): void;
 }

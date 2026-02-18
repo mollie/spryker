@@ -113,7 +113,7 @@
         <events>
             <event name="start payment" onEnter="true" />
             <event name="check payment" onEnter="true"/>
-            <event name="ready for shipment" onEnter="true"/>
+            <event name="ready for shipment" onEnter="true" command="Mollie/PaymentConfirmation"/>
             <event name="ship order" onEnter="true" />
             <event name="confirm delivery" onEnter="true"/>
             <event name="return to payment pending" timeout="1 minute"/>
