@@ -10,7 +10,7 @@
     {{ 'mollie.mail.payment_confirmation.status_success'|trans({}, null, mail.locale.localeName) }}
     ======================
 
-    {{ 'mollie.mail.order_number'|trans({}, null, mail.locale.localeName) }}: {{ mail.order.orderReference }}
+    {{ 'mollie.mail.order_reference'|trans({}, null, mail.locale.localeName) }}: {{ mail.order.orderReference }}
     {{ 'mollie.mail.order_date'|trans({}, null, mail.locale.localeName) }}: {{ mail.order.createdAt|date('d.m.Y H:i') }}
     {{ 'mollie.mail.total_amount'|trans({}, null, mail.locale.localeName) }}: {{ mail.order.totals.grandTotal | money }}
 
