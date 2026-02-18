@@ -9,6 +9,8 @@ use Mollie\Zed\Mollie\Communication\Cache\MollieCacheInvalidator;
 use Mollie\Zed\Mollie\Communication\Cache\MollieCacheInvalidatorInterface;
 use Mollie\Zed\Mollie\Communication\Mapper\MollieCommunicationMapper;
 use Mollie\Zed\Mollie\Communication\Mapper\MollieCommunicationMapperInterface;
+use Mollie\Zed\Mollie\Communication\Mapper\Order\OrderItemMapper;
+use Mollie\Zed\Mollie\Communication\Mapper\Order\OrderItemMapperInterface;
 use Mollie\Zed\Mollie\Communication\Table\MolliePaymentMethodsTable;
 use Mollie\Zed\Mollie\Communication\Table\TableDataProvider\MolliePaymentMethodsDataProvider;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToLocaleFacadeInterface;
@@ -61,6 +63,14 @@ class MollieCommunicationFactory extends AbstractCommunicationFactory
     public function createMollieCommunicationMapper(): MollieCommunicationMapperInterface
     {
         return new MollieCommunicationMapper();
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Communication\Mapper\Order\OrderItemMapperInterface
+     */
+    public function createOrderItemMapper(): OrderItemMapperInterface
+    {
+        return new OrderItemMapper();
     }
 
     /**

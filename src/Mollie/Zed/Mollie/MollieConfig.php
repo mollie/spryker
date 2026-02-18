@@ -1,6 +1,7 @@
 <?php
 
-declare(strict_types=1);
+
+declare(strict_types = 1);
 
 namespace Mollie\Zed\Mollie;
 
@@ -106,5 +107,13 @@ class MollieConfig extends AbstractBundleConfig
     public function isTestMode(): bool
     {
         return $this->get(MollieConstants::MOLLIE)[MollieConstants::MOLLIE_TEST_MODE];
+    }
+
+    /**
+     * @return array<string>
+     */
+    public function getPaymentCaptureStates(): array
+    {
+        return ['capture', 'capture pending'];
     }
 }

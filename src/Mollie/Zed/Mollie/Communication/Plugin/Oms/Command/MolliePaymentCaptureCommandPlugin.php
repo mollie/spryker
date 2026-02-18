@@ -5,8 +5,6 @@ declare(strict_types = 1);
 namespace Mollie\Zed\Mollie\Communication\Plugin\Oms\Command;
 
 use Generated\Shared\Transfer\MolliePaymentCaptureRequestTransfer;
-use Generated\Shared\Transfer\OrderItemFilterTransfer;
-use Generated\Shared\Transfer\OrderTransfer;
 use Orm\Zed\Sales\Persistence\SpySalesOrder;
 use Spryker\Zed\Kernel\Communication\AbstractPlugin;
 use Spryker\Zed\Oms\Business\Util\ReadOnlyArrayObject;
@@ -27,11 +25,14 @@ class MolliePaymentCaptureCommandPlugin extends AbstractPlugin implements Comman
      */
     public function run(array $orderItems, SpySalesOrder $orderEntity, ReadOnlyArrayObject $data): array
     {
-        $orderTransfer = (new OrderTransfer())->fromArray($orderEntity->toArray(), true);
+        $orderTransfer = $this->getFactory()
+            ->getSalesFacade()
+            ->findOrderByIdSalesOrder($orderEntity->getIdSalesOrder());
+
         $orderItemIds = $this->getOrderItemIds($orderItems);
-        $orderItemFilterTransfer = new OrderItemFilterTransfer();
-        $orderItemFilterTransfer->setSalesOrderItemIds($orderItemIds);
-        $itemCollectionTransfer = $this->getFactory()->getSalesFacade()->getOrderItems($orderItemFilterTransfer);
+        $itemCollectionTransfer = $this->getFactory()
+            ->createOrderItemMapper()
+            ->mapOrderTransferToItemCollectionTransfer($orderTransfer, $orderItemIds);
 
         $molliePaymentCaptureRequestTransfer = (new MolliePaymentCaptureRequestTransfer())
             ->setItems($itemCollectionTransfer)

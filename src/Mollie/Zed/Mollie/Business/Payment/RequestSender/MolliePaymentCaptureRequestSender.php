@@ -1,6 +1,5 @@
 <?php
 
-
 declare(strict_types = 1);
 
 namespace Mollie\Zed\Mollie\Business\Payment\RequestSender;
@@ -15,6 +14,7 @@ use Generated\Shared\Transfer\OrderTransfer;
 use Mollie\Client\Mollie\MollieClientInterface;
 use Mollie\Service\Mollie\MollieServiceInterface;
 use Mollie\Zed\Mollie\Business\Mapper\Capture\CaptureMapperInterface;
+use Mollie\Zed\Mollie\MollieConfig;
 use Mollie\Zed\Mollie\Persistence\MollieEntityManagerInterface;
 use Mollie\Zed\Mollie\Persistence\MollieRepositoryInterface;
 use Spryker\Zed\Kernel\Persistence\EntityManager\TransactionTrait;
@@ -29,6 +29,7 @@ class MolliePaymentCaptureRequestSender implements MolliePaymentCaptureRequestSe
      * @param \Mollie\Zed\Mollie\Persistence\MollieRepositoryInterface $mollieRepository
      * @param \Mollie\Zed\Mollie\Persistence\MollieEntityManagerInterface $mollieEntityManager
      * @param \Mollie\Zed\Mollie\Business\Mapper\Capture\CaptureMapperInterface $captureMapper
+     * @param \Mollie\Zed\Mollie\MollieConfig $mollieConfig
      */
     public function __construct(
         protected MollieClientInterface $mollieClient,
@@ -36,6 +37,7 @@ class MolliePaymentCaptureRequestSender implements MolliePaymentCaptureRequestSe
         protected MollieRepositoryInterface $mollieRepository,
         protected MollieEntityManagerInterface $mollieEntityManager,
         protected CaptureMapperInterface $captureMapper,
+        protected MollieConfig $mollieConfig,
     ) {
     }
 
@@ -53,7 +55,7 @@ class MolliePaymentCaptureRequestSender implements MolliePaymentCaptureRequestSe
         $itemCollectionTransfer = $molliePaymentCaptureRequestTransfer->getItems();
         $orderTransfer = $molliePaymentCaptureRequestTransfer->getOrder();
 
-        $mollieAmountTransfer = $this->getCaptureAmount($itemCollectionTransfer);
+        $mollieAmountTransfer = $this->getCaptureAmount($itemCollectionTransfer, $orderTransfer);
         $mollieAmountTransfer->setCurrency($orderTransfer->getCurrencyIsoCode());
 
         $molliePaymentTransfer = $this->mollieRepository->getPaymentByFkSalesOrder($orderTransfer->getIdSalesOrder());
@@ -108,17 +110,61 @@ class MolliePaymentCaptureRequestSender implements MolliePaymentCaptureRequestSe
 
     /**
      * @param \Generated\Shared\Transfer\ItemCollectionTransfer $itemCollectionTransfer
+     * @param \Generated\Shared\Transfer\OrderTransfer $orderTransfer
      *
      * @return \Generated\Shared\Transfer\MollieAmountTransfer
      */
-    protected function getCaptureAmount(ItemCollectionTransfer $itemCollectionTransfer): MollieAmountTransfer
-    {
+    protected function getCaptureAmount(
+        ItemCollectionTransfer $itemCollectionTransfer,
+        OrderTransfer $orderTransfer,
+    ): MollieAmountTransfer {
         $captureAmount = 0;
         foreach ($itemCollectionTransfer->getItems() as $itemTransfer) {
             $captureAmount += $itemTransfer->getSumPriceToPayAggregation();
         }
 
+        $captureAmount += $this->getExpensesCost($orderTransfer);
+
         return $this->mollieService->convertIntegerToMollieAmount($captureAmount);
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\OrderTransfer $orderTransfer
+     *
+     * @return int
+     */
+    protected function getExpensesCost(OrderTransfer $orderTransfer): int
+    {
+        $expensesCost = 0;
+
+        if ($this->hasCaptureForOrderBeenRequestedAtLeastOnce($orderTransfer)) {
+            return $expensesCost;
+        }
+
+        foreach ($orderTransfer->getExpenses() as $expenseTransfer) {
+            $expensesCost += $expenseTransfer->getSumPriceToPayAggregation();
+        }
+
+        return $expensesCost;
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\OrderTransfer $orderTransfer
+     *
+     * @return bool
+     */
+    protected function hasCaptureForOrderBeenRequestedAtLeastOnce(OrderTransfer $orderTransfer): bool
+    {
+        foreach ($orderTransfer->getItems() as $itemTransfer) {
+            foreach ($itemTransfer->getStateHistory() as $itemStateTransfer) {
+                $captureStates = $this->mollieConfig->getPaymentCaptureStates();
+                if (in_array($itemStateTransfer->getName(), $captureStates, true)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     /**
