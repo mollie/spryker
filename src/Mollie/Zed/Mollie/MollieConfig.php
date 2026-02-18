@@ -114,6 +114,6 @@ class MollieConfig extends AbstractBundleConfig
      */
     public function getPaymentCaptureStates(): array
     {
-        return ['capture', 'capture pending'];
+        return ['captured', 'capture pending'];
     }
 }
