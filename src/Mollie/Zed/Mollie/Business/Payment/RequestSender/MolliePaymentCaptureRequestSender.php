@@ -94,15 +94,7 @@ class MolliePaymentCaptureRequestSender implements MolliePaymentCaptureRequestSe
                 $mollieItemPaymentCaptureTransfer = $this->captureMapper
                     ->mapPaymentCaptureToItemPaymentCaptureTransfer($molliePaymentCaptureTransfer);
 
-                $amountTransfer = $this->mollieService->convertIntegerToMollieAmount(
-                    $itemTransfer->getSumPriceToPayAggregation(),
-                );
-
-                $mollieItemPaymentCaptureTransfer
-                    ->setCurrency($itemTransfer->getCurrencyIsoCode())
-                    ->setValue($amountTransfer->getValue())
-                    ->setFkSalesOrderItem($itemTransfer->getIdSalesOrderItem());
-
+                $mollieItemPaymentCaptureTransfer->setFkSalesOrderItem($itemTransfer->getIdSalesOrderItem());
                 $this->mollieEntityManager->createCapture($mollieItemPaymentCaptureTransfer);
             }
         });
