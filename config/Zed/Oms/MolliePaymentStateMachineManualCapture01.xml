@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="utf-8"?>
+<statemachine
+        xmlns="http://static.spryker.com"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://static.spryker.com http://static.spryker.com/oms-01.xsd">
+
+    <process name="MolliePaymentStateMachineManualCapture01" main="true">
+        <subprocesses>
+            <process>MollieRefund</process>
+        </subprocesses>
+
+        <states>
+            <state name="new" reserved="true"/>
+            <state name="authorization pending" reserved="true" display="oms.state.authorization-pending"/>
+            <state name="authorization pending next try" reserved="true" display="oms.state.authorization-pending-next-retry"/>
+            <state name="authorized" reserved="true" display="oms.state.authorized"/>
+            <state name="capture pending" reserved="true" display="oms.state.capture-pending"/>
+            <state name="capture pending next try" reserved="true" display="oms.state.capture-pending-next-retry"/>
+            <state name="captured" reserved="true" display="oms.state.captured"/>
+            <state name="shipped" display="oms.state.shipped"/>
+            <state name="delivered" display="oms.state.delivered"/>
+
+            <!-- Failure/Cancel states -->
+            <state name="authorization failed" display="oms.state.authorization-failed"/>
+            <state name="authorization expired" display="oms.state.authorization-expired"/>
+            <state name="authorized check expiry" display="oms.state.authorization-check-expiry"/>
+            <state name="authorization canceled" display="oms.state.authorization-canceled"/>
+            <state name="capture failed" display="oms.state.capture-failed"/>
+            <state name="closed" display="oms.state.closed"/>
+        </states>
+
+        <transitions>
+
+            <transition happy="true">
+                <source>new</source>
+                <target>authorization pending</target>
+                <event>start authorization</event>
+            </transition>
+
+            <!-- Immediate check for success (happy path) -->
+            <transition happy="true" condition="Mollie/IsAuthorized">
+                <source>authorization pending</source>
+                <target>authorized</target>
+                <event>authorize</event>
+            </transition>
+
+            <!-- Periodic checks for failures (every 5 minutes) -->
+            <transition condition="Mollie/IsAuthorizationFailed">
+                <source>authorization pending</source>
+                <target>authorization failed</target>
+                <event>check authorization</event>
+            </transition>
+
+            <transition condition="Mollie/IsAuthorizationExpired">
+                <source>authorization pending</source>
+                <target>authorization expired</target>
+                <event>check authorization</event>
+            </transition>
+
+            <transition condition="Mollie/IsAuthorizationCanceled">
+                <source>authorization pending</source>
+                <target>authorization canceled</target>
+                <event>check authorization</event>
+            </transition>
+
+            <!-- Still pending - retry -->
+            <transition>
+                <source>authorization pending</source>
+                <target>authorization pending next try</target>
+                <event>check authorization</event>
+            </transition>
+
+            <!-- Loop back to retry -->
+            <transition happy="true">
+                <source>authorization pending next try</source>
+                <target>authorization pending</target>
+                <event>pass</event>
+            </transition>
+
+            <transition happy="true">
+                <source>authorized</source>
+                <target>capture pending</target>
+                <event>start capture</event>
+            </transition>
+
+            <transition condition="Mollie/IsAuthorizationExpired">
+                <source>authorized</source>
+                <target>authorization expired</target>
+                <event>check authorization expiry</event>  <!-- 1 day check -->
+            </transition>
+
+            <transition>
+                <source>authorized</source>
+                <target>authorized check expiry</target>
+                <event>check authorization expiry</event>
+            </transition>
+
+            <transition happy="true">
+                <source>authorized check expiry</source>
+                <target>authorized</target>
+                <event>pass</event>
+            </transition>
+
+            <!-- Immediate check for capture success (happy path) -->
+            <transition happy="true" condition="Mollie/IsCaptured">
+                <source>capture pending</source>
+                <target>captured</target>
+                <event>capture</event>
+            </transition>
+
+            <!-- Periodic check for capture failure -->
+            <transition condition="Mollie/IsCaptureFailed">
+                <source>capture pending</source>
+                <target>capture failed</target>
+                <event>check capture</event>
+            </transition>
+
+            <!-- Still pending - retry -->
+            <transition>
+                <source>capture pending</source>
+                <target>capture pending next try</target>
+                <event>check capture</event>
+            </transition>
+
+            <!-- Loop back to retry -->
+            <transition happy="true">
+                <source>capture pending next try</source>
+                <target>capture pending</target>
+                <event>pass</event>
+            </transition>
+
+            <transition happy="true">
+                <source>captured</source>
+                <target>shipped</target>
+                <event>ship order</event>
+            </transition>
+
+            <transition happy="true">
+                <source>shipped</source>
+                <target>delivered</target>
+                <event>confirm delivery</event>
+            </transition>
+
+            <transition happy="true">
+                <source>delivered</source>
+                <target>closed</target>
+                <event>close</event>
+            </transition>
+
+            <!-- Close all failure states -->
+            <transition>
+                <source>authorization canceled</source>
+                <target>closed</target>
+                <event>close</event>
+            </transition>
+
+            <transition>
+                <source>authorization failed</source>
+                <target>closed</target>
+                <event>close</event>
+            </transition>
+
+            <transition>
+                <source>authorization expired</source>
+                <target>closed</target>
+                <event>close</event>
+            </transition>
+
+            <transition>
+                <source>capture failed</source>
+                <target>closed</target>
+                <event>close</event>
+            </transition>
+
+        </transitions>
+
+       <events>
+           <event name="start authorization" timeout=" 1 minute"/>
+           <event name="authorize" onEnter="true"/>
+           <event name="check authorization" timeout="1 minute"/>
+           <event name="check authorization expiry" timeout="1 day"/>
+           <event name="start capture" manual="true" command="Mollie/MolliePaymentCapture"/>
+           <event name="capture" onEnter="true"/>
+           <event name="check capture" timeout="1 minute"/>
+
+           <event name="ship order" onEnter="true" command="Mollie/PaymentConfirmation"/>
+           <event name="confirm delivery" onEnter="true"/>
+
+           <event name="close" timeout="5 days"/>
+           <event name="pass" onEnter="true"/>
+    </events>
+
+    </process>
+
+    <process name="MollieRefund" file="RefundSubprocess/Refund01.xml"/>
+
+</statemachine>

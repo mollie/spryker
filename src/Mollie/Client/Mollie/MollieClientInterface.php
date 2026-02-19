@@ -1,9 +1,12 @@
 <?php
+
 declare(strict_types = 1);
 
 namespace Mollie\Client\Mollie;
 
 use Generated\Shared\Transfer\MollieApiRequestTransfer;
+use Generated\Shared\Transfer\MollieCreateCaptureApiResponseTransfer;
+use Generated\Shared\Transfer\MollieGetCaptureApiResponseTransfer;
 use Generated\Shared\Transfer\MollieGetProfileApiResponseTransfer;
 use Generated\Shared\Transfer\MollieLogApiTransfer;
 use Generated\Shared\Transfer\MolliePaymentApiResponseTransfer;
@@ -103,6 +106,28 @@ interface MollieClientInterface
 
     /**
      * Specification:
+     *
+     * - Captures the payment
+     *
+     * @param \Generated\Shared\Transfer\MollieApiRequestTransfer $mollieApiRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieCreateCaptureApiResponseTransfer
+     */
+    public function createCapture(MollieApiRequestTransfer $mollieApiRequestTransfer): MollieCreateCaptureApiResponseTransfer;
+
+    /**
+     *  Specification:
+     *
+     *  - Gets capture payment details
+     *
+     * @param \Generated\Shared\Transfer\MollieApiRequestTransfer $mollieApiRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieGetCaptureApiResponseTransfer
+     */
+    public function getCapture(MollieApiRequestTransfer $mollieApiRequestTransfer): MollieGetCaptureApiResponseTransfer;
+
+    /**
+     * Specification:
      * - Deletes cache for enabled payment methods API
      *
      * @api
@@ -158,4 +183,11 @@ interface MollieClientInterface
      * @return void
      */
     public function logMessage(MollieLogApiTransfer $mollieLogApiTransfer): void;
+
+    /**
+     * @param \Generated\Shared\Transfer\MolliePaymentTransfer $molliePaymentTransfer
+     *
+     * @return void
+     */
+    public function updatePaymentCaptureCollection(MolliePaymentTransfer $molliePaymentTransfer): void;
 }

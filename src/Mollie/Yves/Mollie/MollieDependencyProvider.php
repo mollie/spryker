@@ -12,6 +12,7 @@ use Mollie\Yves\Mollie\Dependency\Client\MollieToQuoteClientInterface;
 use Mollie\Yves\Mollie\Dependency\Client\MollieToStorageClientBridge;
 use Mollie\Yves\Mollie\Dependency\Client\MollieToStorageClientInterface;
 use Mollie\Yves\Mollie\Dependency\Service\MollieToUtilEncodingServiceBridge;
+use Mollie\Yves\Mollie\Plugin\Webhook\MollieCaptureWebhookHandlerPlugin;
 use Mollie\Yves\Mollie\Plugin\Webhook\MolliePaymentWebhookHandlerPlugin;
 use Mollie\Yves\Mollie\Plugin\Webhook\MollieRefundWebhookHandlerPlugin;
 use Spryker\Yves\Kernel\AbstractBundleDependencyProvider;
@@ -151,6 +152,7 @@ class MollieDependencyProvider extends AbstractBundleDependencyProvider
         return [
             new MollieRefundWebhookHandlerPlugin(),
             new MolliePaymentWebhookHandlerPlugin(),
+            new MollieCaptureWebhookHandlerPlugin(),
         ];
     }
 

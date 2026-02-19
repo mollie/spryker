@@ -54,6 +54,7 @@ class GetPaymentByTransactionIdApi extends AbstractApiCall
     {
         $this->request = new GetPaymentRequest(
             $mollieApiRequestTransfer->getTransactionId(),
+            embedCaptures: true,
             embedRefunds: true,
         );
 

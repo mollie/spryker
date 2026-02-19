@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Mollie\Zed\Mollie\Communication;
 
@@ -9,10 +9,13 @@ use Mollie\Zed\Mollie\Communication\Cache\MollieCacheInvalidator;
 use Mollie\Zed\Mollie\Communication\Cache\MollieCacheInvalidatorInterface;
 use Mollie\Zed\Mollie\Communication\Mapper\MollieCommunicationMapper;
 use Mollie\Zed\Mollie\Communication\Mapper\MollieCommunicationMapperInterface;
+use Mollie\Zed\Mollie\Communication\Mapper\Order\OrderItemMapper;
+use Mollie\Zed\Mollie\Communication\Mapper\Order\OrderItemMapperInterface;
 use Mollie\Zed\Mollie\Communication\Table\MolliePaymentMethodsTable;
 use Mollie\Zed\Mollie\Communication\Table\TableDataProvider\MolliePaymentMethodsDataProvider;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToLocaleFacadeInterface;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToMailFacadeInterface;
+use Mollie\Zed\Mollie\Dependency\Facade\MollieToSalesFacadeInterface;
 use Mollie\Zed\Mollie\MollieDependencyProvider;
 use Spryker\Zed\Kernel\Communication\AbstractCommunicationFactory;
 
@@ -64,6 +67,14 @@ class MollieCommunicationFactory extends AbstractCommunicationFactory
     }
 
     /**
+     * @return \Mollie\Zed\Mollie\Communication\Mapper\Order\OrderItemMapperInterface
+     */
+    public function createOrderItemMapper(): OrderItemMapperInterface
+    {
+        return new OrderItemMapper();
+    }
+
+    /**
      * @return \Mollie\Client\Mollie\MollieClientInterface
      */
     public function getMollieClient(): MollieClientInterface
@@ -85,5 +96,13 @@ class MollieCommunicationFactory extends AbstractCommunicationFactory
     public function getMailFacade(): MollieToMailFacadeInterface
     {
         return $this->getProvidedDependency(MollieDependencyProvider::FACADE_MAIL);
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Dependency\Facade\MollieToSalesFacadeInterface
+     */
+    public function getSalesFacade(): MollieToSalesFacadeInterface
+    {
+        return $this->getProvidedDependency(MollieDependencyProvider::FACADE_SALES);
     }
 }

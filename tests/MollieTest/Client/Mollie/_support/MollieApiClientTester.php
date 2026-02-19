@@ -48,6 +48,16 @@ class MollieApiClientTester extends Actor
     protected const MOLLIE_MOCKED_REFUND_TRANSACTION_RESPONSE_PAYLOAD = '{"resource":"refund","id":"re_yuj7TaDpm877xZQzP8ULJ","mode":"live","amount":{"value":"307.85","currency":"EUR"},"description":"Order #12345","metadata":{"order_id":12345},"status":"refunded","createdAt":"2026-01-30T09:13:37+00:00","paymentId":"tr_7FQgLEW7ECECKWStSwTLJ","settlementAmount":{"value":"307.85","currency":"EUR"},"_links":{"self":{"href":"...","type":"application/hal+json"},"payment":{"href":"...","type":"application/hal+json"},"documentation":{"href":"...","type":"text/html"}}}';
 
     /**
+     * @var string
+     */
+    protected const MOLLIE_MOCKED_CREATE_CAPTURE_RESPONSE_PAYLOAD = '{"resource":"capture","id":"cpt_vytxeTZskVKR7C7WgdSP3d","mode":"live","description":"Capture for cart #12345","amount":{"currency":"EUR","value":"35.95"},"metadata":{"bookkeeping_id":12345},"status":"pending","paymentId":"tr_5B8cwPMGnU6qLbRvo7qEZo","createdAt":"2023-08-02T09:29:56+00:00","_links":{"self":{"href":"...","type":"application/hal+json"},"payment":{"href":"https://api.mollie.com/v2/payments/tr_5B8cwPMGnU6qLbRvo7qEZo","type":"application/hal+json"},"documentation":{"href":"...","type":"text/html"}}}';
+
+    /**
+     * @var string
+     */
+    protected const MOLLIE_MOCKED_GET_CAPTURE_RESPONSE_PAYLOAD = '{"resource":"capture","id":"cpt_vytxeTZskVKR7C7WgdSP3d","mode":"live","description":"Capture for cart #12345","amount":{"currency":"EUR","value":"35.95"},"metadata":{"bookkeeping_id":12345},"status":"pending","paymentId":"tr_5B8cwPMGnU6qLbRvo7qEZo","createdAt":"2023-08-02T09:29:56+00:00","_links":{"self":{"href":"...","type":"application/hal+json"},"payment":{"href":"https://api.mollie.com/v2/payments/tr_5B8cwPMGnU6qLbRvo7qEZo","type":"application/hal+json"},"documentation":{"href":"...","type":"text/html"}}}';
+
+    /**
      * @return string
      */
     public function getMollieMockedEnabledPaymentMethodResponsePayload(): string
@@ -77,5 +87,21 @@ class MollieApiClientTester extends Actor
     public function getMollieMockedRefundTransactionResponsePayload(): string
     {
         return static::MOLLIE_MOCKED_REFUND_TRANSACTION_RESPONSE_PAYLOAD;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMollieMockedCreateCaptureResponsePayload(): string
+    {
+        return static::MOLLIE_MOCKED_CREATE_CAPTURE_RESPONSE_PAYLOAD;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMollieMockedGetCaptureResponsePayload(): string
+    {
+        return static::MOLLIE_MOCKED_GET_CAPTURE_RESPONSE_PAYLOAD;
     }
 }

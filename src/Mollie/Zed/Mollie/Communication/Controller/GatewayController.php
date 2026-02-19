@@ -2,6 +2,7 @@
 
 namespace Mollie\Zed\Mollie\Communication\Controller;
 
+use Generated\Shared\Transfer\MolliePaymentCaptureResponseTransfer;
 use Generated\Shared\Transfer\MolliePaymentTransfer;
 use Generated\Shared\Transfer\MollieRefundResponseTransfer;
 use Generated\Shared\Transfer\OrderCollectionRequestTransfer;
@@ -32,5 +33,15 @@ class GatewayController extends AbstractGatewayController
     public function processRefundDataAction(MolliePaymentTransfer $molliePaymentTransfer): MollieRefundResponseTransfer
     {
         return $this->getFacade()->processRefundData($molliePaymentTransfer);
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MolliePaymentTransfer $molliePaymentTransfer
+     *
+     * @return \Generated\Shared\Transfer\MolliePaymentCaptureResponseTransfer
+     */
+    public function updatePaymentCaptureCollectionAction(MolliePaymentTransfer $molliePaymentTransfer): MolliePaymentCaptureResponseTransfer
+    {
+        return $this->getFacade()->updatePaymentCaptureCollection($molliePaymentTransfer);
     }
 }

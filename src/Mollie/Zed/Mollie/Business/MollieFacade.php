@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Mollie\Zed\Mollie\Business;
 
 use Generated\Shared\Transfer\CheckoutResponseTransfer;
+use Generated\Shared\Transfer\MolliePaymentCaptureRequestTransfer;
+use Generated\Shared\Transfer\MolliePaymentCaptureResponseTransfer;
 use Generated\Shared\Transfer\MolliePaymentTransfer;
 use Generated\Shared\Transfer\MollieRefundApiResponseTransfer;
 use Generated\Shared\Transfer\MollieRefundResponseTransfer;
@@ -90,6 +92,87 @@ class MollieFacade extends AbstractFacade implements MollieFacadeInterface
     public function processRefundData(MolliePaymentTransfer $molliePaymentTransfer): MollieRefundResponseTransfer
     {
         return $this->getFactory()->createRefundProcessor()->processRefundData($molliePaymentTransfer);
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MolliePaymentCaptureRequestTransfer $molliePaymentCaptureRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\MolliePaymentCaptureResponseTransfer
+     */
+    public function capturePayment(
+        MolliePaymentCaptureRequestTransfer $molliePaymentCaptureRequestTransfer,
+    ): MolliePaymentCaptureResponseTransfer {
+        return $this->getFactory()->createMolliePaymentCaptureRequestSender()->capturePayment($molliePaymentCaptureRequestTransfer);
+    }
+
+    /**
+     * @param int $idSalesOrder
+     *
+     * @return bool
+     */
+    public function isAuthorizationFailed(int $idSalesOrder): bool
+    {
+        return $this->getFactory()->createMolliePaymentStatusHandler()->isAuthorizationFailed($idSalesOrder);
+    }
+
+    /**
+     * @param int $idSalesOrder
+     *
+     * @return bool
+     */
+    public function isAuthorizationCanceled(int $idSalesOrder): bool
+    {
+        return $this->getFactory()->createMolliePaymentStatusHandler()->isAuthorizationCanceled($idSalesOrder);
+    }
+
+    /**
+     * @param int $idSalesOrder
+     *
+     * @return bool
+     */
+    public function isAuthorizationExpired(int $idSalesOrder): bool
+    {
+        return $this->getFactory()->createMolliePaymentStatusHandler()->isAuthorizationExpired($idSalesOrder);
+    }
+
+    /**
+     * @param int $idSalesOrder
+     *
+     * @return bool
+     */
+    public function isAuthorized(int $idSalesOrder): bool
+    {
+        return $this->getFactory()->createMolliePaymentStatusHandler()->isAuthorized($idSalesOrder);
+    }
+
+    /**
+     * @param int $idSalesOrderItem
+     *
+     * @return bool
+     */
+    public function isCaptured(int $idSalesOrderItem): bool
+    {
+        return $this->getFactory()->createMolliePaymentStatusHandler()->isCaptured($idSalesOrderItem);
+    }
+
+    /**
+     * @param int $idSalesOrderItem
+     *
+     * @return bool
+     */
+    public function isCaptureFailed(int $idSalesOrderItem): bool
+    {
+        return $this->getFactory()->createMolliePaymentStatusHandler()->isCaptureFailed($idSalesOrderItem);
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MolliePaymentTransfer $molliePaymentTransfer
+     *
+     * @return \Generated\Shared\Transfer\MolliePaymentCaptureResponseTransfer
+     */
+    public function updatePaymentCaptureCollection(MolliePaymentTransfer $molliePaymentTransfer): MolliePaymentCaptureResponseTransfer
+    {
+        return $this->getFactory()->createCaptureProcessor()->updatePaymentCaptureCollection($molliePaymentTransfer);
     }
 
     /**

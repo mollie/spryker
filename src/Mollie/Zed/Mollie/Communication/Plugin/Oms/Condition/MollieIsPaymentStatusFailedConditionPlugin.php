@@ -24,7 +24,7 @@ class MollieIsPaymentStatusFailedConditionPlugin extends AbstractPlugin implemen
      */
     public function check(SpySalesOrderItem $orderItem): bool
     {
-        $payment = $this->getRepository()->getPaymentByOrderId($orderItem->getFkSalesOrder());
+        $payment = $this->getRepository()->getPaymentByFkSalesOrder($orderItem->getFkSalesOrder());
 
         return $payment->getStatus() === static::PAYMENT_STATUS_FAILED;
     }

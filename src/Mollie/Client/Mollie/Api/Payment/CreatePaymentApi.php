@@ -80,6 +80,7 @@ class CreatePaymentApi extends AbstractApiCall
             method: $method,
             metadata: $metadata,
             additional: $additionalParameters,
+            captureMode: $this->getCaptureModeForMethod($method),
         );
 
         return $this->request;
@@ -131,10 +132,9 @@ class CreatePaymentApi extends AbstractApiCall
      */
     protected function convertAmountToString(int $amount): string
     {
-        $amount = $this->mollieService->convertIntegerToDecimal($amount);
-        $amount = number_format($amount, 2, '.', '');
+        $mollieAmountTransfer = $this->mollieService->convertIntegerToMollieAmount($amount);
 
-        return $amount;
+        return $mollieAmountTransfer->getValue();
     }
 
     /**
@@ -198,5 +198,20 @@ class CreatePaymentApi extends AbstractApiCall
         $requestBody = $payload->all();
 
         return $requestBody;
+    }
+
+    /**
+     * @param string $method
+     *
+     * @return string
+     */
+    protected function getCaptureModeForMethod(string $method): string
+    {
+        $molliePaymentMethodsManualCapture = $this->mollieConfig->getMolliePaymentMethodsManualCapture();
+        if (in_array($method, $molliePaymentMethodsManualCapture)) {
+            return $this->mollieConfig->getMollieManualCaptureMode();
+        }
+
+        return $this->mollieConfig->getMollieAutomaticCaptureMode();
     }
 }

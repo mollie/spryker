@@ -7,6 +7,8 @@ namespace Mollie\Client\Mollie;
 
 use Mollie\Api\MollieApiClient;
 use Mollie\Client\Mollie\Api\ApiCallInterface;
+use Mollie\Client\Mollie\Api\Capture\CreatePaymentCaptureApi;
+use Mollie\Client\Mollie\Api\Capture\GetPaymentCaptureApi;
 use Mollie\Client\Mollie\Api\Payment\CreatePaymentApi;
 use Mollie\Client\Mollie\Api\Payment\GetAllPaymentMethodsApi;
 use Mollie\Client\Mollie\Api\Payment\GetEnabledPaymentMethodsApi;
@@ -131,6 +133,19 @@ class MollieFactory extends AbstractFactory
     /**
      * @return \Mollie\Client\Mollie\Api\ApiCallInterface
      */
+    public function createGetPaymentCaptureApi(): ApiCallInterface
+    {
+        return new GetPaymentCaptureApi(
+            $this->createMollieApiClient(),
+            $this->getConfig(),
+            $this->getUtilEncodingService(),
+            $this->createMollieLogger(),
+        );
+    }
+
+    /**
+     * @return \Mollie\Client\Mollie\Api\ApiCallInterface
+     */
     public function createPaymentApi(): ApiCallInterface
     {
         return new CreatePaymentApi(
@@ -139,6 +154,19 @@ class MollieFactory extends AbstractFactory
             $this->getUtilEncodingService(),
             $this->createMollieLogger(),
             $this->getMollieService(),
+        );
+    }
+
+    /**
+     * @return \Mollie\Client\Mollie\Api\ApiCallInterface
+     */
+    public function createPaymentCaptureApi(): ApiCallInterface
+    {
+        return new CreatePaymentCaptureApi(
+            $this->createMollieApiClient(),
+            $this->getConfig(),
+            $this->getUtilEncodingService(),
+            $this->createMollieLogger(),
         );
     }
 

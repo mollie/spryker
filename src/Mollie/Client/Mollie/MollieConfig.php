@@ -67,10 +67,20 @@ class MollieConfig extends AbstractBundleConfig
      */
     protected const CACHE_KEY_PREFIX_FOR_ALL_PAYMENT_METHODS = 'all_payment_methods';
 
-     /**
-      * @var string
-      */
+    /**
+     * @var string
+     */
     protected const CACHE_KEY_PREFIX_FOR_ENABLED_PAYMENT_METHODS = 'enabled_payment_methods';
+
+    /**
+     * @var string
+     */
+    protected const MOLLIE_AUTOMATIC_CAPTURE_MODE = 'automatic';
+
+    /**
+     * @var string
+     */
+    protected const MOLLIE_MANUAL_CAPTURE_MODE = 'manual';
 
     /**
      * @return string
@@ -102,6 +112,14 @@ class MollieConfig extends AbstractBundleConfig
     public function getMollieOmsToPaymentMethodMapping(): array
     {
         return $this->get(MollieConstants::MOLLIE)[MollieConstants::MOLLIE_OMS_TO_PAYMENT_METHOD_MAPPING];
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public function getMolliePaymentMethodsManualCapture(): array
+    {
+        return $this->get(MollieConstants::MOLLIE)[MollieConstants::MOLLIE_PAYMENT_METHOD_MANUAL_CAPTURE];
     }
 
     /**
@@ -170,5 +188,21 @@ class MollieConfig extends AbstractBundleConfig
     public function getCacheKeyPrefixForEnabledPaymentMethods(): string
     {
         return static::CACHE_KEY_PREFIX_FOR_ENABLED_PAYMENT_METHODS;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMollieAutomaticCaptureMode(): string
+    {
+        return static::MOLLIE_AUTOMATIC_CAPTURE_MODE;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMollieManualCaptureMode(): string
+    {
+        return static::MOLLIE_MANUAL_CAPTURE_MODE;
     }
 }
