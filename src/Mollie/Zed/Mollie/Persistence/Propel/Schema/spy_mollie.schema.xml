@@ -58,8 +58,6 @@
         <column name="fk_sales_order_item" required="true" type="INTEGER"/>
         <column name="capture_id" type="VARCHAR" size="255"/>
         <column name="transaction_id" type="VARCHAR" size="255"/>
-        <column name="value" type="VARCHAR" size="32"/>
-        <column name="currency" type="VARCHAR" size="32"/>
         <column name="status" required="true" type="VARCHAR" size="64"/>
         <column name="description" type="VARCHAR" size="255"/>
         <column name="metadata" type="LONGVARCHAR"/>

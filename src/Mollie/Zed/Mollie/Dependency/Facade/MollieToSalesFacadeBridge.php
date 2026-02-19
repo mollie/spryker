@@ -4,8 +4,7 @@ declare(strict_types = 1);
 
 namespace Mollie\Zed\Mollie\Dependency\Facade;
 
-use Generated\Shared\Transfer\ItemCollectionTransfer;
-use Generated\Shared\Transfer\OrderItemFilterTransfer;
+use Generated\Shared\Transfer\OrderTransfer;
 use Spryker\Zed\Sales\Business\SalesFacadeInterface;
 
 class MollieToSalesFacadeBridge implements MollieToSalesFacadeInterface
@@ -21,12 +20,12 @@ class MollieToSalesFacadeBridge implements MollieToSalesFacadeInterface
     }
 
     /**
-     * @param \Generated\Shared\Transfer\OrderItemFilterTransfer $orderItemFilterTransfer
+     * @param int $idSalesOrder
      *
-     * @return \Generated\Shared\Transfer\ItemCollectionTransfer
+     * @return \Generated\Shared\Transfer\OrderTransfer
      */
-    public function getOrderItems(OrderItemFilterTransfer $orderItemFilterTransfer): ItemCollectionTransfer
+    public function findOrderByIdSalesOrder(int $idSalesOrder): OrderTransfer
     {
-        return $this->salesFacade->getOrderItems($orderItemFilterTransfer);
+        return $this->salesFacade->findOrderByIdSalesOrder($idSalesOrder);
     }
 }

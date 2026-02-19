@@ -4,15 +4,14 @@ declare(strict_types = 1);
 
 namespace Mollie\Zed\Mollie\Dependency\Facade;
 
-use Generated\Shared\Transfer\ItemCollectionTransfer;
-use Generated\Shared\Transfer\OrderItemFilterTransfer;
+use Generated\Shared\Transfer\OrderTransfer;
 
 interface MollieToSalesFacadeInterface
 {
-/**
- * @param \Generated\Shared\Transfer\OrderItemFilterTransfer $orderItemFilterTransfer
- *
- * @return \Generated\Shared\Transfer\ItemCollectionTransfer
- */
-    public function getOrderItems(OrderItemFilterTransfer $orderItemFilterTransfer): ItemCollectionTransfer;
+    /**
+     * @param int $idSalesOrder
+     *
+     * @return \Generated\Shared\Transfer\OrderTransfer
+     */
+    public function findOrderByIdSalesOrder(int $idSalesOrder): OrderTransfer;
 }

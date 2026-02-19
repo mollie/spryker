@@ -128,6 +128,7 @@ class MollieBusinessFactory extends AbstractBusinessFactory
             $this->getRepository(),
             $this->getEntityManager(),
             $this->createCaptureMapper(),
+            $this->getConfig(),
         );
     }
 
