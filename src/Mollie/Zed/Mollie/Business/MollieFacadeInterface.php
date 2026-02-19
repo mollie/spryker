@@ -127,4 +127,11 @@ interface MollieFacadeInterface
      * @return bool
      */
     public function isCaptureFailed(int $idSalesOrderItem): bool;
+
+    /**
+     * @param \Generated\Shared\Transfer\OrderTransfer $orderTransfer
+     *
+     * @return void
+     */
+    public function sendPaymentConfirmationMail(OrderTransfer $orderTransfer): void;
 }

@@ -12,6 +12,8 @@ use Mollie\Zed\Mollie\Business\Filter\MolliePaymentMethodsFilter;
 use Mollie\Zed\Mollie\Business\Filter\MolliePaymentMethodsFilterInterface;
 use Mollie\Zed\Mollie\Business\Filter\MollieRefundFilter;
 use Mollie\Zed\Mollie\Business\Filter\MollieRefundFilterInterface;
+use Mollie\Zed\Mollie\Business\Handler\MollieMailHandler;
+use Mollie\Zed\Mollie\Business\Handler\MollieMailHandlerInterface;
 use Mollie\Zed\Mollie\Business\Handler\MolliePaymentHandler;
 use Mollie\Zed\Mollie\Business\Handler\MolliePaymentHandlerInterface;
 use Mollie\Zed\Mollie\Business\Mapper\Capture\CaptureMapper;
@@ -33,6 +35,7 @@ use Mollie\Zed\Mollie\Business\Processor\Refund\RefundProcessorInterface;
 use Mollie\Zed\Mollie\Business\Writer\MolliePaymentWriter;
 use Mollie\Zed\Mollie\Business\Writer\MolliePaymentWriterInterface;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToLocaleFacadeInterface;
+use Mollie\Zed\Mollie\Dependency\Facade\MollieToMailFacadeInterface;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToOmsInterface;
 use Mollie\Zed\Mollie\Dependency\MollieToStorageClientInterface;
 use Mollie\Zed\Mollie\Dependency\Service\MollieToUtilEncodingServiceInterface;
@@ -240,5 +243,24 @@ class MollieBusinessFactory extends AbstractBusinessFactory
     public function getLocaleFacade(): MollieToLocaleFacadeInterface
     {
         return $this->getProvidedDependency(MollieDependencyProvider::FACADE_LOCALE);
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Business\Handler\MollieMailHandlerInterface
+     */
+    public function createMailHandler(): MollieMailHandlerInterface
+    {
+        return new MollieMailHandler(
+            $this->getLocaleFacade(),
+            $this->getMailFacade(),
+        );
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Dependency\Facade\MollieToMailFacadeInterface
+     */
+    public function getMailFacade(): MollieToMailFacadeInterface
+    {
+        return $this->getProvidedDependency(MollieDependencyProvider::FACADE_MAIL);
     }
 }

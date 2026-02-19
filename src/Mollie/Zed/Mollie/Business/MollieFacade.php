@@ -174,4 +174,14 @@ class MollieFacade extends AbstractFacade implements MollieFacadeInterface
     {
         return $this->getFactory()->createCaptureProcessor()->updatePaymentCaptureCollection($molliePaymentTransfer);
     }
+
+    /**
+     * @param \Generated\Shared\Transfer\OrderTransfer $orderTransfer
+     *
+     * @return void
+     */
+    public function sendPaymentConfirmationMail(OrderTransfer $orderTransfer): void
+    {
+        $this->getFactory()->createMailHandler()->sendPaymentConfirmationMail($orderTransfer);
+    }
 }

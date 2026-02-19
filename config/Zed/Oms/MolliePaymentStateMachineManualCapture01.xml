@@ -183,7 +183,7 @@
            <event name="capture" onEnter="true"/>
            <event name="check capture" timeout="1 minute"/>
 
-           <event name="ship order" onEnter="true"/>
+           <event name="ship order" onEnter="true" command="Mollie/PaymentConfirmation"/>
            <event name="confirm delivery" onEnter="true"/>
 
            <event name="close" timeout="5 days"/>

@@ -6,6 +6,8 @@ namespace Mollie\Zed\Mollie;
 
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToLocaleFacadeBridge;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToLocaleFacadeInterface;
+use Mollie\Zed\Mollie\Dependency\Facade\MollieToMailFacadeBridge;
+use Mollie\Zed\Mollie\Dependency\Facade\MollieToMailFacadeInterface;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToOmsBridge;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToSalesFacadeBridge;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToSalesFacadeInterface;
@@ -23,6 +25,11 @@ class MollieDependencyProvider extends AbstractBundleDependencyProvider
      * @var string
      */
     public const FACADE_OMS = 'FACADE_OMS';
+
+    /**
+     * @var string
+     */
+    public const FACADE_MAIL = 'FACADE_MAIL';
 
     /**
      * @var string
@@ -73,6 +80,7 @@ class MollieDependencyProvider extends AbstractBundleDependencyProvider
         $container = $this->addStorageClient($container);
         $container = $this->addMollieService($container);
         $container = $this->addLocaleFacade($container);
+        $container = $this->addMailFacade($container);
         $container = $this->addUtilEncodingService($container);
 
         return $container;
@@ -209,6 +217,22 @@ class MollieDependencyProvider extends AbstractBundleDependencyProvider
         $container->set(static::FACADE_SALES, function (Container $container): MollieToSalesFacadeInterface {
             return new MollieToSalesFacadeBridge(
                 $container->getLocator()->sales()->facade(),
+            );
+        });
+
+        return $container;
+    }
+
+    /**
+     * @param \Spryker\Zed\Kernel\Container $container
+     *
+     * @return \Spryker\Zed\Kernel\Container
+     */
+    protected function addMailFacade(Container $container): Container
+    {
+        $container->set(static::FACADE_MAIL, function (Container $container): MollieToMailFacadeInterface {
+            return new MollieToMailFacadeBridge(
+                $container->getLocator()->mail()->facade(),
             );
         });
 

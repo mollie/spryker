@@ -1,0 +1,105 @@
+{% block content %}
+    <table width="100%" cellpadding="0" cellspacing="0" border="0"
+           style="background-color:#f6f6f6;padding:40px 0;font-family:Arial, Helvetica, sans-serif;">
+
+        <tr>
+            <td align="center">
+
+                <table width="620" cellpadding="0" cellspacing="0" border="0"
+                       style="background:#ffffff;border-radius:6px;
+                          box-shadow:0 2px 6px rgba(0,0,0,0.1);
+                          overflow:hidden;">
+
+                    <tr>
+                        <td style="background:#08493d;padding:28px 32px;">
+                            <h1 style="margin:0;font-size:22px;color:#ffffff;font-weight:600;">
+                                {{ 'mollie.mail.payment.confirmation.subject'|trans({}, null, mail.locale.localeName) }}
+                            </h1>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td style="padding:32px;color:#202020;font-size:14px;line-height:22px;">
+
+                            <p style="margin-top:0;">
+                                {{ 'mollie.mail.payment_confirmation.greeting'|trans({}, null, mail.locale.localeName) }}
+                                <strong>{{ mail.order.firstName }} {{ mail.order.lastName }}</strong>,
+                            </p>
+
+                            <p style="color:#4c4c4c;">
+                                {{ 'mollie.mail.payment_confirmation.success_message'|trans({}, null, mail.locale.localeName) }}
+                            </p>
+
+                            <table width="100%" cellpadding="14" cellspacing="0" border="0"
+                                   style="margin-top:25px;
+                                      background:rgba(8,73,61,0.15);
+                                      border-left:4px solid #08493d;
+                                      border-radius:4px;">
+                                <tr>
+                                    <td style="font-size:13px;color:#08493d;font-weight:600;">
+                                        {{ 'mollie.mail.payment_confirmation.status_success'|trans({}, null, mail.locale.localeName) }}
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <table width="100%" cellpadding="10" cellspacing="0" border="0"
+                                   style="margin-top:30px;
+                                      border:1px solid #dce0e5;
+                                      border-radius:4px;
+                                      border-collapse:collapse;">
+
+                                <tr>
+                                    <td style="color:#8f8f8f;font-size:13px;border-top:1px solid #e7eaee;">
+                                        {{ 'mollie.mail.order_reference'|trans({}, null, mail.locale.localeName) }}
+                                    </td>
+                                    <td align="right" style="border-top:1px solid #e7eaee;font-weight:600;">
+                                        {{ mail.order.orderReference }}
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td style="color:#8f8f8f;font-size:13px;">
+                                        {{ 'mollie.mail.order_date'|trans({}, null, mail.locale.localeName) }}
+                                    </td>
+                                    <td align="right">
+                                        {{ mail.order.createdAt.date|date('d.m.Y H:i') }}
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td style="color:#8f8f8f;font-size:13px;">
+                                        {{ 'mollie.mail.total_amount'|trans({}, null, mail.locale.localeName) }}
+                                    </td>
+                                    <td align="right" style="font-size:16px;font-weight:700;color:#08493d;">
+                                        {{ mail.order.totals.grandTotal | money }}
+                                    </td>
+                                </tr>
+
+                            </table>
+
+                            <p style="margin-top:35px;color:#4c4c4c;">
+                                {{ 'mollie.mail.payment_confirmation.thank_you'|trans({}, null, mail.locale.localeName) }}
+                            </p>
+
+                        </td>
+                    </tr>
+
+                    {# ================= FOOTER ================= #}
+                    <tr>
+                        <td style="background:#f6f6f6;
+                               padding:22px;
+                               text-align:center;
+                               font-size:12px;
+                               color:#8f8f8f;">
+
+                            {{ 'mollie.mail.footer.automatic_message'|trans({}, null, mail.locale.localeName) }}<br>
+
+                        </td>
+                    </tr>
+
+                </table>
+
+            </td>
+        </tr>
+    </table>
+{% endblock %}

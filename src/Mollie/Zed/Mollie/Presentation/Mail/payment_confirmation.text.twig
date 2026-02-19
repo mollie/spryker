@@ -1,0 +1,23 @@
+{% block content %}
+
+    {{ 'mollie.mail.payment.confirmation.subject'|trans({}, null, mail.locale.localeName) }}
+
+    {{ 'mollie.mail.payment_confirmation.greeting'|trans({}, null, mail.locale.localeName) }} {{ mail.order.firstName }} {{ mail.order.lastName }},
+
+    {{ 'mollie.mail.payment_confirmation.success_message'|trans({}, null, mail.locale.localeName) }}
+
+    ======================
+    {{ 'mollie.mail.payment_confirmation.status_success'|trans({}, null, mail.locale.localeName) }}
+    ======================
+
+    {{ 'mollie.mail.order_reference'|trans({}, null, mail.locale.localeName) }}: {{ mail.order.orderReference }}
+    {{ 'mollie.mail.order_date'|trans({}, null, mail.locale.localeName) }}: {{ mail.order.createdAt|date('d.m.Y H:i') }}
+    {{ 'mollie.mail.total_amount'|trans({}, null, mail.locale.localeName) }}: {{ mail.order.totals.grandTotal | money }}
+
+    {{ 'mollie.mail.payment_confirmation.thank_you'|trans({}, null, mail.locale.localeName) }}
+
+    ---
+
+    {{ 'mollie.mail.footer.automatic_message'|trans({}, null, mail.locale.localeName) }}
+
+{% endblock %}
