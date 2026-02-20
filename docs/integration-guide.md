@@ -877,7 +877,6 @@ class CheckoutPageDependencyProvider extends SprykerShopCheckoutPageDependencyPr
 
 For **PaymentAppCancelOrderOnSummaryPageAfterRedirectFromHostedPaymentPagePlugin** to work correctly, you must set **is_foreign** key to **1** in table **spy_payment_method** on all Mollie payment methods
 
-![spy_payment_method table](images/spy-payment-method-table.png)
 <img src="../.github/images/spy-payment-method-table.png" alt="Spy Payment Method Table" width="600" />
 
 ### 3.4. Payment Dependency Provider
