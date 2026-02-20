@@ -537,7 +537,7 @@ Values passed in this collection should match with right hand side values define
 
 Please check dependency provider configuration chapter (section 3.3.).
 
-https://xiphias.atlassian.net/wiki/spaces/NO/pages/2581364767/Mollie+Payment+Integration+for+Spryker+-+Integration+Guide#3.3.-Checkout-Page-Dependency-Provider-(Yves)
+- [3.3. Checkout Page Dependency Provider (Yves)](#33-checkout-page-dependency-provider-yves)
 
 ### 3.6 Add Payment Forms to Twig
 
