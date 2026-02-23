@@ -18,6 +18,7 @@ $config[MollieConstants::MOLLIE] = [
     MollieConstants::MOLLIE_PROFILE_ID => '',
     MollieConstants::MOLLIE_TEST_MODE => true,
     MollieConstants::MOLLIE_API_KEY => '',
+    MollieConstants::MOLLIE_DEBUG_MODE => '',
     MollieConstants::MOLLIE_REDIRECT_URL => '',
     MollieConstants::MOLLIE_CREDIT_CARD_COMPONENTS_ENABLED => true,
     MollieConstants::MOLLIE_CREDIT_CARD_COMPONENTS_JS_SRC => '', //Example: https://js.mollie.com/v1/mollie.js
@@ -26,6 +27,11 @@ $config[MollieConstants::MOLLIE] = [
     MollieConstants::MOLLIE_OMS_TO_PAYMENT_METHOD_MAPPING => [
         'mollieCreditCardPayment' => 'creditcard',
     ],
+     MollieConstants::MOLLIE_PAYMENT_METHOD_MANUAL_CAPTURE => [
+        'creditcard',
+        'klarna',
+    ],
+     MollieConstants::MOLLIE_INCLUDE_WALLETS => ['applepay'],
 ];
 $config[OmsConstants::PROCESS_LOCATION] = [
     OmsConfig::DEFAULT_PROCESS_LOCATION,
@@ -34,6 +40,7 @@ $config[OmsConstants::PROCESS_LOCATION] = [
 
 $config[SalesConstants::PAYMENT_METHOD_STATEMACHINE_MAPPING] = [
     MollieConfig::MOLLIE_PAYMENT_CREDIT_CARD => 'MolliePaymentStateMachine01',
+    MollieConfig::MOLLIE_PAYMENT_KLARNA => 'MolliePaymentStateMachineManualCapture01',
 ];
 
 $config[OmsConstants::ACTIVE_PROCESSES] = [
