@@ -8,96 +8,96 @@ This guide provides comprehensive instructions for integrating Mollie payment se
 
 - [1. Prerequisites](#1-prerequisites)
 - [2. Setup & Configuration](#2-setup--configuration)
-    - [Complete Configuration Structure](#complete-configuration-structure)
-    - [API Key Configuration](#api-key-configuration)
-    - [Profile ID Configuration](#profile-id-configuration)
-    - [Environment Settings](#environment-settings)
-    - [Test Mode](#test-mode)
-    - [Debug Mode](#debug-mode)
-    - [URL Configuration](#url-configuration)
-    - [1. Redirect URL](#1-redirect-url)
-    - [2. Webhook URL (Production)](#2-webhook-url-production)
-    - [3. Test Environment Webhook URL](#3-test-environment-webhook-url)
-    - [Option A: With HTTP Basic Authentication (If Using .htaccess or Similar)](#option-a-with-http-basic-authentication-if-using-htaccess-or-similar)
-    - [Option B: Without Basic Authentication (Publicly Accessible Test Environment)](#option-b-without-basic-authentication-publicly-accessible-test-environment)
-    - [HTTPS vs HTTP for Test Environments](#https-vs-http-for-test-environments)
+  - [Complete Configuration Structure](#complete-configuration-structure)
+  - [API Key Configuration](#api-key-configuration)
+  - [Profile ID Configuration](#profile-id-configuration)
+  - [Environment Settings](#environment-settings)
+  - [Test Mode](#test-mode)
+  - [Debug Mode](#debug-mode)
+  - [URL Configuration](#url-configuration)
+  - [1. Redirect URL](#1-redirect-url)
+  - [2. Webhook URL (Production)](#2-webhook-url-production)
+  - [3. Test Environment Webhook URL](#3-test-environment-webhook-url)
+  - [Option A: With HTTP Basic Authentication (If Using .htaccess or Similar)](#option-a-with-http-basic-authentication-if-using-htaccess-or-similar)
+  - [Option B: Without Basic Authentication (Publicly Accessible Test Environment)](#option-b-without-basic-authentication-publicly-accessible-test-environment)
+  - [HTTPS vs HTTP for Test Environments](#https-vs-http-for-test-environments)
 - [3. Setting Up Mollie Payment Methods](#3-setting-up-mollie-payment-methods)
-    - [3.1. Add Mollie Payment Methods to CSV](#31-add-mollie-payment-methods-to-csv)
-    - [Example (all available Mollie methods)](#example-all-available-mollie-methods)
-    - [3.2 Assign Payment Methods to Stores](#32-assign-payment-methods-to-stores)
-    - [3.3 Import Payment Methods](#33-import-payment-methods)
-    - [3.4 Configure OMS → Mollie Payment Mapping](#34-configure-oms--mollie-payment-mapping)
-    - [3.5 Register Payment Handlers (Yves)](#35-register-payment-handlers-yves)
-    - [3.6 Add Payment Forms to Twig](#36-add-payment-forms-to-twig)
-    - [3.7 Final Steps](#37-final-steps)
-    - [3.8 Displaying Payment Method Logos in Checkout](#38-displaying-payment-method-logos-in-checkout)
+  - [3.1. Add Mollie Payment Methods to CSV](#31-add-mollie-payment-methods-to-csv)
+  - [Example (all available Mollie methods)](#example-all-available-mollie-methods)
+  - [3.2 Assign Payment Methods to Stores](#32-assign-payment-methods-to-stores)
+  - [3.3 Import Payment Methods](#33-import-payment-methods)
+  - [3.4 Configure OMS → Mollie Payment Mapping](#34-configure-oms--mollie-payment-mapping)
+  - [3.5 Register Payment Handlers (Yves)](#35-register-payment-handlers-yves)
+  - [3.6 Add Payment Forms to Twig](#36-add-payment-forms-to-twig)
+  - [3.7 Final Steps](#37-final-steps)
+  - [3.8 Displaying Payment Method Logos in Checkout](#38-displaying-payment-method-logos-in-checkout)
 - [4. Dependency Provider Configuration](#4-dependency-provider-configuration)
-    - [3.1. Router Dependency Provider](#31-router-dependency-provider)
-    - [Route Provider Plugin](#route-provider-plugin)
-    - [3.2. Checkout Dependency Provider (Zed)](#32-checkout-dependency-provider-zed)
-    - [Post Hooks](#post-hooks)
-    - [3.3. Checkout Page Dependency Provider (Yves)](#33-checkout-page-dependency-provider-yves)
-    - [Payment Method Handlers](#payment-method-handlers)
-    - [Subform Plugin Collection](#subform-plugin-collection)
-    - [Checkout Summary Step Pre-Condition Plugins](#checkout-summary-step-pre-condition-plugins)
-    - [3.4. Payment Dependency Provider](#34-payment-dependency-provider)
-    - [Payment Method Filter Plugins](#payment-method-filter-plugins)
-    - [3.5. OMS Dependency Provider](#35-oms-dependency-provider)
-    - [Command Plugins](#command-plugins)
-    - [Condition Plugins](#condition-plugins)
-    - [3.6. Mail Dependency Provider](#36-mail-dependency-provider)
-    - [Command Plugins](#command-plugins)
+  - [3.1. Router Dependency Provider](#31-router-dependency-provider)
+  - [Route Provider Plugin](#route-provider-plugin)
+  - [3.2. Checkout Dependency Provider (Zed)](#32-checkout-dependency-provider-zed)
+  - [Post Hooks](#post-hooks)
+  - [3.3. Checkout Page Dependency Provider (Yves)](#33-checkout-page-dependency-provider-yves)
+  - [Payment Method Handlers](#payment-method-handlers)
+  - [Subform Plugin Collection](#subform-plugin-collection)
+  - [Checkout Summary Step Pre-Condition Plugins](#checkout-summary-step-pre-condition-plugins)
+  - [3.4. Payment Dependency Provider](#34-payment-dependency-provider)
+  - [Payment Method Filter Plugins](#payment-method-filter-plugins)
+  - [3.5. OMS Dependency Provider](#35-oms-dependency-provider)
+  - [Command Plugins](#command-plugins)
+  - [Condition Plugins](#condition-plugins)
+  - [3.6. Mail Dependency Provider](#36-mail-dependency-provider)
+  - [Command Plugins](#command-plugins)
 - [4. Glossary Keys and Translations](#4-glossary-keys-and-translations)
-    - [Complete Glossary CSV](#complete-glossary-csv)
+  - [Complete Glossary CSV](#complete-glossary-csv)
 - [4. Payment Methods Configuration](#4-payment-methods-configuration)
-    - [Payment Method Mapping](#payment-method-mapping)
-    - [Supported Payment Methods](#supported-payment-methods)
+  - [Payment Method Mapping](#payment-method-mapping)
+  - [Supported Payment Methods](#supported-payment-methods)
 - [5. Backoffice Configuration](#5-backoffice-configuration)
-    - [Displaying the Mollie Panel in Back Office](#displaying-the-mollie-panel-in-back-office)
-    - [Step 1: Update Navigation Configuration](#step-1-update-navigation-configuration)
-    - [Step 2: Rebuild Navigation Cache](#step-2-rebuild-navigation-cache)
-    - [Step 3: Configure Translations](#step-3-configure-translations)
-    - [Step 4: Clear Translation Cache (if applicable)](#step-4-clear-translation-cache-if-applicable)
-    - [Accessing the Mollie Panel](#accessing-the-mollie-panel)
-    - [What You Can See in the Back Office Panel](#what-you-can-see-in-the-back-office-panel)
-    - [Troubleshooting Back Office Panel](#troubleshooting-back-office-panel)
+  - [Displaying the Mollie Panel in Back Office](#displaying-the-mollie-panel-in-back-office)
+  - [Step 1: Update Navigation Configuration](#step-1-update-navigation-configuration)
+  - [Step 2: Rebuild Navigation Cache](#step-2-rebuild-navigation-cache)
+  - [Step 3: Configure Translations](#step-3-configure-translations)
+  - [Step 4: Clear Translation Cache (if applicable)](#step-4-clear-translation-cache-if-applicable)
+  - [Accessing the Mollie Panel](#accessing-the-mollie-panel)
+  - [What You Can See in the Back Office Panel](#what-you-can-see-in-the-back-office-panel)
+  - [Troubleshooting Back Office Panel](#troubleshooting-back-office-panel)
 - [6. Credit Card Components](#6-credit-card-components)
-    - [Enabling Components](#enabling-components)
-    - [JavaScript Library Configuration](#javascript-library-configuration)
-    - [Benefits](#benefits)
-    - [Implementation Requirements](#implementation-requirements)
-    - [Component Example](#component-example)
+  - [Enabling Components](#enabling-components)
+  - [JavaScript Library Configuration](#javascript-library-configuration)
+  - [Benefits](#benefits)
+  - [Implementation Requirements](#implementation-requirements)
+  - [Component Example](#component-example)
 - [7. Wallet Payments](#7-wallet-payments)
-    - [Wallet Configuration](#wallet-configuration)
-    - [Apple Pay Integration](#apple-pay-integration)
-    - [Setup Steps](#setup-steps)
+  - [Wallet Configuration](#wallet-configuration)
+  - [Apple Pay Integration](#apple-pay-integration)
+  - [Setup Steps](#setup-steps)
 - [8. Testing & Debugging](#8-testing--debugging)
-    - [Test Mode Setup](#test-mode-setup)
-    - [Test Credit Cards](#test-credit-cards)
-    - [Debug Logging](#debug-logging)
-    - [How to Enable Debug Mode](#how-to-enable-debug-mode)
-    - [Log Levels and Content](#log-levels-and-content)
-    - [Sensitive Data Masking](#sensitive-data-masking)
-    - [Common Test Issues](#common-test-issues)
+  - [Test Mode Setup](#test-mode-setup)
+  - [Test Credit Cards](#test-credit-cards)
+  - [Debug Logging](#debug-logging)
+  - [How to Enable Debug Mode](#how-to-enable-debug-mode)
+  - [Log Levels and Content](#log-levels-and-content)
+  - [Sensitive Data Masking](#sensitive-data-masking)
+  - [Common Test Issues](#common-test-issues)
 - [9. Production Deployment](#9-production-deployment)
-    - [Pre-Production Checklist](#pre-production-checklist)
-    - [Production Configuration](#production-configuration)
+  - [Pre-Production Checklist](#pre-production-checklist)
+  - [Production Configuration](#production-configuration)
 - [10. Troubleshooting](#10-troubleshooting)
-    - [Payment methods not displaying at checkout](#payment-methods-not-displaying-at-checkout)
-    - [Webhooks not being received](#webhooks-not-being-received)
-    - [Credit card components not loading](#credit-card-components-not-loading)
-    - [Apple Pay not appearing](#apple-pay-not-appearing)
+  - [Payment methods not displaying at checkout](#payment-methods-not-displaying-at-checkout)
+  - [Webhooks not being received](#webhooks-not-being-received)
+  - [Credit card components not loading](#credit-card-components-not-loading)
+  - [Apple Pay not appearing](#apple-pay-not-appearing)
 - [11. Webhook Handling](#11-webhook-handling)
-    - [How Webhooks Work](#how-webhooks-work)
-    - [Webhook Configuration](#webhook-configuration)
-    - [Webhook Payload Structure](#webhook-payload-structure)
-    - [Payment Status Mapping](#payment-status-mapping)
-    - [Webhook Retry Behavior](#webhook-retry-behavior)
+  - [How Webhooks Work](#how-webhooks-work)
+  - [Webhook Configuration](#webhook-configuration)
+  - [Webhook Payload Structure](#webhook-payload-structure)
+  - [Payment Status Mapping](#payment-status-mapping)
+  - [Webhook Retry Behavior](#webhook-retry-behavior)
 - [12. Webhook Error Troubleshooting](#12-webhook-error-troubleshooting)
-    - [Common Webhook Issues](#common-webhook-issues)
-    - [Issue 1: Webhooks Not Being Received](#issue-1-webhooks-not-being-received)
-    - [Issue 2: Webhooks Received But Not Processed](#issue-2-webhooks-received-but-not-processed)
-    - [Getting Help with Webhook Issues](#getting-help-with-webhook-issues)
+  - [Common Webhook Issues](#common-webhook-issues)
+  - [Issue 1: Webhooks Not Being Received](#issue-1-webhooks-not-being-received)
+  - [Issue 2: Webhooks Received But Not Processed](#issue-2-webhooks-received-but-not-processed)
+  - [Getting Help with Webhook Issues](#getting-help-with-webhook-issues)
 - [Getting Help](#getting-help)
 
 ## 1. Prerequisites
@@ -160,6 +160,45 @@ $config[MollieConstants::MOLLIE] = [
     MollieConstants::MOLLIE_INCLUDE_WALLETS => ['applepay'],
 ];
 ```
+
+To enable Spryker kernel recognition for the Mollie module (Facades, Clients, Services, etc.), it is necessary to register Mollie as a core namespace in config_default.php:
+
+```php
+$config[KernelConstants::CORE_NAMESPACES] = [
+    'SprykerShop',
+    'SprykerEco',
+    'Spryker',
+    'SprykerSdk',
+    'Mollie',
+];
+```
+
+Without this, Spryker's dependency locator will be unable to resolve Mollie module automatically.
+
+### TypeScript Component Recognition
+
+To enable TypeScript component recognition for the Mollie module during the frontend build (npm run yves), the Mollie vendor path must be registered in frontend/settings.js.
+
+Define the path under globalSettings.paths:
+
+```js
+// mollie folders
+mollie: './vendor/mollie'
+```
+
+Expose it in the local paths object inside getAppSettingsByTheme:
+
+```js
+mollie: globalSettings.paths.mollie
+```
+
+Include it in the componentEntryPoints.dirs array so the frontend builder scans Mollie's components for TypeScript entry points alongside other core and eco modules:
+
+```js
+join(globalSettings.context, paths.mollie)
+```
+
+Without this, any index.ts components inside the Mollie module will not be picked up during the build.
 
 ### API Key Configuration
 
@@ -361,12 +400,12 @@ MollieConstants::MOLLIE_TEST_ENVIRONMENT_WEBHOOK_URL => sprintf(
 
 After basic Mollie configuration is complete, you must:
 
-1. Add payment methods to CSV
-2. Assign them to stores
-3. Import them
-4. Configure OMS mapping
-5. Register handlers & subforms
-6. Add Twig form configuration
+- Add payment methods to CSV
+- Assign them to stores
+- Import them
+- Configure OMS mapping
+- Register handlers & subforms
+- Add Twig form configuration
 
 ### 3.1. Add Mollie Payment Methods to CSV
 
@@ -395,7 +434,7 @@ Paste selected rows into:
 data/import/common/common/payment_method.csv
 ```
 
-### Example (all available Mollie methods)
+**Example (all available Mollie methods)**
 
 ```csv
 mollieCreditCardPayment,Credit Card,MollieCreditCardPayment,Mollie Credit Card Payment,1
@@ -487,7 +526,9 @@ $config[MollieConstants::MOLLIE] = [
 
 Remove entries for payment methods you are not using.
 
-Add Mollie state machines in the active processes configuration:
+In order for Mollie's state machines to be recognized, the following must be configured in config_default.php.
+
+Add Mollie's state machines to the active processes configuration:
 
 ```php
 $config[OmsConstants::ACTIVE_PROCESSES] = [
@@ -495,6 +536,17 @@ $config[OmsConstants::ACTIVE_PROCESSES] = [
     'MolliePaymentStateMachineManualCapture01',
 ];
 ```
+
+Add Mollie's state machine process location so Spryker can locate and load the state machine XML definitions:
+
+```php
+$config[OmsConstants::PROCESS_LOCATION] = [
+    OmsConfig::DEFAULT_PROCESS_LOCATION,
+    APPLICATION_VENDOR_DIR . '/mollie/spryker-payment/config/Zed/Oms',
+];
+```
+
+Without these, Spryker's OMS will be unable to recognize and process Mollie's state machines.
 
 Add payment method state machine mapping:
 
@@ -516,7 +568,9 @@ $config[SalesConstants::PAYMENT_METHOD_STATEMACHINE_MAPPING] = [
 ];
 ```
 
-For manual capture, replace state machine: `MolliePaymentStateMachine01` with `MolliePaymentStateMachineManualCapture01`
+By default, all payment methods use automatic capturing.
+
+To configure certain payment methods to use manual capture, replace state machine: `MolliePaymentStateMachine01` with `MolliePaymentStateMachineManualCapture01`
 
 Not all payment methods support manual capturing. See docs for details: https://docs.mollie.com/docs/place-a-hold-for-a-payment
 
@@ -1378,12 +1432,12 @@ After completing the configuration:
 1. Log in to your Spryker Backoffice
 2. Navigate to **Administration > Mollie payment methods** in the main navigation menu
 3. The panel displays:
-    - All payment methods from your Mollie account
-    - Button for showing only enabled payment methods
-    - Button for clearing payment method cache
-    - Payment method status (active/inactive)
-    - Minimum/maximum transaction amount
-    - Payment method icons
+  - All payment methods from your Mollie account
+  - Button for showing only enabled payment methods
+  - Button for clearing payment method cache
+  - Payment method status (active/inactive)
+  - Minimum/maximum transaction amount
+  - Payment method icons
 
 ### What You Can See in the Back Office Panel
 
@@ -1435,6 +1489,8 @@ Mollie provides secure, embeddable credit card components that allow customers t
 ```php
 MollieConstants::MOLLIE_CREDIT_CARD_COMPONENTS_ENABLED => true
 ```
+
+If this flag is set to false the credit card components will not be rendered in the checkout. Customers can still choose this payment method, but after placing the order they will be redirected to the hosted checkout page provided by Mollie to enter their credit card details.
 
 ### JavaScript Library Configuration
 
