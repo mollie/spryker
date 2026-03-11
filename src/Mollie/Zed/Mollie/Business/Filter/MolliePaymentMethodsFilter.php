@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Mollie\Zed\Mollie\Business\Filter;
 
 use ArrayObject;
+use Generated\Shared\Transfer\MollieAmountTransfer;
 use Generated\Shared\Transfer\MollieApiRequestTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodQueryParametersTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodTransfer;
@@ -65,6 +66,9 @@ class MolliePaymentMethodsFilter implements MolliePaymentMethodsFilterInterface
      */
     protected function createRequestTransfer(QuoteTransfer $quoteTransfer): MollieApiRequestTransfer
     {
+        $mollieAmount = new MollieAmountTransfer();
+        $mollieAmount->setCurrency($quoteTransfer->getCurrency()?->getCode());
+
         return (new MollieApiRequestTransfer())
             ->setMolliePaymentMethodQueryParameters(
                 (new MolliePaymentMethodQueryParametersTransfer())
@@ -72,7 +76,8 @@ class MolliePaymentMethodsFilter implements MolliePaymentMethodsFilterInterface
                     ->setBillingCountry($quoteTransfer->getBillingAddress()->getIso2Code())
                     ->setIncludeIssuers(true)
                     ->setIncludeWallets($this->mollieConfig->getMollieIncludeWallets())
-                    ->setSequenceType(MollieConstants::MOLLIE_SEQUENCE_TYPE_ONE_OFF),
+                    ->setSequenceType(MollieConstants::MOLLIE_SEQUENCE_TYPE_ONE_OFF)
+                    ->setAmount($mollieAmount),
             );
     }
 

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Mollie\Yves\Mollie\PaymentPage\Cache;
 
+use Generated\Shared\Transfer\MollieCacheOptionsTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodsApiResponseTransfer;
 use Generated\Shared\Transfer\QuoteTransfer;
 use Mollie\Client\Mollie\MollieClientInterface;
@@ -60,10 +61,9 @@ class MollieCachedOptionsExpander implements MollieCachedOptionsExpanderInterfac
             return $options;
         }
 
-        $locale = $this->localeClient->getCurrentLocale();
-        $billingCountry = $quoteTransfer->getBillingAddress()->getIso2Code();
+        $mollieCacheOptionsTransfer = $this->mapper->createMollieCacheOptionsTransfer($quoteTransfer);
 
-        $responseTransfer = $this->getMollieResponse($locale, $billingCountry);
+        $responseTransfer = $this->getMollieResponse($mollieCacheOptionsTransfer);
 
         $methods = $responseTransfer->getCollection()->getMethods()->getArrayCopy();
         $mappedMethods = $this->mapMethodNamesToLogo($methods);
@@ -83,14 +83,13 @@ class MollieCachedOptionsExpander implements MollieCachedOptionsExpanderInterfac
     }
 
     /**
-     * @param string $locale
-     * @param string $billingCountry
+     * @param \Generated\Shared\Transfer\MollieCacheOptionsTransfer $mollieCacheOptionsTransfer
      *
      * @return \Generated\Shared\Transfer\MolliePaymentMethodsApiResponseTransfer
      */
-    protected function getMollieResponse(string $locale, string $billingCountry): MolliePaymentMethodsApiResponseTransfer
+    protected function getMollieResponse(MollieCacheOptionsTransfer $mollieCacheOptionsTransfer): MolliePaymentMethodsApiResponseTransfer
     {
-        $mollieApiRequestTransfer = $this->mapper->createMollieApiRequestTransfer($locale, $billingCountry);
+        $mollieApiRequestTransfer = $this->mapper->createMollieApiRequestTransfer($mollieCacheOptionsTransfer);
         if ($this->config->isTestMode()) {
             return $this->mollieClient->getAllPaymentMethods($mollieApiRequestTransfer);
         }

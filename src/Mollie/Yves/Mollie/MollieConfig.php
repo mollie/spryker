@@ -87,4 +87,12 @@ class MollieConfig extends AbstractBundleConfig
     {
         return static::ERROR_MESSAGE_PAYMENT_ID_DOESNT_EXIST;
     }
+
+    /**
+     * @return array<string>
+     */
+    public function getMollieIncludeWallets(): array
+    {
+        return $this->get(MollieConstants::MOLLIE)[MollieConstants::MOLLIE_INCLUDE_WALLETS] ?? [];
+    }
 }
