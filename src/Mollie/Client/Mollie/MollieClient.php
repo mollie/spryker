@@ -236,6 +236,6 @@ class MollieClient extends AbstractClient implements MollieClientInterface
      */
     public function getPaymentLinks(MollieApiRequestTransfer $mollieApiRequestTransfer): MolliePaymentLinkApiResponseTransfer
     {
-        $molliePaymentLinkApiResponseTransfer = $this->getFactory()->createGetPaymentLinksApi()->execute($mollieApiRequestTransfer);
+        return $this->getFactory()->createGetPaymentLinksApi()->execute($mollieApiRequestTransfer);
     }
 }

@@ -13,14 +13,14 @@ use Spryker\Zed\Gui\Communication\Table\TableConfiguration;
 
 class MolliePaymentLinkTable extends AbstractTable
 {
-    protected const COL_ID = SpyMolliePaymentLinkTableMap::COL_ID_MOLLIE_PAYMENT_LINK;
-    protected const COL_TYPE = SpyMolliePaymentLinkTableMap::COL_TYPE;
-    protected const COL_AMOUNT = SpyMolliePaymentLinkTableMap::COL_AMOUNT;
-    protected const COL_CURRENCY = SpyMolliePaymentLinkTableMap::COL_CURRENCY;
-    protected const COL_DESCRIPTION = SpyMolliePaymentLinkTableMap::COL_DESCRIPTION;
-    protected const COL_STATUS = SpyMolliePaymentLinkTableMap::COL_STATUS;
-    protected const COL_EXPIRY_DATE = SpyMolliePaymentLinkTableMap::COL_EXPIRY_DATE;
-    protected const COL_CREATED_AT = SpyMolliePaymentLinkTableMap::COL_CREATED_AT;
+    protected const COL_ID = 'id_mollie_payment_link';
+    protected const COL_TYPE = 'type';
+    protected const COL_AMOUNT = 'amount';
+    protected const COL_CURRENCY = 'currency';
+    protected const COL_DESCRIPTION = 'description';
+    protected const COL_PAYMENT_LINK = 'payment_link';
+    protected const COL_EXPIRY_DATE = 'expiry_date';
+    protected const COL_CREATED_AT = 'created_at';
     protected const COL_ACTIONS = 'actions';
 
     /**
@@ -45,7 +45,7 @@ class MolliePaymentLinkTable extends AbstractTable
             static::COL_TYPE => 'Type',
             static::COL_AMOUNT => 'Amount',
             static::COL_CURRENCY => 'Currency',
-            static::COL_STATUS => 'Status',
+            static::COL_PAYMENT_LINK => 'Payment Link',
             static::COL_EXPIRY_DATE => 'Expiry Date',
             static::COL_CREATED_AT => 'Created',
             static::COL_ACTIONS => 'Actions',
@@ -61,7 +61,7 @@ class MolliePaymentLinkTable extends AbstractTable
             static::COL_DESCRIPTION,
             static::COL_TYPE,
             static::COL_AMOUNT,
-            static::COL_STATUS,
+            static::COL_PAYMENT_LINK,
             static::COL_CREATED_AT,
             static::COL_EXPIRY_DATE,
         ]);
@@ -73,7 +73,6 @@ class MolliePaymentLinkTable extends AbstractTable
 
         $config->setRawColumns([
             static::COL_ACTIONS,
-            static::COL_STATUS,
         ]);
 
         return $config;
@@ -86,20 +85,20 @@ class MolliePaymentLinkTable extends AbstractTable
     protected function prepareData(TableConfiguration $config): array
     {
 //        $queryResults = $this->runQuery($this->paymentLinkQuery, $config);
-        $paymentLinks = $this->dataProvider->getData();
+        $molliePaymentLinkApiResponseTransfer = $this->dataProvider->getData();
         $results = [];
 
-        foreach ($queryResults as $paymentLink) {
+        foreach ($molliePaymentLinkApiResponseTransfer->getMolliePaymentLinks()?->getPaymentLinks() as $paymentLink) {
             $results[] = [
-                static::COL_ID => $paymentLink[SpyMolliePaymentLinkTableMap::COL_ID_MOLLIE_PAYMENT_LINK],
-                static::COL_DESCRIPTION => $paymentLink[SpyMolliePaymentLinkTableMap::COL_DESCRIPTION],
-                static::COL_TYPE => ucfirst($paymentLink[SpyMolliePaymentLinkTableMap::COL_TYPE]),
-                static::COL_AMOUNT => number_format((float)$paymentLink[SpyMolliePaymentLinkTableMap::COL_AMOUNT], 2),
-                static::COL_CURRENCY => $paymentLink[SpyMolliePaymentLinkTableMap::COL_CURRENCY],
-                static::COL_STATUS => $this->generateStatusLabel($paymentLink[SpyMolliePaymentLinkTableMap::COL_STATUS]),
-                static::COL_EXPIRY_DATE => $paymentLink[SpyMolliePaymentLinkTableMap::COL_EXPIRY_DATE] ?: '-',
-                static::COL_CREATED_AT => $paymentLink[SpyMolliePaymentLinkTableMap::COL_CREATED_AT],
-                static::COL_ACTIONS => $this->buildLinks($paymentLink),
+                static::COL_ID => $paymentLink->getId(),
+                static::COL_DESCRIPTION => $paymentLink->getDescription(),
+                static::COL_TYPE => $paymentLink->getType(),
+                static::COL_AMOUNT => number_format((float)$paymentLink->getAmount()?->getValue(), 2),
+                static::COL_CURRENCY => $paymentLink->getAmount()?->getCurrency(),
+                static::COL_PAYMENT_LINK => $paymentLink->getLinks()->getPaymentLink()->getHref(),
+                static::COL_EXPIRY_DATE => $paymentLink->getExpiresAt() ?: '-',
+                static::COL_CREATED_AT => $paymentLink->getCreatedAt(),
+                static::COL_ACTIONS => $this->buildLinks(),
             ];
         }
 
@@ -111,55 +110,33 @@ class MolliePaymentLinkTable extends AbstractTable
      *
      * @return string
      */
-    protected function buildLinks(array $paymentLink): string
+    protected function buildLinks(): string
     {
         $buttons = [];
 
-        $buttons[] = $this->generateViewButton(
-            Url::generate('/mollie/payment-link/view', [
-                'id-payment-link' => $paymentLink[SpyMolliePaymentLinkTableMap::COL_ID_MOLLIE_PAYMENT_LINK],
-            ]),
-            'View'
-        );
+//        $buttons[] = $this->generateViewButton(
+//            Url::generate('/mollie/payment-link/view', [
+//                'id-payment-link' => $paymentLink[SpyMolliePaymentLinkTableMap::COL_ID_MOLLIE_PAYMENT_LINK],
+//            ]),
+//            'View'
+//        );
+//
+//        $buttons[] = $this->generateEditButton(
+//            Url::generate('/mollie/payment-link/edit', [
+//                'id-payment-link' => $paymentLink[SpyMolliePaymentLinkTableMap::COL_ID_MOLLIE_PAYMENT_LINK],
+//            ]),
+//            'Edit'
+//        );
+//
+//
+//        $buttons[] = $this->generateRemoveButton(
+//            Url::generate('/mollie/payment-link/delete', [
+//                'id-payment-link' => $paymentLink[SpyMolliePaymentLinkTableMap::COL_ID_MOLLIE_PAYMENT_LINK],
+//            ]),
+//            'Delete'
+//        );
 
-        $buttons[] = $this->generateEditButton(
-            Url::generate('/mollie/payment-link/edit', [
-                'id-payment-link' => $paymentLink[SpyMolliePaymentLinkTableMap::COL_ID_MOLLIE_PAYMENT_LINK],
-            ]),
-            'Edit'
-        );
-
-        if ($paymentLink[SpyMolliePaymentLinkTableMap::COL_STATUS] !== 'paid') {
-            $buttons[] = $this->generateRemoveButton(
-                Url::generate('/mollie/payment-link/delete', [
-                    'id-payment-link' => $paymentLink[SpyMolliePaymentLinkTableMap::COL_ID_MOLLIE_PAYMENT_LINK],
-                ]),
-                'Delete'
-            );
-        }
 
         return implode(' ', $buttons);
-    }
-
-    /**
-     * @param string $status
-     *
-     * @return string
-     */
-    protected function generateStatusLabel(string $status): string
-    {
-        $labelClass = match($status) {
-            'draft' => 'label-default',
-            'active' => 'label-success',
-            'expired' => 'label-warning',
-            'paid' => 'label-info',
-            default => 'label-default',
-        };
-
-        return sprintf(
-            '<span class="label %s">%s</span>',
-            $labelClass,
-            ucfirst($status)
-        );
     }
 }

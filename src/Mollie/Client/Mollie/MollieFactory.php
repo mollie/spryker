@@ -286,6 +286,11 @@ class MollieFactory extends AbstractFactory
      */
     public function createGetPaymentLinksApi(): ApiCallInterface
     {
-        return new GetPaymentLinksApi();
+        return new GetPaymentLinksApi(
+            $this->createMollieApiClient(),
+            $this->getConfig(),
+            $this->getUtilEncodingService(),
+            $this->createMollieLogger(),
+        );
     }
 }
