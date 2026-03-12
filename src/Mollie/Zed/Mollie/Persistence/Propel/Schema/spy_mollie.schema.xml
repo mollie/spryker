@@ -95,7 +95,13 @@
         <column name="created_at" required="false" type="TIMESTAMP"/>
         <column name="updated_at" required="false" type="TIMESTAMP"/>
 
+        <unique name="spy_mollie_payment_link-mollie_id">
+            <unique-column name="mollie_id"/>
+        </unique>
+
         <id-method-parameter value="spy_mollie_payment_link_pk_seq"/>
+
+        <behavior name="timestampable"/>
     </table>
 
 </database>

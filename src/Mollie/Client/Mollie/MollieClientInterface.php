@@ -193,14 +193,16 @@ interface MollieClientInterface
     public function updatePaymentCaptureCollection(MolliePaymentTransfer $molliePaymentTransfer): void;
 
     /**
-     * @param MollieApiRequestTransfer $mollieApiRequestTransfer
-     * @return MolliePaymentLinkApiResponseTransfer
+     * @param \Generated\Shared\Transfer\MollieApiRequestTransfer $mollieApiRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\MolliePaymentLinkApiResponseTransfer
      */
     public function createPaymentLink(MollieApiRequestTransfer $mollieApiRequestTransfer): MolliePaymentLinkApiResponseTransfer;
 
     /**
-     * @param MollieApiRequestTransfer $mollieApiRequestTransfer
-     * @return MolliePaymentLinkApiResponseTransfer
+     * @param \Generated\Shared\Transfer\MollieApiRequestTransfer $mollieApiRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\MolliePaymentLinkApiResponseTransfer
      */
     public function getPaymentLinks(MollieApiRequestTransfer $mollieApiRequestTransfer): MolliePaymentLinkApiResponseTransfer;
 }

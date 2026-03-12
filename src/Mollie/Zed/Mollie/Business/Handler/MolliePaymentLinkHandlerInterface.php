@@ -8,13 +8,9 @@ use Generated\Shared\Transfer\MolliePaymentLinkTransfer;
 interface MolliePaymentLinkHandlerInterface
 {
     /**
-     * @param MolliePaymentLinkTransfer $molliePaymentLinkTransfer
-     * @return MolliePaymentLinkTransfer
+     * @param \Generated\Shared\Transfer\MolliePaymentLinkTransfer $molliePaymentLinkTransfer
+     *
+     * @return \Generated\Shared\Transfer\MolliePaymentLinkTransfer
      */
-    public function createPaymentLink(MolliePaymentLinkTransfer $molliePaymentLinkTransfer): MolliePaymentLinkApiResponseTransfer
-
-//    /**
-//     * @return MolliePaymentLinkApiResponseTransfer
-//     */
-//    public function getPaymentLinks(): MolliePaymentLinkApiResponseTransfer;
+    public function createPaymentLink(MolliePaymentLinkTransfer $molliePaymentLinkTransfer): MolliePaymentLinkApiResponseTransfer;
 }

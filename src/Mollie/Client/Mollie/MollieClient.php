@@ -4,13 +4,13 @@ declare(strict_types = 1);
 
 namespace Mollie\Client\Mollie;
 
-use Generated\Shared\Transfer\MolliePaymentLinkApiResponseTransfer;
 use Generated\Shared\Transfer\MollieApiRequestTransfer;
 use Generated\Shared\Transfer\MollieCreateCaptureApiResponseTransfer;
 use Generated\Shared\Transfer\MollieGetCaptureApiResponseTransfer;
 use Generated\Shared\Transfer\MollieGetProfileApiResponseTransfer;
 use Generated\Shared\Transfer\MollieLogApiTransfer;
 use Generated\Shared\Transfer\MolliePaymentApiResponseTransfer;
+use Generated\Shared\Transfer\MolliePaymentLinkApiResponseTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodQueryParametersTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodsApiResponseTransfer;
 use Generated\Shared\Transfer\MolliePaymentTransfer;
@@ -221,18 +221,21 @@ class MollieClient extends AbstractClient implements MollieClientInterface
     }
 
     /**
-     * @param MollieApiRequestTransfer $mollieApiRequestTransfer
-     * @return MolliePaymentLinkApiResponseTransfer
+     * @param \Generated\Shared\Transfer\MollieApiRequestTransfer $mollieApiRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\MolliePaymentLinkApiResponseTransfer
      */
     public function createPaymentLink(MollieApiRequestTransfer $mollieApiRequestTransfer): MolliePaymentLinkApiResponseTransfer
     {
         $molliePaymentLinkApiResponseTransfer = $this->getFactory()->createPaymentLinkApi()->execute($mollieApiRequestTransfer);
+
         return $molliePaymentLinkApiResponseTransfer;
     }
 
     /**
-     * @param MollieApiRequestTransfer $mollieApiRequestTransfer
-     * @return MolliePaymentLinkApiResponseTransfer
+     * @param \Generated\Shared\Transfer\MollieApiRequestTransfer $mollieApiRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\MolliePaymentLinkApiResponseTransfer
      */
     public function getPaymentLinks(MollieApiRequestTransfer $mollieApiRequestTransfer): MolliePaymentLinkApiResponseTransfer
     {

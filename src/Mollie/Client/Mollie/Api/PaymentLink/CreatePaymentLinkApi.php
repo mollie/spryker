@@ -19,26 +19,26 @@ use Spryker\Shared\Kernel\Transfer\AbstractTransfer;
 class CreatePaymentLinkApi extends AbstractApiCall
 {
     /**
-     * @param MollieApiClient $mollieApiClient
-     * @param MollieConfig $mollieConfig
-     * @param MollieToUtilEncodingServiceInterface $utilEncodingService
-     * @param MollieLoggerInterface $logger
-     * @param MollieServiceInterface $mollieService
+     * @param \Mollie\Api\MollieApiClient $mollieApiClient
+     * @param \Mollie\Client\Mollie\MollieConfig $mollieConfig
+     * @param \Mollie\Client\Mollie\Dependency\Service\MollieToUtilEncodingServiceInterface $utilEncodingService
+     * @param \Mollie\Client\Mollie\Logger\MollieLoggerInterface $logger
+     * @param \Mollie\Service\Mollie\MollieServiceInterface $mollieService
      */
     public function __construct(
         MollieApiClient $mollieApiClient,
         MollieConfig $mollieConfig,
         MollieToUtilEncodingServiceInterface $utilEncodingService,
         MollieLoggerInterface $logger,
-        protected MollieServiceInterface $mollieService
-    )
-    {
+        protected MollieServiceInterface $mollieService,
+    ) {
         parent::__construct($mollieApiClient, $mollieConfig, $utilEncodingService, $logger);
     }
 
     /**
-     * @param MollieApiRequestTransfer|null $mollieApiRequestTransfer
-     * @return Request|null
+     * @param \Generated\Shared\Transfer\MollieApiRequestTransfer|null $mollieApiRequestTransfer
+     *
+     * @return \Mollie\Api\Http\Request|null
      */
     protected function buildRequest(?MollieApiRequestTransfer $mollieApiRequestTransfer = null): ?Request
     {
@@ -71,8 +71,9 @@ class CreatePaymentLinkApi extends AbstractApiCall
     }
 
     /**
-     * @param MollieApiResponseTransfer $mollieApiResponseTransfer
-     * @return AbstractTransfer
+     * @param \Generated\Shared\Transfer\MollieApiResponseTransfer $mollieApiResponseTransfer
+     *
+     * @return \Spryker\Shared\Kernel\Transfer\AbstractTransfer
      */
     protected function mapApiResponse(MollieApiResponseTransfer $mollieApiResponseTransfer): AbstractTransfer
     {

@@ -5,20 +5,21 @@ declare(strict_types=1);
 namespace Mollie\Zed\Mollie\Communication\Controller;
 
 use Generated\Shared\Transfer\MolliePaymentLinkTransfer;
-use Mollie\Shared\Mollie\MollieConstants;
-use Mollie\Zed\Mollie\Business\MollieFacadeInterface;
-use Mollie\Zed\Mollie\Communication\MollieCommunicationFactory;
 use Spryker\Zed\Kernel\Communication\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
- * @method MollieCommunicationFactory getFactory()
- * @method MollieFacadeInterface getFacade()
+ * @method \Mollie\Zed\Mollie\Communication\MollieCommunicationFactory getFactory()
+ * @method \Mollie\Zed\Mollie\Communication\Controller\MollieFacadeInterface getFacade()
  */
 class PaymentLinkController extends AbstractController
 {
+    /**
+     * @var string
+     */
     protected const MESSAGE_PAYMENT_LINK_CREATE_SUCCESS = 'Payment link has been successfully created.';
-    
+
     /**
      * @param \Symfony\Component\HttpFoundation\Request $request
      *
@@ -36,7 +37,7 @@ class PaymentLinkController extends AbstractController
     /**
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      */
-    public function tableAction()
+    public function tableAction(): JsonResponse
     {
         $table = $this->getFactory()->createPaymentLinkTable();
 
@@ -46,7 +47,7 @@ class PaymentLinkController extends AbstractController
     /**
      * @param \Symfony\Component\HttpFoundation\Request $request
      *
-     * @return array<string, mixed>|\Symfony\Component\HttpFoundation\RedirectResponse
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|array<string, mixed>
      */
     public function createAction(Request $request): array|RedirectResponse
     {
@@ -54,7 +55,7 @@ class PaymentLinkController extends AbstractController
         $form = $this->getFactory()
             ->createPaymentLinkForm(
                 $dataProvider->getData(),
-                $dataProvider->getOptions()
+                $dataProvider->getOptions(),
             )
             ->handleRequest($request);
 
@@ -67,7 +68,7 @@ class PaymentLinkController extends AbstractController
 
             $molliePaymentLinkApiResponseTransfer = $this->getFacade()->createPaymentLink($paymentLinkTransfer);
 
-            if($molliePaymentLinkApiResponseTransfer->getIsSuccessful()) {
+            if ($molliePaymentLinkApiResponseTransfer->getIsSuccessful()) {
                 $this->addSuccessMessage(static::MESSAGE_PAYMENT_LINK_CREATE_SUCCESS);
             }
 

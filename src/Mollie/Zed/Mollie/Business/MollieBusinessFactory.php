@@ -267,10 +267,13 @@ class MollieBusinessFactory extends AbstractBusinessFactory
     }
 
     /**
-     * @return MolliePaymentLinkHandler
+     * @return \Mollie\Zed\Mollie\Business\Handler\MolliePaymentLinkHandler
      */
     public function createMolliePaymentLinkHandler(): MolliePaymentLinkHandlerInterface
     {
-        return new MolliePaymentLinkHandler($this->getMollieClient());
+        return new MolliePaymentLinkHandler(
+            $this->getMollieClient(),
+            $this->getEntityManager(),
+        );
     }
 }

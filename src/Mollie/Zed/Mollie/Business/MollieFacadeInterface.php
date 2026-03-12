@@ -138,8 +138,9 @@ interface MollieFacadeInterface
     public function sendPaymentConfirmationMail(OrderTransfer $orderTransfer): void;
 
     /**
-     * @param MolliePaymentLinkTransfer $molliePaymentLinkTransfer
-     * @return MolliePaymentLinkApiResponseTransfer
+     * @param \Generated\Shared\Transfer\MolliePaymentLinkTransfer $molliePaymentLinkTransfer
+     *
+     * @return \Generated\Shared\Transfer\MolliePaymentLinkApiResponseTransfer
      */
     public function createPaymentLink(MolliePaymentLinkTransfer $molliePaymentLinkTransfer): MolliePaymentLinkApiResponseTransfer;
 
