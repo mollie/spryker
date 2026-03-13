@@ -321,6 +321,11 @@
         <property name="paymentLinks" type="MolliePaymentLink[]" singular="paymentLink"/>
     </transfer>
 
+    <transfer name="MolliePaymentLinkResponse">
+        <property name="isSuccessful" type="bool"/>
+        <property name="message" type="string"/>
+    </transfer>
+
     <transfer name="MolliePaymentLinkApiResponse">
         <property name="isSuccessful" type="bool"/>
         <property name="message" type="string"/>
@@ -328,5 +333,22 @@
         <property name="molliePaymentLink" type="MolliePaymentLink"/>
     </transfer>
 
+
+    <transfer name="MollieWebhookEvent">
+        <property name="resource" type="string"/>
+        <property name="id" type="string"/>
+        <property name="type" type="string"/>
+        <property name="entityId" type="string"/>
+        <property name="createdAt" type="string"/>
+        <property name="embedded" type="array"/>
+        <property name="links" type="MollieWebhookLinks"/>
+    </transfer>
+
+    <transfer name="MollieWebhookLinks">
+        <property name="self" type="MollieLink"/>
+        <property name="paymentLink" type="MollieLink"/>
+        <property name="documentation" type="MollieLink"/>
+        <property name="payment" type="MollieLink"/>
+    </transfer>
 
 </transfers>

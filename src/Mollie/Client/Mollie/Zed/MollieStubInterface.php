@@ -3,6 +3,8 @@
 namespace Mollie\Client\Mollie\Zed;
 
 use Generated\Shared\Transfer\MolliePaymentCaptureResponseTransfer;
+use Generated\Shared\Transfer\MolliePaymentLinkResponseTransfer;
+use Generated\Shared\Transfer\MolliePaymentLinkTransfer;
 use Generated\Shared\Transfer\MolliePaymentTransfer;
 use Generated\Shared\Transfer\MollieRefundResponseTransfer;
 use Generated\Shared\Transfer\OrderCollectionRequestTransfer;
@@ -30,4 +32,11 @@ interface MollieStubInterface
      * @return \Generated\Shared\Transfer\MolliePaymentCaptureResponseTransfer
      */
     public function updatePaymentCaptureCollection(MolliePaymentTransfer $molliePaymentTransfer): MolliePaymentCaptureResponseTransfer;
+
+    /**
+     * @param \Generated\Shared\Transfer\MolliePaymentLinkTransfer $molliePaymentLinkTransfer
+     *
+     * @return \Generated\Shared\Transfer\MolliePaymentLinkResponseTransfer
+     */
+    public function updatePaymentLink(MolliePaymentLinkTransfer $molliePaymentLinkTransfer): MolliePaymentLinkResponseTransfer;
 }

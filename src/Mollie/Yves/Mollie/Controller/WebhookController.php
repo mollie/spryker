@@ -1,10 +1,16 @@
 <?php
 
+/**
+ * This file is part of the Spryker Commerce OS.
+ * For full license information, please view the LICENSE file that was distributed with this source code.
+ */
+
 declare(strict_types = 1);
 
 namespace Mollie\Yves\Mollie\Controller;
 
 use Generated\Shared\Transfer\MollieApiRequestTransfer;
+use Generated\Shared\Transfer\MollieWebhookEventTransfer;
 use Generated\Shared\Transfer\MollieWebhookResponseTransfer;
 use Spryker\Shared\Log\LoggerTrait;
 use SprykerShop\Yves\ShopApplication\Controller\AbstractController;
@@ -46,10 +52,7 @@ class WebhookController extends AbstractController
             );
         }
 
-        $webhookResponseTransfer = (new MollieWebhookResponseTransfer())
-            ->setStatusCode(Response::HTTP_OK)
-            ->setMessage(static::NO_APPLICABLE_WEBHOOK_HANDLERS_FOUND);
-
+        $webhookResponseTransfer = $this->initializeMollieWebhookResponseTransfer();
         foreach ($this->getFactory()->getMollieWebhookHandlerPlugins() as $webhookHandlerPlugin) {
             if (!$webhookHandlerPlugin->isApplicable($molliePaymentApiResponseTransfer->getMolliePayment())) {
                 continue;
@@ -62,6 +65,66 @@ class WebhookController extends AbstractController
             $webhookResponseTransfer->getStatusCode(),
             $webhookResponseTransfer->getMessage(),
         );
+    }
+
+    /**
+     * @param \Symfony\Component\HttpFoundation\Request $request
+     *
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function nextGenWebhookAction(Request $request): Response
+    {
+        $signatureHeader = $request->headers->get('X-Mollie-Signature');
+        if (!$signatureHeader) {
+            return $this->createResponse(
+                Response::HTTP_UNAUTHORIZED,
+                'Missing signature',
+            );
+        }
+
+        $content = $request->getContent();
+        $isValidSignature = $this->getFactory()
+            ->createWebhookSignatureValidator()
+            ->isValid($content, $signatureHeader);
+
+        if (!$isValidSignature) {
+            return $this->createResponse(
+                Response::HTTP_UNAUTHORIZED,
+                'Invalid signature',
+            );
+        }
+
+        $payload = $this->getFactory()
+            ->getUtilEncodingService()
+            ->decodeJson($content);
+
+        $mollieWebhookEventTransfer = $this->getFactory()
+            ->createMollieMapper()
+            ->mapRequestPayloadToMollieWebhookEventTransfer($payload);
+
+        $webhookResponseTransfer = $this->initializeMollieWebhookResponseTransfer();
+        foreach ($this->getFactory()->getMollieNextGenWebhookHandlerPlugins() as $webhookHandlerPlugin) {
+            if (!$webhookHandlerPlugin->isApplicable($mollieWebhookEventTransfer)) {
+                continue;
+            }
+
+            $webhookResponseTransfer = $webhookHandlerPlugin->handle($mollieWebhookEventTransfer);
+        }
+
+        return $this->createResponse(
+            $webhookResponseTransfer->getStatusCode(),
+            $webhookResponseTransfer->getMessage(),
+        );
+    }
+
+    /**
+     * @return \Generated\Shared\Transfer\MollieWebhookResponseTransfer
+     */
+    protected function initializeMollieWebhookResponseTransfer(): MollieWebhookResponseTransfer
+    {
+        return (new MollieWebhookResponseTransfer())
+            ->setStatusCode(Response::HTTP_OK)
+            ->setMessage(static::NO_APPLICABLE_WEBHOOK_HANDLERS_FOUND);
     }
 
     /**

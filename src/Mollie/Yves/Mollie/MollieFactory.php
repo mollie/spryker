@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Mollie\Yves\Mollie;
 
@@ -52,6 +52,8 @@ use Mollie\Yves\Mollie\PaymentPage\Form\MollieKlarnaSliceItSubForm;
 use Mollie\Yves\Mollie\PaymentPage\Form\MollieKlarnaSubForm;
 use Mollie\Yves\Mollie\PaymentPage\Form\MolliePayByBankSubForm;
 use Mollie\Yves\Mollie\PaymentPage\Form\MolliePayPalSubForm;
+use Mollie\Yves\Mollie\Validator\WebhookSignatureValidator;
+use Mollie\Yves\Mollie\Validator\WebhookSignatureValidatorInterface;
 use Spryker\Yves\Kernel\AbstractFactory;
 use Spryker\Yves\StepEngine\Dependency\Form\StepEngineFormDataProviderInterface;
 use Spryker\Yves\StepEngine\Dependency\Form\SubFormInterface;
@@ -421,6 +423,16 @@ class MollieFactory extends AbstractFactory
     }
 
     /**
+     * @return \Mollie\Yves\Mollie\Validator\WebhookSignatureValidatorInterface
+     */
+    public function createWebhookSignatureValidator(): WebhookSignatureValidatorInterface
+    {
+        return new WebhookSignatureValidator(
+            $this->getConfig(),
+        );
+    }
+
+    /**
      * @return \Mollie\Yves\Mollie\Dependency\Client\MollieToStorageClientInterface
      */
     public function getStorageClient(): MollieToStorageClientInterface
@@ -458,6 +470,14 @@ class MollieFactory extends AbstractFactory
     public function getMollieWebhookHandlerPlugins(): array
     {
         return $this->getProvidedDependency(MollieDependencyProvider::PLUGINS_MOLLIE_WEBHOOK_HANDLER);
+    }
+
+     /**
+      * @return array<\Mollie\Yves\Mollie\Plugin\Webhook\MollieNextGenWebhookHandlerPluginInterface>
+      */
+    public function getMollieNextGenWebhookHandlerPlugins(): array
+    {
+        return $this->getProvidedDependency(MollieDependencyProvider::PLUGINS_MOLLIE_NEXT_GEN_WEBHOOK_HANDLER);
     }
 
     /**

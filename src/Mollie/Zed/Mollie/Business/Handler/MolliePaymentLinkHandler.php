@@ -1,33 +1,45 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Mollie\Zed\Mollie\Business\Handler;
 
 use Generated\Shared\Transfer\MollieApiRequestTransfer;
 use Generated\Shared\Transfer\MolliePaymentLinkApiResponseTransfer;
+use Generated\Shared\Transfer\MolliePaymentLinkResponseTransfer;
 use Generated\Shared\Transfer\MolliePaymentLinkTransfer;
 use Mollie\Client\Mollie\MollieClientInterface;
 
 class MolliePaymentLinkHandler implements MolliePaymentLinkHandlerInterface
 {
     /**
-     * @param MollieClientInterface $mollieClient
+     * @param \Mollie\Client\Mollie\MollieClientInterface $mollieClient
      */
     public function __construct(protected MollieClientInterface $mollieClient)
     {
     }
 
     /**
-     * @param MolliePaymentLinkTransfer $molliePaymentLinkTransfer
-     * @return MolliePaymentLinkTransfer
+     * @param \Generated\Shared\Transfer\MolliePaymentLinkTransfer $molliePaymentLinkTransfer
+     *
+     * @return \Generated\Shared\Transfer\MolliePaymentLinkTransfer
      */
     public function createPaymentLink(MolliePaymentLinkTransfer $molliePaymentLinkTransfer): MolliePaymentLinkApiResponseTransfer
     {
         $mollieApiRequestTransfer = (new MollieApiRequestTransfer())
             ->setPaymentLink($molliePaymentLinkTransfer);
-        
+
         return $this->mollieClient->createPaymentLink($mollieApiRequestTransfer);
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MolliePaymentLinkTransfer $molliePaymentLinkTransfer
+     *
+     * @return \Generated\Shared\Transfer\MolliePaymentLinkResponseTransfer
+     */
+    public function updatePaymentLink(MolliePaymentLinkTransfer $molliePaymentLinkTransfer): MolliePaymentLinkResponseTransfer
+    {
+        return new MolliePaymentLinkResponseTransfer();
     }
 
 //    /**

@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Mollie\Zed\Mollie\Business;
 
@@ -267,7 +267,7 @@ class MollieBusinessFactory extends AbstractBusinessFactory
     }
 
     /**
-     * @return MolliePaymentLinkHandler
+     * @return \Mollie\Zed\Mollie\Business\Handler\MolliePaymentLinkHandler
      */
     public function createMolliePaymentLinkHandler(): MolliePaymentLinkHandlerInterface
     {
