@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Mollie\Zed\Mollie\Communication;
 
@@ -11,12 +11,15 @@ use Mollie\Zed\Mollie\Communication\Mapper\MollieCommunicationMapper;
 use Mollie\Zed\Mollie\Communication\Mapper\MollieCommunicationMapperInterface;
 use Mollie\Zed\Mollie\Communication\Mapper\Order\OrderItemMapper;
 use Mollie\Zed\Mollie\Communication\Mapper\Order\OrderItemMapperInterface;
+use Mollie\Zed\Mollie\Communication\Table\MolliePaymentLinkTable;
 use Mollie\Zed\Mollie\Communication\Table\MolliePaymentMethodsTable;
+use Mollie\Zed\Mollie\Communication\Table\TableDataProvider\MolliePaymentLinkDataProvider;
 use Mollie\Zed\Mollie\Communication\Table\TableDataProvider\MolliePaymentMethodsDataProvider;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToLocaleFacadeInterface;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToMailFacadeInterface;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToSalesFacadeInterface;
 use Mollie\Zed\Mollie\MollieDependencyProvider;
+use Orm\Zed\Mollie\Persistence\SpyMolliePaymentLinkQuery;
 use Spryker\Zed\Kernel\Communication\AbstractCommunicationFactory;
 
 /**
@@ -56,6 +59,25 @@ class MollieCommunicationFactory extends AbstractCommunicationFactory
             $this->getMollieClient(),
             $this->getLocaleFacade(),
         );
+    }
+
+    /**
+     * @return MolliePaymentLinkTable
+     */
+    public function createPaymentLinkTable()
+    {
+        return new MolliePaymentLinkTable(
+        //$this->getMolliePaymentLinkQuery()
+            $this->createMolliePaymentLinkDataProvider()
+        );
+    }
+
+    /**
+     * @return MolliePaymentLinkDataProvider
+     */
+    public function createMolliePaymentLinkDataProvider(): MolliePaymentLinkDataProvider
+    {
+        return new MolliePaymentLinkDataProvider($this->getMollieClient());
     }
 
     /**
@@ -104,5 +126,13 @@ class MollieCommunicationFactory extends AbstractCommunicationFactory
     public function getSalesFacade(): MollieToSalesFacadeInterface
     {
         return $this->getProvidedDependency(MollieDependencyProvider::FACADE_SALES);
+    }
+
+    /**
+     * @return SpyMolliePaymentLinkQuery
+     */
+    public function getMolliePaymentLinkQuery(): SpyMolliePaymentLinkQuery
+    {
+        return $this->getProvidedDependency(MollieDependencyProvider::PROPEL_QUERY_PAYMENT_LINK);
     }
 }

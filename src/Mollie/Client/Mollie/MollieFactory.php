@@ -13,6 +13,8 @@ use Mollie\Client\Mollie\Api\Payment\CreatePaymentApi;
 use Mollie\Client\Mollie\Api\Payment\GetAllPaymentMethodsApi;
 use Mollie\Client\Mollie\Api\Payment\GetEnabledPaymentMethodsApi;
 use Mollie\Client\Mollie\Api\Payment\GetPaymentByTransactionIdApi;
+use Mollie\Client\Mollie\Api\PaymentLink\CreatePaymentLinkApi;
+use Mollie\Client\Mollie\Api\PaymentLink\GetPaymentLinksApi;
 use Mollie\Client\Mollie\Api\Profile\GetCurrentProfileApi;
 use Mollie\Client\Mollie\Api\Refund\CreateRefundApi;
 use Mollie\Client\Mollie\Api\Refund\GetRefundByRefundIdApi;
@@ -263,5 +265,32 @@ class MollieFactory extends AbstractFactory
     public function getStorageClient(): MollieToStorageClientInterface
     {
         return $this->getProvidedDependency(MollieDependencyProvider::CLIENT_STORAGE);
+    }
+
+    /**
+     * @return ApiCallInterface
+     */
+    public function createPaymentLinkApi(): ApiCallInterface
+    {
+        return new CreatePaymentLinkApi(
+            $this->createMollieApiClient(),
+            $this->getConfig(),
+            $this->getUtilEncodingService(),
+            $this->createMollieLogger(),
+            $this->getMollieService(),
+        );
+    }
+
+    /**
+     * @return ApiCallInterface
+     */
+    public function createGetPaymentLinksApi(): ApiCallInterface
+    {
+        return new GetPaymentLinksApi(
+            $this->createMollieApiClient(),
+            $this->getConfig(),
+            $this->getUtilEncodingService(),
+            $this->createMollieLogger(),
+        );
     }
 }

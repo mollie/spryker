@@ -16,6 +16,7 @@ use Mollie\Zed\Mollie\Dependency\MollieToStorageClientInterface;
 use Mollie\Zed\Mollie\Dependency\Service\MollieToUtilEncodingServiceBridge;
 use Mollie\Zed\Mollie\Dependency\Service\MollieToUtilEncodingServiceInterface;
 use Monolog\Logger;
+use Orm\Zed\Mollie\Persistence\SpyMolliePaymentLinkQuery;
 use Spryker\Zed\Kernel\AbstractBundleDependencyProvider;
 use Spryker\Zed\Kernel\Container;
 
@@ -67,6 +68,11 @@ class MollieDependencyProvider extends AbstractBundleDependencyProvider
     public const SERVICE_MOLLIE = 'SERVICE_MOLLIE';
 
     /**
+     * @var string
+     */
+    public const PROPEL_QUERY_PAYMENT_LINK = 'PROPEL_QUERY_PAYMENT_LINK';
+
+    /**
      * @param \Spryker\Zed\Kernel\Container $container
      *
      * @return \Spryker\Zed\Kernel\Container
@@ -97,6 +103,7 @@ class MollieDependencyProvider extends AbstractBundleDependencyProvider
         $container = $this->addMollieClient($container);
         $container = $this->addLocaleFacade($container);
         $container = $this->addSalesFacade($container);
+        $container = $this->addPaymentLinkQuery($container);
 
         return $container;
     }
@@ -249,6 +256,19 @@ class MollieDependencyProvider extends AbstractBundleDependencyProvider
         $container->set(static::SERVICE_MOLLIE, function (Container $container) {
             return $container->getLocator()->mollie()->service();
         });
+
+        return $container;
+    }
+
+    /**
+     * @param Container $container
+     * @return Container
+     */
+    protected function addPaymentLinkQuery(Container $container): Container
+    {
+        $container->set(static::PROPEL_QUERY_PAYMENT_LINK, $container->factory(function () {
+            return SpyMolliePaymentLinkQuery::create();
+        }));
 
         return $container;
     }

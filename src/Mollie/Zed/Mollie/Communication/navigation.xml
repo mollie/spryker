@@ -1,9 +1,29 @@
 <?xml version="1.0"?>
-<mollie-payment-method>
-    <label>Mollie payment methods</label>
-    <title>Mollie payment methods</title>
-    <bundle>mollie</bundle>
-    <controller>index</controller>
-    <action>index</action>
-    <visible>1</visible>
-</mollie-payment-method>
+
+<config>
+    <administration>
+        <label>Customers</label>
+        <title>Customers</title>
+        <icon>fa-users</icon>
+        <uri>#</uri>
+        <visible>1</visible>
+        <pages>
+            <mollie-payment-method>
+                <label>Mollie payment methods</label>
+                <title>Mollie payment methods</title>
+                <bundle>mollie</bundle>
+                <controller>index</controller>
+                <action>index</action>
+                <visible>1</visible>
+            </mollie-payment-method>
+            <mollie-payment-links>
+                <label>Mollie payment links</label>
+                <title>Mollie payment links</title>
+                <bundle>mollie</bundle>
+                <controller>payment-link</controller>
+                <action>index</action>
+                <visible>1</visible>
+            </mollie-payment-links>
+        </pages>
+    </administration>
+</config>

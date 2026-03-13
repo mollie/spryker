@@ -1,0 +1,121 @@
+{% extends '@Gui/Layout/layout.twig' %}
+
+{% set widget_title = 'Create Mollie Payment Link' | trans %}
+
+{% block head_title widget_title %}
+{% block section_title widget_title %}
+
+{% block action %}
+    {{ backActionButton('/mollie/payment-link', 'Back to List' | trans) }}
+{% endblock %}
+
+{% block content %}
+
+    {% embed '@Gui/Partials/widget.twig' %}
+
+        {% block widget_content %}
+
+            {{ form_start(form) }}
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        {{ form_label(form.type) }}
+                        {{ form_widget(form.type, {'attr': {'class': 'form-control'}}) }}
+                        {{ form_errors(form.type) }}
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="form-group">
+                        {{ form_label(form.currency) }}
+                        {{ form_widget(form.currency, {'attr': {'class': 'form-control'}}) }}
+                        {{ form_errors(form.currency) }}
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="form-group">
+                        {{ form_label(form.amount) }}
+                        {{ form_widget(form.amount, {'attr': {'class': 'form-control', 'placeholder': '200'}}) }}
+                        {{ form_errors(form.amount) }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                {{ form_label(form.description) }}
+                {{ form_widget(form.description, {'attr': {'class': 'form-control'}}) }}
+                {{ form_errors(form.description) }}
+                <span class="help-block text-danger">This information is required</span>
+            </div>
+
+            <div class="form-group">
+                {{ form_label(form.expiryDate) }}
+                {{ form_widget(form.expiryDate, {'attr': {'class': 'form-control'}}) }}
+                {{ form_errors(form.expiryDate) }}
+            </div>
+
+            <div class="form-group">
+                {{ form_label(form.redirectUrl) }}
+                {{ form_widget(form.redirectUrl, {'attr': {'class': 'form-control'}}) }}
+                {{ form_errors(form.redirectUrl) }}
+            </div>
+
+            <div class="checkbox">
+                <label>
+                    {{ form_widget(form.saveRedirectUrl) }}
+                    {{ form.saveRedirectUrl.vars.label }}
+                </label>
+                {{ form_errors(form.saveRedirectUrl) }}
+            </div>
+
+            <hr>
+
+            <h4>Extra options</h4>
+
+            <div class="checkbox">
+                <label>
+                    {{ form_widget(form.isReusable) }}
+                    {{ form.isReusable.vars.label }}
+                </label>
+                {{ form_errors(form.isReusable) }}
+            </div>
+
+            <div class="form-group">
+                {{ form_label(form.paymentMethods) }}
+                {{ form_widget(form.paymentMethods, {'attr': {'class': 'form-control select2'}}) }}
+                {{ form_errors(form.paymentMethods) }}
+                <span class="help-block">By default, all methods are offered in your checkout.</span>
+            </div>
+
+            <hr>
+
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fa fa-save"></i> Create link
+                </button>
+                <a href="/mollie/payment-link/index" class="btn btn-default">
+                    Cancel
+                </a>
+            </div>
+
+            {{ form_end(form) }}
+
+        {% endblock %}
+
+    {% endembed %}
+
+{% endblock %}
+
+{% block footer_js %}
+    {{ parent() }}
+    <script>
+        $(document).ready(function() {
+            $('.select2').select2({
+                placeholder: 'By default, all methods are offered in your checkout.',
+                allowClear: true
+            });
+        });
+    </script>
+{% endblock %}
