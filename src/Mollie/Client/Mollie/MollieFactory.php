@@ -13,6 +13,7 @@ use Mollie\Client\Mollie\Api\Payment\CreatePaymentApi;
 use Mollie\Client\Mollie\Api\Payment\GetAllPaymentMethodsApi;
 use Mollie\Client\Mollie\Api\Payment\GetEnabledPaymentMethodsApi;
 use Mollie\Client\Mollie\Api\Payment\GetPaymentByTransactionIdApi;
+use Mollie\Client\Mollie\Api\Payment\ReleasePaymentAuthorizationApi;
 use Mollie\Client\Mollie\Api\Profile\GetCurrentProfileApi;
 use Mollie\Client\Mollie\Api\Refund\CreateRefundApi;
 use Mollie\Client\Mollie\Api\Refund\GetRefundByRefundIdApi;
@@ -154,6 +155,19 @@ class MollieFactory extends AbstractFactory
             $this->getUtilEncodingService(),
             $this->createMollieLogger(),
             $this->getMollieService(),
+        );
+    }
+
+    /**
+     * @return \Mollie\Client\Mollie\Api\ApiCallInterface
+     */
+    public function createReleasePaymentAuthorizationApi(): ApiCallInterface
+    {
+        return new ReleasePaymentAuthorizationApi(
+            $this->createMollieApiClient(),
+            $this->getConfig(),
+            $this->getUtilEncodingService(),
+            $this->createMollieLogger(),
         );
     }
 

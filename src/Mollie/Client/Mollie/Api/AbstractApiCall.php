@@ -15,6 +15,7 @@ use Mollie\Api\MollieApiClient;
 use Mollie\Client\Mollie\Dependency\Service\MollieToUtilEncodingServiceInterface;
 use Mollie\Client\Mollie\Logger\MollieLoggerInterface;
 use Mollie\Client\Mollie\MollieConfig;
+use Psr\Http\Message\ResponseInterface;
 use Ramsey\Uuid\Uuid;
 use ReflectionClass;
 use Spryker\Shared\Kernel\Transfer\AbstractTransfer;
@@ -72,8 +73,7 @@ abstract class AbstractApiCall implements ApiCallInterface
             $request = $this->buildRequest($mollieApiRequestTransfer);
 
             $result = $this->mollieApiClient->send($request);
-            $response = $result->getResponse();
-            $statusCode = $response->status();
+            [$statusCode, $response] = $this->resolveResult($result);
 
             if ($statusCode === Response::HTTP_OK || $statusCode === Response::HTTP_CREATED) {
                 $payload = $this->formatApiResponse($response);
@@ -81,7 +81,7 @@ abstract class AbstractApiCall implements ApiCallInterface
             }
         } catch (ApiException $exception) {
             $response = $exception->getResponse();
-            $payload = $this->formatApiResponse($response);
+            $payload = $this->formatApiResponse($response->getPsrResponse());
             $errorCode = $response->status();
             $mollieApiResponseTransfer = $this->createErrorResponse($errorCode, $payload);
         } catch (Exception $exception) {
@@ -91,6 +91,26 @@ abstract class AbstractApiCall implements ApiCallInterface
         $this->logApi($mollieApiResponseTransfer);
 
         return $this->mapApiResponse($mollieApiResponseTransfer);
+    }
+
+    /**
+     * @param mixed $result
+     *
+     * @return array<int, mixed>
+     */
+    protected function resolveResult(mixed $result): array
+    {
+        if ($result instanceof MollieApiHttpResponse) {
+            return [
+                $result->getPsrResponse()->getStatusCode(),
+                $result->getPsrResponse(),
+            ];
+        }
+
+        return [
+            $result->getResponse()->status(),
+            $result->getResponse()->getPsrResponse(),
+        ];
     }
 
     /**
@@ -126,9 +146,7 @@ abstract class AbstractApiCall implements ApiCallInterface
      */
     protected function getRequestBody(): array
     {
-        $requestBody = $this->request?->query()->all() ?? [];
-
-        return $requestBody;
+        return $this->request?->query()->all() ?? [];
     }
 
     /**
@@ -144,14 +162,12 @@ abstract class AbstractApiCall implements ApiCallInterface
     }
 
     /**
-     * @param \Mollie\Api\Http\Response $response
+     * @param \Psr\Http\Message\ResponseInterface $psrResponse
      *
      * @return array<string, mixed>
      */
-    protected function formatApiResponse(MollieApiHttpResponse $response): array
+    protected function formatApiResponse(ResponseInterface $psrResponse): array
     {
-        $psrResponse = $response->getPsrResponse();
-
         return $this->utilEncodingService->decodeJson($psrResponse->getBody()->getContents());
     }
 

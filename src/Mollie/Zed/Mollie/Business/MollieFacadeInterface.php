@@ -86,6 +86,12 @@ interface MollieFacadeInterface
         MolliePaymentCaptureRequestTransfer $molliePaymentCaptureRequestTransfer,
     ): MolliePaymentCaptureResponseTransfer;
 
+     /**
+     * @param int $idSalesOrder
+     * @return void
+     */
+    public function releaseAuthorization(int $idSalesOrder): void;
+
     /**
      * @param int $idSalesOrder
      *
