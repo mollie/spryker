@@ -89,6 +89,8 @@ class MollieZedTester extends Actor
     }
 
     /**
+     * @param string $trasactionId
+     *
      * @return \Propel\Runtime\Collection\ObjectCollection
      */
     public function findMollieOrderItemPaymentCaptureCollection(string $trasactionId): ObjectCollection

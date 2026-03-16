@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Mollie\Zed\Mollie;
 
+use Mollie\Zed\Mollie\Dependency\Facade\MollieToCurrencyFacadeBridge;
+use Mollie\Zed\Mollie\Dependency\Facade\MollieToCurrencyFacadeInterface;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToLocaleFacadeBridge;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToLocaleFacadeInterface;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToMailFacadeBridge;
@@ -16,6 +18,7 @@ use Mollie\Zed\Mollie\Dependency\MollieToStorageClientInterface;
 use Mollie\Zed\Mollie\Dependency\Service\MollieToUtilEncodingServiceBridge;
 use Mollie\Zed\Mollie\Dependency\Service\MollieToUtilEncodingServiceInterface;
 use Monolog\Logger;
+use Orm\Zed\Mollie\Persistence\SpyMolliePaymentLinkQuery;
 use Spryker\Zed\Kernel\AbstractBundleDependencyProvider;
 use Spryker\Zed\Kernel\Container;
 
@@ -44,6 +47,11 @@ class MollieDependencyProvider extends AbstractBundleDependencyProvider
     /**
      * @var string
      */
+    public const FACADE_CURRENCY = 'FACADE_CURRENCY';
+
+    /**
+     * @var string
+     */
     public const LOGGER = 'LOGGER';
 
     /**
@@ -65,6 +73,11 @@ class MollieDependencyProvider extends AbstractBundleDependencyProvider
      * @var string
      */
     public const SERVICE_MOLLIE = 'SERVICE_MOLLIE';
+
+    /**
+     * @var string
+     */
+    public const PROPEL_QUERY_PAYMENT_LINK = 'PROPEL_QUERY_PAYMENT_LINK';
 
     /**
      * @param \Spryker\Zed\Kernel\Container $container
@@ -97,6 +110,8 @@ class MollieDependencyProvider extends AbstractBundleDependencyProvider
         $container = $this->addMollieClient($container);
         $container = $this->addLocaleFacade($container);
         $container = $this->addSalesFacade($container);
+        $container = $this->addPaymentLinkQuery($container);
+        $container = $this->addCurrencyFacade($container);
 
         return $container;
     }
@@ -248,6 +263,36 @@ class MollieDependencyProvider extends AbstractBundleDependencyProvider
     {
         $container->set(static::SERVICE_MOLLIE, function (Container $container) {
             return $container->getLocator()->mollie()->service();
+        });
+
+        return $container;
+    }
+
+    /**
+     * @param \Spryker\Zed\Kernel\Container $container
+     *
+     * @return \Spryker\Zed\Kernel\Container
+     */
+    protected function addPaymentLinkQuery(Container $container): Container
+    {
+        $container->set(static::PROPEL_QUERY_PAYMENT_LINK, $container->factory(function () {
+            return SpyMolliePaymentLinkQuery::create();
+        }));
+
+        return $container;
+    }
+
+    /**
+     * @param \Spryker\Zed\Kernel\Container $container
+     *
+     * @return \Spryker\Zed\Kernel\Container
+     */
+    protected function addCurrencyFacade(Container $container): Container
+    {
+        $container->set(static::FACADE_CURRENCY, function (Container $container): MollieToCurrencyFacadeInterface {
+            return new MollieToCurrencyFacadeBridge(
+                $container->getLocator()->currency()->facade(),
+            );
         });
 
         return $container;

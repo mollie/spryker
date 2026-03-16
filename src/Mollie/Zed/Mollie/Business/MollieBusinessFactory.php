@@ -16,6 +16,8 @@ use Mollie\Zed\Mollie\Business\Handler\MollieMailHandler;
 use Mollie\Zed\Mollie\Business\Handler\MollieMailHandlerInterface;
 use Mollie\Zed\Mollie\Business\Handler\MolliePaymentHandler;
 use Mollie\Zed\Mollie\Business\Handler\MolliePaymentHandlerInterface;
+use Mollie\Zed\Mollie\Business\Handler\MolliePaymentLinkHandler;
+use Mollie\Zed\Mollie\Business\Handler\MolliePaymentLinkHandlerInterface;
 use Mollie\Zed\Mollie\Business\Mapper\Capture\CaptureMapper;
 use Mollie\Zed\Mollie\Business\Mapper\Capture\CaptureMapperInterface;
 use Mollie\Zed\Mollie\Business\Mapper\Order\OrderMapper;
@@ -262,5 +264,13 @@ class MollieBusinessFactory extends AbstractBusinessFactory
     public function getMailFacade(): MollieToMailFacadeInterface
     {
         return $this->getProvidedDependency(MollieDependencyProvider::FACADE_MAIL);
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Business\Handler\MolliePaymentLinkHandler
+     */
+    public function createMolliePaymentLinkHandler(): MolliePaymentLinkHandlerInterface
+    {
+        return new MolliePaymentLinkHandler($this->getMollieClient());
     }
 }

@@ -166,6 +166,7 @@
         <property name="dashboard" type="MollieLink"/>
         <property name="documentation" type="MollieLink"/>
         <property name="payment" type="MollieLink"/>
+        <property name="paymentLink" type="MollieLink"/>
     </transfer>
 
     <transfer name="MollieLink">
@@ -229,6 +230,7 @@
         <property name="transactionId" type="string"/>
         <property name="refund" type="MollieRefund"/>
         <property name="paymentCapture" type="MolliePaymentCapture"/>
+        <property name="paymentLink" type="MolliePaymentLink"/>
     </transfer>
 
     <transfer name="MolliePaymentCaptureRequest">
@@ -285,5 +287,46 @@
         <property name="statusCode" type="int"/>
         <property name="message" type="string"/>
     </transfer>
+
+    <transfer name="MolliePaymentLink">
+        <property name="idMolliePaymentLink" type="int"/>
+        <property name="resource" type="string"/>
+        <property name="id" type="string"/>
+        <property name="description" type="string"/>
+        <property name="mode" type="string"/>
+        <property name="archived" type="bool"/>
+        <property name="reusable" type="bool"/>
+        <property name="profileId" type="string"/>
+        <property name="amount" type="MollieAmount"/>
+        <property name="webhookUrl" type="string"/>
+        <property name="redirectUrl" type="string"/>
+        <property name="createdAt" type="string"/>
+        <property name="paidAt" type="string"/>
+        <property name="expiresAt" type="string"/>
+        <property name="allowedMethods" type="array" singular="allowedMethod"/>
+        <property name="sequenceType" type="string"/>
+        <property name="links" type="MollieLinks"/>
+        <property name="type" type="string"/>
+        <property name="saveRedirectUrl" type="bool"/>
+        <property name="status" type="string"/>
+        <property name="updatedAt" type="string"/>
+    </transfer>
+
+    <transfer name="MolliePaymentLinkCriteria">
+        <property name="idMolliePaymentLink" type="int"/>
+        <property name="status" type="string"/>
+    </transfer>
+
+    <transfer name="MolliePaymentLinkCollection">
+        <property name="paymentLinks" type="MolliePaymentLink[]" singular="paymentLink"/>
+    </transfer>
+
+    <transfer name="MolliePaymentLinkApiResponse">
+        <property name="isSuccessful" type="bool"/>
+        <property name="message" type="string"/>
+        <property name="molliePaymentLinks" type="MolliePaymentLinkCollection"/>
+        <property name="molliePaymentLink" type="MolliePaymentLink"/>
+    </transfer>
+
 
 </transfers>
