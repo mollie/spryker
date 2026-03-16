@@ -110,6 +110,8 @@ interface MollieClientInterface
      *
      * - Captures the payment
      *
+     * @api
+     *
      * @param \Generated\Shared\Transfer\MollieApiRequestTransfer $mollieApiRequestTransfer
      *
      * @return \Generated\Shared\Transfer\MollieCreateCaptureApiResponseTransfer
@@ -120,6 +122,8 @@ interface MollieClientInterface
      *  Specification:
      *
      *  - Gets capture payment details
+     *
+     * @api
      *
      * @param \Generated\Shared\Transfer\MollieApiRequestTransfer $mollieApiRequestTransfer
      *
@@ -186,6 +190,11 @@ interface MollieClientInterface
     public function logMessage(MollieLogApiTransfer $mollieLogApiTransfer): void;
 
     /**
+     * Specification:
+     * - updates payment capture collection
+     *
+     * @api
+     *
      * @param \Generated\Shared\Transfer\MolliePaymentTransfer $molliePaymentTransfer
      *
      * @return void
@@ -193,6 +202,11 @@ interface MollieClientInterface
     public function updatePaymentCaptureCollection(MolliePaymentTransfer $molliePaymentTransfer): void;
 
     /**
+     * Specification:
+     * - Creates new payment link by sending a request to Mollie API
+     *
+     * @api
+     *
      * @param \Generated\Shared\Transfer\MollieApiRequestTransfer $mollieApiRequestTransfer
      *
      * @return \Generated\Shared\Transfer\MolliePaymentLinkApiResponseTransfer
@@ -200,6 +214,11 @@ interface MollieClientInterface
     public function createPaymentLink(MollieApiRequestTransfer $mollieApiRequestTransfer): MolliePaymentLinkApiResponseTransfer;
 
     /**
+     * Specification:
+     * - Gets payment links from Mollie API
+     *
+     * @api
+     *
      * @param \Generated\Shared\Transfer\MollieApiRequestTransfer $mollieApiRequestTransfer
      *
      * @return \Generated\Shared\Transfer\MolliePaymentLinkApiResponseTransfer
