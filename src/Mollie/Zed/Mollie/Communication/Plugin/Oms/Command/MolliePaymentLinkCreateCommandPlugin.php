@@ -9,7 +9,7 @@ use Spryker\Zed\Oms\Dependency\Plugin\Command\CommandByOrderInterface;
 
 /**
  * @method \Mollie\Zed\Mollie\Business\MollieFacadeInterface getFacade()
- * @method \Mollie\Zed\Mollie\Communication\Plugin\Oms\Command\MollieConfig getConfig()
+ * @method \Mollie\Zed\Mollie\MollieConfig getConfig()
  */
 class MolliePaymentLinkCreateCommandPlugin extends AbstractPlugin implements CommandByOrderInterface
 {

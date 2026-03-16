@@ -113,7 +113,7 @@ class MolliePaymentLinkTable extends AbstractTable
     /**
      * @param \Spryker\Zed\Gui\Communication\Table\TableConfiguration $config
      *
-     * @return array
+     * @return array<mixed>
      */
     protected function prepareData(TableConfiguration $config): array
     {
