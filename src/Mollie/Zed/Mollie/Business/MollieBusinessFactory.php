@@ -267,7 +267,7 @@ class MollieBusinessFactory extends AbstractBusinessFactory
     }
 
     /**
-     * @return MolliePaymentLinkHandler
+     * @return \Mollie\Zed\Mollie\Business\Handler\MolliePaymentLinkHandler
      */
     public function createMolliePaymentLinkHandler(): MolliePaymentLinkHandlerInterface
     {

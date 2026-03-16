@@ -4,26 +4,31 @@ declare(strict_types=1);
 
 namespace Mollie\Zed\Mollie\Communication\Table\TableDataProvider;
 
-use Generated\Shared\Transfer\MollieApiRequestTransfer;
-use Generated\Shared\Transfer\MolliePaymentLinkApiResponseTransfer;
 use Mollie\Client\Mollie\MollieClientInterface;
 
 class MolliePaymentLinkDataProvider
 {
+    /**
+     * @param \Mollie\Client\Mollie\MollieClientInterface $mollieClient
+     */
     public function __construct(
-        protected MollieClientInterface $mollieClient
-    )
-    {
+        protected MollieClientInterface $mollieClient,
+    ) {
     }
 
     /**
-     * @return MolliePaymentLinkApiResponseTransfer
+     * @return \Generated\Shared\Transfer\MolliePaymentLinkApiResponseTransfer|array<mixed>
      */
-    public function getData(): MolliePaymentLinkApiResponseTransfer
+    public function getData()
     {
-        $mollieApiRequestTransfer = new MollieApiRequestTransfer();
-        $molliePaymentLinkApiResponseTransfer = $this->mollieClient->getPaymentLinks($mollieApiRequestTransfer);
-        
-        return $molliePaymentLinkApiResponseTransfer;
+        return [];
+    }
+
+    /**
+     * @return array<mixed>
+     */
+    public function getOptions(): array
+    {
+        return [];
     }
 }

@@ -12,21 +12,23 @@ use Mollie\Client\Mollie\MollieClientInterface;
 class MolliePaymentLinkHandler implements MolliePaymentLinkHandlerInterface
 {
     /**
-     * @param MollieClientInterface $mollieClient
+     * @param \Mollie\Client\Mollie\MollieClientInterface $mollieClient
      */
-    public function __construct(protected MollieClientInterface $mollieClient)
-    {
+    public function __construct(
+        protected MollieClientInterface $mollieClient,
+    ) {
     }
 
     /**
-     * @param MolliePaymentLinkTransfer $molliePaymentLinkTransfer
-     * @return MolliePaymentLinkTransfer
+     * @param \Generated\Shared\Transfer\MolliePaymentLinkTransfer $molliePaymentLinkTransfer
+     *
+     * @return \Generated\Shared\Transfer\MolliePaymentLinkTransfer
      */
     public function createPaymentLink(MolliePaymentLinkTransfer $molliePaymentLinkTransfer): MolliePaymentLinkApiResponseTransfer
     {
         $mollieApiRequestTransfer = (new MollieApiRequestTransfer())
             ->setPaymentLink($molliePaymentLinkTransfer);
-        
+
         return $this->mollieClient->createPaymentLink($mollieApiRequestTransfer);
     }
 

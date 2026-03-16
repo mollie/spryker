@@ -14,13 +14,12 @@ use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MolliePaymentCaptureMapperInterf
 use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MollieRefundMapper;
 use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MollieRefundMapperInterface;
 use Orm\Zed\Mollie\Persistence\SpyMollieOrderItemPaymentCaptureQuery;
-use Orm\Zed\Mollie\Persistence\SpyMolliePaymentLinkQuery;
 use Orm\Zed\Mollie\Persistence\SpyPaymentMollieQuery;
 use Orm\Zed\Mollie\Persistence\SpyRefundMollieQuery;
 use Spryker\Zed\Kernel\Persistence\AbstractPersistenceFactory;
 
 /**
- * @method MollieQueryContainerInterface getQueryContainer()
+ * @method \Mollie\Zed\Mollie\Persistence\MollieQueryContainerInterface getQueryContainer()
  */
 class MolliePersistenceFactory extends AbstractPersistenceFactory
 {

@@ -6,8 +6,10 @@ namespace Mollie\Zed\Mollie\Business\Writer;
 
 class MolliePaymentLinkWriter implements MolliePaymentLinkWriterInterface
 {
-    public function ()
+    /**
+     * @return void
+     */
+    public function test(): void
     {
-        
     }
 }

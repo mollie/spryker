@@ -268,7 +268,7 @@ class MollieFactory extends AbstractFactory
     }
 
     /**
-     * @return ApiCallInterface
+     * @return \Mollie\Client\Mollie\Api\ApiCallInterface
      */
     public function createPaymentLinkApi(): ApiCallInterface
     {
@@ -282,7 +282,7 @@ class MollieFactory extends AbstractFactory
     }
 
     /**
-     * @return ApiCallInterface
+     * @return \Mollie\Client\Mollie\Api\ApiCallInterface
      */
     public function createGetPaymentLinksApi(): ApiCallInterface
     {
