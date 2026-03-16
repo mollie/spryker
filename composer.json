@@ -34,7 +34,7 @@
       "name": "Vladimir Lenartić",
       "email": "vladimir.lenartic@kps.com"
     },
-     {
+    {
       "name": "Domagoj Križanec",
       "email": "domagoj.krizanec@kps.com"
     }
@@ -50,8 +50,7 @@
     "spryker-shop/checkout-page": "^3.39",
     "spryker/cart-extension": "^4.3",
     "spryker/checkout-extension": "^1.5",
-    "spryker/router": "^1.23",
-    "spryker-feature/payments": "^202507.0"
+    "spryker/router": "^1.23"
   },
   "require-dev": {
     "spryker/application": "^3.33",
