@@ -88,9 +88,9 @@ class CreatePaymentLinkForm extends AbstractType
     {
         parent::configureOptions($resolver);
         $resolver->setDefined([
-            self::OPTION_PAYMENT_TYPES,
-            self::OPTION_AVAILABLE_PAYMENT_METHODS,
-            self::OPTION_CURRENCY_CODES,
+            static::OPTION_PAYMENT_TYPES,
+            static::OPTION_AVAILABLE_PAYMENT_METHODS,
+            static::OPTION_CURRENCY_CODES,
         ]);
     }
 
@@ -261,7 +261,10 @@ class CreatePaymentLinkForm extends AbstractType
     {
         $builder->add(self::FIELD_PAYMENT_METHODS, ChoiceType::class, [
             'label' => 'Payment methods (Optional)',
-            'choices' => array_flip($options[self::OPTION_AVAILABLE_PAYMENT_METHODS]),
+            'choices' => array_unique($options[self::OPTION_AVAILABLE_PAYMENT_METHODS]),
+            'choice_value' => function ($choice) {
+                return $choice;
+            },
             'multiple' => true,
             'required' => false,
             'expanded' => false,

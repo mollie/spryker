@@ -11,8 +11,6 @@ use Mollie\Zed\Mollie\Dependency\Facade\MollieToLocaleFacadeInterface;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToMailFacadeBridge;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToMailFacadeInterface;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToOmsBridge;
-use Mollie\Zed\Mollie\Dependency\Facade\MollieToPaymentFacadeBridge;
-use Mollie\Zed\Mollie\Dependency\Facade\MollieToPaymentFacadeInterface;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToSalesFacadeBridge;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToSalesFacadeInterface;
 use Mollie\Zed\Mollie\Dependency\MollieToStorageClientBridge;
@@ -50,11 +48,6 @@ class MollieDependencyProvider extends AbstractBundleDependencyProvider
      * @var string
      */
     public const FACADE_CURRENCY = 'FACADE_CURRENCY';
-
-    /**
-     * @var string
-     */
-    public const FACADE_PAYMENT = 'FACADE_PAYMENT';
 
     /**
      * @var string
@@ -119,7 +112,6 @@ class MollieDependencyProvider extends AbstractBundleDependencyProvider
         $container = $this->addSalesFacade($container);
         $container = $this->addPaymentLinkQuery($container);
         $container = $this->addCurrencyFacade($container);
-        $container = $this->addPaymentFacade($container);
 
         return $container;
     }
@@ -300,22 +292,6 @@ class MollieDependencyProvider extends AbstractBundleDependencyProvider
         $container->set(static::FACADE_CURRENCY, function (Container $container): MollieToCurrencyFacadeInterface {
             return new MollieToCurrencyFacadeBridge(
                 $container->getLocator()->currency()->facade(),
-            );
-        });
-
-        return $container;
-    }
-
-    /**
-     * @param \Spryker\Zed\Kernel\Container $container
-     *
-     * @return \Spryker\Zed\Kernel\Container
-     */
-    protected function addPaymentFacade(Container $container): Container
-    {
-        $container->set(static::FACADE_PAYMENT, function (Container $container): MollieToPaymentFacadeInterface {
-            return new MollieToPaymentFacadeBridge(
-                $container->getLocator()->payment()->facade(),
             );
         });
 

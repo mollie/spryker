@@ -20,7 +20,6 @@ use Mollie\Zed\Mollie\Communication\Table\TableDataProvider\MolliePaymentMethods
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToCurrencyFacadeInterface;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToLocaleFacadeInterface;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToMailFacadeInterface;
-use Mollie\Zed\Mollie\Dependency\Facade\MollieToPaymentFacadeInterface;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToSalesFacadeInterface;
 use Mollie\Zed\Mollie\MollieDependencyProvider;
 use Orm\Zed\Mollie\Persistence\SpyMolliePaymentLinkQuery;
@@ -29,6 +28,7 @@ use Symfony\Component\Form\FormInterface;
 
 /**
  * @method \Mollie\Zed\Mollie\Business\MollieFacade getFacade();
+ * @method \Mollie\Zed\Mollie\MollieConfig getConfig()
  */
 class MollieCommunicationFactory extends AbstractCommunicationFactory
 {
@@ -108,7 +108,7 @@ class MollieCommunicationFactory extends AbstractCommunicationFactory
     {
         return new PaymentLinkFormDataProvider(
             $this->getCurrencyFacade(),
-            $this->getPaymentFacade(),
+            $this->getConfig(),
         );
     }
 
@@ -163,7 +163,7 @@ class MollieCommunicationFactory extends AbstractCommunicationFactory
     /**
      * @return \Orm\Zed\Mollie\Persistence\SpyMolliePaymentLinkQuery
      */
-    public function getMolliePaymentLinkQuery(): SpyMolliePaymentLinkQuery
+    public function getMolliePaymentLinkPropelQuery(): SpyMolliePaymentLinkQuery
     {
         return $this->getProvidedDependency(MollieDependencyProvider::PROPEL_QUERY_PAYMENT_LINK);
     }
@@ -174,13 +174,5 @@ class MollieCommunicationFactory extends AbstractCommunicationFactory
     public function getCurrencyFacade(): MollieToCurrencyFacadeInterface
     {
         return $this->getProvidedDependency(MollieDependencyProvider::FACADE_CURRENCY);
-    }
-
-    /**
-     * @return \Mollie\Zed\Mollie\Dependency\Facade\MollieToPaymentFacadeInterface
-     */
-    public function getPaymentFacade(): MollieToPaymentFacadeInterface
-    {
-        return $this->getProvidedDependency(MollieDependencyProvider::FACADE_PAYMENT);
     }
 }
