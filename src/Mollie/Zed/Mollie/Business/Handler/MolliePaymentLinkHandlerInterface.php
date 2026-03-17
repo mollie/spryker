@@ -15,9 +15,4 @@ interface MolliePaymentLinkHandlerInterface
      * @return \Generated\Shared\Transfer\MolliePaymentLinkTransfer
      */
     public function createPaymentLink(MolliePaymentLinkTransfer $molliePaymentLinkTransfer): MolliePaymentLinkApiResponseTransfer;
-
-//    /**
-//     * @return MolliePaymentLinkApiResponseTransfer
-//     */
-//    public function getPaymentLinks(): MolliePaymentLinkApiResponseTransfer;
 }
