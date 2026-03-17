@@ -40,6 +40,16 @@ class MollieConfig extends AbstractBundleConfig
     /**
      * @var string
      */
+    public const RESPONSE_PARAMETER_EMBEDDED = '_embedded';
+
+    /**
+     * @var string
+     */
+    public const RESPONSE_PARAMETER_PAYMENT_LINKS = 'payment_links';
+
+    /**
+     * @var string
+     */
     public const REQUEST_PARAMETER_CREATE_PAYMENT_BANK_TRANSFER_DUE_DATE = 'dueDate';
 
     /**

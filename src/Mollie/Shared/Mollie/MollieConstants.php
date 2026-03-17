@@ -167,4 +167,12 @@ interface MollieConstants
     public const string MOLLIE_SEQUENCE_TYPE_ONE_OFF = 'oneoff';
 
     public const string LOGO_URL = 'LogoUrl';
+
+    /**
+     * @var array<string>
+     */
+    public const array PAYMENT_LINK_TYPES = [
+        'Fixed' => 'fixed',
+        'Open' => 'open',
+    ];
 }
