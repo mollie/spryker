@@ -40,12 +40,4 @@ class MolliePaymentLinkHandler implements MolliePaymentLinkHandlerInterface
 
         return $molliePaymentLinkApiResponseTransfer;
     }
-
-//    /**
-//     * @return MolliePaymentLinkApiResponseTransfer
-//     */
-//    public function getPaymentLinks(): MolliePaymentLinkApiResponseTransfer
-//    {
-//        return $this->mollieClient->getPaymentLinks();
-//    }
 }
