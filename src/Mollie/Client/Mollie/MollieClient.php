@@ -126,6 +126,10 @@ class MollieClient extends AbstractClient implements MollieClientInterface
     }
 
     /**
+     * {@inheritDoc}
+     *
+     * @api
+     *
      * @param \Generated\Shared\Transfer\MolliePaymentTransfer $molliePaymentTransfer
      *
      * @return void
@@ -185,6 +189,10 @@ class MollieClient extends AbstractClient implements MollieClientInterface
     }
 
     /**
+     * {@inheritDoc}
+     *
+     * @api
+     *
      * @param \Generated\Shared\Transfer\MollieApiRequestTransfer $mollieApiRequestTransfer
      *
      * @return \Generated\Shared\Transfer\MollieCreateCaptureApiResponseTransfer
@@ -198,6 +206,10 @@ class MollieClient extends AbstractClient implements MollieClientInterface
     }
 
     /**
+     * {@inheritDoc}
+     *
+     * @api
+     *
      * @param \Generated\Shared\Transfer\MollieApiRequestTransfer $mollieApiRequestTransfer
      *
      * @return \Generated\Shared\Transfer\MollieGetCaptureApiResponseTransfer
@@ -221,6 +233,10 @@ class MollieClient extends AbstractClient implements MollieClientInterface
     }
 
     /**
+     * {@inheritDoc}
+     *
+     * @api
+     *
      * @param \Generated\Shared\Transfer\MollieApiRequestTransfer $mollieApiRequestTransfer
      *
      * @return \Generated\Shared\Transfer\MolliePaymentLinkApiResponseTransfer
@@ -233,6 +249,10 @@ class MollieClient extends AbstractClient implements MollieClientInterface
     }
 
     /**
+     * {@inheritDoc}
+     *
+     * @api
+     *
      * @param \Generated\Shared\Transfer\MollieApiRequestTransfer $mollieApiRequestTransfer
      *
      * @return \Generated\Shared\Transfer\MolliePaymentLinkApiResponseTransfer

@@ -7,7 +7,6 @@ namespace Mollie\Client\Mollie\Api\PaymentLink;
 use Generated\Shared\Transfer\MollieApiRequestTransfer;
 use Generated\Shared\Transfer\MollieApiResponseTransfer;
 use Generated\Shared\Transfer\MollieLinksTransfer;
-use Generated\Shared\Transfer\MolliePaymentApiResponseTransfer;
 use Generated\Shared\Transfer\MolliePaymentLinkApiResponseTransfer;
 use Generated\Shared\Transfer\MolliePaymentLinkCollectionTransfer;
 use Generated\Shared\Transfer\MolliePaymentLinkTransfer;
@@ -20,8 +19,9 @@ use Spryker\Shared\Kernel\Transfer\AbstractTransfer;
 class GetPaymentLinksApi extends AbstractApiCall
 {
     /**
-     * @param MollieApiRequestTransfer|null $mollieApiRequestTransfer
-     * @return Request|null
+     * @param \Generated\Shared\Transfer\MollieApiRequestTransfer|null $mollieApiRequestTransfer
+     *
+     * @return \Mollie\Api\Http\Request|null
      */
     protected function buildRequest(?MollieApiRequestTransfer $mollieApiRequestTransfer = null): ?Request
     {
@@ -34,8 +34,9 @@ class GetPaymentLinksApi extends AbstractApiCall
     }
 
     /**
-     * @param MollieApiResponseTransfer $mollieApiResponseTransfer
-     * @return AbstractTransfer
+     * @param \Generated\Shared\Transfer\MollieApiResponseTransfer $mollieApiResponseTransfer
+     *
+     * @return \Spryker\Shared\Kernel\Transfer\AbstractTransfer
      */
     protected function mapApiResponse(MollieApiResponseTransfer $mollieApiResponseTransfer): AbstractTransfer
     {
@@ -47,7 +48,7 @@ class GetPaymentLinksApi extends AbstractApiCall
         $payload = $mollieApiResponseTransfer->getPayload();
         $paymentLinks = $payload[MollieConfig::RESPONSE_PARAMETER_EMBEDDED][MollieConfig::RESPONSE_PARAMETER_PAYMENT_LINKS] ?? [];
 
-        if(empty($paymentLinks)){
+        if (!$paymentLinks) {
             return $mollieApiResponseTransfer;
         }
 

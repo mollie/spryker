@@ -5,37 +5,69 @@ declare(strict_types=1);
 namespace Mollie\Zed\Mollie\Communication\Table;
 
 use Mollie\Zed\Mollie\Communication\Table\TableDataProvider\MolliePaymentLinkDataProvider;
-use Orm\Zed\Mollie\Persistence\Map\SpyMolliePaymentLinkTableMap;
-use Orm\Zed\Mollie\Persistence\SpyMolliePaymentLinkQuery;
 use Spryker\Zed\Gui\Communication\Table\AbstractTable;
 use Spryker\Zed\Gui\Communication\Table\TableConfiguration;
 
-
 class MolliePaymentLinkTable extends AbstractTable
 {
+    /**
+     * @var string
+     */
     protected const COL_ID = 'id_mollie_payment_link';
+
+    /**
+     * @var string
+     */
     protected const COL_TYPE = 'type';
+
+    /**
+     * @var string
+     */
     protected const COL_AMOUNT = 'amount';
+
+    /**
+     * @var string
+     */
     protected const COL_CURRENCY = 'currency';
+
+    /**
+     * @var string
+     */
     protected const COL_DESCRIPTION = 'description';
+
+    /**
+     * @var string
+     */
     protected const COL_PAYMENT_LINK = 'payment_link';
+
+    /**
+     * @var string
+     */
     protected const COL_EXPIRY_DATE = 'expiry_date';
+
+    /**
+     * @var string
+     */
     protected const COL_CREATED_AT = 'created_at';
+
+    /**
+     * @var string
+     */
     protected const COL_ACTIONS = 'actions';
 
     /**
-     * @param MolliePaymentLinkDataProvider $dataProvider
+     * @param \Mollie\Zed\Mollie\Communication\Table\TableDataProvider\MolliePaymentLinkDataProvider $dataProvider
      */
     public function __construct(
         //protected SpyMolliePaymentLinkQuery $paymentLinkQuery,
         protected MolliePaymentLinkDataProvider $dataProvider,
-    )
-    {
+    ) {
     }
 
     /**
-     * @param TableConfiguration $config
-     * @return TableConfiguration
+     * @param \Spryker\Zed\Gui\Communication\Table\TableConfiguration $config
+     *
+     * @return \Spryker\Zed\Gui\Communication\Table\TableConfiguration
      */
     protected function configure(TableConfiguration $config): TableConfiguration
     {
@@ -68,7 +100,7 @@ class MolliePaymentLinkTable extends AbstractTable
 
         $config->setDefaultSortField(
             static::COL_ID,
-            TableConfiguration::SORT_DESC
+            TableConfiguration::SORT_DESC,
         );
 
         $config->setRawColumns([
@@ -79,13 +111,19 @@ class MolliePaymentLinkTable extends AbstractTable
     }
 
     /**
-     * @param TableConfiguration $config
-     * @return array
+     * @param \Spryker\Zed\Gui\Communication\Table\TableConfiguration $config
+     *
+     * @return array<mixed>
      */
     protected function prepareData(TableConfiguration $config): array
     {
-//        $queryResults = $this->runQuery($this->paymentLinkQuery, $config);
+        //$queryResults = $this->runQuery($this->paymentLinkQuery, $config);
         $molliePaymentLinkApiResponseTransfer = $this->dataProvider->getData();
+
+        if (!$molliePaymentLinkApiResponseTransfer) {
+            return [];
+        }
+
         $results = [];
 
         foreach ($molliePaymentLinkApiResponseTransfer->getMolliePaymentLinks()?->getPaymentLinks() as $paymentLink) {
@@ -106,8 +144,6 @@ class MolliePaymentLinkTable extends AbstractTable
     }
 
     /**
-     * @param array $paymentLink
-     *
      * @return string
      */
     protected function buildLinks(): string
@@ -135,7 +171,6 @@ class MolliePaymentLinkTable extends AbstractTable
 //            ]),
 //            'Delete'
 //        );
-
 
         return implode(' ', $buttons);
     }

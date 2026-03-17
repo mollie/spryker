@@ -4,8 +4,13 @@ declare(strict_types=1);
 
 namespace Mollie\Client\Mollie\Api\PaymentLink;
 
+use Generated\Shared\Transfer\MollieAmountTransfer;
 use Generated\Shared\Transfer\MollieApiRequestTransfer;
 use Generated\Shared\Transfer\MollieApiResponseTransfer;
+use Generated\Shared\Transfer\MollieLinksTransfer;
+use Generated\Shared\Transfer\MolliePaymentLinkApiResponseTransfer;
+use Generated\Shared\Transfer\MolliePaymentLinkTransfer;
+use Mollie\Api\Http\Data\Money;
 use Mollie\Api\Http\Request;
 use Mollie\Api\Http\Requests\CreatePaymentLinkRequest;
 use Mollie\Api\MollieApiClient;
@@ -43,19 +48,21 @@ class CreatePaymentLinkApi extends AbstractApiCall
     protected function buildRequest(?MollieApiRequestTransfer $mollieApiRequestTransfer = null): ?Request
     {
         $checkoutResponseTransfer = $mollieApiRequestTransfer->getCheckoutResponse();
+        $paymentLinkTransfer = $mollieApiRequestTransfer->getPaymentLink();
 
-        $description = 'Test Payment'; // TODO: Get actual value from BO
-        $redirectUrl = $this->getRedirectUrl($checkoutResponseTransfer->getSaveOrderOrFail()->getOrderReference());
+        $description = $paymentLinkTransfer->getDescription();
+        $orderReference = $checkoutResponseTransfer?->getSaveOrder()?->getOrderReference() ?? '';
+        $redirectUrl = $paymentLinkTransfer->getRedirectUrl() ?? $this->getRedirectUrl($orderReference);
         $webhookUrl = $this->mollieService->resolveWebhookUrl(
             $this->mollieConfig->getMollieWebhookUrl(),
             $this->mollieConfig->getTestEnvironmentMollieWebhookUrl(),
             $this->mollieConfig->isMollieTestModeEnabled(),
         );
 
-        $amount = null; // TODO: Get actual value from BO
+        $amount = $this->convertMollieAmountTransferToMoney($paymentLinkTransfer->getAmount());
         $profileId = $this->mollieConfig->getMollieProfileId();
-        $reusable = false; //TODO: Get actual value from BO
-        $allowedMethods = []; //TODO: Get actual value from BO
+        $reusable = $paymentLinkTransfer->getReusable();
+        $allowedMethods = $paymentLinkTransfer->getAllowedMethods();
 
         $this->request = new CreatePaymentLinkRequest(
             description: $description,
@@ -77,20 +84,20 @@ class CreatePaymentLinkApi extends AbstractApiCall
      */
     protected function mapApiResponse(MollieApiResponseTransfer $mollieApiResponseTransfer): AbstractTransfer
     {
-        $molliePaymentLinksApiResponseTransfer = (new MolliePaymentApiResponseTransfer())
+        $molliePaymentLinksApiResponseTransfer = (new MolliePaymentLinkApiResponseTransfer())
             ->setIsSuccessful($mollieApiResponseTransfer->getIsSuccessful())
             ->setMessage($mollieApiResponseTransfer->getMessage());
 
-        $molliePaymentTransfer = new MolliePaymentTransfer();
-        $molliePaymentTransfer->fromArray($mollieApiResponseTransfer->getPayload(), true);
+        $molliePaymentLinkTransfer = new MolliePaymentLinkTransfer();
+        $molliePaymentLinkTransfer->fromArray($mollieApiResponseTransfer->getPayload(), true);
 
         $links = $mollieApiResponseTransfer->getPayload()[MollieConfig::RESPONSE_PARAMETER_CREATE_PAYMENT_LINKS] ?? [];
         $mollieLinksTransfer = new MollieLinksTransfer();
         $mollieLinksTransfer->fromArray($links, true);
-        $molliePaymentTransfer
+        $molliePaymentLinkTransfer
             ->setLinks($mollieLinksTransfer);
 
-        $molliePaymentLinksApiResponseTransfer->setMolliePayment($molliePaymentTransfer);
+        $molliePaymentLinksApiResponseTransfer->setMolliePaymentLink($molliePaymentLinkTransfer);
 
         return $molliePaymentLinksApiResponseTransfer;
     }
@@ -103,5 +110,17 @@ class CreatePaymentLinkApi extends AbstractApiCall
     protected function getRedirectUrl(string $orderReference): string
     {
         return $this->mollieConfig->getMollieRedirectUrl() . '?orderReference=' . $orderReference;
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MollieAmountTransfer $mollieAmountTransfer
+     *
+     * @return \Mollie\Api\Http\Data\Money
+     */
+    protected function convertMollieAmountTransferToMoney(MollieAmountTransfer $mollieAmountTransfer): Money
+    {
+        $money = new Money($mollieAmountTransfer->getCurrency(), $mollieAmountTransfer->getValue());
+
+        return $money;
     }
 }

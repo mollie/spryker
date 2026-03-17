@@ -7,10 +7,13 @@ namespace MollieTest\Zed\Mollie;
 use ArrayObject;
 use Codeception\Actor;
 use DateTime;
+use Orm\Zed\Mollie\Persistence\SpyMollieOrderItemPaymentCapture;
+use Orm\Zed\Mollie\Persistence\SpyMollieOrderItemPaymentCaptureQuery;
 use Orm\Zed\Mollie\Persistence\SpyPaymentMollie;
 use Orm\Zed\Mollie\Persistence\SpyPaymentMollieQuery;
 use Orm\Zed\Mollie\Persistence\SpyRefundMollie;
 use Orm\Zed\Mollie\Persistence\SpyRefundMollieQuery;
+use Propel\Runtime\Collection\ObjectCollection;
 
 /**
  * Inherited Methods
@@ -55,6 +58,25 @@ class MollieZedTester extends Actor
     }
 
     /**
+     * @param int $idSalesOrderItem
+     *
+     * @return \Orm\Zed\Mollie\Persistence\SpyMollieOrderItemPaymentCapture
+     */
+    public function createMollieOrderItemPaymentCapture(int $idSalesOrderItem): SpyMollieOrderItemPaymentCapture
+    {
+        $spyMollieOrderItemPaymentCapture = (new SpyMollieOrderItemPaymentCapture())
+            ->setFkSalesOrderItem($idSalesOrderItem)
+            ->setCaptureId('capture_123')
+            ->setTransactionId('test_123')
+            ->setStatus('pending')
+            ->setDescription('Capture for test order');
+
+        $spyMollieOrderItemPaymentCapture->save();
+
+        return $spyMollieOrderItemPaymentCapture;
+    }
+
+    /**
      * @param int $idSalesOrder
      *
      * @return \Orm\Zed\Mollie\Persistence\SpyPaymentMollie
@@ -64,6 +86,18 @@ class MollieZedTester extends Actor
         return SpyPaymentMollieQuery::create()
             ->filterByFkSalesOrder($idSalesOrder)
             ->findOne();
+    }
+
+    /**
+     * @param string $trasactionId
+     *
+     * @return \Propel\Runtime\Collection\ObjectCollection
+     */
+    public function findMollieOrderItemPaymentCaptureCollection(string $trasactionId): ObjectCollection
+    {
+        return SpyMollieOrderItemPaymentCaptureQuery::create()
+            ->filterByTransactionId($trasactionId)
+            ->find();
     }
 
     /**

@@ -49,10 +49,6 @@ class MolliePaymentMethodsFilter implements MolliePaymentMethodsFilterInterface
 
         $this->addIncludeWalletLogs($requestTransfer);
 
-        if ($this->mollieConfig->isTestMode()) {
-            return $paymentMethodsTransfer;
-        }
-
         $paymentMethodsTransfer = $this->filterMolliePaymentMethods($paymentMethodsTransfer, $quoteTransfer, $molliePaymentMethods);
 
         return $paymentMethodsTransfer;

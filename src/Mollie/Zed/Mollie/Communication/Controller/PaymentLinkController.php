@@ -4,14 +4,13 @@ declare(strict_types=1);
 
 namespace Mollie\Zed\Mollie\Communication\Controller;
 
-use Generated\Shared\Transfer\MolliePaymentLinkTransfer;
 use Spryker\Zed\Kernel\Communication\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @method \Mollie\Zed\Mollie\Communication\MollieCommunicationFactory getFactory()
- * @method \Mollie\Zed\Mollie\Communication\Controller\MollieFacadeInterface getFacade()
+ * @method \Mollie\Zed\Mollie\Business\MollieFacadeInterface getFacade()
  */
 class PaymentLinkController extends AbstractController
 {
@@ -19,6 +18,11 @@ class PaymentLinkController extends AbstractController
      * @var string
      */
     protected const MESSAGE_PAYMENT_LINK_CREATE_SUCCESS = 'Payment link has been successfully created.';
+
+    /**
+     * @var string
+     */
+    protected const URL_PAYMENT_LINK_LIST = '/mollie/payment-link';
 
     /**
      * @param \Symfony\Component\HttpFoundation\Request $request
@@ -49,9 +53,9 @@ class PaymentLinkController extends AbstractController
      *
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|array<string, mixed>
      */
-    public function createAction(Request $request): array|RedirectResponse
+    public function createAction(Request $request)
     {
-        $dataProvider = $this->getFactory()->createPaymentLinkFormDataProvider();
+        $dataProvider = $this->getFactory()->createMolliePaymentLinkFormDataProvider();
         $form = $this->getFactory()
             ->createPaymentLinkForm(
                 $dataProvider->getData(),
@@ -62,9 +66,9 @@ class PaymentLinkController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $formData = $form->getData();
 
-            $paymentLinkTransfer = new MolliePaymentLinkTransfer();
-            $paymentLinkTransfer->fromArray($formData, true);
-            $paymentLinkTransfer->setStatus('draft');
+            $paymentLinkTransfer = $this->getFactory()
+                ->createMollieCommunicationMapper()
+                ->mapPaymentLinkFormDataToMolliePaymentLinkTransfer($formData);
 
             $molliePaymentLinkApiResponseTransfer = $this->getFacade()->createPaymentLink($paymentLinkTransfer);
 

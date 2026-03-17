@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Mollie\Zed\Mollie\Business\Handler;
 
 use Generated\Shared\Transfer\MolliePaymentLinkApiResponseTransfer;
