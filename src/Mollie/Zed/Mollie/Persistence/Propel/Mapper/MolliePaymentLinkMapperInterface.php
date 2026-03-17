@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Mollie\Zed\Mollie\Persistence\Propel\Mapper;
 
 use Generated\Shared\Transfer\MolliePaymentLinkTransfer;
