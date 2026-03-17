@@ -75,7 +75,7 @@ abstract class AbstractApiCall implements ApiCallInterface
             $result = $this->mollieApiClient->send($request);
             [$statusCode, $response] = $this->resolveResult($result);
 
-            if ($statusCode === Response::HTTP_OK || $statusCode === Response::HTTP_CREATED) {
+            if ($statusCode >= Response::HTTP_OK || $statusCode < Response::HTTP_MULTIPLE_CHOICES) {
                 $payload = $this->formatApiResponse($response);
                 $mollieApiResponseTransfer = $this->createSuccessResponse($statusCode, $payload);
             }
@@ -168,7 +168,7 @@ abstract class AbstractApiCall implements ApiCallInterface
      */
     protected function formatApiResponse(ResponseInterface $psrResponse): array
     {
-        return $this->utilEncodingService->decodeJson($psrResponse->getBody()->getContents());
+        return $this->utilEncodingService->decodeJson($psrResponse->getBody()->getContents()) ?? [];
     }
 
     /**

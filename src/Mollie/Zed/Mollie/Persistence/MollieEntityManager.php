@@ -43,6 +43,25 @@ class MollieEntityManager extends AbstractEntityManager implements MollieEntityM
     }
 
     /**
+     * @param \Generated\Shared\Transfer\MolliePaymentTransfer $molliePaymentTransfer
+     *
+     * @return void
+     */
+    public function saveMolliePaymentReleaseAuthorizationRequest(MolliePaymentTransfer $molliePaymentTransfer): void
+    {
+        $spyPaymentMolleEntity = $this->getFactory()
+            ->createSpyPaymentMollieQuery()
+            ->findOneByTransactionId($molliePaymentTransfer->getId());
+
+        if (!$spyPaymentMolleEntity) {
+            return;
+        }
+
+        $spyPaymentMolleEntity->setReleaseAuthorizationRequest($molliePaymentTransfer->getReleaseAuthorizationRequest());
+        $spyPaymentMolleEntity->save();
+    }
+
+    /**
      * @param int $idSalesOrder
      * @param \Generated\Shared\Transfer\MolliePaymentTransfer $molliePaymentTransfer
      *

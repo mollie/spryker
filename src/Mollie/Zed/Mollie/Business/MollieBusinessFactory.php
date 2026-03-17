@@ -143,6 +143,7 @@ class MollieBusinessFactory extends AbstractBusinessFactory
     {
         return new MollieReleaseAuthorizationRequestSender(
             $this->getRepository(),
+            $this->getEntityManager(),
             $this->getMollieClient(),
         );
     }

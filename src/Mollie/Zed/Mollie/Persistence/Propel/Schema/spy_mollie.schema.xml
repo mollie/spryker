@@ -12,6 +12,7 @@
         <column name="sequence_type" required="true" type="VARCHAR" size="64"/>
         <column name="metadata" type="LONGVARCHAR"/>
         <column name="expires_at" type="TIMESTAMP"/>
+        <column name="release_authorization_request" type="TIMESTAMP" required="false" />
 
         <foreign-key name="spy_payment_mollie-fk_sales_order" foreignTable="spy_sales_order" phpName="SpySalesOrder">
             <reference foreign="id_sales_order" local="fk_sales_order"/>
