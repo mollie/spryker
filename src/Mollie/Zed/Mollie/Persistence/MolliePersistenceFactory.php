@@ -20,9 +20,6 @@ use Orm\Zed\Mollie\Persistence\SpyPaymentMollieQuery;
 use Orm\Zed\Mollie\Persistence\SpyRefundMollieQuery;
 use Spryker\Zed\Kernel\Persistence\AbstractPersistenceFactory;
 
-/**
- * @method \Mollie\Zed\Mollie\Persistence\MollieQueryContainerInterface getQueryContainer()
- */
 class MolliePersistenceFactory extends AbstractPersistenceFactory
 {
     /**
