@@ -46,7 +46,7 @@ class MollieEntityManager extends AbstractEntityManager implements MollieEntityM
      *
      * @return void
      */
-    public function updateMolliePaymentWithStatus(OrderCollectionRequestTransfer $updateOrderCollectionRequestTransfer): void
+    public function updateMolliePayment(OrderCollectionRequestTransfer $updateOrderCollectionRequestTransfer): void
     {
         $spyPaymentMolleEntity = $this->getFactory()
             ->createSpyPaymentMollieQuery()
@@ -56,7 +56,10 @@ class MollieEntityManager extends AbstractEntityManager implements MollieEntityM
             return;
         }
 
-        $spyPaymentMolleEntity->setStatus($updateOrderCollectionRequestTransfer->getStatus());
+        $spyPaymentMolleEntity
+            ->setStatus($updateOrderCollectionRequestTransfer->getStatus())
+            ->setCaptureBefore($updateOrderCollectionRequestTransfer->getCaptureBefore());
+
         $spyPaymentMolleEntity->save();
     }
 

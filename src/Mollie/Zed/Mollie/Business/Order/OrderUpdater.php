@@ -27,7 +27,7 @@ class OrderUpdater implements OrderUpdaterInterface
     {
         $orderCollectionResponseTransfer = new OrderCollectionResponseTransfer();
 
-        $this->entityManager->updateMolliePaymentWithStatus($updateOrderCollectionRequestTransfer);
+        $this->entityManager->updateMolliePayment($updateOrderCollectionRequestTransfer);
 
         $orderCollectionResponseTransfer->setIsSuccess(true);
 
