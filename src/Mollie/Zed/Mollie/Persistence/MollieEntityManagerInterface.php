@@ -19,7 +19,7 @@ interface MollieEntityManagerInterface
      *
      * @return void
      */
-    public function updateMolliePaymentWithStatus(OrderCollectionRequestTransfer $updateOrderCollectionRequestTransfer): void;
+    public function updateMolliePayment(OrderCollectionRequestTransfer $updateOrderCollectionRequestTransfer): void;
 
     /**
      * @param int $idSalesOrder
