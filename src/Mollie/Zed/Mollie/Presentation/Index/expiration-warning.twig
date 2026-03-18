@@ -1,0 +1,13 @@
+{% if shouldDisplayWarning %}
+    <div class="col-lg-12">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title clearfix">
+                <h2 style="color: red">
+                    {{ warningMessage | trans({
+                        '%s': expirationThreshold,
+                    }) }}
+                </h2>
+            </div>
+        </div>
+    </div>
+{% endif %}

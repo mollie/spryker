@@ -15,3 +15,4 @@ mollie.profile.id,Profil-ID:
 mollie.profile.status,Profilstatus:
 mollie.profile.error-message.generic,Fehler beim Kontaktieren des Mollie-Dienstes zur Profilvalidierung
 mollie.profile.error-message.not-verified,Zahlungen sind im Live-Modus möglicherweise erst nach der Verifizierung Ihres Profils möglich.
+mollie.order.warning.capture-expiration,Die Zahlungserfassung läuft in %s ab. Bitte erfassen Sie die Zahlung manuell vor diesem Zeitpunkt.

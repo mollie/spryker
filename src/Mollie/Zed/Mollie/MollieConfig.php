@@ -131,6 +131,14 @@ class MollieConfig extends AbstractBundleConfig
     }
 
     /**
+     * @return int
+     */
+    public function getExpirationWarningThreshold(): int
+    {
+        return $this->get(MollieConstants::MOLLIE)[MollieConstants::MOLLIE_EXPIRATION_WARNING_THRESHOLD];
+    }
+
+    /**
      * @return array<string>
      */
     public function getPaymentCaptureStates(): array
