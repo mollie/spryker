@@ -2,7 +2,7 @@
     <div class="col-lg-12">
         <div class="ibox float-e-margins">
             <div class="ibox-title clearfix">
-                <h2 style="color: red">
+                <h2 class="warning-message-container">
                     {{ warningMessage | trans({
                         '%s': expirationThreshold,
                     }) }}
@@ -10,4 +10,6 @@
             </div>
         </div>
     </div>
+
+    <link rel="stylesheet" href="{{ assetsPath('css/spryker-zed-mollie-main.css') }}">
 {% endif %}
