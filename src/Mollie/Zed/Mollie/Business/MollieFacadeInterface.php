@@ -144,6 +144,13 @@ interface MollieFacadeInterface
      */
     public function createPaymentLink(MolliePaymentLinkTransfer $molliePaymentLinkTransfer): MolliePaymentLinkApiResponseTransfer;
 
+    /**
+     * @param \Generated\Shared\Transfer\OrderTransfer $orderTransfer
+     *
+     * @return \Generated\Shared\Transfer\MolliePaymentLinkTransfer
+     */
+    public function processPaymentLinkData(OrderTransfer $orderTransfer): MolliePaymentLinkTransfer;
+
 //    /**
 //     * @return MolliePaymentLinkApiResponseTransfer
 //     */

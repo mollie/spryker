@@ -199,6 +199,18 @@ class MollieFacade extends AbstractFacade implements MollieFacadeInterface
             ->createPaymentLink($molliePaymentLinkTransfer);
     }
 
+    /**
+     * @param \Generated\Shared\Transfer\OrderTransfer $orderTransfer
+     *
+     * @return \Generated\Shared\Transfer\MolliePaymentLinkTransfer
+     */
+    public function processPaymentLinkData(OrderTransfer $orderTransfer): MolliePaymentLinkTransfer
+    {
+        return $this->getFactory()
+            ->createPaymentLinkProcessor()
+            ->processOrderItemPaymentLink($orderTransfer);
+    }
+
 //    /**
 //     * @return MolliePaymentLinkApiResponseTransfer
 //     */

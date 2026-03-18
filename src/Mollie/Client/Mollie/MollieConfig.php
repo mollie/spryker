@@ -93,6 +93,11 @@ class MollieConfig extends AbstractBundleConfig
     protected const MOLLIE_MANUAL_CAPTURE_MODE = 'manual';
 
     /**
+     * @var string
+     */
+    public const RESPONSE_CREATE_PAYMENT_LINK_STATUS_OPEN = 'open';
+
+    /**
      * @return string
      */
     public function getMollieRedirectUrl(): string

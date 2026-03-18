@@ -101,6 +101,14 @@ class MollieConfig extends AbstractBundleConfig
     /**
      * @return string
      */
+    public function getMolliePaymentLinkRedirectUrl(): string
+    {
+        return $this->get(MollieConstants::MOLLIE)[MollieConstants::MOLLIE_PAYMENT_LINK_REDIRECT_URL];
+    }
+
+    /**
+     * @return string
+     */
     public function getMollieWebhookUrl(): string
     {
         return $this->get(MollieConstants::MOLLIE)[MollieConstants::MOLLIE_WEBHOOK_URL];
@@ -136,5 +144,13 @@ class MollieConfig extends AbstractBundleConfig
     public function getPaymentCaptureStates(): array
     {
         return ['captured', 'capture pending'];
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getMollieProfileId(): string|null
+    {
+        return $this->get(MollieConstants::MOLLIE)[MollieConstants::MOLLIE_PROFILE_ID];
     }
 }

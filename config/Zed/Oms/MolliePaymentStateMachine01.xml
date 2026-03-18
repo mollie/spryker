@@ -21,6 +21,9 @@
             <state name="canceled" display="oms.state.canceled"/>
             <state name="expired" display="oms.state.expired"/>
             <state name="failed" display="oms.state.failed"/>
+            <state name="payment link created" display="oms.state.payment-link-created"/>
+            <state name="payment link open" display="oms.state.payment-link-open"/>
+            <state name="payment link failed" display="oms.state.payment-link-failed"/>
         </states>
 
         <transitions>
@@ -103,6 +106,54 @@
             </transition>
 
             <transition>
+                <source>canceled</source>
+                <target>payment link created</target>
+                <event>create payment link</event>
+            </transition>
+
+            <transition>
+                <source>payment link created</source>
+                <target>payment link open</target>
+                <event>check payment link creation</event>
+            </transition>
+
+            <transition condition="Mollie/IsPaymentLinkCreationFailed">
+                <source>payment link created</source>
+                <target>payment link failed</target>
+                <event>check payment link creation</event>
+            </transition>
+
+            <transition condition="Mollie/IsPaymentStatusPaid">
+                <source>payment link open</source>
+                <target>paid</target>
+                <event>check payment link status</event>
+            </transition>
+
+            <transition condition="Mollie/IsPaymentStatusFailed">
+                <source>payment link open</source>
+                <target>payment link failed</target>
+                <event>check payment link status</event>
+            </transition>
+
+            <transition condition="Mollie/IsPaymentStatusExpired">
+                <source>payment link open</source>
+                <target>expired</target>
+                <event>check payment link status</event>
+            </transition>
+
+            <transition>
+                <source>payment link open</source>
+                <target>expired</target>
+                <event>payment link timeout</event>
+            </transition>
+
+            <transition>
+                <source>payment link failed</source>
+                <target>closed</target>
+                <event>close</event>
+            </transition>
+
+            <transition>
                 <source>expired</source>
                 <target>closed</target>
                 <event>close</event>
@@ -119,6 +170,10 @@
             <event name="return to payment pending" timeout="1 minute"/>
             <event name="pass" onEnter="true"/>
             <event name="close" timeout="5 days"/>
+            <event name="create payment link" manual="true" command="Mollie/PaymentLinkCreate"/>
+            <event name="check payment link creation" onEnter="true"/>
+            <event name="check payment link status" onEnter="true"/>
+            <event name="payment link timeout" timeout="7 days"/>
         </events>
 
     </process>
