@@ -199,6 +199,16 @@ class MollieFacade extends AbstractFacade implements MollieFacadeInterface
             ->createPaymentLink($molliePaymentLinkTransfer);
     }
 
+    /**
+     * @param int $orderId
+     *
+     * @return bool
+     */
+    public function shouldDisplayExpirationWarning(int $orderId): bool
+    {
+        return $this->getFactory()->createMollieExpirationWarningHandler()->shouldDisplayExpiryWarning($orderId);
+    }
+
 //    /**
 //     * @return MolliePaymentLinkApiResponseTransfer
 //     */

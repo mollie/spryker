@@ -144,6 +144,13 @@ interface MollieFacadeInterface
      */
     public function createPaymentLink(MolliePaymentLinkTransfer $molliePaymentLinkTransfer): MolliePaymentLinkApiResponseTransfer;
 
+    /**
+     * @param int $orderId
+     *
+     * @return bool
+     */
+    public function shouldDisplayExpirationWarning(int $orderId): bool;
+
 //    /**
 //     * @return MolliePaymentLinkApiResponseTransfer
 //     */

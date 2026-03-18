@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @method \Mollie\Zed\Mollie\Communication\MollieCommunicationFactory getFactory()
+ * @method \Mollie\Zed\Mollie\Business\MollieFacadeInterface getFacade()
  */
 class IndexController extends AbstractController
 {
@@ -60,18 +61,15 @@ class IndexController extends AbstractController
             return $this->viewResponse(['shouldDisplayWarning' => false]);
         }
 
-//        $expirationThreshold = $this->getFactory()->getConfig()->getExpirationWarningThreshold();
-//        $expirationHandler = $this->getFactory()->createMollieExpirationWarningHandler();
-//        $shouldDisplayWarning = $expirationHandler->shouldDisplayExpirationWarning($orderId);
+        $expirationThreshold = $this->getFactory()->getConfig()->getExpirationWarningThreshold();
+
+        $shouldDisplayWarning = $this->getFacade()->shouldDisplayExpirationWarning($orderId);
 
         return $this->viewResponse(
             [
-            //                "shouldDisplayWarning" => $shouldDisplayWarning,
-            //                "expirationThreshold" => $expirationThreshold
+                'shouldDisplayWarning' => $shouldDisplayWarning,
+                'expirationThreshold' => $expirationThreshold,
                 'warningMessage' => static::CAPTURE_EXPIRATION_WARNING_MESSAGE,
-                'shouldDisplayWarning' => true,
-                'expirationThreshold' => '1d',
-
             ],
         );
     }
