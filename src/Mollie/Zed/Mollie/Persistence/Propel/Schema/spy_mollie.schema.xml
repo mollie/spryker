@@ -84,19 +84,18 @@
         <column name="type" required="true" type="ENUM" valueSet="fixed, percentage"/>
         <column name="currency" required="true" type="VARCHAR" size="3"/>
         <column name="amount" required="true" type="DECIMAL" size="10" scale="2"/>
+        <column name="status" required="true" type="VARCHAR" size="64"/>
         <column name="description" required="true" type="LONGVARCHAR"/>
         <column name="expiry_date" required="false" type="DATE"/>
         <column name="redirect_url" required="false" type="VARCHAR" size="500"/>
-        <column name="save_redirect_url" required="false" type="BOOLEAN" default="false"/>
         <column name="is_reusable" required="false" type="BOOLEAN" default="false"/>
         <column name="payment_methods" required="false" type="LONGVARCHAR"/>
         <column name="mollie_payment_link_id" required="false" type="VARCHAR" size="255"/>
         <column name="payment_link_url" required="false" type="VARCHAR" size="500"/>
-        <column name="status" required="true" type="ENUM" valueSet="draft, active, expired, paid" default="draft"/>
-        <column name="created_at" required="false" type="TIMESTAMP"/>
-        <column name="updated_at" required="false" type="TIMESTAMP"/>
 
         <id-method-parameter value="spy_mollie_payment_link_pk_seq"/>
+
+        <behavior name="timestampable"/>
     </table>
 
 </database>

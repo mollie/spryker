@@ -8,14 +8,17 @@ use Generated\Shared\Transfer\MollieApiRequestTransfer;
 use Generated\Shared\Transfer\MolliePaymentLinkApiResponseTransfer;
 use Generated\Shared\Transfer\MolliePaymentLinkTransfer;
 use Mollie\Client\Mollie\MollieClientInterface;
+use Mollie\Zed\Mollie\Persistence\MollieEntityManagerInterface;
 
 class MolliePaymentLinkHandler implements MolliePaymentLinkHandlerInterface
 {
     /**
      * @param \Mollie\Client\Mollie\MollieClientInterface $mollieClient
+     * @param \Mollie\Zed\Mollie\Persistence\MollieEntityManagerInterface $mollieEntityManager
      */
     public function __construct(
         protected MollieClientInterface $mollieClient,
+        protected MollieEntityManagerInterface $mollieEntityManager,
     ) {
     }
 
@@ -29,14 +32,12 @@ class MolliePaymentLinkHandler implements MolliePaymentLinkHandlerInterface
         $mollieApiRequestTransfer = (new MollieApiRequestTransfer())
             ->setPaymentLink($molliePaymentLinkTransfer);
 
-        return $this->mollieClient->createPaymentLink($mollieApiRequestTransfer);
-    }
+        $molliePaymentLinkApiResponseTransfer = $this->mollieClient->createPaymentLink($mollieApiRequestTransfer);
 
-//    /**
-//     * @return MolliePaymentLinkApiResponseTransfer
-//     */
-//    public function getPaymentLinks(): MolliePaymentLinkApiResponseTransfer
-//    {
-//        return $this->mollieClient->getPaymentLinks();
-//    }
+        if ($molliePaymentLinkApiResponseTransfer->getIsSuccessful()) {
+            $this->mollieEntityManager->writePaymentLink($molliePaymentLinkApiResponseTransfer->getMolliePaymentLink());
+        }
+
+        return $molliePaymentLinkApiResponseTransfer;
+    }
 }

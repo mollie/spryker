@@ -1,11 +1,12 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Mollie\Zed\Mollie\Persistence;
 
 use Generated\Shared\Transfer\MollieItemPaymentCaptureTransfer;
 use Generated\Shared\Transfer\MolliePaymentCaptureTransfer;
+use Generated\Shared\Transfer\MolliePaymentLinkTransfer;
 use Generated\Shared\Transfer\MolliePaymentTransfer;
 use Generated\Shared\Transfer\MollieRefundCollectionTransfer;
 use Generated\Shared\Transfer\MollieRefundSaveTransfer;
@@ -55,4 +56,11 @@ interface MollieEntityManagerInterface
      * @return void
      */
     public function updateCapture(MolliePaymentCaptureTransfer $molliePaymentCaptureTransfer): void;
+
+    /**
+     * @param \Generated\Shared\Transfer\MolliePaymentLinkTransfer $molliePaymentLinkTransfer
+
+     * @return void
+     */
+    public function writePaymentLink(MolliePaymentLinkTransfer $molliePaymentLinkTransfer): void;
 }
