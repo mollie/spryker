@@ -144,7 +144,7 @@ class MollieEntityManager extends AbstractEntityManager implements MollieEntityM
 
     /**
      * @param \Generated\Shared\Transfer\MolliePaymentLinkTransfer $molliePaymentLinkTransfer
-
+     *
      * @return void
      */
     public function writePaymentLink(MolliePaymentLinkTransfer $molliePaymentLinkTransfer): void

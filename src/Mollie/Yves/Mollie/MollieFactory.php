@@ -472,9 +472,9 @@ class MollieFactory extends AbstractFactory
         return $this->getProvidedDependency(MollieDependencyProvider::PLUGINS_MOLLIE_WEBHOOK_HANDLER);
     }
 
-     /**
-      * @return array<\Mollie\Yves\Mollie\Plugin\Webhook\MollieNextGenWebhookHandlerPluginInterface>
-      */
+    /**
+     * @return array<\Mollie\Yves\Mollie\Plugin\Webhook\MollieNextGenWebhookHandlerPluginInterface>
+     */
     public function getMollieNextGenWebhookHandlerPlugins(): array
     {
         return $this->getProvidedDependency(MollieDependencyProvider::PLUGINS_MOLLIE_NEXT_GEN_WEBHOOK_HANDLER);
