@@ -323,11 +323,6 @@
         <property name="paymentLinks" type="MolliePaymentLink[]" singular="paymentLink"/>
     </transfer>
 
-    <transfer name="MolliePaymentLinkResponse">
-        <property name="isSuccessful" type="bool"/>
-        <property name="message" type="string"/>
-    </transfer>
-
     <transfer name="MolliePaymentLinkApiResponse">
         <property name="isSuccessful" type="bool"/>
         <property name="message" type="string"/>
