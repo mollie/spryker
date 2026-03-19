@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Mollie\Yves\Mollie\Plugin\Webhook;
 
 use Generated\Shared\Transfer\MollieWebhookEventTransfer;

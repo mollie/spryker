@@ -175,7 +175,7 @@ class MollieEntityManager extends AbstractEntityManager implements MollieEntityM
             return $molliePaymentLinkTransfer;
         }
 
-        $molliePaymentLinkTransfer->setIdMolliePaymentLink($molliePaymentLinkTransfer->getIdMolliePaymentLink());
+        $molliePaymentLinkTransfer->setIdMolliePaymentLink($spyMolliePaymentLinkEntity->getIdMolliePaymentLink());
         $spyMolliePaymentLinkEntity = $this->getFactory()
             ->createMolliePaymentLinkMapper()
             ->mapMolliePaymentLinkTransferToEntity($molliePaymentLinkTransfer, $spyMolliePaymentLinkEntity);
