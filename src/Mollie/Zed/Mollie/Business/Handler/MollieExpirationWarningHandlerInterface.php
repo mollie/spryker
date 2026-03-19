@@ -11,7 +11,7 @@ interface MollieExpirationWarningHandlerInterface
     /**
      * @param int $orderId
      *
-     * @return bool
+     * @return \Generated\Shared\Transfer\MollieExpirationInformationTransfer
      */
     public function getExpirationInformation(int $orderId): MollieExpirationInformationTransfer;
 }
