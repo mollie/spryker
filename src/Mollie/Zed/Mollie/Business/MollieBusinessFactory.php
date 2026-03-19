@@ -274,7 +274,6 @@ class MollieBusinessFactory extends AbstractBusinessFactory
         return new MolliePaymentLinkHandler(
             $this->getMollieClient(),
             $this->getEntityManager(),
-            $this->getRepository(),
         );
     }
 }
