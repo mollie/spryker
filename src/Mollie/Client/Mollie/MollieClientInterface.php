@@ -111,6 +111,8 @@ interface MollieClientInterface
      *
      * - Captures the payment
      *
+     * @api
+     *
      * @param \Generated\Shared\Transfer\MollieApiRequestTransfer $mollieApiRequestTransfer
      *
      * @return \Generated\Shared\Transfer\MollieCreateCaptureApiResponseTransfer
@@ -121,6 +123,8 @@ interface MollieClientInterface
      *  Specification:
      *
      *  - Gets capture payment details
+     *
+     * @api
      *
      * @param \Generated\Shared\Transfer\MollieApiRequestTransfer $mollieApiRequestTransfer
      *
@@ -187,11 +191,28 @@ interface MollieClientInterface
     public function logMessage(MollieLogApiTransfer $mollieLogApiTransfer): void;
 
     /**
+     * Specification:
+     * - updates payment capture collection
+     *
+     * @api
+     *
      * @param \Generated\Shared\Transfer\MolliePaymentTransfer $molliePaymentTransfer
      *
      * @return void
      */
     public function updatePaymentCaptureCollection(MolliePaymentTransfer $molliePaymentTransfer): void;
+
+    /**
+     * Specification:
+     * - Creates new payment link by sending a request to Mollie API
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\MollieApiRequestTransfer $mollieApiRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\MolliePaymentLinkApiResponseTransfer
+     */
+    public function createPaymentLink(MollieApiRequestTransfer $mollieApiRequestTransfer): MolliePaymentLinkApiResponseTransfer;
 
     /**
      * @param \Generated\Shared\Transfer\MolliePaymentLinkTransfer $molliePaymentLinkTransfer
@@ -201,13 +222,11 @@ interface MollieClientInterface
     public function updatePaymentLink(MolliePaymentLinkTransfer $molliePaymentLinkTransfer): void;
 
     /**
-     * @param \Generated\Shared\Transfer\MollieApiRequestTransfer $mollieApiRequestTransfer
+     * Specification:
+     * - Gets payment links from Mollie API
      *
-     * @return \Generated\Shared\Transfer\MolliePaymentLinkApiResponseTransfer
-     */
-    public function createPaymentLink(MollieApiRequestTransfer $mollieApiRequestTransfer): MolliePaymentLinkApiResponseTransfer;
-
-    /**
+     * @api
+     *
      * @param \Generated\Shared\Transfer\MollieApiRequestTransfer $mollieApiRequestTransfer
      *
      * @return \Generated\Shared\Transfer\MolliePaymentLinkApiResponseTransfer

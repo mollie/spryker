@@ -68,6 +68,7 @@ class MolliePaymentCaptureRequestSender implements MolliePaymentCaptureRequestSe
         $mollieApiRequestTransfer = new MollieApiRequestTransfer();
         $mollieApiRequestTransfer->setPaymentCapture($molliePaymentCaptureTransfer);
         $mollieCreateCaptureApiResponseTransfer = $this->mollieClient->createCapture($mollieApiRequestTransfer);
+
         if (!$mollieCreateCaptureApiResponseTransfer->getIsSuccessful()) {
             $molliePaymentCaptureResponseTransfer->setIsSuccessful(false);
 

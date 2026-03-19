@@ -11,17 +11,15 @@ use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MollieOrderMapper;
 use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MollieOrderMapperInterface;
 use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MolliePaymentCaptureMapper;
 use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MolliePaymentCaptureMapperInterface;
+use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MolliePaymentLinkMapper;
+use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MolliePaymentLinkMapperInterface;
 use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MollieRefundMapper;
 use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MollieRefundMapperInterface;
 use Orm\Zed\Mollie\Persistence\SpyMollieOrderItemPaymentCaptureQuery;
-use Orm\Zed\Mollie\Persistence\SpyMolliePaymentLinkQuery;
 use Orm\Zed\Mollie\Persistence\SpyPaymentMollieQuery;
 use Orm\Zed\Mollie\Persistence\SpyRefundMollieQuery;
 use Spryker\Zed\Kernel\Persistence\AbstractPersistenceFactory;
 
-/**
- * @method MollieQueryContainerInterface getQueryContainer()
- */
 class MolliePersistenceFactory extends AbstractPersistenceFactory
 {
     /**
@@ -38,6 +36,14 @@ class MolliePersistenceFactory extends AbstractPersistenceFactory
     public function createMollieOrderMapper(): MollieOrderMapperInterface
     {
         return new MollieOrderMapper();
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Persistence\Propel\Mapper\MolliePaymentLinkMapperInterface
+     */
+    public function createMolliePaymentLinkMapper(): MolliePaymentLinkMapperInterface
+    {
+        return new MolliePaymentLinkMapper();
     }
 
     /**

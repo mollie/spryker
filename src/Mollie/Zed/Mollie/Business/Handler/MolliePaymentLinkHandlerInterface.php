@@ -13,7 +13,7 @@ interface MolliePaymentLinkHandlerInterface
     /**
      * @param \Generated\Shared\Transfer\MolliePaymentLinkTransfer $molliePaymentLinkTransfer
      *
-     * @return \Generated\Shared\Transfer\MolliePaymentLinkApiResponseTransfer
+     * @return \Generated\Shared\Transfer\MolliePaymentLinkTransfer
      */
     public function createPaymentLink(MolliePaymentLinkTransfer $molliePaymentLinkTransfer): MolliePaymentLinkApiResponseTransfer;
 
