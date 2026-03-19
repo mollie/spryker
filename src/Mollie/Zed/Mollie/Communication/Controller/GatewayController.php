@@ -53,7 +53,7 @@ class GatewayController extends AbstractGatewayController
      *
      * @return \Generated\Shared\Transfer\MolliePaymentLinkTransfer
      */
-    public function updatePaymentLink(MolliePaymentLinkTransfer $molliePaymentLinkTransfer): MolliePaymentLinkTransfer
+    public function updatePaymentLinkAction(MolliePaymentLinkTransfer $molliePaymentLinkTransfer): MolliePaymentLinkTransfer
     {
         return $this->getFacade()->updatePaymentLink($molliePaymentLinkTransfer);
     }
