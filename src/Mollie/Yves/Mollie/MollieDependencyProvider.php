@@ -13,7 +13,6 @@ use Mollie\Yves\Mollie\Dependency\Client\MollieToStorageClientBridge;
 use Mollie\Yves\Mollie\Dependency\Client\MollieToStorageClientInterface;
 use Mollie\Yves\Mollie\Dependency\Service\MollieToUtilEncodingServiceBridge;
 use Mollie\Yves\Mollie\Plugin\Webhook\MollieCaptureWebhookHandlerPlugin;
-use Mollie\Yves\Mollie\Plugin\Webhook\MollieNextGenWebhookHandlerPluginInterface;
 use Mollie\Yves\Mollie\Plugin\Webhook\MolliePaymentLinkWebhookHandlerPlugin;
 use Mollie\Yves\Mollie\Plugin\Webhook\MolliePaymentWebhookHandlerPlugin;
 use Mollie\Yves\Mollie\Plugin\Webhook\MollieRefundWebhookHandlerPlugin;
