@@ -16,8 +16,6 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class IndexController extends AbstractController
 {
-    public const string CAPTURE_EXPIRATION_WARNING_MESSAGE = 'mollie.order.warning.capture-expiration';
-
     /**
      * @param \Symfony\Component\HttpFoundation\Request $request
      *
@@ -61,15 +59,13 @@ class IndexController extends AbstractController
             return $this->viewResponse(['shouldDisplayWarning' => false]);
         }
 
-        $expirationThreshold = $this->getFactory()->getConfig()->getExpirationWarningThreshold();
-
-        $shouldDisplayWarning = $this->getFacade()->shouldDisplayExpirationWarning($orderId);
+        $expirationTransfer = $this->getFacade()->getExpirationInformation($orderId);
 
         return $this->viewResponse(
             [
-                'shouldDisplayWarning' => $shouldDisplayWarning,
-                'expirationThreshold' => $expirationThreshold,
-                'warningMessage' => static::CAPTURE_EXPIRATION_WARNING_MESSAGE,
+                'shouldDisplayWarning' => $expirationTransfer->getShowWarningMessage(),
+                'expirationThreshold' => $expirationTransfer->getExpiresIn(),
+                'warningMessage' => $expirationTransfer->getWarningMessage(),
             ],
         );
     }

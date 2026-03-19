@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Mollie\Zed\Mollie\Business\Handler;
 
+use Generated\Shared\Transfer\MollieExpirationInformationTransfer;
+
 interface MollieExpirationWarningHandlerInterface
 {
     /**
@@ -11,5 +13,5 @@ interface MollieExpirationWarningHandlerInterface
      *
      * @return bool
      */
-    public function shouldDisplayExpiryWarning(int $orderId): bool;
+    public function getExpirationInformation(int $orderId): MollieExpirationInformationTransfer;
 }

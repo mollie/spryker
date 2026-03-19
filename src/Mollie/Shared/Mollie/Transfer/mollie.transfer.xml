@@ -330,5 +330,10 @@
         <property name="molliePaymentLink" type="MolliePaymentLink"/>
     </transfer>
 
+    <transfer name="MollieExpirationInformation">
+        <property name="showWarningMessage" type="bool" />
+        <property name="warningMessage" type="string" />
+        <property name="expiresIn" type="int" />
+    </transfer>
 
 </transfers>

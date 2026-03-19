@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Mollie\Zed\Mollie\Business;
 
 use Generated\Shared\Transfer\CheckoutResponseTransfer;
+use Generated\Shared\Transfer\MollieExpirationInformationTransfer;
 use Generated\Shared\Transfer\MolliePaymentCaptureRequestTransfer;
 use Generated\Shared\Transfer\MolliePaymentCaptureResponseTransfer;
 use Generated\Shared\Transfer\MolliePaymentLinkApiResponseTransfer;
@@ -149,7 +150,7 @@ interface MollieFacadeInterface
      *
      * @return bool
      */
-    public function shouldDisplayExpirationWarning(int $orderId): bool;
+    public function getExpirationInformation(int $orderId): MollieExpirationInformationTransfer;
 
 //    /**
 //     * @return MolliePaymentLinkApiResponseTransfer
