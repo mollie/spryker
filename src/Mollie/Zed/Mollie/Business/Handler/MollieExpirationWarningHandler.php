@@ -32,6 +32,11 @@ class MollieExpirationWarningHandler implements MollieExpirationWarningHandlerIn
     ) {
     }
 
+    /**
+     * @param int $orderId
+     *
+     * @return \Generated\Shared\Transfer\MollieExpirationInformationTransfer
+     */
     public function getExpirationInformation(int $orderId): MollieExpirationInformationTransfer
     {
         $transfer = $this->createExpirationInformationTransferWithDefaultData();
