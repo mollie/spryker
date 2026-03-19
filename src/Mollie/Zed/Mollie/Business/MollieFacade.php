@@ -8,7 +8,6 @@ use Generated\Shared\Transfer\CheckoutResponseTransfer;
 use Generated\Shared\Transfer\MolliePaymentCaptureRequestTransfer;
 use Generated\Shared\Transfer\MolliePaymentCaptureResponseTransfer;
 use Generated\Shared\Transfer\MolliePaymentLinkApiResponseTransfer;
-use Generated\Shared\Transfer\MolliePaymentLinkResponseTransfer;
 use Generated\Shared\Transfer\MolliePaymentLinkTransfer;
 use Generated\Shared\Transfer\MolliePaymentTransfer;
 use Generated\Shared\Transfer\MollieRefundApiResponseTransfer;
@@ -23,6 +22,7 @@ use Spryker\Zed\Kernel\Business\AbstractFacade;
 /**
  * @method \Mollie\Zed\Mollie\Business\MollieBusinessFactory getFactory()
  * @method \Mollie\Zed\Mollie\Persistence\MollieRepositoryInterface getRepository()
+ * @method \Mollie\Zed\Mollie\Persistence\MollieEntityManagerInterface getEntityManager()
  */
 class MollieFacade extends AbstractFacade implements MollieFacadeInterface
 {
@@ -203,22 +203,10 @@ class MollieFacade extends AbstractFacade implements MollieFacadeInterface
     /**
      * @param \Generated\Shared\Transfer\MolliePaymentLinkTransfer $molliePaymentLinkTransfer
      *
-     * @return \Generated\Shared\Transfer\MolliePaymentLinkResponseTransfer
+     * @return \Generated\Shared\Transfer\MolliePaymentLinkTransfer
      */
-    public function updatePaymentLink(MolliePaymentLinkTransfer $molliePaymentLinkTransfer): MolliePaymentLinkResponseTransfer
+    public function updatePaymentLink(MolliePaymentLinkTransfer $molliePaymentLinkTransfer): MolliePaymentLinkTransfer
     {
-        return $this->getFactory()
-            ->createMolliePaymentLinkHandler()
-            ->updatePaymentLink($molliePaymentLinkTransfer);
+        return $this->getEntityManager()->updatePaymentLink($molliePaymentLinkTransfer);
     }
-
-//    /**
-//     * @return MolliePaymentLinkApiResponseTransfer
-//     */
-//    public function getPaymentLinks(): MolliePaymentLinkApiResponseTransfer
-//    {
-//        return $this->getFactory()
-//            ->createMolliePaymentLinkHandler()
-//            ->getPaymentLinks();
-//    }
 }

@@ -152,10 +152,10 @@ class MollieDependencyProvider extends AbstractBundleDependencyProvider
     }
 
      /**
-     * @param \Spryker\Yves\Kernel\Container $container
-     *
-     * @return \Spryker\Yves\Kernel\Container
-     */
+      * @param \Spryker\Yves\Kernel\Container $container
+      *
+      * @return \Spryker\Yves\Kernel\Container
+      */
     protected function addMollieNextGenWebhookHandlerPlugins(Container $container): Container
     {
         $container->set(static::PLUGINS_MOLLIE_NEXT_GEN_WEBHOOK_HANDLER, function () {

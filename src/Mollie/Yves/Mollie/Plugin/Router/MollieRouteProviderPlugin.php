@@ -67,10 +67,10 @@ class MollieRouteProviderPlugin extends AbstractRouteProviderPlugin
     }
 
      /**
-     * @param \Spryker\Yves\Router\Route\RouteCollection $routeCollection
-     *
-     * @return \Spryker\Yves\Router\Route\RouteCollection
-     */
+      * @param \Spryker\Yves\Router\Route\RouteCollection $routeCollection
+      *
+      * @return \Spryker\Yves\Router\Route\RouteCollection
+      */
     protected function addNextGenWebhookRoute(RouteCollection $routeCollection): RouteCollection
     {
         $route = $this->buildRoute('/mollie/next-gen/webhook', 'Mollie', 'Webhook', 'nextGenWebhookAction');

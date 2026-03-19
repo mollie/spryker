@@ -1,16 +1,11 @@
 <?php
 
-/**
- * This file is part of the Spryker Commerce OS.
- * For full license information, please view the LICENSE file that was distributed with this source code.
- */
 
 declare(strict_types = 1);
 
 namespace Mollie\Yves\Mollie\Controller;
 
 use Generated\Shared\Transfer\MollieApiRequestTransfer;
-use Generated\Shared\Transfer\MollieWebhookEventTransfer;
 use Generated\Shared\Transfer\MollieWebhookResponseTransfer;
 use Spryker\Shared\Log\LoggerTrait;
 use SprykerShop\Yves\ShopApplication\Controller\AbstractController;
