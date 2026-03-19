@@ -330,7 +330,6 @@
         <property name="molliePaymentLink" type="MolliePaymentLink"/>
     </transfer>
 
-
     <transfer name="MollieWebhookEvent">
         <property name="resource" type="string"/>
         <property name="id" type="string"/>
