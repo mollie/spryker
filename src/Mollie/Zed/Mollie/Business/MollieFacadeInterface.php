@@ -151,6 +151,7 @@ interface MollieFacadeInterface
      * @return \Generated\Shared\Transfer\MolliePaymentLinkTransfer
      */
     public function updatePaymentLink(MolliePaymentLinkTransfer $molliePaymentLinkTransfer): MolliePaymentLinkTransfer;
+
     /**
      * @param int $orderId
      *
