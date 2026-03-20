@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Mollie\Zed\Mollie\Business;
 
@@ -22,6 +22,7 @@ use Spryker\Zed\Kernel\Business\AbstractFacade;
 /**
  * @method \Mollie\Zed\Mollie\Business\MollieBusinessFactory getFactory()
  * @method \Mollie\Zed\Mollie\Persistence\MollieRepositoryInterface getRepository()
+ * @method \Mollie\Zed\Mollie\Persistence\MollieEntityManagerInterface getEntityManager()
  */
 class MollieFacade extends AbstractFacade implements MollieFacadeInterface
 {
@@ -199,13 +200,13 @@ class MollieFacade extends AbstractFacade implements MollieFacadeInterface
             ->createPaymentLink($molliePaymentLinkTransfer);
     }
 
-//    /**
-//     * @return MolliePaymentLinkApiResponseTransfer
-//     */
-//    public function getPaymentLinks(): MolliePaymentLinkApiResponseTransfer
-//    {
-//        return $this->getFactory()
-//            ->createMolliePaymentLinkHandler()
-//            ->getPaymentLinks();
-//    }
+    /**
+     * @param \Generated\Shared\Transfer\MolliePaymentLinkTransfer $molliePaymentLinkTransfer
+     *
+     * @return \Generated\Shared\Transfer\MolliePaymentLinkTransfer
+     */
+    public function updatePaymentLink(MolliePaymentLinkTransfer $molliePaymentLinkTransfer): MolliePaymentLinkTransfer
+    {
+        return $this->getEntityManager()->updatePaymentLink($molliePaymentLinkTransfer);
+    }
 }

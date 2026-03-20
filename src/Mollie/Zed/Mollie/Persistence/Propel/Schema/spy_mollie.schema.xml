@@ -83,6 +83,7 @@
         <column name="id_mollie_payment_link" required="true" type="INTEGER" autoIncrement="true" primaryKey="true"/>
         <column name="type" required="true" type="ENUM" valueSet="fixed, percentage"/>
         <column name="currency" required="true" type="VARCHAR" size="3"/>
+        <column name="id" required="true" type="VARCHAR" />
         <column name="amount" required="true" type="DECIMAL" size="10" scale="2"/>
         <column name="status" required="true" type="VARCHAR" size="64"/>
         <column name="description" required="true" type="LONGVARCHAR"/>

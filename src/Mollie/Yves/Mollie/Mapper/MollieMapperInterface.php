@@ -6,6 +6,7 @@ namespace Mollie\Yves\Mollie\Mapper;
 
 use Generated\Shared\Transfer\MollieApiRequestTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodQueryParametersTransfer;
+use Generated\Shared\Transfer\MollieWebhookEventTransfer;
 
 interface MollieMapperInterface
 {
@@ -24,4 +25,11 @@ interface MollieMapperInterface
      * @return \Generated\Shared\Transfer\MolliePaymentMethodQueryParametersTransfer
      */
     public function createMolliePaymentMethodQueryParametersTransfer(string $locale, string $billingCountry): MolliePaymentMethodQueryParametersTransfer;
+
+    /**
+     * @param array<string, mixed> $requestBody
+     *
+     * @return \Generated\Shared\Transfer\MollieWebhookEventTransfer
+     */
+    public function mapRequestPayloadToMollieWebhookEventTransfer(array $requestBody): MollieWebhookEventTransfer;
 }

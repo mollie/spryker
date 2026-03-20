@@ -1,11 +1,12 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Mollie\Yves\Mollie\Mapper;
 
 use Generated\Shared\Transfer\MollieApiRequestTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodQueryParametersTransfer;
+use Generated\Shared\Transfer\MollieWebhookEventTransfer;
 use Mollie\Shared\Mollie\MollieConstants;
 
 class MollieMapper implements MollieMapperInterface
@@ -37,5 +38,21 @@ class MollieMapper implements MollieMapperInterface
             ->setIncludeIssuers(true)
             ->setBillingCountry($billingCountry)
             ->setSequenceType(MollieConstants::MOLLIE_SEQUENCE_TYPE_ONE_OFF);
+    }
+
+    /**
+     * @param array<string, mixed> $requestBody
+     *
+     * @return \Generated\Shared\Transfer\MollieWebhookEventTransfer
+     */
+    public function mapRequestPayloadToMollieWebhookEventTransfer(array $requestBody): MollieWebhookEventTransfer
+    {
+        $mollieWebhookEventTransfer = (new MollieWebhookEventTransfer())
+            ->fromArray($requestBody, true);
+
+        $embedded = $requestBody['_embedded'] ?? [];
+        $mollieWebhookEventTransfer->setEmbedded($embedded);
+
+        return $mollieWebhookEventTransfer;
     }
 }
