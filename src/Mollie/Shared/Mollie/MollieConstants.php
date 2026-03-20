@@ -139,11 +139,6 @@ interface MollieConstants
     /**
      * @var string
      */
-    public const MOLLIE_PAYMENT_LINK_REDIRECT_URL = 'MOLLIE:MOLLIE_PAYMENT_LINK_REDIRECT_URL';
-
-    /**
-     * @var string
-     */
     public const MOLLIE_OMS_TO_PAYMENT_METHOD_MAPPING = 'MOLLIE:MOLLIE_OMS_TO_PAYMENT_METHOD_MAPPING';
 
     /**
@@ -178,5 +173,5 @@ interface MollieConstants
 
     public const string LOGO_URL = 'LogoUrl';
 
-    public const int MOLLIE_PAYMENT_LINK_EXPIRATION_TIME = 10080;
+    public const string MOLLIE_PAYMENT_LINK_EXPIRATION_TIME = 'MOLLIE:MOLLIE_PAYMENT_LINK_EXPIRATION_TIME';
 }

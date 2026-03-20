@@ -315,20 +315,18 @@
         <property name="fkSalesOrder" type="int"/>
     </transfer>
 
-    <transfer name="MolliePaymentLinkCriteria">
-        <property name="idMolliePaymentLink" type="int"/>
-        <property name="status" type="string"/>
-    </transfer>
-
-    <transfer name="MolliePaymentLinkCollection">
-        <property name="paymentLinks" type="MolliePaymentLink[]" singular="paymentLink"/>
-    </transfer>
-
     <transfer name="MolliePaymentLinkApiResponse">
         <property name="isSuccessful" type="bool"/>
         <property name="message" type="string"/>
-        <property name="molliePaymentLinks" type="MolliePaymentLinkCollection"/>
         <property name="molliePaymentLink" type="MolliePaymentLink"/>
+    </transfer>
+
+    <transfer name="MolliePaymentLinkLines">
+        <property name="type" type="string"/>
+        <property name="description" type="string"/>
+        <property name="quantity" type="int"/>
+        <property name="quantityUnit" type="string"/>
+        <property name="unitPrice" type="string"/>
     </transfer>
 
     <transfer name="MollieWebhookEvent">

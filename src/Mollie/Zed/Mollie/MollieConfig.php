@@ -66,11 +66,6 @@ class MollieConfig extends AbstractBundleConfig
     public const MOLLIE_WALLET_APPLE_PAY = 'applepay';
 
     /**
-     * @var string
-     */
-    public const PAYMENT_PROVIDER_PREFIX = 'Mollie';
-
-    /**
      * @return array<string, string>
      */
     public function getMollieOmsToPaymentMethodMapping(): array
@@ -96,14 +91,6 @@ class MollieConfig extends AbstractBundleConfig
     public function getMollieRedirectUrl(): string
     {
         return $this->get(MollieConstants::MOLLIE)[MollieConstants::MOLLIE_REDIRECT_URL];
-    }
-
-    /**
-     * @return string
-     */
-    public function getMolliePaymentLinkRedirectUrl(): string
-    {
-        return $this->get(MollieConstants::MOLLIE)[MollieConstants::MOLLIE_PAYMENT_LINK_REDIRECT_URL];
     }
 
     /**

@@ -51,13 +51,6 @@ class CreatePaymentLinkApi extends AbstractApiCall
 
         $description = $paymentLinkTransfer->getDescription();
         $redirectUrl = $paymentLinkTransfer->getRedirectUrl();
-//        $webhookUrl = $this->mollieService->resolveWebhookUrl(
-//            $this->mollieConfig->getMollieWebhookUrl(),
-//            $this->mollieConfig->getTestEnvironmentMollieWebhookUrl(),
-//            $this->mollieConfig->isMollieTestModeEnabled(),
-//        );
-        $webhookUrl = '';
-
         $amount = $this->convertMollieAmountTransferToMoney($paymentLinkTransfer->getAmount());
         $reusable = $paymentLinkTransfer->getReusable();
         $allowedMethods = $paymentLinkTransfer->getAllowedMethods();
@@ -67,7 +60,6 @@ class CreatePaymentLinkApi extends AbstractApiCall
             description: $description,
             amount: $amount,
             redirectUrl: $redirectUrl,
-            webhookUrl: $webhookUrl,
             reusable: $reusable,
             expiresAt: $expiresAt,
             allowedMethods: $allowedMethods,

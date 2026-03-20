@@ -20,7 +20,7 @@ class MolliePaymentLinkTable extends AbstractTable
     /**
      * @var string
      */
-    protected const COL_MOLLIE_ID = 'mollie_payment_link_id';
+    protected const COL_MOLLIE_ID = 'id';
 
     /**
      * @var string
@@ -148,7 +148,7 @@ class MolliePaymentLinkTable extends AbstractTable
 
             $results[] = [
                 static::COL_ID => $paymentLink->getIdMolliePaymentLink(),
-                static::COL_MOLLIE_ID => $paymentLink->getMolliePaymentLinkId(),
+                static::COL_MOLLIE_ID => $paymentLink->getId(),
                 static::COL_DESCRIPTION => $paymentLink->getDescription(),
                 static::COL_TYPE => $paymentLink->getType(),
                 static::COL_SEQUENCE_TYPE => $paymentLink->getSequenceType(),

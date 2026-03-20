@@ -35,7 +35,7 @@ class MolliePaymentLinkMapper implements MolliePaymentLinkMapperInterface
         $amount = $this->moneyFacade->convertDecimalToInteger($value);
 
         $spyMolliePaymentLinkEntity
-            ->setMolliePaymentLinkId($molliePaymentLinkTransfer->getId())
+            ->setId($molliePaymentLinkTransfer->getId())
             ->setFkSalesOrder($molliePaymentLinkTransfer->getFkSalesOrder())
             ->setDescription($molliePaymentLinkTransfer->getDescription())
             ->setType($molliePaymentLinkTransfer->getType())
