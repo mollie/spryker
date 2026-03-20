@@ -27,6 +27,11 @@
             <state name="authorization canceled" display="oms.state.authorization-canceled"/>
             <state name="capture failed" display="oms.state.capture-failed"/>
             <state name="closed" display="oms.state.closed"/>
+
+            <!-- Payment Link States-->
+            <state name="payment link created" display="oms.state.payment-link-created"/>
+            <state name="payment link open" display="oms.state.payment-link-open"/>
+            <state name="payment link checking" display="oms.state.payment-link-checking"/>
         </states>
 
         <transitions>
@@ -99,6 +104,52 @@
                 <source>authorized check expiry</source>
                 <target>authorized</target>
                 <event>pass</event>
+            </transition>
+
+            <!-- Payment Link Creation -->
+            <transition>
+                <source>authorized</source>
+                <target>payment link created</target>
+                <event>create payment link</event>
+            </transition>
+
+            <transition condition="Mollie/IsPaymentLinkCreationFailed">
+                <source>payment link created</source>
+                <target>authorized</target>
+                <event>check payment link creation</event>
+            </transition>
+
+            <transition>
+                <source>payment link created</source>
+                <target>payment link open</target>
+                <event>check payment link creation</event>
+            </transition>
+
+            <!-- Start checking immediately when entering payment link open -->
+            <transition>
+                <source>payment link open</source>
+                <target>payment link checking</target>
+                <event>start checking</event>
+            </transition>
+
+            <!-- Check conditions -->
+            <transition condition="Mollie/IsPaymentLinkStatusPaid">
+                <source>payment link checking</source>
+                <target>captured</target>
+                <event>check payment link status</event>
+            </transition>
+
+            <transition condition="Mollie/IsPaymentLinkStatusExpired">
+                <source>payment link checking</source>
+                <target>authorization expired</target>
+                <event>check payment link status</event>
+            </transition>
+
+            <!-- Loop back after 5 minutes -->
+            <transition>
+                <source>payment link checking</source>
+                <target>payment link open</target>
+                <event>recheck</event>
             </transition>
 
             <!-- Immediate check for capture success (happy path) -->
@@ -188,6 +239,13 @@
 
            <event name="close" timeout="5 days"/>
            <event name="pass" onEnter="true"/>
+
+           <!-- Payment Link Events -->
+           <event name="create payment link" manual="true" command="Mollie/CreatePaymentLink"/>
+           <event name="check payment link creation" onEnter="true"/>
+           <event name="start checking" onEnter="true"/>
+           <event name="check payment link status" onEnter="true"/>
+           <event name="recheck" timeout="2 minute"/>
     </events>
 
     </process>

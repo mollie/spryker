@@ -151,8 +151,24 @@ interface MollieFacadeInterface
      */
     public function processPaymentLinkData(OrderTransfer $orderTransfer): MolliePaymentLinkTransfer;
 
-//    /**
-//     * @return MolliePaymentLinkApiResponseTransfer
-//     */
-//    public function getPaymentLinks(): MolliePaymentLinkApiResponseTransfer;
+    /**
+     * @param int $idSalesOrder
+     *
+     * @return bool
+     */
+    public function isPaymentLinkCreationFailed(int $idSalesOrder): bool;
+
+    /**
+     * @param int $idSalesOrder
+     *
+     * @return bool
+     */
+    public function isPaymentLinkStatusPaid(int $idSalesOrder): bool;
+
+    /**
+     * @param int $idSalesOrder
+     *
+     * @return bool
+     */
+    public function isPaymentLinkStatusExpired(int $idSalesOrder): bool;
 }

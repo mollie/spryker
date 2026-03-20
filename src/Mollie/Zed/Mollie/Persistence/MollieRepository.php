@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Mollie\Zed\Mollie\Persistence;
 
 use Generated\Shared\Transfer\MollieItemPaymentCaptureTransfer;
+use Generated\Shared\Transfer\MolliePaymentLinkTransfer;
 use Generated\Shared\Transfer\MolliePaymentTransfer;
 use Generated\Shared\Transfer\MollieRefundResponseTransfer;
 use Spryker\Zed\Kernel\Persistence\AbstractRepository;
@@ -71,5 +72,26 @@ class MollieRepository extends AbstractRepository implements MollieRepositoryInt
         return $this->getFactory()
             ->createMolliePaymentCaptureMapper()
             ->mapFromSpyMollieOrderItemPaymentCaptureEntityToTransfer($spyMollieOrderItemPaymentCaptureEntity);
+    }
+
+    /**
+     * @param int $idSalesOrder
+     *
+     * @return \Generated\Shared\Transfer\MolliePaymentLinkTransfer|null
+     */
+    public function getPaymentLinkByFkSalesOrder(int $idSalesOrder): ?MolliePaymentLinkTransfer
+    {
+        $spyMolliePaymentLinkEntity = $this->getFactory()
+            ->createSpyMolliePaymentLinkQuery()
+            ->filterByFkSalesOrder($idSalesOrder)
+            ->findOne();
+
+        if (!$spyMolliePaymentLinkEntity) {
+            return null;
+        }
+
+        return $this->getFactory()
+            ->createMolliePaymentLinkMapper()
+            ->mapMolliePaymentLinkEntityToTransfer($spyMolliePaymentLinkEntity);
     }
 }

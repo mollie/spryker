@@ -2,6 +2,9 @@
 
 namespace Mollie\Zed\Mollie\Communication\Plugin\Oms\Command;
 
+use Generated\Shared\Transfer\MessageTransfer;
+use Generated\Shared\Transfer\MolliePaymentLinkApiResponseTransfer;
+use Generated\Shared\Transfer\OmsEventTriggerResponseTransfer;
 use Orm\Zed\Sales\Persistence\SpySalesOrder;
 use Spryker\Zed\Kernel\Communication\AbstractPlugin;
 use Spryker\Zed\Oms\Business\Util\ReadOnlyArrayObject;
@@ -28,8 +31,30 @@ class MolliePaymentLinkCreateCommandPlugin extends AbstractPlugin implements Com
             ->findOrderByIdSalesOrder($orderEntity->getIdSalesOrder());
 
         $molliePaymentLinkTransfer = $this->getFacade()->processPaymentLinkData($orderTransfer);
-        $this->getFacade()->createPaymentLink($molliePaymentLinkTransfer);
+        $molliePaymentLinkApiResponseTransfer = $this->getFacade()->createPaymentLink($molliePaymentLinkTransfer);
 
-        return [];
+        $omsEventTriggerResponseTransfer = $this->createOmsEventTriggerResponseTransfer($molliePaymentLinkApiResponseTransfer);
+
+        return ['oms_event_trigger_response' => $omsEventTriggerResponseTransfer];
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MolliePaymentLinkApiResponseTransfer $molliePaymentLinkApiResponseTransfer
+     *
+     * @return \Generated\Shared\Transfer\OmsEventTriggerResponseTransfer
+     */
+    protected function createOmsEventTriggerResponseTransfer(
+        MolliePaymentLinkApiResponseTransfer $molliePaymentLinkApiResponseTransfer,
+    ): OmsEventTriggerResponseTransfer {
+        $omsEventTriggerResponseTransfer = new OmsEventTriggerResponseTransfer();
+        $omsEventTriggerResponseTransfer->setIsSuccessful($molliePaymentLinkApiResponseTransfer->getIsSuccessful());
+
+        if (!$molliePaymentLinkApiResponseTransfer->getIsSuccessful()) {
+            $messageTrasfer = new MessageTransfer();
+            $messageTrasfer->setValue($molliePaymentLinkApiResponseTransfer->getMessage());
+            $omsEventTriggerResponseTransfer->addMessage($messageTrasfer);
+        }
+
+        return $omsEventTriggerResponseTransfer;
     }
 }

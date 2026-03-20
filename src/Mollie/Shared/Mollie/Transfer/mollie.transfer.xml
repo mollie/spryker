@@ -310,6 +310,7 @@
         <property name="saveRedirectUrl" type="bool"/>
         <property name="status" type="string"/>
         <property name="updatedAt" type="string"/>
+        <property name="fkSalesOrder" type="int"/>
     </transfer>
 
     <transfer name="MolliePaymentLinkCriteria">

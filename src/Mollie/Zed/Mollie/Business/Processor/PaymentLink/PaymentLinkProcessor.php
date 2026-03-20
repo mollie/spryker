@@ -40,9 +40,9 @@ class PaymentLinkProcessor implements PaymentLinkProcessorInterface
         $expirationDateTime = $this->mollieService->getPaymentLinkDefaultExpirationDateTime();
 
         $molliePaymentLinkTransfer
+            ->setFkSalesOrder($orderTransfer->getIdSalesOrder())
             ->setDescription(sprintf(static::MOLLIE_PAYMENT_LINK_DESCRIPTION, $orderTransfer->getOrderReference()))
             ->setAmount($amountTransfer)
-            ->setRedirectUrl($this->config->getMolliePaymentLinkRedirectUrl())
             ->setWebhookUrl($this->config->getMollieWebhookUrl()) // change this to next gen webhook
             ->setExpiresAt($expirationDateTime);
 

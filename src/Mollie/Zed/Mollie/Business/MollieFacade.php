@@ -211,13 +211,39 @@ class MollieFacade extends AbstractFacade implements MollieFacadeInterface
             ->processOrderItemPaymentLink($orderTransfer);
     }
 
-//    /**
-//     * @return MolliePaymentLinkApiResponseTransfer
-//     */
-//    public function getPaymentLinks(): MolliePaymentLinkApiResponseTransfer
-//    {
-//        return $this->getFactory()
-//            ->createMolliePaymentLinkHandler()
-//            ->getPaymentLinks();
-//    }
+    /**
+     * @param int $idSalesOrder
+     *
+     * @return bool
+     */
+    public function isPaymentLinkCreationFailed(int $idSalesOrder): bool
+    {
+        return $this->getFactory()
+            ->createMolliePaymentLinkHandler()
+            ->isPaymentLinkCreationFailed($idSalesOrder);
+    }
+
+    /**
+     * @param int $idSalesOrder
+     *
+     * @return bool
+     */
+    public function isPaymentLinkStatusPaid(int $idSalesOrder): bool
+    {
+        return $this->getFactory()
+            ->createMolliePaymentLinkHandler()
+            ->isPaymentLinkStatusPaid($idSalesOrder);
+    }
+
+    /**
+     * @param int $idSalesOrder
+     *
+     * @return bool
+     */
+    public function isPaymentLinkStatusExpired(int $idSalesOrder): bool
+    {
+        return $this->getFactory()
+            ->createMolliePaymentLinkHandler()
+            ->isPaymentLinkStatusExpired($idSalesOrder);
+    }
 }

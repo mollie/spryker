@@ -36,6 +36,7 @@ class MolliePaymentLinkMapper implements MolliePaymentLinkMapperInterface
 
         $spyMolliePaymentLinkEntity
             ->setMolliePaymentLinkId($molliePaymentLinkTransfer->getId())
+            ->setFkSalesOrder($molliePaymentLinkTransfer->getFkSalesOrder())
             ->setDescription($molliePaymentLinkTransfer->getDescription())
             ->setType($molliePaymentLinkTransfer->getType())
             ->setSequenceType($molliePaymentLinkTransfer->getSequenceType())
@@ -55,5 +56,18 @@ class MolliePaymentLinkMapper implements MolliePaymentLinkMapperInterface
         }
 
         return $spyMolliePaymentLinkEntity;
+    }
+
+    /**
+     * @param \Orm\Zed\Mollie\Persistence\SpyMolliePaymentLink $spyMolliePaymentLinkEntity
+     *
+     * @return \Generated\Shared\Transfer\MolliePaymentLinkTransfer
+     */
+    public function mapMolliePaymentLinkEntityToTransfer(SpyMolliePaymentLink $spyMolliePaymentLinkEntity): MolliePaymentLinkTransfer
+    {
+        $paymentLinkTransfer = new MolliePaymentLinkTransfer();
+        $paymentLinkTransfer->fromArray($spyMolliePaymentLinkEntity->toArray(), true);
+
+        return $paymentLinkTransfer;
     }
 }
