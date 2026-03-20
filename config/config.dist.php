@@ -24,6 +24,7 @@ $config[MollieConstants::MOLLIE] = [
     MollieConstants::MOLLIE_CREDIT_CARD_COMPONENTS_JS_SRC => '', //Example: https://js.mollie.com/v1/mollie.js
     MollieConstants::MOLLIE_WEBHOOK_URL => '',
     MollieConstants::MOLLIE_TEST_ENVIRONMENT_WEBHOOK_URL => '',
+    MollieConstants::MOLLIE_NEXT_GEN_WEBHOOK_SIGNING_SECRET => '',
     MollieConstants::MOLLIE_OMS_TO_PAYMENT_METHOD_MAPPING => [
         'mollieCreditCardPayment' => 'creditcard',
     ],

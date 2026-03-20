@@ -42,6 +42,11 @@ interface MollieConstants
     /**
      * @var string
      */
+    public const MOLLIE_NEXT_GEN_WEBHOOK_SIGNING_SECRET = 'MOLLIE:MOLLIE_NEXT_GEN_WEBHOOK_SIGNING_SECRET';
+
+    /**
+     * @var string
+     */
     public const MOLLIE_PAYMENT_TRANSACTION_STORAGE_KEY_PREFIX = 'mollie:payment';
 
     /**

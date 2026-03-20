@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Mollie\Zed\Mollie\Business;
 
@@ -146,14 +146,15 @@ interface MollieFacadeInterface
     public function createPaymentLink(MolliePaymentLinkTransfer $molliePaymentLinkTransfer): MolliePaymentLinkApiResponseTransfer;
 
     /**
+     * @param \Generated\Shared\Transfer\MolliePaymentLinkTransfer $molliePaymentLinkTransfer
+     *
+     * @return \Generated\Shared\Transfer\MolliePaymentLinkTransfer
+     */
+    public function updatePaymentLink(MolliePaymentLinkTransfer $molliePaymentLinkTransfer): MolliePaymentLinkTransfer;
+    /**
      * @param int $orderId
      *
      * @return \Generated\Shared\Transfer\MollieExpirationInformationTransfer
      */
     public function getExpirationInformation(int $orderId): MollieExpirationInformationTransfer;
-
-//    /**
-//     * @return MolliePaymentLinkApiResponseTransfer
-//     */
-//    public function getPaymentLinks(): MolliePaymentLinkApiResponseTransfer;
 }

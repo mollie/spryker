@@ -23,6 +23,7 @@ use Spryker\Zed\Kernel\Business\AbstractFacade;
 /**
  * @method \Mollie\Zed\Mollie\Business\MollieBusinessFactory getFactory()
  * @method \Mollie\Zed\Mollie\Persistence\MollieRepositoryInterface getRepository()
+ * @method \Mollie\Zed\Mollie\Persistence\MollieEntityManagerInterface getEntityManager()
  */
 class MollieFacade extends AbstractFacade implements MollieFacadeInterface
 {
@@ -201,6 +202,15 @@ class MollieFacade extends AbstractFacade implements MollieFacadeInterface
     }
 
     /**
+     * @param \Generated\Shared\Transfer\MolliePaymentLinkTransfer $molliePaymentLinkTransfer
+     *
+     * @return \Generated\Shared\Transfer\MolliePaymentLinkTransfer
+     */
+    public function updatePaymentLink(MolliePaymentLinkTransfer $molliePaymentLinkTransfer): MolliePaymentLinkTransfer
+    {
+        return $this->getEntityManager()->updatePaymentLink($molliePaymentLinkTransfer);
+    }
+    /**
      * @param int $orderId
      *
      * @return \Generated\Shared\Transfer\MollieExpirationInformationTransfer
@@ -209,14 +219,4 @@ class MollieFacade extends AbstractFacade implements MollieFacadeInterface
     {
         return $this->getFactory()->createMollieExpirationWarningHandler()->getExpirationInformation($orderId);
     }
-
-//    /**
-//     * @return MolliePaymentLinkApiResponseTransfer
-//     */
-//    public function getPaymentLinks(): MolliePaymentLinkApiResponseTransfer
-//    {
-//        return $this->getFactory()
-//            ->createMolliePaymentLinkHandler()
-//            ->getPaymentLinks();
-//    }
 }
