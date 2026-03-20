@@ -25,6 +25,11 @@ class MolliePaymentLinkTable extends AbstractTable
     /**
      * @var string
      */
+    protected const COL_ID_SALES_ORDER = 'id_sales_order';
+
+    /**
+     * @var string
+     */
     protected const COL_TYPE = 'type';
 
     /**
@@ -94,6 +99,7 @@ class MolliePaymentLinkTable extends AbstractTable
         $config->setHeader([
             static::COL_ID => 'ID',
             static::COL_MOLLIE_ID => 'Mollie ID',
+            static::COL_ID_SALES_ORDER => 'ID Order',
             static::COL_DESCRIPTION => 'Description',
             static::COL_TYPE => 'Type',
             static::COL_SEQUENCE_TYPE => 'Sequence Type',
@@ -109,10 +115,13 @@ class MolliePaymentLinkTable extends AbstractTable
         $config->setSearchable([
             static::COL_DESCRIPTION,
             static::COL_ID,
+            static::COL_MOLLIE_ID,
+            static::COL_ID_SALES_ORDER,
         ]);
 
         $config->setSortable([
             static::COL_ID,
+            static::COL_ID_SALES_ORDER,
             static::COL_DESCRIPTION,
             static::COL_AMOUNT,
             static::COL_PAYMENT_LINK,
@@ -149,6 +158,7 @@ class MolliePaymentLinkTable extends AbstractTable
             $results[] = [
                 static::COL_ID => $paymentLink->getIdMolliePaymentLink(),
                 static::COL_MOLLIE_ID => $paymentLink->getId(),
+                static::COL_ID_SALES_ORDER => $paymentLink->getFkSalesOrder(),
                 static::COL_DESCRIPTION => $paymentLink->getDescription(),
                 static::COL_TYPE => $paymentLink->getType(),
                 static::COL_SEQUENCE_TYPE => $paymentLink->getSequenceType(),
