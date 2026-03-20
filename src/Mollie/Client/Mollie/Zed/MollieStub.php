@@ -3,6 +3,7 @@
 namespace Mollie\Client\Mollie\Zed;
 
 use Generated\Shared\Transfer\MolliePaymentCaptureResponseTransfer;
+use Generated\Shared\Transfer\MolliePaymentLinkTransfer;
 use Generated\Shared\Transfer\MolliePaymentTransfer;
 use Generated\Shared\Transfer\MollieRefundResponseTransfer;
 use Generated\Shared\Transfer\OrderCollectionRequestTransfer;
@@ -54,5 +55,19 @@ class MollieStub implements MollieStubInterface
             ->call('/mollie/gateway/update-payment-capture-collection', $molliePaymentTransfer);
 
         return $molliePaymentCaptureResponseTransfer;
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MolliePaymentLinkTransfer $molliePaymentLinkTransfer
+     *
+     * @return \Generated\Shared\Transfer\MolliePaymentLinkTransfer
+     */
+    public function updatePaymentLink(MolliePaymentLinkTransfer $molliePaymentLinkTransfer): MolliePaymentLinkTransfer
+    {
+        /** @var \Generated\Shared\Transfer\MolliePaymentLinkTransfer $molliePaymentLinkTransfer */
+        $molliePaymentLinkTransfer = $this->zedStub
+            ->call('/mollie/gateway/update-payment-link', $molliePaymentLinkTransfer);
+
+        return $molliePaymentLinkTransfer;
     }
 }
