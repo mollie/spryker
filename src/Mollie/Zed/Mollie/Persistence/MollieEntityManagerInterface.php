@@ -19,7 +19,7 @@ interface MollieEntityManagerInterface
      *
      * @return void
      */
-    public function updateMolliePaymentWithStatus(OrderCollectionRequestTransfer $updateOrderCollectionRequestTransfer): void;
+    public function updateMolliePayment(OrderCollectionRequestTransfer $updateOrderCollectionRequestTransfer): void;
 
     /**
      * @param int $idSalesOrder
@@ -59,8 +59,15 @@ interface MollieEntityManagerInterface
 
     /**
      * @param \Generated\Shared\Transfer\MolliePaymentLinkTransfer $molliePaymentLinkTransfer
-
+     *
      * @return void
      */
     public function writePaymentLink(MolliePaymentLinkTransfer $molliePaymentLinkTransfer): void;
+
+    /**
+     * @param \Generated\Shared\Transfer\MolliePaymentLinkTransfer $molliePaymentLinkTransfer
+     *
+     * @return \Generated\Shared\Transfer\MolliePaymentLinkTransfer
+     */
+    public function updatePaymentLink(MolliePaymentLinkTransfer $molliePaymentLinkTransfer): MolliePaymentLinkTransfer;
 }

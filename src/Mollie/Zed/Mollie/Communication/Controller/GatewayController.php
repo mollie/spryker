@@ -1,8 +1,11 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Mollie\Zed\Mollie\Communication\Controller;
 
 use Generated\Shared\Transfer\MolliePaymentCaptureResponseTransfer;
+use Generated\Shared\Transfer\MolliePaymentLinkTransfer;
 use Generated\Shared\Transfer\MolliePaymentTransfer;
 use Generated\Shared\Transfer\MollieRefundResponseTransfer;
 use Generated\Shared\Transfer\OrderCollectionRequestTransfer;
@@ -43,5 +46,15 @@ class GatewayController extends AbstractGatewayController
     public function updatePaymentCaptureCollectionAction(MolliePaymentTransfer $molliePaymentTransfer): MolliePaymentCaptureResponseTransfer
     {
         return $this->getFacade()->updatePaymentCaptureCollection($molliePaymentTransfer);
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MolliePaymentLinkTransfer $molliePaymentLinkTransfer
+     *
+     * @return \Generated\Shared\Transfer\MolliePaymentLinkTransfer
+     */
+    public function updatePaymentLinkAction(MolliePaymentLinkTransfer $molliePaymentLinkTransfer): MolliePaymentLinkTransfer
+    {
+        return $this->getFacade()->updatePaymentLink($molliePaymentLinkTransfer);
     }
 }

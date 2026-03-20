@@ -77,6 +77,7 @@
         <property name="isCancelable" type="bool"/>
         <property name="createdAt" type="string"/>
         <property name="expiresAt" type="string"/>
+        <property name="captureBefore" type="string"/>
         <property name="embedded" type="array"/>
         <property name="links" type="MollieLinks"/>
     </transfer>
@@ -177,6 +178,7 @@
     <transfer name="OrderCollectionRequest">
         <property name="id" type="string" />
         <property name="status" type="string" />
+        <property name="captureBefore" type="string" />
     </transfer>
 
     <transfer name="OrderCollectionResponse">
@@ -329,5 +331,21 @@
         <property name="molliePaymentLink" type="MolliePaymentLink"/>
     </transfer>
 
+    <transfer name="MollieWebhookEvent">
+        <property name="resource" type="string"/>
+        <property name="id" type="string"/>
+        <property name="type" type="string"/>
+        <property name="entityId" type="string"/>
+        <property name="createdAt" type="string"/>
+        <property name="embedded" type="array"/>
+        <property name="links" type="MollieWebhookLinks"/>
+    </transfer>
+
+    <transfer name="MollieWebhookLinks">
+        <property name="self" type="MollieLink"/>
+        <property name="paymentLink" type="MollieLink"/>
+        <property name="documentation" type="MollieLink"/>
+        <property name="payment" type="MollieLink"/>
+    </transfer>
 
 </transfers>

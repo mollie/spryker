@@ -12,6 +12,7 @@
         <column name="sequence_type" required="true" type="VARCHAR" size="64"/>
         <column name="metadata" type="LONGVARCHAR"/>
         <column name="expires_at" type="TIMESTAMP"/>
+        <column name="capture_before" type="TIMESTAMP"/>
 
         <foreign-key name="spy_payment_mollie-fk_sales_order" foreignTable="spy_sales_order" phpName="SpySalesOrder">
             <reference foreign="id_sales_order" local="fk_sales_order"/>
@@ -80,7 +81,7 @@
 
     <table name="spy_mollie_payment_link" idMethod="native" allowPkInsert="true" phpName="SpyMolliePaymentLink">
         <column name="id_mollie_payment_link" required="true" type="INTEGER" autoIncrement="true" primaryKey="true"/>
-        <column name="mollie_payment_link_id" required="false" type="VARCHAR" size="255"/>
+        <column name="id" required="true" type="VARCHAR" />
         <column name="fk_sales_order" type="INTEGER"/>
         <column name="description" required="true" type="LONGVARCHAR"/>
         <column name="type" type="VARCHAR"/>
