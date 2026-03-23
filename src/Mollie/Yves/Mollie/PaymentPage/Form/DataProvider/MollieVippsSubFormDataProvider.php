@@ -14,8 +14,7 @@ class MollieVippsSubFormDataProvider implements StepEngineFormDataProviderInterf
      */
     public function __construct(
         protected MollieCachedOptionsExpander $optionsExpander,
-    )
-    {
+    ) {
     }
 
     /**

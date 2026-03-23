@@ -13,7 +13,7 @@ use Spryker\Yves\StepEngine\Dependency\Plugin\Form\SubFormPluginInterface;
 class MollieTwintSubFormPlugin extends AbstractPlugin implements SubFormPluginInterface
 {
     /**
-     * @return SubFormInterface
+     * @return \Spryker\Yves\StepEngine\Dependency\Form\SubFormInterface
      */
     public function createSubForm(): SubFormInterface
     {
@@ -21,7 +21,7 @@ class MollieTwintSubFormPlugin extends AbstractPlugin implements SubFormPluginIn
     }
 
     /**
-     * @return StepEngineFormDataProviderInterface
+     * @return \Spryker\Yves\StepEngine\Dependency\Form\StepEngineFormDataProviderInterface
      */
     public function createSubFormDataProvider(): StepEngineFormDataProviderInterface
     {

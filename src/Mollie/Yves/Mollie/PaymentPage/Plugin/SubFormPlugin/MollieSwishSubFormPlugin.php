@@ -2,9 +2,9 @@
 
 namespace Mollie\Yves\Mollie\PaymentPage\Plugin\SubFormPlugin;
 
-use Spryker\Yves\StepEngine\Dependency\Form\SubFormInterface;
 use Spryker\Yves\Kernel\AbstractPlugin;
 use Spryker\Yves\StepEngine\Dependency\Form\StepEngineFormDataProviderInterface;
+use Spryker\Yves\StepEngine\Dependency\Form\SubFormInterface;
 use Spryker\Yves\StepEngine\Dependency\Plugin\Form\SubFormPluginInterface;
 
 /**
@@ -13,7 +13,7 @@ use Spryker\Yves\StepEngine\Dependency\Plugin\Form\SubFormPluginInterface;
 class MollieSwishSubFormPlugin extends AbstractPlugin implements SubFormPluginInterface
 {
     /**
-     * @return SubFormInterface
+     * @return \Spryker\Yves\StepEngine\Dependency\Form\SubFormInterface
      */
     public function createSubForm(): SubFormInterface
     {
@@ -21,7 +21,7 @@ class MollieSwishSubFormPlugin extends AbstractPlugin implements SubFormPluginIn
     }
 
     /**
-     * @return StepEngineFormDataProviderInterface
+     * @return \Spryker\Yves\StepEngine\Dependency\Form\StepEngineFormDataProviderInterface
      */
     public function createSubFormDataProvider(): StepEngineFormDataProviderInterface
     {

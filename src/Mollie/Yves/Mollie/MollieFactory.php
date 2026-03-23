@@ -246,7 +246,6 @@ class MollieFactory extends AbstractFactory
         );
     }
 
-
     /**
      * @return \Spryker\Yves\StepEngine\Dependency\Form\SubFormInterface
      */

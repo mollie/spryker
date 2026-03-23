@@ -10,8 +10,8 @@ use Spryker\Yves\StepEngine\Dependency\Form\StepEngineFormDataProviderInterface;
 class MollieSwishSubFormDataProvider implements StepEngineFormDataProviderInterface
 {
      /**
-     * @param \Mollie\Yves\Mollie\PaymentPage\Cache\MollieCachedOptionsExpander $optionsExpander
-     */
+      * @param \Mollie\Yves\Mollie\PaymentPage\Cache\MollieCachedOptionsExpander $optionsExpander
+      */
     public function __construct(
         protected MollieCachedOptionsExpander $optionsExpander,
     ) {
