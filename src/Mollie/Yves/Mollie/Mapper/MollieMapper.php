@@ -88,7 +88,11 @@ class MollieMapper implements MollieMapperInterface
         $currency = $quoteTransfer->getCurrency()?->getCode();
 
         $mollieAmount = (new MollieAmountTransfer());
-        $mollieAmount->setCurrency($currency);
+        $grandTotal = $quoteTransfer->getTotals()->getGrandTotal();
+        $amountValue = number_format($this->mollieService->convertIntegerToDecimal($grandTotal), 2);
+        $mollieAmount
+            ->setValue($amountValue)
+            ->setCurrency($currency);
 
         $mollieCacheOptionsTransfer
             ->setLocale($locale)
