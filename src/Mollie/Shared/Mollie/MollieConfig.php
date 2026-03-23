@@ -159,7 +159,6 @@ class MollieConfig extends AbstractSharedConfig
      */
     public const MOLLIE_PAYMENT_APPLE_PAY = 'mollieApplePayPayment';
 
-
     /**
      * @var string
      */

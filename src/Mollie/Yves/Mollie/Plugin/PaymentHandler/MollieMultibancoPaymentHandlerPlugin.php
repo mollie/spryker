@@ -26,4 +26,3 @@ class MollieMultibancoPaymentHandlerPlugin extends AbstractPlugin implements Ste
         return $this->getFactory()->createMollieMultibancoPaymentHandler()->addPaymentToQuote($dataTransfer);
     }
 }
-

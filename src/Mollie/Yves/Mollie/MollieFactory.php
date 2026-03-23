@@ -201,7 +201,7 @@ class MollieFactory extends AbstractFactory
     }
 
     /**
-     * @return SubFormInterface
+     * @return \Spryker\Yves\StepEngine\Dependency\Form\SubFormInterface
      */
     public function createMolliePrzelewy24SubForm(): SubFormInterface
     {
@@ -209,7 +209,7 @@ class MollieFactory extends AbstractFactory
     }
 
     /**
-     * @return SubFormInterface
+     * @return \Spryker\Yves\StepEngine\Dependency\Form\SubFormInterface
      */
     public function createMollieMultibancoSubForm(): SubFormInterface
     {
@@ -217,7 +217,7 @@ class MollieFactory extends AbstractFactory
     }
 
     /**
-     * @return SubFormInterface
+     * @return \Spryker\Yves\StepEngine\Dependency\Form\SubFormInterface
      */
     public function createMollieBancomatPaySubForm(): SubFormInterface
     {
@@ -225,7 +225,7 @@ class MollieFactory extends AbstractFactory
     }
 
     /**
-     * @return SubFormInterface
+     * @return \Spryker\Yves\StepEngine\Dependency\Form\SubFormInterface
      */
     public function createMollieBizumSubForm(): SubFormInterface
     {
@@ -507,15 +507,15 @@ class MollieFactory extends AbstractFactory
     }
 
     /**
-     * @return MolliePaymentHandlerInterface
+     * @return \Mollie\Yves\Mollie\Handler\Payment\MolliePaymentHandlerInterface
      */
-    public function createMolliePrzelewsky24PaymentHandler(): MolliePaymentHandlerInterface
+    public function createMolliePrzelewy24PaymentHandler(): MolliePaymentHandlerInterface
     {
         return new MolliePaymentPrzelewy24Handler();
     }
 
     /**
-     * @return MolliePaymentHandlerInterface
+     * @return \Mollie\Yves\Mollie\Handler\Payment\MolliePaymentHandlerInterface
      */
     public function createMollieMultibancoPaymentHandler(): MolliePaymentHandlerInterface
     {
@@ -523,7 +523,7 @@ class MollieFactory extends AbstractFactory
     }
 
     /**
-     * @return MolliePaymentHandlerInterface
+     * @return \Mollie\Yves\Mollie\Handler\Payment\MolliePaymentHandlerInterface
      */
     public function createMollieBancomatPayPaymentHandler(): MolliePaymentHandlerInterface
     {
@@ -531,7 +531,7 @@ class MollieFactory extends AbstractFactory
     }
 
     /**
-     * @return MolliePaymentHandlerInterface
+     * @return \Mollie\Yves\Mollie\Handler\Payment\MolliePaymentHandlerInterface
      */
     public function createMollieBizumPaymentHandler(): MolliePaymentHandlerInterface
     {

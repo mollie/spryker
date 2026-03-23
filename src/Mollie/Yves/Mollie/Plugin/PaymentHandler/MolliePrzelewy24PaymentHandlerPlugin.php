@@ -25,4 +25,3 @@ class MolliePrzelewy24PaymentHandlerPlugin extends AbstractPlugin implements Ste
         return $this->getFactory()->createMolliePrzelewy24PaymentHandler()->addPaymentToQuote($dataTransfer);
     }
 }
-

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Mollie\Yves\Mollie\PaymentPage\Form;
 
-use Generated\Shared\Transfer\MolliePayPalPaymentTransfer;
 use Mollie\Shared\Mollie\MollieConfig;
 use Mollie\Shared\Mollie\MollieConstants;
 use Spryker\Yves\StepEngine\Dependency\Form\AbstractSubFormType;
@@ -19,7 +18,7 @@ class MollieBancomatPaySubForm extends AbstractSubFormType implements SubFormInt
     /**
      * @var string
      */
-    protected const PAYMENT_METHOD = 'paypal';
+    protected const PAYMENT_METHOD = 'bancomatPay';
 
     /**
      * @var string
@@ -35,9 +34,6 @@ class MollieBancomatPaySubForm extends AbstractSubFormType implements SubFormInt
     {
         parent::configureOptions($resolver);
         $resolver
-            ->setDefaults([
-                'data_class' => MolliePayPalPaymentTransfer::class,
-            ])
             ->setRequired(static::OPTIONS_FIELD_NAME);
     }
 
@@ -68,7 +64,7 @@ class MollieBancomatPaySubForm extends AbstractSubFormType implements SubFormInt
      */
     public function getPropertyPath(): string
     {
-        return MollieConfig::MOLLIE_PROVIDER_BANCOMAT_PAY;
+        return MollieConfig::MOLLIE_PAYMENT_BANCOMAT_PAY;
     }
 
     /**
@@ -76,7 +72,7 @@ class MollieBancomatPaySubForm extends AbstractSubFormType implements SubFormInt
      */
     public function getName(): string
     {
-        return MollieConfig::MOLLIE_PROVIDER_BANCOMAT_PAY;
+        return MollieConfig::MOLLIE_PAYMENT_BANCOMAT_PAY;
     }
 
     /**

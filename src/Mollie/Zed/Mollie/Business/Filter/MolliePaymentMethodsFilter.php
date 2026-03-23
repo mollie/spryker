@@ -45,6 +45,7 @@ class MolliePaymentMethodsFilter implements MolliePaymentMethodsFilterInterface
     {
         $requestTransfer = $this->createRequestTransfer($quoteTransfer);
         $molliePaymentMethodsApiResponseTransfer = $this->mollieClient->getEnabledPaymentMethods($requestTransfer);
+//        $molliePaymentMethodsApiResponseTransfer = $this->mollieClient->getAllPaymentMethods($requestTransfer);
         $molliePaymentMethods = $molliePaymentMethodsApiResponseTransfer->getCollection()->getMethods();
 
         $this->addIncludeWalletLogs($requestTransfer);
@@ -65,7 +66,7 @@ class MolliePaymentMethodsFilter implements MolliePaymentMethodsFilterInterface
             ->setMolliePaymentMethodQueryParameters(
                 (new MolliePaymentMethodQueryParametersTransfer())
                     ->setLocale($this->localeFacade->getCurrentLocale()->getLocaleName())
-                    ->setBillingCountry($quoteTransfer->getBillingAddress()->getIso2Code())
+                    ->setBillingCountry('HR')
                     ->setIncludeIssuers(true)
                     ->setIncludeWallets($this->mollieConfig->getMollieIncludeWallets())
                     ->setSequenceType(MollieConstants::MOLLIE_SEQUENCE_TYPE_ONE_OFF),
