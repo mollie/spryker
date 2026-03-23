@@ -20,6 +20,11 @@ class MollieRouteProviderPlugin extends AbstractRouteProviderPlugin
     public const ROUTE_MOLLIE_WEBHOOK = 'mollie/webhook';
 
     /**
+     * @var string
+     */
+    public const ROUTE_MOLLIE_NEXT_GEN_WEBHOOK = 'mollie/next-gen/webhook';
+
+    /**
      * @param \Spryker\Yves\Router\Route\RouteCollection $routeCollection
      *
      * @return \Spryker\Yves\Router\Route\RouteCollection
@@ -28,6 +33,7 @@ class MollieRouteProviderPlugin extends AbstractRouteProviderPlugin
     {
         $routeCollection = $this->addPaymentStatusRoute($routeCollection);
         $routeCollection = $this->addWebhookRoute($routeCollection);
+        $routeCollection = $this->addNextGenWebhookRoute($routeCollection);
 
         return $routeCollection;
     }
@@ -56,6 +62,20 @@ class MollieRouteProviderPlugin extends AbstractRouteProviderPlugin
         $route = $this->buildRoute('/mollie/webhook', 'Mollie', 'Webhook', 'webhookAction');
         $route = $route->setMethods(['POST']);
         $routeCollection->add(static::ROUTE_MOLLIE_WEBHOOK, $route);
+
+        return $routeCollection;
+    }
+
+     /**
+      * @param \Spryker\Yves\Router\Route\RouteCollection $routeCollection
+      *
+      * @return \Spryker\Yves\Router\Route\RouteCollection
+      */
+    protected function addNextGenWebhookRoute(RouteCollection $routeCollection): RouteCollection
+    {
+        $route = $this->buildRoute('/mollie/next-gen/webhook', 'Mollie', 'Webhook', 'nextGenWebhookAction');
+        $route = $route->setMethods(['POST']);
+        $routeCollection->add(static::ROUTE_MOLLIE_NEXT_GEN_WEBHOOK, $route);
 
         return $routeCollection;
     }

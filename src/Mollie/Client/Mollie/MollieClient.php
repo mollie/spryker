@@ -10,6 +10,8 @@ use Generated\Shared\Transfer\MollieGetCaptureApiResponseTransfer;
 use Generated\Shared\Transfer\MollieGetProfileApiResponseTransfer;
 use Generated\Shared\Transfer\MollieLogApiTransfer;
 use Generated\Shared\Transfer\MolliePaymentApiResponseTransfer;
+use Generated\Shared\Transfer\MolliePaymentLinkApiResponseTransfer;
+use Generated\Shared\Transfer\MolliePaymentLinkTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodQueryParametersTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodsApiResponseTransfer;
 use Generated\Shared\Transfer\MolliePaymentTransfer;
@@ -125,6 +127,10 @@ class MollieClient extends AbstractClient implements MollieClientInterface
     }
 
     /**
+     * {@inheritDoc}
+     *
+     * @api
+     *
      * @param \Generated\Shared\Transfer\MolliePaymentTransfer $molliePaymentTransfer
      *
      * @return void
@@ -132,6 +138,16 @@ class MollieClient extends AbstractClient implements MollieClientInterface
     public function updatePaymentCaptureCollection(MolliePaymentTransfer $molliePaymentTransfer): void
     {
         $this->getFactory()->createZedMollieStub()->updatePaymentCaptureCollection($molliePaymentTransfer);
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MolliePaymentLinkTransfer $molliePaymentLinkTransfer
+     *
+     * @return void
+     */
+    public function updatePaymentLink(MolliePaymentLinkTransfer $molliePaymentLinkTransfer): void
+    {
+        $this->getFactory()->createZedMollieStub()->updatePaymentLink($molliePaymentLinkTransfer);
     }
 
     /**
@@ -184,6 +200,10 @@ class MollieClient extends AbstractClient implements MollieClientInterface
     }
 
     /**
+     * {@inheritDoc}
+     *
+     * @api
+     *
      * @param \Generated\Shared\Transfer\MollieApiRequestTransfer $mollieApiRequestTransfer
      *
      * @return \Generated\Shared\Transfer\MollieCreateCaptureApiResponseTransfer
@@ -197,6 +217,10 @@ class MollieClient extends AbstractClient implements MollieClientInterface
     }
 
     /**
+     * {@inheritDoc}
+     *
+     * @api
+     *
      * @param \Generated\Shared\Transfer\MollieApiRequestTransfer $mollieApiRequestTransfer
      *
      * @return \Generated\Shared\Transfer\MollieGetCaptureApiResponseTransfer
@@ -217,5 +241,35 @@ class MollieClient extends AbstractClient implements MollieClientInterface
     public function logMessage(MollieLogApiTransfer $mollieLogApiTransfer): void
     {
         $this->getFactory()->createMollieLogger()->logMessage($mollieLogApiTransfer);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\MollieApiRequestTransfer $mollieApiRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\MolliePaymentLinkApiResponseTransfer
+     */
+    public function createPaymentLink(MollieApiRequestTransfer $mollieApiRequestTransfer): MolliePaymentLinkApiResponseTransfer
+    {
+        $molliePaymentLinkApiResponseTransfer = $this->getFactory()->createPaymentLinkApi()->execute($mollieApiRequestTransfer);
+
+        return $molliePaymentLinkApiResponseTransfer;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\MollieApiRequestTransfer $mollieApiRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\MolliePaymentLinkApiResponseTransfer
+     */
+    public function getPaymentLinks(MollieApiRequestTransfer $mollieApiRequestTransfer): MolliePaymentLinkApiResponseTransfer
+    {
+        return $this->getFactory()->createGetPaymentLinksApi()->execute($mollieApiRequestTransfer);
     }
 }

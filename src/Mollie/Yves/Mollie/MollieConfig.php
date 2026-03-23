@@ -67,6 +67,14 @@ class MollieConfig extends AbstractBundleConfig
     /**
      * @return string
      */
+    public function getMollieNextGenWebhookSigningSecret(): string
+    {
+        return $this->get(MollieConstants::MOLLIE)[MollieConstants::MOLLIE_NEXT_GEN_WEBHOOK_SIGNING_SECRET];
+    }
+
+    /**
+     * @return string
+     */
     public function getOrderReferenceQueryParamName(): string
     {
         return static::ORDER_REFERENCE_QUERY_PARAM_NAME;

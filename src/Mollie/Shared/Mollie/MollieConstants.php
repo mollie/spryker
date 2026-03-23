@@ -37,6 +37,11 @@ interface MollieConstants
     /**
      * @var string
      */
+    public const MOLLIE_NEXT_GEN_WEBHOOK_SIGNING_SECRET = 'MOLLIE:MOLLIE_NEXT_GEN_WEBHOOK_SIGNING_SECRET';
+
+    /**
+     * @var string
+     */
     public const MOLLIE_PAYMENT_TRANSACTION_STORAGE_KEY_PREFIX = 'mollie:payment';
 
     /**
@@ -167,4 +172,12 @@ interface MollieConstants
     public const string MOLLIE_SEQUENCE_TYPE_ONE_OFF = 'oneoff';
 
     public const string LOGO_URL = 'LogoUrl';
+
+    /**
+     * @var array<string>
+     */
+    public const array PAYMENT_LINK_TYPES = [
+        'Fixed' => 'fixed',
+        'Open' => 'open',
+    ];
 }

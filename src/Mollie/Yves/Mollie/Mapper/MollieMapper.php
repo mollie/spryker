@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Mollie\Yves\Mollie\Mapper;
 
@@ -8,6 +8,7 @@ use Generated\Shared\Transfer\MollieAmountTransfer;
 use Generated\Shared\Transfer\MollieApiRequestTransfer;
 use Generated\Shared\Transfer\MollieCacheOptionsTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodQueryParametersTransfer;
+use Generated\Shared\Transfer\MollieWebhookEventTransfer;
 use Generated\Shared\Transfer\QuoteTransfer;
 use Mollie\Service\Mollie\MollieServiceInterface;
 use Mollie\Shared\Mollie\MollieConstants;
@@ -56,6 +57,22 @@ class MollieMapper implements MollieMapperInterface
             ->setAmount($mollieCacheOptionsTransfer->getAmount())
             ->setIncludeWallets($this->mollieConfig->getMollieIncludeWallets())
             ->setSequenceType(MollieConstants::MOLLIE_SEQUENCE_TYPE_ONE_OFF);
+    }
+
+    /**
+     * @param array<string, mixed> $requestBody
+     *
+     * @return \Generated\Shared\Transfer\MollieWebhookEventTransfer
+     */
+    public function mapRequestPayloadToMollieWebhookEventTransfer(array $requestBody): MollieWebhookEventTransfer
+    {
+        $mollieWebhookEventTransfer = (new MollieWebhookEventTransfer())
+            ->fromArray($requestBody, true);
+
+        $embedded = $requestBody['_embedded'] ?? [];
+        $mollieWebhookEventTransfer->setEmbedded($embedded);
+
+        return $mollieWebhookEventTransfer;
     }
 
     /**

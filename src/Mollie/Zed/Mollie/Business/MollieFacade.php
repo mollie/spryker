@@ -1,12 +1,14 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Mollie\Zed\Mollie\Business;
 
 use Generated\Shared\Transfer\CheckoutResponseTransfer;
 use Generated\Shared\Transfer\MolliePaymentCaptureRequestTransfer;
 use Generated\Shared\Transfer\MolliePaymentCaptureResponseTransfer;
+use Generated\Shared\Transfer\MolliePaymentLinkApiResponseTransfer;
+use Generated\Shared\Transfer\MolliePaymentLinkTransfer;
 use Generated\Shared\Transfer\MolliePaymentTransfer;
 use Generated\Shared\Transfer\MollieRefundApiResponseTransfer;
 use Generated\Shared\Transfer\MollieRefundResponseTransfer;
@@ -20,6 +22,7 @@ use Spryker\Zed\Kernel\Business\AbstractFacade;
 /**
  * @method \Mollie\Zed\Mollie\Business\MollieBusinessFactory getFactory()
  * @method \Mollie\Zed\Mollie\Persistence\MollieRepositoryInterface getRepository()
+ * @method \Mollie\Zed\Mollie\Persistence\MollieEntityManagerInterface getEntityManager()
  */
 class MollieFacade extends AbstractFacade implements MollieFacadeInterface
 {
@@ -183,5 +186,27 @@ class MollieFacade extends AbstractFacade implements MollieFacadeInterface
     public function sendPaymentConfirmationMail(OrderTransfer $orderTransfer): void
     {
         $this->getFactory()->createMailHandler()->sendPaymentConfirmationMail($orderTransfer);
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MolliePaymentLinkTransfer $molliePaymentLinkTransfer
+     *
+     * @return \Generated\Shared\Transfer\MolliePaymentLinkApiResponseTransfer
+     */
+    public function createPaymentLink(MolliePaymentLinkTransfer $molliePaymentLinkTransfer): MolliePaymentLinkApiResponseTransfer
+    {
+        return $this->getFactory()
+            ->createMolliePaymentLinkHandler()
+            ->createPaymentLink($molliePaymentLinkTransfer);
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MolliePaymentLinkTransfer $molliePaymentLinkTransfer
+     *
+     * @return \Generated\Shared\Transfer\MolliePaymentLinkTransfer
+     */
+    public function updatePaymentLink(MolliePaymentLinkTransfer $molliePaymentLinkTransfer): MolliePaymentLinkTransfer
+    {
+        return $this->getEntityManager()->updatePaymentLink($molliePaymentLinkTransfer);
     }
 }

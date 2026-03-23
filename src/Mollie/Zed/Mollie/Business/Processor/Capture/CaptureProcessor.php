@@ -44,6 +44,8 @@ class CaptureProcessor implements CaptureProcessorInterface
             }
         });
 
+        $molliePaymentCaptureResponseTransfer->setIsSuccessful(true);
+
         return $molliePaymentCaptureResponseTransfer;
     }
 }

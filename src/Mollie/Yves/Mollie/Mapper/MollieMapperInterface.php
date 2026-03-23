@@ -7,6 +7,7 @@ namespace Mollie\Yves\Mollie\Mapper;
 use Generated\Shared\Transfer\MollieApiRequestTransfer;
 use Generated\Shared\Transfer\MollieCacheOptionsTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodQueryParametersTransfer;
+use Generated\Shared\Transfer\MollieWebhookEventTransfer;
 use Generated\Shared\Transfer\QuoteTransfer;
 
 interface MollieMapperInterface
@@ -33,4 +34,11 @@ interface MollieMapperInterface
      * @return \Generated\Shared\Transfer\MollieCacheOptionsTransfer
      */
     public function createMollieCacheOptionsTransfer(QuoteTransfer $quoteTransfer): MollieCacheOptionsTransfer;
+
+    /**
+     * @param array<string, mixed> $requestBody
+     *
+     * @return \Generated\Shared\Transfer\MollieWebhookEventTransfer
+     */
+    public function mapRequestPayloadToMollieWebhookEventTransfer(array $requestBody): MollieWebhookEventTransfer;
 }
