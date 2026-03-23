@@ -42,6 +42,12 @@
         <property name="mollieKbcPayment" type="[]"/>
         <property name="molliePayByBankPayment" type="[]"/>
         <property name="mollieApplePayPayment" type="MollieApplePayPayment"/>
+        <property name="mollieTrustlyPayment" type="[]"/>
+        <property name="mollieMbWayPayment" type="[]"/>
+        <property name="mollieSwishPayment" type="[]"/>
+        <property name="mollieSatispayPayment" type="[]"/>
+        <property name="mollieTwintPayment" type="[]"/>
+        <property name="mollieVippsPayment" type="[]"/>
     </transfer>
 
     <transfer name="MolliePaymentMethod">
