@@ -115,13 +115,13 @@
 
             <transition condition="Mollie/IsPaymentLinkCreationSuccessful">
                 <source>payment link created</source>
-                <target>authorized</target>
+                <target>payment link open</target>
                 <event>check payment link creation</event>
             </transition>
 
             <transition>
                 <source>payment link created</source>
-                <target>payment link open</target>
+                <target>authorized</target>
                 <event>check payment link creation</event>
             </transition>
 
@@ -245,7 +245,7 @@
            <event name="check payment link creation" onEnter="true"/>
            <event name="start checking" onEnter="true"/>
            <event name="check payment link status" onEnter="true"/>
-           <event name="recheck" timeout="2 minute"/>
+           <event name="recheck" timeout="10 minute"/>
     </events>
 
     </process>
