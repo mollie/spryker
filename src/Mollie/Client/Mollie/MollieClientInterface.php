@@ -229,6 +229,11 @@ interface MollieClientInterface
     public function createPaymentLink(MollieApiRequestTransfer $mollieApiRequestTransfer): MolliePaymentLinkApiResponseTransfer;
 
     /**
+     * Specification:
+     * - Updates existing payment link in DB
+     *
+     * @api
+     *
      * @param \Generated\Shared\Transfer\MolliePaymentLinkTransfer $molliePaymentLinkTransfer
      *
      * @return void

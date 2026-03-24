@@ -35,6 +35,8 @@ use Mollie\Zed\Mollie\Business\Payment\Status\MolliePaymentStatusHandler;
 use Mollie\Zed\Mollie\Business\Payment\Status\MolliePaymentStatusHandlerInterface;
 use Mollie\Zed\Mollie\Business\Processor\Capture\CaptureProcessor;
 use Mollie\Zed\Mollie\Business\Processor\Capture\CaptureProcessorInterface;
+use Mollie\Zed\Mollie\Business\Processor\PaymentLink\PaymentLinkProcessor;
+use Mollie\Zed\Mollie\Business\Processor\PaymentLink\PaymentLinkProcessorInterface;
 use Mollie\Zed\Mollie\Business\Processor\Refund\RefundProcessor;
 use Mollie\Zed\Mollie\Business\Processor\Refund\RefundProcessorInterface;
 use Mollie\Zed\Mollie\Business\Writer\MolliePaymentWriter;
@@ -300,6 +302,18 @@ class MollieBusinessFactory extends AbstractBusinessFactory
         return new MolliePaymentLinkHandler(
             $this->getMollieClient(),
             $this->getEntityManager(),
+            $this->getRepository(),
+        );
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Business\Processor\PaymentLink\PaymentLinkProcessorInterface
+     */
+    public function createPaymentLinkProcessor(): PaymentLinkProcessorInterface
+    {
+        return new PaymentLinkProcessor(
+            $this->getMollieService(),
+            $this->getConfig(),
         );
     }
 }

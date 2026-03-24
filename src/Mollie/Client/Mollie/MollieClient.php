@@ -142,6 +142,10 @@ class MollieClient extends AbstractClient implements MollieClientInterface
     }
 
     /**
+     * {@inheritDoc}
+     *
+     * @api
+     *
      * @param \Generated\Shared\Transfer\MolliePaymentLinkTransfer $molliePaymentLinkTransfer
      *
      * @return void

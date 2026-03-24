@@ -15,4 +15,25 @@ interface MolliePaymentLinkHandlerInterface
      * @return \Generated\Shared\Transfer\MolliePaymentLinkTransfer
      */
     public function createPaymentLink(MolliePaymentLinkTransfer $molliePaymentLinkTransfer): MolliePaymentLinkApiResponseTransfer;
+
+    /**
+     * @param int $idSalesOrder
+     *
+     * @return bool
+     */
+    public function isPaymentLinkCreationSuccessful(int $idSalesOrder): bool;
+
+    /**
+     * @param int $idSalesOrder
+     *
+     * @return bool
+     */
+    public function isPaymentLinkStatusPaid(int $idSalesOrder): bool;
+
+    /**
+     * @param int $idSalesOrder
+     *
+     * @return bool
+     */
+    public function isPaymentLinkStatusExpired(int $idSalesOrder): bool;
 }

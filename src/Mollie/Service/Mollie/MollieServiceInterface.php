@@ -42,4 +42,14 @@ interface MollieServiceInterface
      * @return string
      */
     public function resolveWebhookUrl(string $webhookUrl, string $testEnvironmentWebhookUrl, bool $testMode): string;
+
+    /**
+     * Specification:
+     * - gets number of seconds to be added as expiration time
+     *
+     * @api
+     *
+     * @return string
+     */
+    public function getPaymentLinkDefaultExpirationDateTime(): string;
 }

@@ -66,11 +66,6 @@ class MollieConfig extends AbstractBundleConfig
     public const MOLLIE_WALLET_APPLE_PAY = 'applepay';
 
     /**
-     * @var string
-     */
-    public const PAYMENT_PROVIDER_PREFIX = 'Mollie';
-
-    /**
      * @return array<string, string>
      */
     public function getMollieOmsToPaymentMethodMapping(): array
@@ -144,5 +139,13 @@ class MollieConfig extends AbstractBundleConfig
     public function getPaymentCaptureStates(): array
     {
         return ['captured', 'capture pending'];
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getMollieProfileId(): string|null
+    {
+        return $this->get(MollieConstants::MOLLIE)[MollieConstants::MOLLIE_PROFILE_ID];
     }
 }

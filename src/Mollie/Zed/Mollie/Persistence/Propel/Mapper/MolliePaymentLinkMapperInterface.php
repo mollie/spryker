@@ -19,4 +19,11 @@ interface MolliePaymentLinkMapperInterface
         MolliePaymentLinkTransfer $molliePaymentLinkTransfer,
         SpyMolliePaymentLink $spyMolliePaymentLinkEntity,
     ): SpyMolliePaymentLink;
+
+    /**
+     * @param \Orm\Zed\Mollie\Persistence\SpyMolliePaymentLink $spyMolliePaymentLinkEntity
+     *
+     * @return \Generated\Shared\Transfer\MolliePaymentLinkTransfer
+     */
+    public function mapMolliePaymentLinkEntityToTransfer(SpyMolliePaymentLink $spyMolliePaymentLinkEntity): MolliePaymentLinkTransfer;
 }

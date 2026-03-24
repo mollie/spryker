@@ -212,6 +212,54 @@ class MollieFacade extends AbstractFacade implements MollieFacadeInterface
     }
 
     /**
+     * @param \Generated\Shared\Transfer\OrderTransfer $orderTransfer
+     *
+     * @return \Generated\Shared\Transfer\MolliePaymentLinkTransfer
+     */
+    public function processPaymentLinkData(OrderTransfer $orderTransfer): MolliePaymentLinkTransfer
+    {
+        return $this->getFactory()
+            ->createPaymentLinkProcessor()
+            ->processOrderItemPaymentLink($orderTransfer);
+    }
+
+    /**
+     * @param int $idSalesOrder
+     *
+     * @return bool
+     */
+    public function isPaymentLinkCreationSuccessful(int $idSalesOrder): bool
+    {
+        return $this->getFactory()
+            ->createMolliePaymentLinkHandler()
+            ->isPaymentLinkCreationSuccessful($idSalesOrder);
+    }
+
+    /**
+     * @param int $idSalesOrder
+     *
+     * @return bool
+     */
+    public function isPaymentLinkStatusPaid(int $idSalesOrder): bool
+    {
+        return $this->getFactory()
+            ->createMolliePaymentLinkHandler()
+            ->isPaymentLinkStatusPaid($idSalesOrder);
+    }
+
+    /**
+     * @param int $idSalesOrder
+     *
+     * @return bool
+     */
+    public function isPaymentLinkStatusExpired(int $idSalesOrder): bool
+    {
+        return $this->getFactory()
+            ->createMolliePaymentLinkHandler()
+            ->isPaymentLinkStatusExpired($idSalesOrder);
+    }
+
+    /**
      * @param \Generated\Shared\Transfer\MolliePaymentLinkTransfer $molliePaymentLinkTransfer
      *
      * @return \Generated\Shared\Transfer\MolliePaymentLinkTransfer

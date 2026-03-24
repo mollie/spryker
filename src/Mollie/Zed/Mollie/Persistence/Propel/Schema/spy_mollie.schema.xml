@@ -82,22 +82,29 @@
 
     <table name="spy_mollie_payment_link" idMethod="native" allowPkInsert="true" phpName="SpyMolliePaymentLink">
         <column name="id_mollie_payment_link" required="true" type="INTEGER" autoIncrement="true" primaryKey="true"/>
-        <column name="type" required="true" type="ENUM" valueSet="fixed, percentage"/>
-        <column name="currency" required="true" type="VARCHAR" size="3"/>
         <column name="id" required="true" type="VARCHAR" />
-        <column name="amount" required="true" type="DECIMAL" size="10" scale="2"/>
-        <column name="status" required="true" type="VARCHAR" size="64"/>
+        <column name="fk_sales_order" type="INTEGER"/>
         <column name="description" required="true" type="LONGVARCHAR"/>
-        <column name="expiry_date" required="false" type="DATE"/>
-        <column name="redirect_url" required="false" type="VARCHAR" size="500"/>
-        <column name="is_reusable" required="false" type="BOOLEAN" default="false"/>
-        <column name="payment_methods" required="false" type="LONGVARCHAR"/>
-        <column name="mollie_payment_link_id" required="false" type="VARCHAR" size="255"/>
-        <column name="payment_link_url" required="false" type="VARCHAR" size="500"/>
+        <column name="type" type="VARCHAR"/>
+        <column name="sequence_type" type="VARCHAR" size="15"/>
+        <column name="currency" required="true" type="VARCHAR" size="3"/>
+        <column name="amount" required="true" type="INTEGER"/>
+        <column name="status" type="VARCHAR" size="64"/>
+        <column name="expiry_date" type="DATETIME"/>
+        <column name="redirect_url" type="VARCHAR" size="500"/>
+        <column name="is_reusable" type="BOOLEAN" default="false"/>
+        <column name="payment_methods" type="LONGVARCHAR"/>
+        <column name="payment_link_url" required="true" type="VARCHAR" size="500"/>
+        <column name="mode" type="VARCHAR"/>
+        <column name="profileId" type="VARCHAR"/>
 
         <id-method-parameter value="spy_mollie_payment_link_pk_seq"/>
 
         <behavior name="timestampable"/>
+
+        <foreign-key name="spy_mollie_payment_link-fk_sales_order" foreignTable="spy_sales_order" phpName="SpySalesOrder">
+            <reference foreign="id_sales_order" local="fk_sales_order"/>
+        </foreign-key>
     </table>
 
 </database>

@@ -178,11 +178,5 @@ interface MollieConstants
 
     public const string LOGO_URL = 'LogoUrl';
 
-    /**
-     * @var array<string>
-     */
-    public const array PAYMENT_LINK_TYPES = [
-        'Fixed' => 'fixed',
-        'Open' => 'open',
-    ];
+    public const string MOLLIE_PAYMENT_LINK_EXPIRATION_TIME = 'MOLLIE:MOLLIE_PAYMENT_LINK_EXPIRATION_TIME';
 }
