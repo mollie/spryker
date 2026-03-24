@@ -68,6 +68,36 @@ class MollieConfig extends AbstractBundleConfig
     public const REQUEST_PARAMETER_CREATE_PAYMENT_APPLE_PAY_PAYMENT_TOKEN = 'applePayPaymentToken';
 
     /**
+     * @var string
+     */
+    public const REQUEST_PARAMETER_CREATE_PAYMENT_BILLIE_COMPANY = 'company';
+
+    /**
+     * @var string
+     */
+    public const REQUEST_PARAMETER_CREATE_PAYMENT_BILLIE_COMPANY_BILLING_ADDRESS_ORGANIZATION_NAME = 'billingAddress.organizationName';
+
+    /**
+     * @var string
+     */
+    public const REQUEST_PARAMETER_CREATE_PAYMENT_BILLIE_COMPANY_REGISTRATION_NUMBER = 'registrationNumber';
+
+    /**
+     * @var string
+     */
+    public const REQUEST_PARAMETER_CREATE_PAYMENT_BILLIE_COMPANY_VAT_NUMBER = 'vatNumber';
+
+    /**
+     * @var string
+     */
+    public const REQUEST_PARAMETER_CREATE_PAYMENT_BILLIE_COMPANY_ENTITY_TYPE = 'entityType';
+
+    /**
+     * @var string
+     */
+    public const REQUEST_PARAMETER_CREATE_PAYMENT_IDEAL_IN3_CONSUMER_DATE_OF_BIRTH = 'consumerDateOfBirth';
+
+    /**
      * @var int
      */
     public const MOLLIE_PAYMENT_METHODS_STORAGE_KEY_TTL = 21600;
@@ -184,9 +214,9 @@ class MollieConfig extends AbstractBundleConfig
         return static::MOLLIE_PAYMENT_METHODS_STORAGE_KEY_TTL;
     }
 
-      /**
-       * @return string
-       */
+    /**
+     * @return string
+     */
     public function getCacheKeyPrefixForAllPaymentMethods(): string
     {
         return static::CACHE_KEY_PREFIX_FOR_ALL_PAYMENT_METHODS;
@@ -214,5 +244,13 @@ class MollieConfig extends AbstractBundleConfig
     public function getMollieManualCaptureMode(): string
     {
         return static::MOLLIE_MANUAL_CAPTURE_MODE;
+    }
+
+    /**
+     * @return array<string>
+     */
+    public function getBNPLPaymentMethods(): array
+    {
+        return MollieConstants::BNPL_PAYMENT_METHODS;
     }
 }

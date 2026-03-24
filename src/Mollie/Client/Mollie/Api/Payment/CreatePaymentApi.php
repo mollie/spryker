@@ -5,12 +5,18 @@ declare(strict_types = 1);
 namespace Mollie\Client\Mollie\Api\Payment;
 
 use Generated\Shared\Transfer\CheckoutResponseTransfer;
+use Generated\Shared\Transfer\MollieAmountTransfer;
 use Generated\Shared\Transfer\MollieApiRequestTransfer;
 use Generated\Shared\Transfer\MollieApiResponseTransfer;
+use Generated\Shared\Transfer\MollieLinesTransfer;
 use Generated\Shared\Transfer\MollieLinksTransfer;
 use Generated\Shared\Transfer\MolliePaymentApiResponseTransfer;
 use Generated\Shared\Transfer\MolliePaymentTransfer;
+use Generated\Shared\Transfer\QuoteTransfer;
+use Mollie\Api\Http\Data\Address;
+use Mollie\Api\Http\Data\DataCollection;
 use Mollie\Api\Http\Data\Money;
+use Mollie\Api\Http\Data\RecurringBillingCycle;
 use Mollie\Api\Http\Request;
 use Mollie\Api\Http\Requests\CreatePaymentRequest;
 use Mollie\Api\MollieApiClient;
@@ -71,6 +77,13 @@ class CreatePaymentApi extends AbstractApiCall
         $method = $this->mollieConfig->getMolliePaymentMethod($paymentTransfer->getPaymentMethod());
         $metadata = $this->addMetadata($checkoutResponseTransfer);
         $additionalParameters = $this->addAdditionalParameters($mollieApiRequestTransfer);
+        $billingAddress = $this->addBillingAddress($quoteTransfer);
+
+        $lines = null;
+        if(in_array($method, $this->mollieConfig->getBNPLPaymentMethods())){
+            $lines = $this->addLines($quoteTransfer, $method);
+        }
+
 
         $this->request = new CreatePaymentRequest(
             description: $checkoutResponseTransfer->getSaveOrderOrFail()->getOrderReference(),
@@ -79,8 +92,10 @@ class CreatePaymentApi extends AbstractApiCall
             webhookUrl: $webhookUrl,
             method: $method,
             metadata: $metadata,
-            additional: $additionalParameters,
             captureMode: $this->getCaptureModeForMethod($method),
+            additional: $additionalParameters,
+            lines: $lines,
+            billingAddress: $billingAddress,
         );
 
         return $this->request;
@@ -116,6 +131,14 @@ class CreatePaymentApi extends AbstractApiCall
                 break;
             case SharedConfig::MOLLIE_PAYMENT_APPLE_PAY:
                 $additionalData[MollieConfig::REQUEST_PARAMETER_CREATE_PAYMENT_APPLE_PAY_PAYMENT_TOKEN] = $paymentTransfer->getMollieApplePayPayment()->getApplePayPaymentToken() ?? '';
+
+                break;
+            case SharedConfig::MOLLIE_PAYMENT_BILLIE:
+                $additionalData[MollieConfig::REQUEST_PARAMETER_CREATE_PAYMENT_BILLIE_COMPANY] = $this->createCompanyObject($mollieApiRequestTransfer);
+
+                break;
+            case SharedConfig::MOLLIE_PAYMENT_IDEAL_IN3:
+                $additionalData[MollieConfig::REQUEST_PARAMETER_CREATE_PAYMENT_IDEAL_IN3_CONSUMER_DATE_OF_BIRTH] = $this->getCustomerDateOfBirth($mollieApiRequestTransfer);
 
                 break;
             default:
@@ -213,5 +236,93 @@ class CreatePaymentApi extends AbstractApiCall
         }
 
         return $this->mollieConfig->getMollieAutomaticCaptureMode();
+    }
+
+    /**
+     * @param QuoteTransfer $quoteTransfer
+     *
+     * @return DataCollection|null
+     */
+    protected function addLines(QuoteTransfer $quoteTransfer): ?DataCollection
+    {
+        $items = $quoteTransfer->getItems();
+        $lines = new \ArrayObject();
+        foreach ($items as $item) {
+            $linesTransfer = new MollieLinesTransfer();
+
+            $unitPrice = $this->mollieService->convertIntegerToMollieAmount($item->getUnitPriceToPayAggregation(), $item->getCurrencyIsoCode());
+            $totalAmount = $this->mollieService->convertIntegerToMollieAmount($item->getSumPriceToPayAggregation(), $item->getCurrencyIsoCode());
+            $discountAmount = $this->mollieService->convertIntegerToMollieAmount($item->getUnitDiscountAmountAggregation(), $item->getCurrencyIsoCode());
+
+            $linesTransfer
+                ->setDescription($item->getName())
+                ->setQuantity($item->getQuantity())
+                ->setUnitPrice($unitPrice)
+                ->setTotalAmount($totalAmount)
+                ->setDiscountAmount($discountAmount)
+                ->setSku($item->getSku());
+
+            $lines->append($linesTransfer);
+        }
+        $linesCollection = new DataCollection($lines->getArrayCopy());
+
+        return $linesCollection;
+    }
+
+    /**
+     * @param QuoteTransfer $quoteTransfer
+     * @return Address
+     */
+    protected function addBillingAddress(QuoteTransfer $quoteTransfer): Address
+    {
+        $customerAddress = $quoteTransfer->getBillingAddress();
+
+        $billingAddress = new Address(
+            title: $customerAddress->getSalutation(),
+            givenName: $customerAddress->getFirstName(),
+            familyName: $customerAddress->getLastName(),
+            organizationName: $customerAddress->getCompany(),
+            streetAndNumber: $customerAddress->getAddress1(),
+            postalCode: $customerAddress->getZipCode(),
+            email: $customerAddress->getEmail(),
+            phone: $customerAddress->getPhone(),
+            city: $customerAddress->getCity(),
+            country: $customerAddress->getCountry(),
+        );
+
+        return $billingAddress;
+    }
+
+    /**
+     * @param MollieApiRequestTransfer $mollieApiRequestTransfer
+     * @return \ArrayObject
+     */
+    protected function createCompanyObject(MollieApiRequestTransfer $mollieApiRequestTransfer): \ArrayObject
+    {
+        $quoteTransfer = $mollieApiRequestTransfer->getQuote();
+        $billingAddress = $quoteTransfer->getBillingAddress();
+
+        $company[MollieConfig::REQUEST_PARAMETER_CREATE_PAYMENT_BILLIE_COMPANY_BILLING_ADDRESS_ORGANIZATION_NAME] = $billingAddress->getCompany();
+        $company[MollieConfig::REQUEST_PARAMETER_CREATE_PAYMENT_BILLIE_COMPANY_REGISTRATION_NUMBER] = 'reg 123'; // no company registration number in spryker?
+        $company[MollieConfig::REQUEST_PARAMETER_CREATE_PAYMENT_BILLIE_COMPANY_VAT_NUMBER] = 'test 123'; // no vat numbers in spryker?
+        $company[MollieConfig::REQUEST_PARAMETER_CREATE_PAYMENT_BILLIE_COMPANY_ENTITY_TYPE] = 'entity 1'; // no company entity type
+
+        $companyObject[MollieConfig::REQUEST_PARAMETER_CREATE_PAYMENT_BILLIE_COMPANY] = $company;
+        return new \ArrayObject($companyObject);
+    }
+
+    /**
+     * @param MollieApiRequestTransfer $mollieApiRequestTransfer
+     * @return string|null
+     */
+    protected function getCustomerDateOfBirth(MollieApiRequestTransfer $mollieApiRequestTransfer): ?string
+    {
+        $dateOfBirth = null;
+        $quoteTransfer = $mollieApiRequestTransfer->getQuote();
+        if($quoteTransfer->getCustomer()){
+            $dateOfBirth = $quoteTransfer->getCustomer()->getDateOfBirth();
+        }
+
+        return $dateOfBirth;
     }
 }

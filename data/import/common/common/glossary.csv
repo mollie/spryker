@@ -24,6 +24,14 @@ molliePayByBankPayment,Per Banküberweisung bezahlen,de_DE
 molliePayByBankPayment,Pay by bank transfer,en_US
 mollieApplePayPayment,Apple Pay,de_DE
 mollieApplePayPayment,Apple Pay,en_US
+mollieBilliePayment,Billie,de_DE
+mollieBilliePayment,Billie,en_US
+mollieRivertyPayment,Riverty,de_DE
+mollieRivertyPayment,Riverty,en_US
+mollieIdealIn3Payment,iDEAL in3,de_DE
+mollieIdealIn3Payment,iDEAL in3,en_US
+mollieAlmaPayment,Alma,de_DE
+mollieAlmaPayment,Alma,en_US
 checkout.payment.provider.MollieCreditCardPayment,Mollie Kreditkarte,de_DE
 checkout.payment.provider.MollieCreditCardPayment,Mollie Credit Card,en_US
 checkout.payment.provider.MolliePayPalPayment,Mollie PayPal,de_DE
@@ -50,6 +58,14 @@ checkout.payment.provider.MolliePayByBankPayment,Mollie per Bank bezahlen,de_DE
 checkout.payment.provider.MolliePayByBankPayment,Mollie Pay By Bank,en_US
 checkout.payment.provider.MollieApplePayPayment,Mollie Apple Pay,de_DE
 checkout.payment.provider.MollieApplePayPayment,Mollie Apple Pay,en_US
+checkout.payment.provider.MollieBilliePayment,Mollie Billie,de_DE
+checkout.payment.provider.MollieBilliePayment,Mollie Billie,en_US
+checkout.payment.provider.MollieIdealIn3Payment,Mollie iDEAL in3,de_DE
+checkout.payment.provider.MollieIdealIn3Payment,Mollie iDEAL in3,en_US
+checkout.payment.provider.MollieRivertyPayment,Mollie Riverty,de_DE
+checkout.payment.provider.MollieRivertyPayment,Mollie Riverty,en_US
+checkout.payment.provider.MollieAlmaPayment,Mollie Alma,de_DE
+checkout.payment.provider.MollieAlmaPayment,Mollie Alma,en_US
 checkout.payment.provider.molliePaypal.descriptionText,Schließen Sie Ihren Einkauf sicher mit Ihrem PayPal-Konto ab.,de_DE
 checkout.payment.provider.molliePaypal.descriptionText,Complete your purchase securely using your PayPal account.,en_US
 checkout.payment.provider.mollieBankTransfer.descriptionText,Schließen Sie Ihren Einkauf sicher per Banküberweisung ab.,de_DE
@@ -76,3 +92,11 @@ checkout.payment.provider.mollieCreditCard.descriptionText,Schließen Sie Ihren 
 checkout.payment.provider.mollieCreditCard.descriptionText,Complete your purchase securely using your credit card credentials.,en_US
 checkout.payment.provider.mollieApplePay.descriptionText,Schließen Sie Ihren Einkauf sicher mit Apple Pay ab.,de_DE
 checkout.payment.provider.mollieApplePay.descriptionText,Complete your purchase securely using Apple Pay.,en_US
+checkout.payment.provider.mollieBillie.descriptionText,Schließen Sie Ihren Einkauf sicher mit Billie ab.,de_DE
+checkout.payment.provider.mollieBillie.descriptionText,Complete your purchase securely using Billie.,en_US
+checkout.payment.provider.mollieIdealIn3.descriptionText,Schließen Sie Ihren Einkauf sicher mit iDEAL in3 ab.,de_DE
+checkout.payment.provider.mollieIdealIn3.descriptionText,Complete your purchase securely using iDEAL in3.,en_US
+checkout.payment.provider.mollieRiverty.descriptionText,Schließen Sie Ihren Einkauf sicher mit Riverty ab.,de_DE
+checkout.payment.provider.mollieRiverty.descriptionText,Complete your purchase securely using Riverty.,en_US
+checkout.payment.provider.mollieAlma.descriptionText,Schließen Sie Ihren Einkauf sicher mit Alma ab.,de_DE
+checkout.payment.provider.mollieAlma.descriptionText,Complete your purchase securely using Alma.,en_US

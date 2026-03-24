@@ -18,15 +18,20 @@ class MollieAmountConverter implements MollieAmountConverterInterface
 
     /**
      * @param int $amount
+     * @param string|null $currency
      *
      * @return \Generated\Shared\Transfer\MollieAmountTransfer
      */
-    public function convertIntegerToMollieAmount(int $amount): MollieAmountTransfer
+    public function convertIntegerToMollieAmount(int $amount, ?string $currency = null): MollieAmountTransfer
     {
         $decimalAmount = $this->integerToDecimalConverter->convert($amount);
         $amount = number_format($decimalAmount, 2, '.', '');
         $mollieAmountTransfer = new MollieAmountTransfer();
         $mollieAmountTransfer->setValue($amount);
+        
+        if($currency){
+            $mollieAmountTransfer->setCurrency($currency);
+        }
 
         return $mollieAmountTransfer;
     }

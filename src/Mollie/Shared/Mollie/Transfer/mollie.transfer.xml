@@ -28,6 +28,16 @@
         <property name="applePayPaymentToken" type="string"/>
     </transfer>
 
+    <transfer name="MollieBilliePayment">
+        <property name="registrationNumber" type="string"/>
+        <property name="vatNumber" type="string"/>
+        <property name="entityType" type="string"/>
+    </transfer>
+
+    <transfer name="MollieIdealIn3Payment">
+        <property name="consumerDateOfBirth" type="string"/>
+    </transfer>
+
     <transfer name="Payment">
         <property name="mollieCreditCardPayment" type="MollieCreditCardPayment"/>
         <property name="molliePayPalPayment" type="MolliePayPalPayment"/>
@@ -42,6 +52,10 @@
         <property name="mollieKbcPayment" type="[]"/>
         <property name="molliePayByBankPayment" type="[]"/>
         <property name="mollieApplePayPayment" type="MollieApplePayPayment"/>
+        <property name="mollieBilliePayment" type="MollieBilliePayment"/>
+        <property name="mollieRivertyPayment" type="MollieRivertyPayment"/>
+        <property name="mollieIdealIn3Payment" type="MollieIdealIn3Payment"/>
+        <property name="mollieAlmaPayment" type="MollieAlmaPayment"/>
     </transfer>
 
     <transfer name="MolliePaymentMethod">
@@ -345,6 +359,22 @@
         <property name="paymentLink" type="MollieLink"/>
         <property name="documentation" type="MollieLink"/>
         <property name="payment" type="MollieLink"/>
+    </transfer>
+
+    <transfer name="MollieLines">
+        <property name="type" type="string"/>
+        <property name="description" type="string"/>
+        <property name="quantity" type="integer"/>
+        <property name="quantityUnit" type="string"/>
+        <property name="unitPrice" type="MollieAmount"/>
+        <property name="discountAmount" type="MollieAmount"/>
+        <property name="totalAmount" type="MollieAmount"/>
+        <property name="vatRate" type="string"/>
+        <property name="vatAmount" type="MollieAmount"/>
+        <property name="sku" type="string"/>
+        <property name="categories" type="array"/>
+        <property name="imageUrl" type="string"/>
+        <property name="recurring" type="RecurringBillingCycle"/>
     </transfer>
 
 </transfers>

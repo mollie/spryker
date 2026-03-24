@@ -32,12 +32,13 @@ class MollieService extends AbstractService implements MollieServiceInterface
      * @api
      *
      * @param int $value
+     * @param string|null $currency
      *
      * @return \Generated\Shared\Transfer\MollieAmountTransfer
      */
-    public function convertIntegerToMollieAmount(int $value): MollieAmountTransfer
+    public function convertIntegerToMollieAmount(int $value, ?string $currency = null): MollieAmountTransfer
     {
-        return $this->getFactory()->createMollieAmountConverter()->convertIntegerToMollieAmount($value);
+        return $this->getFactory()->createMollieAmountConverter()->convertIntegerToMollieAmount($value, $currency);
     }
 
     /**

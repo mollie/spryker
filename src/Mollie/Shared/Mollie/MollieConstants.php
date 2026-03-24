@@ -180,4 +180,9 @@ interface MollieConstants
         'Fixed' => 'fixed',
         'Open' => 'open',
     ];
+
+    /**
+     * @var array<string>
+     */
+    public const array BNPL_PAYMENT_METHODS = ['billie', 'in3', 'klarna', 'riverty', 'voucher'];
 }
