@@ -21,8 +21,14 @@ use Mollie\Yves\Mollie\Handler\Payment\MolliePaymentKlarnaHandler;
 use Mollie\Yves\Mollie\Handler\Payment\MolliePaymentKlarnaPayLaterHandler;
 use Mollie\Yves\Mollie\Handler\Payment\MolliePaymentKlarnaPayNowHandler;
 use Mollie\Yves\Mollie\Handler\Payment\MolliePaymentKlarnaSliceItHandler;
+use Mollie\Yves\Mollie\Handler\Payment\MolliePaymentMbWayHandler;
 use Mollie\Yves\Mollie\Handler\Payment\MolliePaymentPayByBankHandler;
 use Mollie\Yves\Mollie\Handler\Payment\MolliePaymentPayPalHandler;
+use Mollie\Yves\Mollie\Handler\Payment\MolliePaymentSatispayHandler;
+use Mollie\Yves\Mollie\Handler\Payment\MolliePaymentSwishHandler;
+use Mollie\Yves\Mollie\Handler\Payment\MolliePaymentTrustlyHandler;
+use Mollie\Yves\Mollie\Handler\Payment\MolliePaymentTwintHandler;
+use Mollie\Yves\Mollie\Handler\Payment\MolliePaymentVippsHandler;
 use Mollie\Yves\Mollie\Mapper\MollieMapper;
 use Mollie\Yves\Mollie\Mapper\MollieMapperInterface;
 use Mollie\Yves\Mollie\PaymentPage\Cache\MollieCachedOptionsExpander;
@@ -540,6 +546,54 @@ class MollieFactory extends AbstractFactory
     public function createMollieApplePayPaymentHandler(): MolliePaymentHandlerInterface
     {
         return new MolliePaymentApplePayHandler();
+    }
+
+     /**
+      * @return \Mollie\Yves\Mollie\Handler\Payment\MolliePaymentHandlerInterface
+      */
+    public function createMollieMbWayPaymentHandler(): MolliePaymentHandlerInterface
+    {
+        return new MolliePaymentMbWayHandler();
+    }
+
+     /**
+      * @return \Mollie\Yves\Mollie\Handler\Payment\MolliePaymentHandlerInterface
+      */
+    public function createMolliePaymentSatispayHandler(): MolliePaymentHandlerInterface
+    {
+        return new MolliePaymentSatispayHandler();
+    }
+
+     /**
+      * @return \Mollie\Yves\Mollie\Handler\Payment\MolliePaymentHandlerInterface
+      */
+    public function createMolliePaymentSwishHandler(): MolliePaymentHandlerInterface
+    {
+        return new MolliePaymentSwishHandler();
+    }
+
+     /**
+      * @return \Mollie\Yves\Mollie\Handler\Payment\MolliePaymentHandlerInterface
+      */
+    public function createMolliePaymentTrustlyHandler(): MolliePaymentHandlerInterface
+    {
+        return new MolliePaymentTrustlyHandler();
+    }
+
+     /**
+      * @return \Mollie\Yves\Mollie\Handler\Payment\MolliePaymentHandlerInterface
+      */
+    public function createMolliePaymentTwintHandler(): MolliePaymentHandlerInterface
+    {
+        return new MolliePaymentTwintHandler();
+    }
+
+     /**
+      * @return \Mollie\Yves\Mollie\Handler\Payment\MolliePaymentHandlerInterface
+      */
+    public function createMolliePaymentVippsHandler(): MolliePaymentHandlerInterface
+    {
+        return new MolliePaymentVippsHandler();
     }
 
     /**
