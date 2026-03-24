@@ -217,11 +217,11 @@ class MollieFacade extends AbstractFacade implements MollieFacadeInterface
      *
      * @return bool
      */
-    public function isPaymentLinkCreationFailed(int $idSalesOrder): bool
+    public function isPaymentLinkCreationSuccessful(int $idSalesOrder): bool
     {
         return $this->getFactory()
             ->createMolliePaymentLinkHandler()
-            ->isPaymentLinkCreationFailed($idSalesOrder);
+            ->isPaymentLinkCreationSuccessful($idSalesOrder);
     }
 
     /**

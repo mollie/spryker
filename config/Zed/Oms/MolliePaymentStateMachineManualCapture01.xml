@@ -113,7 +113,7 @@
                 <event>create payment link</event>
             </transition>
 
-            <transition condition="Mollie/IsPaymentLinkCreationFailed">
+            <transition condition="Mollie/IsPaymentLinkCreationSuccessful">
                 <source>payment link created</source>
                 <target>authorized</target>
                 <event>check payment link creation</event>

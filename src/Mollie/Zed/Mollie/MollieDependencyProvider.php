@@ -120,7 +120,6 @@ class MollieDependencyProvider extends AbstractBundleDependencyProvider
         $container = $this->addPaymentLinkQuery($container);
         $container = $this->addCurrencyFacade($container);
         $container = $this->addMollieService($container);
-        $container = $this->addMollieService($container);
 
         return $container;
     }

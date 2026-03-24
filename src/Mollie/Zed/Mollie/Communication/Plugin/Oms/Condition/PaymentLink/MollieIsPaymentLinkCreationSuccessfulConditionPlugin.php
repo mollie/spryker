@@ -11,7 +11,7 @@ use Spryker\Zed\Oms\Dependency\Plugin\Condition\ConditionInterface;
 /**
  * @method \Mollie\Zed\Mollie\Business\MollieFacadeInterface getFacade()
  */
-class MollieIsPaymentLinkCreationFailedConditionPlugin extends AbstractPlugin implements ConditionInterface
+class MollieIsPaymentLinkCreationSuccessfulConditionPlugin extends AbstractPlugin implements ConditionInterface
 {
  /**
   * @param \Orm\Zed\Sales\Persistence\SpySalesOrderItem $orderItem
@@ -22,10 +22,6 @@ class MollieIsPaymentLinkCreationFailedConditionPlugin extends AbstractPlugin im
     {
         $idSalesOrder = $orderItem->getFkSalesOrder();
 
-        if (!$idSalesOrder) {
-            return true;
-        }
-
-        return $this->getFacade()->isPaymentLinkCreationFailed($idSalesOrder);
+        return $this->getFacade()->isPaymentLinkCreationSuccessful($idSalesOrder);
     }
 }

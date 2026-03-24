@@ -156,7 +156,7 @@ interface MollieFacadeInterface
      *
      * @return bool
      */
-    public function isPaymentLinkCreationFailed(int $idSalesOrder): bool;
+    public function isPaymentLinkCreationSuccessful(int $idSalesOrder): bool;
 
     /**
      * @param int $idSalesOrder
