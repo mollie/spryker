@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Mollie\Yves\Mollie\PaymentPage\Form;
 
 use Mollie\Shared\Mollie\MollieConfig;

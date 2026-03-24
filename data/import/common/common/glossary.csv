@@ -74,18 +74,18 @@ checkout.payment.provider.MollieTwintPayment,Mollie TWINT payment,en_US
 checkout.payment.provider.MollieTwintPayment,Mollie TWINT payment,de_DE
 checkout.payment.provider.MollieVippsPayment,Mollie Vipps payment,en_US
 checkout.payment.provider.MollieVippsPayment,Mollie Vipps payment,de_DE
-checkout.payment.provider.mollieTwintPayment.descriptionText,Schließen Sie Ihren Einkauf sicher mit Ihrem PayPal-Konto ab.,en_US
-checkout.payment.provider.mollieTwintPayment.descriptionText,Schließen Sie Ihren Einkauf sicher mit Ihrem PayPal-Konto ab.,de_DE
-checkout.payment.provider.mollieVippsPayment.descriptionText,Schließen Sie Ihren Einkauf sicher mit Ihrem PayPal-Konto ab.,en_US
-checkout.payment.provider.mollieVippsPayment.descriptionText,Schließen Sie Ihren Einkauf sicher mit Ihrem PayPal-Konto ab.,de_DE
-checkout.payment.provider.mollieSatispayPayment.descriptionText,Schließen Sie Ihren Einkauf sicher mit Ihrem PayPal-Konto ab.,en_US
-checkout.payment.provider.mollieSatispayPayment.descriptionText,Schließen Sie Ihren Einkauf sicher mit Ihrem PayPal-Konto ab.,de_DE
-checkout.payment.provider.mollieSwishPayment.descriptionText,Schließen Sie Ihren Einkauf sicher mit Ihrem PayPal-Konto ab.,en_US
-checkout.payment.provider.mollieSwishPayment.descriptionText,Schließen Sie Ihren Einkauf sicher mit Ihrem PayPal-Konto ab.,de_DE
-checkout.payment.provider.mollieMbWayPayment.descriptionText,Schließen Sie Ihren Einkauf sicher mit Ihrem PayPal-Konto ab.,en_US
-checkout.payment.provider.mollieMbWayPayment.descriptionText,Schließen Sie Ihren Einkauf sicher mit Ihrem PayPal-Konto ab.,de_DE
-checkout.payment.provider.mollieTrustlyPayment.descriptionText,Schließen Sie Ihren Einkauf sicher mit Ihrem PayPal-Konto ab.,en_US
-checkout.payment.provider.mollieTrustlyPayment.descriptionText,Schließen Sie Ihren Einkauf sicher mit Ihrem PayPal-Konto ab.,de_DE
+checkout.payment.provider.mollieTwintPayment.descriptionText,Complete your purchase securely with TWINT the Swiss mobile payment app.,en_US
+checkout.payment.provider.mollieTwintPayment.descriptionText,Schließen Sie Ihren Einkauf sicher mit TWINT ab der Schweizer Mobile Payment App.,de_DE
+checkout.payment.provider.mollieVippsPayment.descriptionText,Complete your purchase securely with Vipps the popular Norwegian mobile payment solution.,en_US
+checkout.payment.provider.mollieVippsPayment.descriptionText,Schließen Sie Ihren Einkauf sicher mit Vipps ab der beliebten norwegischen Mobile Payment Lösung.,de_DE
+checkout.payment.provider.mollieSatispayPayment.descriptionText,Complete your purchase securely with Satispay the simple and fast Italian mobile payment app.,en_US
+checkout.payment.provider.mollieSatispayPayment.descriptionText,Schließen Sie Ihren Einkauf sicher mit Satispay ab der einfachen und schnellen italienischen Zahlungs App.,de_DE
+checkout.payment.provider.mollieSwishPayment.descriptionText,Complete your purchase securely with Swish the leading mobile payment service in Sweden.,en_US
+checkout.payment.provider.mollieSwishPayment.descriptionText,Schließen Sie Ihren Einkauf sicher mit Swish ab dem führenden mobilen Bezahldienst in Schweden.,de_DE
+checkout.payment.provider.mollieMbWayPayment.descriptionText,Complete your purchase securely with MB WAY the fast and convenient Portuguese mobile payment solution.,en_US
+checkout.payment.provider.mollieMbWayPayment.descriptionText,Schließen Sie Ihren Einkauf sicher mit MB WAY ab der schnellen und bequemen portugiesischen Mobile Payment Lösung.,de_DE
+checkout.payment.provider.mollieTrustlyPayment.descriptionText,Complete your purchase securely with Trustly and pay directly from your bank account without registration.,en_US
+checkout.payment.provider.mollieTrustlyPayment.descriptionText,Schließen Sie Ihren Einkauf sicher mit Trustly ab und zahlen Sie direkt von Ihrem Bankkonto ohne Registrierung.,de_DE
 checkout.payment.provider.molliePaypal.descriptionText,Schließen Sie Ihren Einkauf sicher mit Ihrem PayPal-Konto ab.,de_DE
 checkout.payment.provider.molliePaypal.descriptionText,Complete your purchase securely using your PayPal account.,en_US
 checkout.payment.provider.mollieBankTransfer.descriptionText,Schließen Sie Ihren Einkauf sicher per Banküberweisung ab.,de_DE
