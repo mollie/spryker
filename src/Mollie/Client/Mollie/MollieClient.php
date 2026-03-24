@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace Mollie\Client\Mollie;
 
 use Generated\Shared\Transfer\MollieApiRequestTransfer;
+use Generated\Shared\Transfer\MollieApiResponseTransfer;
 use Generated\Shared\Transfer\MollieCreateCaptureApiResponseTransfer;
 use Generated\Shared\Transfer\MollieGetCaptureApiResponseTransfer;
 use Generated\Shared\Transfer\MollieGetProfileApiResponseTransfer;
@@ -231,6 +232,19 @@ class MollieClient extends AbstractClient implements MollieClientInterface
         $mollieGetCaptureApiResponseTransfer = $this->getFactory()->createGetPaymentCaptureApi()->execute($mollieApiRequestTransfer);
 
         return $mollieGetCaptureApiResponseTransfer;
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MollieApiRequestTransfer $mollieApiRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieApiResponseTransfer
+     */
+    public function releaseAuthorization(MollieApiRequestTransfer $mollieApiRequestTransfer): MollieApiResponseTransfer
+    {
+        /** @var \Generated\Shared\Transfer\MollieApiResponseTransfer $mollieApiResponseTransfer */
+        $mollieApiResponseTransfer = $this->getFactory()->createReleasePaymentAuthorizationApi()->execute($mollieApiRequestTransfer);
+
+        return $mollieApiResponseTransfer;
     }
 
     /**

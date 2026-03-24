@@ -28,6 +28,7 @@ use Mollie\Zed\Mollie\Business\Order\OrderUpdater;
 use Mollie\Zed\Mollie\Business\Order\OrderUpdaterInterface;
 use Mollie\Zed\Mollie\Business\Payment\RequestSender\MolliePaymentCaptureRequestSender;
 use Mollie\Zed\Mollie\Business\Payment\RequestSender\MolliePaymentCaptureRequestSenderInterface;
+use Mollie\Zed\Mollie\Business\Payment\RequestSender\MollieReleaseAuthorizationRequestSender;
 use Mollie\Zed\Mollie\Business\Payment\Status\MolliePaymentStatusHandler;
 use Mollie\Zed\Mollie\Business\Payment\Status\MolliePaymentStatusHandlerInterface;
 use Mollie\Zed\Mollie\Business\Processor\Capture\CaptureProcessor;
@@ -134,6 +135,18 @@ class MollieBusinessFactory extends AbstractBusinessFactory
             $this->getEntityManager(),
             $this->createCaptureMapper(),
             $this->getConfig(),
+        );
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Business\Payment\RequestSender\MollieReleaseAuthorizationRequestSender
+     */
+    public function createMollieReleaseAuthorizationRequestSender(): MollieReleaseAuthorizationRequestSender
+    {
+        return new MollieReleaseAuthorizationRequestSender(
+            $this->getRepository(),
+            $this->getEntityManager(),
+            $this->getMollieClient(),
         );
     }
 

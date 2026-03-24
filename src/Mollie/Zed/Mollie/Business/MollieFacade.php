@@ -111,6 +111,16 @@ class MollieFacade extends AbstractFacade implements MollieFacadeInterface
     /**
      * @param int $idSalesOrder
      *
+     * @return void
+     */
+    public function releaseAuthorization(int $idSalesOrder): void
+    {
+        $this->getFactory()->createMollieReleaseAuthorizationRequestSender()->releaseAuthorization($idSalesOrder);
+    }
+
+    /**
+     * @param int $idSalesOrder
+     *
      * @return bool
      */
     public function isAuthorizationFailed(int $idSalesOrder): bool

@@ -13,6 +13,8 @@
             <state name="new" reserved="true"/>
             <state name="authorization pending" reserved="true" display="oms.state.authorization-pending"/>
             <state name="authorization pending next try" reserved="true" display="oms.state.authorization-pending-next-retry"/>
+            <state name="authorization cancel pending" reserved="true" display="oms.state.authorization-cancel-pending"/>
+            <state name="authorization cancel pending next try" reserved="true" display="oms.state.authorization-cancel-pending-next-retry"/>
             <state name="authorized" reserved="true" display="oms.state.authorized"/>
             <state name="capture pending" reserved="true" display="oms.state.capture-pending"/>
             <state name="capture pending next try" reserved="true" display="oms.state.capture-pending-next-retry"/>
@@ -81,6 +83,30 @@
                 <source>authorized</source>
                 <target>capture pending</target>
                 <event>start capture</event>
+            </transition>
+
+            <transition>
+                <source>authorized</source>
+                <target>authorization cancel pending</target>
+                <event>release authorization</event>
+            </transition>
+
+            <transition happy="true" condition="Mollie/IsAuthorizationCanceled">
+                <source>authorization cancel pending</source>
+                <target>authorization canceled</target>
+                <event>check authorization</event>
+            </transition>
+
+            <transition>
+                <source>authorization cancel pending</source>
+                <target>authorization cancel pending next try</target>
+                <event>check authorization</event>
+            </transition>
+
+            <transition>
+                <source>authorization cancel pending next try</source>
+                <target>authorization cancel pending</target>
+                <event>pass</event>
             </transition>
 
             <transition condition="Mollie/IsAuthorizationExpired">
@@ -179,6 +205,7 @@
            <event name="authorize" onEnter="true"/>
            <event name="check authorization" timeout="1 minute"/>
            <event name="check authorization expiry" timeout="1 day"/>
+           <event name="release authorization" manual="true" command="Mollie/MollieReleaseAuthorization"/>
            <event name="start capture" manual="true" command="Mollie/MolliePaymentCapture"/>
            <event name="capture" onEnter="true"/>
            <event name="check capture" timeout="1 minute"/>

@@ -77,11 +77,11 @@
         <property name="isCancelable" type="bool"/>
         <property name="createdAt" type="string"/>
         <property name="expiresAt" type="string"/>
+        <property name="releaseAuthorizationRequest" type="string"/>
         <property name="captureBefore" type="string"/>
         <property name="embedded" type="array"/>
         <property name="links" type="MollieLinks"/>
     </transfer>
-
 
     <transfer name="MollieCreateCaptureApiResponse">
         <property name="isSuccessful" type="bool"/>

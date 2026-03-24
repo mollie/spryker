@@ -37,6 +37,13 @@ interface MollieEntityManagerInterface
     public function updateMollieRefundWithStatus(MollieRefundCollectionTransfer $mollieRefundCollectionTransfer): void;
 
     /**
+     * @param \Generated\Shared\Transfer\MolliePaymentTransfer $molliePaymentTransfer
+     *
+     * @return void
+     */
+    public function saveMolliePaymentReleaseAuthorizationRequest(MolliePaymentTransfer $molliePaymentTransfer): void;
+
+    /**
      * @param \Generated\Shared\Transfer\MollieRefundSaveTransfer $mollieRefundSaveTransfer
      *
      * @return void
