@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace Mollie\Yves\Mollie;
 
 use Mollie\Client\Mollie\MollieClientInterface;
+use Mollie\Service\Mollie\MollieServiceInterface;
 use Mollie\Yves\Mollie\Dependency\Client\MollieToLocaleClientInterface;
 use Mollie\Yves\Mollie\Dependency\Client\MollieToQuoteClientInterface;
 use Mollie\Yves\Mollie\Dependency\Client\MollieToStorageClientInterface;
@@ -99,7 +100,11 @@ class MollieFactory extends AbstractFactory
      */
     public function createMollieMapper(): MollieMapperInterface
     {
-        return new MollieMapper();
+        return new MollieMapper(
+            $this->getMollieService(),
+            $this->getLocaleClient(),
+            $this->getConfig(),
+        );
     }
 
     /**
@@ -660,5 +665,13 @@ class MollieFactory extends AbstractFactory
     public function getLocaleClient(): MollieToLocaleClientInterface
     {
         return $this->getProvidedDependency(MollieDependencyProvider::CLIENT_LOCALE);
+    }
+
+    /**
+     * @return \Mollie\Service\Mollie\MollieServiceInterface
+     */
+    public function getMollieService(): MollieServiceInterface
+    {
+        return $this->getProvidedDependency(MollieDependencyProvider::SERVICE_MOLLIE);
     }
 }

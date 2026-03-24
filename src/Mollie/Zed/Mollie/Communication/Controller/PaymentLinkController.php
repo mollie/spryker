@@ -67,13 +67,17 @@ class PaymentLinkController extends AbstractController
             $formData = $form->getData();
 
             $paymentLinkTransfer = $this->getFactory()
-                ->createMollieCommunicationMapper()
+                ->createPaymentLinkMapper()
                 ->mapPaymentLinkFormDataToMolliePaymentLinkTransfer($formData);
 
             $molliePaymentLinkApiResponseTransfer = $this->getFacade()->createPaymentLink($paymentLinkTransfer);
 
             if ($molliePaymentLinkApiResponseTransfer->getIsSuccessful()) {
                 $this->addSuccessMessage(static::MESSAGE_PAYMENT_LINK_CREATE_SUCCESS);
+            }
+
+            if (!$molliePaymentLinkApiResponseTransfer->getIsSuccessful()) {
+                $this->addErrorMessage($molliePaymentLinkApiResponseTransfer->getMessage());
             }
 
             return $this->redirectResponse(static::URL_PAYMENT_LINK_LIST);

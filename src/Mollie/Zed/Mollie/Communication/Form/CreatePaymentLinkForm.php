@@ -67,11 +67,6 @@ class CreatePaymentLinkForm extends AbstractType
     /**
      * @var string
      */
-    public const OPTION_PAYMENT_TYPES = 'payment_types';
-
-    /**
-     * @var string
-     */
     public const OPTION_CURRENCY_CODES = 'currency_codes';
 
     /**
@@ -88,7 +83,6 @@ class CreatePaymentLinkForm extends AbstractType
     {
         parent::configureOptions($resolver);
         $resolver->setDefined([
-            static::OPTION_PAYMENT_TYPES,
             static::OPTION_AVAILABLE_PAYMENT_METHODS,
             static::OPTION_CURRENCY_CODES,
         ]);
@@ -103,7 +97,6 @@ class CreatePaymentLinkForm extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $this
-            ->addTypeField($builder, $options)
             ->addCurrencyField($builder, $options)
             ->addAmountField($builder)
             ->addDescriptionField($builder)
@@ -111,26 +104,6 @@ class CreatePaymentLinkForm extends AbstractType
             ->addRedirectUrlField($builder)
             ->addIsReusableField($builder)
             ->addPaymentMethodsField($builder, $options);
-    }
-
-    /**
-     * @param \Symfony\Component\Form\FormBuilderInterface $builder
-     * @param array<mixed> $options
-     *
-     * @return $this
-     */
-    protected function addTypeField(FormBuilderInterface $builder, array $options)
-    {
-        $builder->add(static::FIELD_TYPE, ChoiceType::class, [
-            'label' => 'Type',
-            'choices' => $options[static::OPTION_PAYMENT_TYPES],
-            'required' => true,
-            'constraints' => [
-                new NotBlank(),
-            ],
-        ]);
-
-        return $this;
     }
 
     /**

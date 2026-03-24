@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @method \Mollie\Zed\Mollie\Communication\MollieCommunicationFactory getFactory()
+ * @method \Mollie\Zed\Mollie\Business\MollieFacadeInterface getFacade()
  */
 class IndexController extends AbstractController
 {
@@ -43,6 +44,29 @@ class IndexController extends AbstractController
 
         return $this->jsonResponse(
             $reportsTable->fetchData(),
+        );
+    }
+
+    /**
+     * @param \Symfony\Component\HttpFoundation\Request $request
+     *
+     * @return array<string, mixed>
+     */
+    public function expirationWarningAction(Request $request): array
+    {
+        $orderId = (int)$request->query->get('id-sales-order');
+        if (!$orderId) {
+            return $this->viewResponse(['shouldDisplayWarning' => false]);
+        }
+
+        $expirationTransfer = $this->getFacade()->getExpirationInformation($orderId);
+
+        return $this->viewResponse(
+            [
+                'shouldDisplayWarning' => $expirationTransfer->getShowWarningMessage(),
+                'expirationThreshold' => $expirationTransfer->getExpiresIn(),
+                'warningMessage' => $expirationTransfer->getWarningMessage(),
+            ],
         );
     }
 

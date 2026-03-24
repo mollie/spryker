@@ -1,10 +1,11 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Mollie\Zed\Mollie\Business;
 
 use Generated\Shared\Transfer\CheckoutResponseTransfer;
+use Generated\Shared\Transfer\MollieExpirationInformationTransfer;
 use Generated\Shared\Transfer\MolliePaymentCaptureRequestTransfer;
 use Generated\Shared\Transfer\MolliePaymentCaptureResponseTransfer;
 use Generated\Shared\Transfer\MolliePaymentLinkApiResponseTransfer;
@@ -111,6 +112,16 @@ class MollieFacade extends AbstractFacade implements MollieFacadeInterface
     /**
      * @param int $idSalesOrder
      *
+     * @return void
+     */
+    public function releaseAuthorization(int $idSalesOrder): void
+    {
+        $this->getFactory()->createMollieReleaseAuthorizationRequestSender()->releaseAuthorization($idSalesOrder);
+    }
+
+    /**
+     * @param int $idSalesOrder
+     *
      * @return bool
      */
     public function isAuthorizationFailed(int $idSalesOrder): bool
@@ -201,6 +212,54 @@ class MollieFacade extends AbstractFacade implements MollieFacadeInterface
     }
 
     /**
+     * @param \Generated\Shared\Transfer\OrderTransfer $orderTransfer
+     *
+     * @return \Generated\Shared\Transfer\MolliePaymentLinkTransfer
+     */
+    public function processPaymentLinkData(OrderTransfer $orderTransfer): MolliePaymentLinkTransfer
+    {
+        return $this->getFactory()
+            ->createPaymentLinkProcessor()
+            ->processOrderItemPaymentLink($orderTransfer);
+    }
+
+    /**
+     * @param int $idSalesOrder
+     *
+     * @return bool
+     */
+    public function isPaymentLinkCreationSuccessful(int $idSalesOrder): bool
+    {
+        return $this->getFactory()
+            ->createMolliePaymentLinkHandler()
+            ->isPaymentLinkCreationSuccessful($idSalesOrder);
+    }
+
+    /**
+     * @param int $idSalesOrder
+     *
+     * @return bool
+     */
+    public function isPaymentLinkStatusPaid(int $idSalesOrder): bool
+    {
+        return $this->getFactory()
+            ->createMolliePaymentLinkHandler()
+            ->isPaymentLinkStatusPaid($idSalesOrder);
+    }
+
+    /**
+     * @param int $idSalesOrder
+     *
+     * @return bool
+     */
+    public function isPaymentLinkStatusExpired(int $idSalesOrder): bool
+    {
+        return $this->getFactory()
+            ->createMolliePaymentLinkHandler()
+            ->isPaymentLinkStatusExpired($idSalesOrder);
+    }
+
+    /**
      * @param \Generated\Shared\Transfer\MolliePaymentLinkTransfer $molliePaymentLinkTransfer
      *
      * @return \Generated\Shared\Transfer\MolliePaymentLinkTransfer
@@ -208,5 +267,15 @@ class MollieFacade extends AbstractFacade implements MollieFacadeInterface
     public function updatePaymentLink(MolliePaymentLinkTransfer $molliePaymentLinkTransfer): MolliePaymentLinkTransfer
     {
         return $this->getEntityManager()->updatePaymentLink($molliePaymentLinkTransfer);
+    }
+
+    /**
+     * @param int $orderId
+     *
+     * @return \Generated\Shared\Transfer\MollieExpirationInformationTransfer
+     */
+    public function getExpirationInformation(int $orderId): MollieExpirationInformationTransfer
+    {
+        return $this->getFactory()->createMollieExpirationWarningHandler()->getExpirationInformation($orderId);
     }
 }

@@ -10,6 +10,8 @@ use Mollie\Zed\Mollie\Dependency\Facade\MollieToLocaleFacadeBridge;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToLocaleFacadeInterface;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToMailFacadeBridge;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToMailFacadeInterface;
+use Mollie\Zed\Mollie\Dependency\Facade\MollieToMoneyFacadeBridge;
+use Mollie\Zed\Mollie\Dependency\Facade\MollieToMoneyFacadeInterface;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToOmsBridge;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToSalesFacadeBridge;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToSalesFacadeInterface;
@@ -48,6 +50,11 @@ class MollieDependencyProvider extends AbstractBundleDependencyProvider
      * @var string
      */
     public const FACADE_CURRENCY = 'FACADE_CURRENCY';
+
+    /**
+     * @var string
+     */
+    public const FACADE_MONEY = 'FACADE_MONEY';
 
     /**
      * @var string
@@ -112,6 +119,7 @@ class MollieDependencyProvider extends AbstractBundleDependencyProvider
         $container = $this->addSalesFacade($container);
         $container = $this->addPaymentLinkQuery($container);
         $container = $this->addCurrencyFacade($container);
+        $container = $this->addMollieService($container);
 
         return $container;
     }
@@ -126,6 +134,7 @@ class MollieDependencyProvider extends AbstractBundleDependencyProvider
         $container = parent::providePersistenceLayerDependencies($container);
         $container = $this->addUtilEncodingService($container);
         $container = $this->addMollieService($container);
+        $container = $this->addMoneyFacade($container);
 
         return $container;
     }
@@ -292,6 +301,22 @@ class MollieDependencyProvider extends AbstractBundleDependencyProvider
         $container->set(static::FACADE_CURRENCY, function (Container $container): MollieToCurrencyFacadeInterface {
             return new MollieToCurrencyFacadeBridge(
                 $container->getLocator()->currency()->facade(),
+            );
+        });
+
+        return $container;
+    }
+
+    /**
+     * @param \Spryker\Zed\Kernel\Container $container
+     *
+     * @return \Spryker\Zed\Kernel\Container
+     */
+    protected function addMoneyFacade(Container $container): Container
+    {
+        $container->set(static::FACADE_MONEY, function (Container $container): MollieToMoneyFacadeInterface {
+            return new MollieToMoneyFacadeBridge(
+                $container->getLocator()->money()->facade(),
             );
         });
 

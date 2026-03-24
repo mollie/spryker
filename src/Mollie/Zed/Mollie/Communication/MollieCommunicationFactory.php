@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Mollie\Zed\Mollie\Communication;
 
 use Mollie\Client\Mollie\MollieClientInterface;
+use Mollie\Service\Mollie\MollieServiceInterface;
 use Mollie\Zed\Mollie\Communication\Cache\MollieCacheInvalidator;
 use Mollie\Zed\Mollie\Communication\Cache\MollieCacheInvalidatorInterface;
 use Mollie\Zed\Mollie\Communication\Form\CreatePaymentLinkForm;
@@ -13,6 +14,8 @@ use Mollie\Zed\Mollie\Communication\Mapper\MollieCommunicationMapper;
 use Mollie\Zed\Mollie\Communication\Mapper\MollieCommunicationMapperInterface;
 use Mollie\Zed\Mollie\Communication\Mapper\Order\OrderItemMapper;
 use Mollie\Zed\Mollie\Communication\Mapper\Order\OrderItemMapperInterface;
+use Mollie\Zed\Mollie\Communication\Mapper\PaymentLink\MolliePaymentLinkMapper;
+use Mollie\Zed\Mollie\Communication\Mapper\PaymentLink\MolliePaymentLinkMapperInterface;
 use Mollie\Zed\Mollie\Communication\Table\MolliePaymentLinkTable;
 use Mollie\Zed\Mollie\Communication\Table\MolliePaymentMethodsTable;
 use Mollie\Zed\Mollie\Communication\Table\TableDataProvider\MolliePaymentLinkDataProvider;
@@ -72,8 +75,9 @@ class MollieCommunicationFactory extends AbstractCommunicationFactory
     public function createPaymentLinkTable(): MolliePaymentLinkTable
     {
         return new MolliePaymentLinkTable(
-        //$this->getMolliePaymentLinkQuery()
+            $this->getMolliePaymentLinkPropelQuery(),
             $this->createMolliePaymentLinkDataProvider(),
+            $this->getMollieService(),
         );
     }
 
@@ -118,6 +122,17 @@ class MollieCommunicationFactory extends AbstractCommunicationFactory
     public function createMollieCommunicationMapper(): MollieCommunicationMapperInterface
     {
         return new MollieCommunicationMapper();
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Communication\Mapper\PaymentLink\MolliePaymentLinkMapperInterface
+     */
+    public function createPaymentLinkMapper(): MolliePaymentLinkMapperInterface
+    {
+        return new MolliePaymentLinkMapper(
+            $this->getMollieService(),
+            $this->getConfig(),
+        );
     }
 
     /**
@@ -174,5 +189,13 @@ class MollieCommunicationFactory extends AbstractCommunicationFactory
     public function getCurrencyFacade(): MollieToCurrencyFacadeInterface
     {
         return $this->getProvidedDependency(MollieDependencyProvider::FACADE_CURRENCY);
+    }
+
+    /**
+     * @return \Mollie\Service\Mollie\MollieServiceInterface
+     */
+    public function getMollieService(): MollieServiceInterface
+    {
+        return $this->getProvidedDependency(MollieDependencyProvider::SERVICE_MOLLIE);
     }
 }

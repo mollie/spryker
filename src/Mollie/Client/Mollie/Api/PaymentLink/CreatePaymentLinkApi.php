@@ -47,24 +47,21 @@ class CreatePaymentLinkApi extends AbstractApiCall
      */
     protected function buildRequest(?MollieApiRequestTransfer $mollieApiRequestTransfer = null): ?Request
     {
-        $checkoutResponseTransfer = $mollieApiRequestTransfer->getCheckoutResponse();
         $paymentLinkTransfer = $mollieApiRequestTransfer->getPaymentLink();
 
         $description = $paymentLinkTransfer->getDescription();
-        $orderReference = $checkoutResponseTransfer?->getSaveOrder()?->getOrderReference() ?? '';
-        $redirectUrl = $paymentLinkTransfer->getRedirectUrl() ?? $this->getRedirectUrl($orderReference);
-
+        $redirectUrl = $paymentLinkTransfer->getRedirectUrl();
         $amount = $this->convertMollieAmountTransferToMoney($paymentLinkTransfer->getAmount());
-        $profileId = $this->mollieConfig->getMollieProfileId();
         $reusable = $paymentLinkTransfer->getReusable();
         $allowedMethods = $paymentLinkTransfer->getAllowedMethods();
+        $expiresAt = $paymentLinkTransfer->getExpiresAt();
 
         $this->request = new CreatePaymentLinkRequest(
             description: $description,
             amount: $amount,
             redirectUrl: $redirectUrl,
-            profileId: $profileId,
             reusable: $reusable,
+            expiresAt: $expiresAt,
             allowedMethods: $allowedMethods,
         );
 
@@ -82,28 +79,26 @@ class CreatePaymentLinkApi extends AbstractApiCall
             ->setIsSuccessful($mollieApiResponseTransfer->getIsSuccessful())
             ->setMessage($mollieApiResponseTransfer->getMessage());
 
+        if (!$mollieApiResponseTransfer->getIsSuccessful()) {
+            return $molliePaymentLinksApiResponseTransfer;
+        }
+
         $molliePaymentLinkTransfer = new MolliePaymentLinkTransfer();
         $molliePaymentLinkTransfer->fromArray($mollieApiResponseTransfer->getPayload(), true);
 
         $links = $mollieApiResponseTransfer->getPayload()[MollieConfig::RESPONSE_PARAMETER_CREATE_PAYMENT_LINKS] ?? [];
         $mollieLinksTransfer = new MollieLinksTransfer();
         $mollieLinksTransfer->fromArray($links, true);
+
+        $status = MollieConfig::RESPONSE_CREATE_PAYMENT_LINK_STATUS_OPEN;
+
         $molliePaymentLinkTransfer
+            ->setStatus($status)
             ->setLinks($mollieLinksTransfer);
 
         $molliePaymentLinksApiResponseTransfer->setMolliePaymentLink($molliePaymentLinkTransfer);
 
         return $molliePaymentLinksApiResponseTransfer;
-    }
-
-    /**
-     * @param string $orderReference
-     *
-     * @return string
-     */
-    protected function getRedirectUrl(string $orderReference): string
-    {
-        return $this->mollieConfig->getMollieRedirectUrl() . '?orderReference=' . $orderReference;
     }
 
     /**
