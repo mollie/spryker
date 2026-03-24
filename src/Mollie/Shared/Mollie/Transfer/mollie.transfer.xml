@@ -347,4 +347,10 @@
         <property name="payment" type="MollieLink"/>
     </transfer>
 
+    <transfer name="MollieCacheOptions">
+        <property name="locale" type="string"/>
+        <property name="billingCountry" type="string"/>
+        <property name="amount" type="MollieAmount"/>
+    </transfer>
+
 </transfers>
