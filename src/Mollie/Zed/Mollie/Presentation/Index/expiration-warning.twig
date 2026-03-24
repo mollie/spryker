@@ -1,0 +1,15 @@
+{% if shouldDisplayWarning %}
+    <div class="col-lg-12">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title clearfix">
+                <h2 class="warning-message-container">
+                    {{ warningMessage | trans({
+                        '%s': expirationThreshold,
+                    }) }}
+                </h2>
+            </div>
+        </div>
+    </div>
+
+    <link rel="stylesheet" href="{{ assetsPath('css/spryker-zed-mollie-main.css') }}">
+{% endif %}

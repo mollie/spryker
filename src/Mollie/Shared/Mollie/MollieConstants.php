@@ -32,6 +32,11 @@ interface MollieConstants
     /**
      * @var string
      */
+    public const MOLLIE_EXPIRATION_WARNING_THRESHOLD = 'MOLLIE:EXPIRATION_WARNING_THRESHOLD';
+
+    /**
+     * @var string
+     */
     public const MOLLIE_WEBHOOK_URL = 'MOLLIE:WEBHOOK_URL';
 
     /**

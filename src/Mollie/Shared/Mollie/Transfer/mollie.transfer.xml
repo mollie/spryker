@@ -346,6 +346,11 @@
         <property name="documentation" type="MollieLink"/>
         <property name="payment" type="MollieLink"/>
     </transfer>
+    <transfer name="MollieExpirationInformation">
+        <property name="showWarningMessage" type="bool" />
+        <property name="warningMessage" type="string" />
+        <property name="expiresIn" type="int" />
+    </transfer>
 
     <transfer name="MollieCacheOptions">
         <property name="locale" type="string"/>

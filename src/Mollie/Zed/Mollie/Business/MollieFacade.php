@@ -1,10 +1,11 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Mollie\Zed\Mollie\Business;
 
 use Generated\Shared\Transfer\CheckoutResponseTransfer;
+use Generated\Shared\Transfer\MollieExpirationInformationTransfer;
 use Generated\Shared\Transfer\MolliePaymentCaptureRequestTransfer;
 use Generated\Shared\Transfer\MolliePaymentCaptureResponseTransfer;
 use Generated\Shared\Transfer\MolliePaymentLinkApiResponseTransfer;
@@ -218,5 +219,15 @@ class MollieFacade extends AbstractFacade implements MollieFacadeInterface
     public function updatePaymentLink(MolliePaymentLinkTransfer $molliePaymentLinkTransfer): MolliePaymentLinkTransfer
     {
         return $this->getEntityManager()->updatePaymentLink($molliePaymentLinkTransfer);
+    }
+
+    /**
+     * @param int $orderId
+     *
+     * @return \Generated\Shared\Transfer\MollieExpirationInformationTransfer
+     */
+    public function getExpirationInformation(int $orderId): MollieExpirationInformationTransfer
+    {
+        return $this->getFactory()->createMollieExpirationWarningHandler()->getExpirationInformation($orderId);
     }
 }
