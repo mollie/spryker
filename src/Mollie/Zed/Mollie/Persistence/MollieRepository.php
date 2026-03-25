@@ -6,8 +6,11 @@ namespace Mollie\Zed\Mollie\Persistence;
 
 use Generated\Shared\Transfer\MollieItemPaymentCaptureTransfer;
 use Generated\Shared\Transfer\MolliePaymentLinkTransfer;
+use Generated\Shared\Transfer\MolliePaymentMethodConfigCollectionTransfer;
+use Generated\Shared\Transfer\MolliePaymentMethodConfigTransfer;
 use Generated\Shared\Transfer\MolliePaymentTransfer;
 use Generated\Shared\Transfer\MollieRefundResponseTransfer;
+use Propel\Runtime\ActiveQuery\Criteria;
 use Spryker\Zed\Kernel\Persistence\AbstractRepository;
 
 /**
@@ -93,5 +96,50 @@ class MollieRepository extends AbstractRepository implements MollieRepositoryInt
         return $this->getFactory()
             ->createMolliePaymentLinkMapper()
             ->mapMolliePaymentLinkEntityToTransfer($spyMolliePaymentLinkEntity);
+    }
+
+    public function getPaymentMethodConfigCollection(?int $localeId): MolliePaymentMethodConfigCollectionTransfer
+    {
+        $query = $this->getFactory()
+            ->createSpyMolliePaymentMethodConfigQuery()
+            ->joinWithSpyMolliePaymentMethodConfigTranslation(Criteria::LEFT_JOIN)
+        ;
+
+        if ($localeId) {
+//            $query->addJoinCondition(
+//                'SpyMolliePaymentMethodConfigTranslation',
+//                'SpyMolliePaymentMethodConfigTranslation.FkLocale = ?',
+//                $localeId
+//            );
+        }
+
+        $entities = $query->find();
+
+        return $this->getFactory()
+            ->createMolliePaymentMethodConfigMapper()
+            ->mapMolliePaymentMethodConfigEntitiesToCollection($entities);
+    }
+
+    /**
+     * @param string $mollieKey
+     *
+     * @return MolliePaymentMethodConfigTransfer|null
+     */
+    public function getMolliePaymentMethodConfigByMollieKey(string $mollieKey): ?MolliePaymentMethodConfigTransfer
+    {
+        $spyMolliePaymentLinkEntity = $this->getFactory()
+            ->createSpyMolliePaymentMethodConfigQuery()
+            ->filterByPaymentMethodKey($mollieKey)
+            ->joinWithSpyMolliePaymentMethodConfigTranslation(Criteria::LEFT_JOIN)
+            ->find()
+            ->getFirst();
+
+        if (!$spyMolliePaymentLinkEntity) {
+            return null;
+        }
+
+        return $this->getFactory()
+            ->createMolliePaymentMethodConfigMapper()
+            ->mapMolliePaymentMethodConfigEntityToTransfer($spyMolliePaymentLinkEntity);
     }
 }

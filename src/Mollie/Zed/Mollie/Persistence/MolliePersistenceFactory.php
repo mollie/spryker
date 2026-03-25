@@ -14,10 +14,14 @@ use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MolliePaymentCaptureMapper;
 use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MolliePaymentCaptureMapperInterface;
 use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MolliePaymentLinkMapper;
 use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MolliePaymentLinkMapperInterface;
+use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MolliePaymentMethodConfigMapper;
+use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MolliePaymentMethodConfigMapperInterface;
 use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MollieRefundMapper;
 use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MollieRefundMapperInterface;
 use Orm\Zed\Mollie\Persistence\SpyMollieOrderItemPaymentCaptureQuery;
 use Orm\Zed\Mollie\Persistence\SpyMolliePaymentLinkQuery;
+use Orm\Zed\Mollie\Persistence\SpyMolliePaymentMethodConfigQuery;
+use Orm\Zed\Mollie\Persistence\SpyMolliePaymentMethodConfigTranslationQuery;
 use Orm\Zed\Mollie\Persistence\SpyPaymentMollieQuery;
 use Orm\Zed\Mollie\Persistence\SpyRefundMollieQuery;
 use Spryker\Zed\Kernel\Persistence\AbstractPersistenceFactory;
@@ -61,6 +65,11 @@ class MolliePersistenceFactory extends AbstractPersistenceFactory
             $this->getMollieService(),
         );
     }
+    
+    public function createMolliePaymentMethodConfigMapper(): MolliePaymentMethodConfigMapperInterface 
+    {
+        return new MolliePaymentMethodConfigMapper();
+    }
 
     /**
      * @return \Orm\Zed\Mollie\Persistence\SpyPaymentMollieQuery
@@ -92,6 +101,22 @@ class MolliePersistenceFactory extends AbstractPersistenceFactory
     public function createSpyMolliePaymentLinkQuery(): SpyMolliePaymentLinkQuery
     {
         return SpyMolliePaymentLinkQuery::create();
+    }
+
+    /**
+     * @return SpyMolliePaymentMethodConfigQuery
+     */
+    public function createSpyMolliePaymentMethodConfigQuery(): SpyMolliePaymentMethodConfigQuery
+    {
+        return SpyMolliePaymentMethodConfigQuery::create();
+    }
+
+    /**
+     * @return SpyMolliePaymentMethodConfigTranslationQuery
+     */
+    public function createSpyMolliePaymentMethodConfiTranslationgQuery(): SpyMolliePaymentMethodConfigTranslationQuery
+    {
+        return SpyMolliePaymentMethodConfigTranslationQuery::create();
     }
 
     /**

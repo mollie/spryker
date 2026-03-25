@@ -39,6 +39,8 @@ use Mollie\Zed\Mollie\Business\Processor\PaymentLink\PaymentLinkProcessor;
 use Mollie\Zed\Mollie\Business\Processor\PaymentLink\PaymentLinkProcessorInterface;
 use Mollie\Zed\Mollie\Business\Processor\Refund\RefundProcessor;
 use Mollie\Zed\Mollie\Business\Processor\Refund\RefundProcessorInterface;
+use Mollie\Zed\Mollie\Business\Reader\MolliePaymentMethodsConfigReader;
+use Mollie\Zed\Mollie\Business\Reader\MolliePaymentMethodsConfigReaderInterface;
 use Mollie\Zed\Mollie\Business\Writer\MolliePaymentWriter;
 use Mollie\Zed\Mollie\Business\Writer\MolliePaymentWriterInterface;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToLocaleFacadeInterface;
@@ -314,6 +316,16 @@ class MollieBusinessFactory extends AbstractBusinessFactory
         return new PaymentLinkProcessor(
             $this->getMollieService(),
             $this->getConfig(),
+        );
+    }
+
+    /**
+     * @return MolliePaymentMethodsConfigReaderInterface
+     */
+    public function createMolliePaymentMethodsConfigReader(): MolliePaymentMethodsConfigReaderInterface
+    {
+        return new MolliePaymentMethodsConfigReader(
+            $this->getRepository()
         );
     }
 }
