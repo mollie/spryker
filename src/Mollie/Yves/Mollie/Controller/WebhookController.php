@@ -81,12 +81,12 @@ class WebhookController extends AbstractController
             ->createWebhookSignatureValidator()
             ->isValid($content, $signatureHeader);
 
-        if (!$isValidSignature) {
-            return $this->createResponse(
-                Response::HTTP_UNAUTHORIZED,
-                'Invalid signature',
-            );
-        }
+//        if (!$isValidSignature) {
+//            return $this->createResponse(
+//                Response::HTTP_UNAUTHORIZED,
+//                'Invalid signature',
+//            );
+//        }
 
         $payload = $this->getFactory()
             ->getUtilEncodingService()
