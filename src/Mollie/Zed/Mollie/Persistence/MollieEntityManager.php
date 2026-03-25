@@ -11,7 +11,6 @@ use Generated\Shared\Transfer\MolliePaymentTransfer;
 use Generated\Shared\Transfer\MollieRefundCollectionTransfer;
 use Generated\Shared\Transfer\MollieRefundSaveTransfer;
 use Generated\Shared\Transfer\OrderCollectionRequestTransfer;
-use Mollie\Shared\Mollie\MollieConstants;
 use Orm\Zed\Mollie\Persistence\SpyMollieOrderItemPaymentCapture;
 use Orm\Zed\Mollie\Persistence\SpyMolliePaymentLink;
 use Orm\Zed\Mollie\Persistence\SpyPaymentMollie;
@@ -196,11 +195,11 @@ class MollieEntityManager extends AbstractEntityManager implements MollieEntityM
         }
 
         $molliePaymentLinkTransfer->setIdMolliePaymentLink($spyMolliePaymentLinkEntity->getIdMolliePaymentLink());
+        $spyMolliePaymentLinkEntity = $this->getFactory()
+            ->createMolliePaymentLinkMapper()
+            ->mapMolliePaymentLinkTransferToEntity($molliePaymentLinkTransfer, $spyMolliePaymentLinkEntity);
 
-        if ($molliePaymentLinkTransfer->getPaidAt()) {
-            $spyMolliePaymentLinkEntity->setStatus(MollieConstants::STATUS_PAID);
-            $spyMolliePaymentLinkEntity->save();
-        }
+        $spyMolliePaymentLinkEntity->save();
 
         return $molliePaymentLinkTransfer;
     }
