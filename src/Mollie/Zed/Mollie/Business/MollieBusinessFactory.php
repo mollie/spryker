@@ -247,6 +247,7 @@ class MollieBusinessFactory extends AbstractBusinessFactory
             $this->getMollieService(),
             $this->getLocaleFacade(),
             $this->getConfig(),
+            $this->createMolliePaymentMethodsConfigReader(),
         );
     }
 
