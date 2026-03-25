@@ -329,6 +329,28 @@
         <property name="unitPrice" type="string"/>
     </transfer>
 
+    <transfer name="MolliePaymentMethodConfig">
+        <property name="paymentMethodKey" type="string" />
+        <property name="minAmount" type="integer" />
+        <property name="maxAmount" type="integer" />
+        <property name="isActive" type="bool" />
+        <property name="logoUrl" type="string" />
+        <property name="isLogoVisible" type="bool" />
+        <property name="isActive" type="bool" />
+        <property name="translations" type="MolliePaymentMethodConfigTranslation[]" />
+    </transfer>
+
+    <transfer name="MolliePaymentMethodConfigTranslation">
+        <property name="fkMolliePaymentMethodConfig" type="int" />
+        <property name="fkLocale" type="int" />
+        <property name="name" type="string" />
+        <property name="description" type="string" />
+    </transfer>
+
+    <transfer name="MolliePaymentMethodConfigCollection">
+        <property name="configs" type="MolliePaymentMethodConfig[]" singular="molliePaymentMethodConfig"/>
+    </transfer>
+
     <transfer name="MollieWebhookEvent">
         <property name="resource" type="string"/>
         <property name="id" type="string"/>
@@ -345,6 +367,7 @@
         <property name="documentation" type="MollieLink"/>
         <property name="payment" type="MollieLink"/>
     </transfer>
+
     <transfer name="MollieExpirationInformation">
         <property name="showWarningMessage" type="bool" />
         <property name="warningMessage" type="string" />
@@ -356,5 +379,4 @@
         <property name="billingCountry" type="string"/>
         <property name="amount" type="MollieAmount"/>
     </transfer>
-
 </transfers>

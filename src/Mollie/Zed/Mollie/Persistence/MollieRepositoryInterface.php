@@ -6,6 +6,8 @@ namespace Mollie\Zed\Mollie\Persistence;
 
 use Generated\Shared\Transfer\MollieItemPaymentCaptureTransfer;
 use Generated\Shared\Transfer\MolliePaymentLinkTransfer;
+use Generated\Shared\Transfer\MolliePaymentMethodConfigCollectionTransfer;
+use Generated\Shared\Transfer\MolliePaymentMethodConfigTransfer;
 use Generated\Shared\Transfer\MolliePaymentTransfer;
 use Generated\Shared\Transfer\MollieRefundResponseTransfer;
 
@@ -38,4 +40,14 @@ interface MollieRepositoryInterface
      * @return \Generated\Shared\Transfer\MolliePaymentLinkTransfer|null
      */
     public function getPaymentLinkByFkSalesOrder(int $idSalesOrder): ?MolliePaymentLinkTransfer;
+
+
+    public function getPaymentMethodConfigCollection(?int $localeId): MolliePaymentMethodConfigCollectionTransfer;
+
+    /**
+     * @param string $mollieKey
+     *
+     * @return MolliePaymentMethodConfigTransfer|null
+     */
+    public function getMolliePaymentMethodConfigByMollieKey(string $mollieKey): ?MolliePaymentMethodConfigTransfer;
 }

@@ -54,6 +54,7 @@ class MollieCommunicationFactory extends AbstractCommunicationFactory
             $this->createMollieCommunicationMapper(),
             $this->getMollieClient(),
             $this->getLocaleFacade(),
+            $this->getFacade(),
         );
     }
 

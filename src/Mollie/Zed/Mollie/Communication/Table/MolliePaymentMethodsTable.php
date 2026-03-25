@@ -30,16 +30,20 @@ class MolliePaymentMethodsTable extends AbstractTable
 
     protected const string STATUS_NOT_ACTIVATED = 'not activated';
 
+    protected const string HEADER_ACTIONS = 'actions';
+
     protected const array MOLLIE_PAYMENT_METHODS_TABLE_COLUMN_MAP = [
         MolliePaymentMethodTransfer::DESCRIPTION => 'Name',
         MolliePaymentMethodTransfer::STATUS => 'Status',
         MolliePaymentMethodTransfer::MINIMUM_AMOUNT => 'Minimal amount',
         MolliePaymentMethodTransfer::MAXIMUM_AMOUNT => 'Maximal amount',
         MolliePaymentMethodTransfer::IMAGE => 'Images',
+        self::HEADER_ACTIONS => 'Actions',
     ];
 
     protected const array MOLLIE_PAYMENT_METHODS_TABLE_RAW_COLUMNS = [
         MolliePaymentMethodTransfer::IMAGE,
+        self::HEADER_ACTIONS
     ];
 
     /**
@@ -119,6 +123,7 @@ class MolliePaymentMethodsTable extends AbstractTable
                 MolliePaymentMethodTransfer::MINIMUM_AMOUNT => $this->formatMinimumAmountField($paymentMethod),
                 MolliePaymentMethodTransfer::MAXIMUM_AMOUNT => $this->formatMaximumAmountField($paymentMethod),
                 MolliePaymentMethodTransfer::IMAGE => $this->formatImagesField($paymentMethod->getImage()),
+                static::HEADER_ACTIONS => $this->getActionButtons($paymentMethod),
             ];
         }
 
@@ -189,12 +194,12 @@ class MolliePaymentMethodsTable extends AbstractTable
      */
     protected function formatImagesField(array $images): string
     {
-        $html = '';
-        foreach (array_values($images) as $imageUrl) {
-            $html .= sprintf(static::IMAGE_HTML, $imageUrl);
-        }
+        $imageUrl =
+            $images['size2x'] ??
+            $images['size1x'] ??
+            $images['svg'] ?? '';
 
-        return $html;
+        return sprintf(static::IMAGE_HTML, $imageUrl);
     }
 
     /**
@@ -210,5 +215,29 @@ class MolliePaymentMethodsTable extends AbstractTable
         }
 
         return false;
+    }
+
+    /**
+     * @param \Xiphias\BladeFxApi\DTO\BladeFxReportTransfer $reportListItem
+     * @param array|null $params
+     *
+     * @return string
+     */
+    public function getActionButtons(MolliePaymentMethodTransfer $transfer, ?array $params = []): string
+    {
+        return $this->generateEditButton(
+            $this->buildEditUrl($transfer),
+            'edit',
+        );
+    }
+
+    /**
+     * @param \Xiphias\BladeFxApi\DTO\BladeFxReportTransfer $reportListItem
+     *
+     * @return string
+     */
+    protected function buildEditUrl(MolliePaymentMethodTransfer $transfer): string
+    {
+        return sprintf('/mollie/detail?mollie_payment_method_id=%s', $transfer->getId());
     }
 }

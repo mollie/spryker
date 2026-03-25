@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Mollie\Zed\Mollie\Business;
 
+use Generated\Shared\Transfer\MolliePaymentMethodConfigTransfer;
 use Generated\Shared\Transfer\CheckoutResponseTransfer;
+use Generated\Shared\Transfer\MolliePaymentMethodConfigCollectionTransfer;
 use Generated\Shared\Transfer\MollieExpirationInformationTransfer;
 use Generated\Shared\Transfer\MolliePaymentCaptureRequestTransfer;
 use Generated\Shared\Transfer\MolliePaymentCaptureResponseTransfer;
@@ -277,5 +279,21 @@ class MollieFacade extends AbstractFacade implements MollieFacadeInterface
     public function getExpirationInformation(int $orderId): MollieExpirationInformationTransfer
     {
         return $this->getFactory()->createMollieExpirationWarningHandler()->getExpirationInformation($orderId);
+    }
+
+    public function getPaymentMethodConfigCollection(?int $localeId = null): MolliePaymentMethodConfigCollectionTransfer
+    {
+        return $this->getFactory()->createMolliePaymentMethodsConfigReader()->getPaymentMethodConfigCollection($localeId);
+    }
+
+
+    /**
+     * @param string $key
+     *
+     * @return MolliePaymentMethodConfigTransfer
+     */
+    public function getPaymentMethodConfigByMollieKey(string $key): ?MolliePaymentMethodConfigTransfer
+    {
+        return $this->getFactory()->createMolliePaymentMethodsConfigReader()->getPaymentMethodConfigByMollieKey($key);
     }
 }
