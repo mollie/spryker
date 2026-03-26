@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Mollie\Zed\Mollie\Business\Reader;
 
-use Generated\Shared\Transfer\MolliePaymentMethodConfigTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodConfigCollectionTransfer;
-use Mollie\Zed\Mollie\Communication\Mapper\MollieCommunicationMapper;
+use Generated\Shared\Transfer\MolliePaymentMethodConfigCriteriaTransfer;
+use Generated\Shared\Transfer\MolliePaymentMethodConfigTransfer;
 use Mollie\Zed\Mollie\Persistence\MollieRepositoryInterface;
 
 class MolliePaymentMethodsConfigReader implements MolliePaymentMethodsConfigReaderInterface
@@ -15,16 +15,25 @@ class MolliePaymentMethodsConfigReader implements MolliePaymentMethodsConfigRead
         private MollieRepositoryInterface $repository,
     ) {
     }
-    
-    public function getPaymentMethodConfigCollection(?int $localeId): MolliePaymentMethodConfigCollectionTransfer
-    {
-        return $this->repository->getPaymentMethodConfigCollection($localeId);
 
+    /**
+     * @param \Generated\Shared\Transfer\MolliePaymentMethodConfigCriteriaTransfer $molliePaymentMethodConfigCriteriaTransfer
+     *
+     * @return \Generated\Shared\Transfer\MolliePaymentMethodConfigCollectionTransfer
+     */
+    public function getPaymentMethodConfigCollection(
+        MolliePaymentMethodConfigCriteriaTransfer $molliePaymentMethodConfigCriteriaTransfer,
+    ): MolliePaymentMethodConfigCollectionTransfer {
+        return $this->repository->getPaymentMethodConfigCollection($molliePaymentMethodConfigCriteriaTransfer);
     }
 
+    /**
+     * @param string $key
+     *
+     * @return \Generated\Shared\Transfer\MolliePaymentMethodConfigTransfer|null
+     */
     public function getPaymentMethodConfigByMollieKey(string $key): ?MolliePaymentMethodConfigTransfer
     {
         return $this->repository->getMolliePaymentMethodConfigByMollieKey($key);
     }
 }
-

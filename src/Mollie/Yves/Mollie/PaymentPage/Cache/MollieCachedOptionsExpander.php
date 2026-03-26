@@ -1,10 +1,12 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Mollie\Yves\Mollie\PaymentPage\Cache;
 
 use Generated\Shared\Transfer\MollieCacheOptionsTransfer;
+use Generated\Shared\Transfer\MolliePaymentMethodConfigCollectionTransfer;
+use Generated\Shared\Transfer\MolliePaymentMethodConfigCriteriaTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodsApiResponseTransfer;
 use Generated\Shared\Transfer\QuoteTransfer;
 use Mollie\Client\Mollie\MollieClientInterface;
@@ -26,6 +28,8 @@ class MollieCachedOptionsExpander implements MollieCachedOptionsExpanderInterfac
      * @var array<string, string>
      */
     protected static array $mappedPaymentToLogo = [];
+
+    protected static ?MolliePaymentMethodConfigCollectionTransfer $paymentMethodConfigCollection = null;
 
     /**
      * @param \Mollie\Client\Mollie\MollieClientInterface $mollieClient
@@ -51,6 +55,7 @@ class MollieCachedOptionsExpander implements MollieCachedOptionsExpanderInterfac
     public function expandOptions(string $paymentMethod, QuoteTransfer $quoteTransfer, array $options): array
     {
         $omsToPaymentMethodMapping = $this->config->getMollieOmsToPaymentMethodMapping();
+        $molliePaymentMethodConfigCollectionTransfer = $this->getMolliePaymentMethodConfigCollection();
         $omsToPaymentMethodMapping = array_merge($omsToPaymentMethodMapping, static::MOLLIE_LOGO_MAPPING);
         $key = $omsToPaymentMethodMapping[$paymentMethod];
         $logoUniqueKey = $paymentMethod . MollieConstants::LOGO_URL;
@@ -114,5 +119,21 @@ class MollieCachedOptionsExpander implements MollieCachedOptionsExpanderInterfac
         }
 
         return $mappedMethods;
+    }
+
+    /**
+     * @return \Generated\Shared\Transfer\MolliePaymentMethodConfigCollectionTransfer
+     */
+    protected function getMolliePaymentMethodConfigCollection(): MolliePaymentMethodConfigCollectionTransfer
+    {
+        if (static::$paymentMethodConfigCollection !== null) {
+            return static::$paymentMethodConfigCollection;
+        }
+
+        static::$paymentMethodConfigCollection = $this->mollieClient->getPaymentMethodConfigCollection(
+            new MolliePaymentMethodConfigCriteriaTransfer(),
+        );
+
+        return static::$paymentMethodConfigCollection;
     }
 }

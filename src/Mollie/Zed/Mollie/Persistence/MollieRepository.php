@@ -1,12 +1,13 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Mollie\Zed\Mollie\Persistence;
 
 use Generated\Shared\Transfer\MollieItemPaymentCaptureTransfer;
 use Generated\Shared\Transfer\MolliePaymentLinkTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodConfigCollectionTransfer;
+use Generated\Shared\Transfer\MolliePaymentMethodConfigCriteriaTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodConfigTransfer;
 use Generated\Shared\Transfer\MolliePaymentTransfer;
 use Generated\Shared\Transfer\MollieRefundResponseTransfer;
@@ -98,14 +99,19 @@ class MollieRepository extends AbstractRepository implements MollieRepositoryInt
             ->mapMolliePaymentLinkEntityToTransfer($spyMolliePaymentLinkEntity);
     }
 
-    public function getPaymentMethodConfigCollection(?int $localeId): MolliePaymentMethodConfigCollectionTransfer
-    {
+    /**
+     * @param \Generated\Shared\Transfer\MolliePaymentMethodConfigCriteriaTransfer $molliePaymentMethodConfigCriteriaTransfer
+     *
+     * @return \Generated\Shared\Transfer\MolliePaymentMethodConfigCollectionTransfer
+     */
+    public function getPaymentMethodConfigCollection(
+        MolliePaymentMethodConfigCriteriaTransfer $molliePaymentMethodConfigCriteriaTransfer,
+    ): MolliePaymentMethodConfigCollectionTransfer {
         $query = $this->getFactory()
             ->createSpyMolliePaymentMethodConfigQuery()
-            ->joinWithSpyMolliePaymentMethodConfigTranslation(Criteria::LEFT_JOIN)
-        ;
+            ->joinWithSpyMolliePaymentMethodConfigTranslation(Criteria::LEFT_JOIN);
 
-        if ($localeId) {
+        if ($molliePaymentMethodConfigCriteriaTransfer->getLocaleId()) {
 //            $query->addJoinCondition(
 //                'SpyMolliePaymentMethodConfigTranslation',
 //                'SpyMolliePaymentMethodConfigTranslation.FkLocale = ?',
@@ -123,7 +129,7 @@ class MollieRepository extends AbstractRepository implements MollieRepositoryInt
     /**
      * @param string $mollieKey
      *
-     * @return MolliePaymentMethodConfigTransfer|null
+     * @return \Generated\Shared\Transfer\MolliePaymentMethodConfigTransfer|null
      */
     public function getMolliePaymentMethodConfigByMollieKey(string $mollieKey): ?MolliePaymentMethodConfigTransfer
     {

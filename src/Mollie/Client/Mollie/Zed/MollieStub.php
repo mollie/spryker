@@ -1,9 +1,13 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Mollie\Client\Mollie\Zed;
 
 use Generated\Shared\Transfer\MolliePaymentCaptureResponseTransfer;
 use Generated\Shared\Transfer\MolliePaymentLinkTransfer;
+use Generated\Shared\Transfer\MolliePaymentMethodConfigCollectionTransfer;
+use Generated\Shared\Transfer\MolliePaymentMethodConfigCriteriaTransfer;
 use Generated\Shared\Transfer\MolliePaymentTransfer;
 use Generated\Shared\Transfer\MollieRefundResponseTransfer;
 use Generated\Shared\Transfer\OrderCollectionRequestTransfer;
@@ -26,9 +30,7 @@ class MollieStub implements MollieStubInterface
      */
     public function updateOrderCollection(OrderCollectionRequestTransfer $updateOrderCollectionRequestTransfer): OrderCollectionResponseTransfer
     {
-        $updateOrderCollectionResponseTransfer = $this->zedStub->call('/mollie/gateway/update-order-collection', $updateOrderCollectionRequestTransfer);
-
-        return $updateOrderCollectionResponseTransfer;
+        return $this->zedStub->call('/mollie/gateway/update-order-collection', $updateOrderCollectionRequestTransfer);
     }
 
     /**
@@ -38,9 +40,7 @@ class MollieStub implements MollieStubInterface
      */
     public function processRefundData(MolliePaymentTransfer $molliePaymentTransfer): MollieRefundResponseTransfer
     {
-        $mollieRefundResponseTransfer = $this->zedStub->call('/mollie/gateway/process-refund-data', $molliePaymentTransfer);
-
-        return $mollieRefundResponseTransfer;
+        return $this->zedStub->call('/mollie/gateway/process-refund-data', $molliePaymentTransfer);
     }
 
      /**
@@ -69,5 +69,20 @@ class MollieStub implements MollieStubInterface
             ->call('/mollie/gateway/update-payment-link', $molliePaymentLinkTransfer);
 
         return $molliePaymentLinkTransfer;
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MolliePaymentMethodConfigCriteriaTransfer $molliePaymentMethodConfigCriteriaTransfer
+     *
+     * @return \Generated\Shared\Transfer\MolliePaymentMethodConfigCollectionTransfer
+     */
+    public function getPaymentMethodConfigCollection(
+        MolliePaymentMethodConfigCriteriaTransfer $molliePaymentMethodConfigCriteriaTransfer,
+    ): MolliePaymentMethodConfigCollectionTransfer {
+        /** @var \Generated\Shared\Transfer\MolliePaymentMethodConfigCollectionTransfer $molliePaymentMethodConfigCollectionTransfer */
+        $molliePaymentMethodConfigCollectionTransfer = $this->zedStub
+            ->call('/mollie/gateway/get-payment-method-config-collection', $molliePaymentMethodConfigCriteriaTransfer);
+
+        return $molliePaymentMethodConfigCollectionTransfer;
     }
 }

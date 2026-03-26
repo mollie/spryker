@@ -1,9 +1,5 @@
 <?php
 
-/**
- * This file is part of the Spryker Commerce OS.
- * For full license information, please view the LICENSE file that was distributed with this source code.
- */
 
 declare(strict_types = 1);
 
@@ -12,6 +8,7 @@ namespace Mollie\Zed\Mollie\Business\Filter;
 use ArrayObject;
 use Generated\Shared\Transfer\MollieAmountTransfer;
 use Generated\Shared\Transfer\MollieApiRequestTransfer;
+use Generated\Shared\Transfer\MolliePaymentMethodConfigCriteriaTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodQueryParametersTransfer;
 use Generated\Shared\Transfer\PaymentMethodsTransfer;
 use Generated\Shared\Transfer\QuoteTransfer;
@@ -116,7 +113,7 @@ class MolliePaymentMethodsFilter implements MolliePaymentMethodsFilterInterface
         ArrayObject $molliePaymentMethods,
     ): PaymentMethodsTransfer {
         $activeMollieMethods = $this->indexMollieMethods($molliePaymentMethods);
-        $indexedMolliePaymentConfigMethods = $this->getIndexMolliePaymentConfigMethods();
+        $indexedMolliePaymentConfigMethods = $this->getIndexedMolliePaymentConfigMethods();
         $grandTotal = $this->mollieService->convertIntegerToDecimal($quoteTransfer->getTotals()->getGrandTotal());
 
         $filteredMethods = new ArrayObject();
@@ -177,9 +174,11 @@ class MolliePaymentMethodsFilter implements MolliePaymentMethodsFilterInterface
     /**
      * @return array<string, \Generated\Shared\Transfer\MolliePaymentMethodConfigTransfer>
      */
-    protected function getIndexMolliePaymentConfigMethods(): array
+    protected function getIndexedMolliePaymentConfigMethods(): array
     {
-        $molliePaymentMethodConfigCollectionTransfer = $this->molliePaymentMethodsConfigReader->getPaymentMethodConfigCollection(46);
+        $molliePaymentMethodConfigCollectionTransfer = $this->molliePaymentMethodsConfigReader
+            ->getPaymentMethodConfigCollection((new MolliePaymentMethodConfigCriteriaTransfer()));
+
         $indexedPaymentConfigMethods = [];
 
         foreach ($molliePaymentMethodConfigCollectionTransfer->getConfigs() as $molliePaymentMethodConfigTransfer) {

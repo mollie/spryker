@@ -321,12 +321,12 @@ class MollieBusinessFactory extends AbstractBusinessFactory
     }
 
     /**
-     * @return MolliePaymentMethodsConfigReaderInterface
+     * @return \Mollie\Zed\Mollie\Business\Reader\MolliePaymentMethodsConfigReaderInterface
      */
     public function createMolliePaymentMethodsConfigReader(): MolliePaymentMethodsConfigReaderInterface
     {
         return new MolliePaymentMethodsConfigReader(
-            $this->getRepository()
+            $this->getRepository(),
         );
     }
 }

@@ -43,7 +43,7 @@ class MolliePaymentMethodsTable extends AbstractTable
 
     protected const array MOLLIE_PAYMENT_METHODS_TABLE_RAW_COLUMNS = [
         MolliePaymentMethodTransfer::IMAGE,
-        self::HEADER_ACTIONS
+        self::HEADER_ACTIONS,
     ];
 
     /**

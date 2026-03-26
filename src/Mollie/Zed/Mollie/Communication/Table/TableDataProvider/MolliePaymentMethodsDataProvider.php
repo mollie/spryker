@@ -4,10 +4,11 @@ declare(strict_types = 1);
 
 namespace Mollie\Zed\Mollie\Communication\Table\TableDataProvider;
 
+use ArrayObject;
 use Generated\Shared\Transfer\MolliePaymentMethodCollectionTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodConfigCollectionTransfer;
-use Generated\Shared\Transfer\MolliePaymentMethodsApiResponseTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodConfigTransfer;
+use Generated\Shared\Transfer\MolliePaymentMethodsApiResponseTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodTransfer;
 use Mollie\Client\Mollie\MollieClientInterface;
 use Mollie\Shared\Mollie\MollieConstants;
@@ -49,53 +50,55 @@ class MolliePaymentMethodsDataProvider
     protected function overrideMollieDefaultsWithConfigData(
         MolliePaymentMethodConfigCollectionTransfer $collection,
         MolliePaymentMethodsApiResponseTransfer $responseTransfer,
-        int $localeId
+        int $localeId,
     ): MolliePaymentMethodsApiResponseTransfer {
-
         $configs = $collection->getConfigs()->getArrayCopy();
         $paymentMethods = $responseTransfer->getCollection()->getMethods()->getArrayCopy();
         $mappedPaymentMethods = $this->mapMolliePaymentMethodTransfersToMollieId($responseTransfer->getCollection());
         foreach ($configs as $config) {
             $paymentId = $config->getPaymentMethodKey();
             if (isset($mappedPaymentMethods[$paymentId])) {
-               $this->do($mappedPaymentMethods[$paymentId], $config);
+                $this->do($mappedPaymentMethods[$paymentId], $config);
             }
         }
 
         return $responseTransfer->setCollection(
             (new MolliePaymentMethodCollectionTransfer())->setMethods(
-                new \ArrayObject(array_values($mappedPaymentMethods))
-            )
+                new ArrayObject(array_values($mappedPaymentMethods)),
+            ),
         );
     }
 
+    /**
+     * @return void
+     */
     protected function do(MolliePaymentMethodTransfer $methodTransfer, MolliePaymentMethodConfigTransfer $configTransfer): void
     {
         if ($configTransfer->getMaxAmount() !== null) {
             $methodTransfer->setMaximumAmount(
                 [
-                    "value" => (string)$configTransfer->getMaxAmount(),
-                    "currency" => $methodTransfer->getMaximumAmount()["currency"]
-                ]
+                    'value' => (string)$configTransfer->getMaxAmount(),
+                    'currency' => $methodTransfer->getMaximumAmount()['currency'],
+                ],
             );
         }
 
         if ($configTransfer->getMinAmount() !== null) {
             $methodTransfer->setMinimumAmount(
                 [
-                    "value" => (string)$configTransfer->getMinAmount(),
-                    "currency" => $methodTransfer->getMinimumAmount()["currency"]
-                ]
+                    'value' => (string)$configTransfer->getMinAmount(),
+                    'currency' => $methodTransfer->getMinimumAmount()['currency'],
+                ],
             );
         }
 
         if ($configTransfer->getLogoUrl() !== null) {
             $methodTransfer->setImage(
                 [
-//                    "size1x" => $configTransfer->getLogoUrl(),
-                    "size2x" => $configTransfer->getLogoUrl(),
-//                    "svg" => $configTransfer->getLogoUrl()
-                ]
+                //                    "size1x" => $configTransfer->getLogoUrl(),
+                    'size2x' => $configTransfer->getLogoUrl(),
+                //                    "svg" => $configTransfer->getLogoUrl()
+                ],
             );
         }
 
@@ -119,9 +122,9 @@ class MolliePaymentMethodsDataProvider
     }
 
     /**
-     * @param Request $request
+     * @param \Symfony\Component\HttpFoundation\Request $request
      *
-     * @return MolliePaymentMethodsApiResponseTransfer
+     * @return \Generated\Shared\Transfer\MolliePaymentMethodsApiResponseTransfer
      */
     protected function getMollieDefaultValues(Request $request, string $locale): MolliePaymentMethodsApiResponseTransfer
     {

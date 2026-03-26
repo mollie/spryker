@@ -355,6 +355,10 @@
         <property name="configs" type="MolliePaymentMethodConfig[]" singular="molliePaymentMethodConfig"/>
     </transfer>
 
+    <transfer name="MolliePaymentMethodConfigCriteria">
+        <property name="localeId" type="string"/>
+    </transfer>
+
     <transfer name="MollieWebhookEvent">
         <property name="resource" type="string"/>
         <property name="id" type="string"/>

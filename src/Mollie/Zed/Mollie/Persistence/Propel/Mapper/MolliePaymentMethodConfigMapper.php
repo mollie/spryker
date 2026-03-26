@@ -2,13 +2,12 @@
 
 namespace Mollie\Zed\Mollie\Persistence\Propel\Mapper;
 
+use ArrayObject;
 use Generated\Shared\Transfer\MolliePaymentMethodConfigCollectionTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodConfigTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodConfigTranslationTransfer;
-use Generated\Shared\Transfer\MolliePaymentTransfer;
 use Orm\Zed\Mollie\Persistence\SpyMolliePaymentMethodConfig;
 use Orm\Zed\Mollie\Persistence\SpyMolliePaymentMethodConfigTranslation;
-use Orm\Zed\Mollie\Persistence\SpyPaymentMollie;
 
 class MolliePaymentMethodConfigMapper implements MolliePaymentMethodConfigMapperInterface
 {
@@ -38,16 +37,17 @@ class MolliePaymentMethodConfigMapper implements MolliePaymentMethodConfigMapper
 
         $translations = $spyMolliePaymentMethodConfig->getSpyMolliePaymentMethodConfigTranslations()->getData();
         $paymentMethodConfigTransfer->setTranslations(
-            new \ArrayObject(
-                $spyMolliePaymentMethodConfig->getSpyMolliePaymentMethodConfigTranslations()
-            )
+            new ArrayObject(
+                $spyMolliePaymentMethodConfig->getSpyMolliePaymentMethodConfigTranslations(),
+            ),
         );
 
         return $paymentMethodConfigTransfer;
     }
 
-    public function mapMolliePaymentMethodConfigTranslationEntityToTransfer(SpyMolliePaymentMethodConfigTranslation $configTranslation): MolliePaymentMethodConfigTranslationTransfer
-    {
+    public function mapMolliePaymentMethodConfigTranslationEntityToTransfer(
+        SpyMolliePaymentMethodConfigTranslation $configTranslation,
+    ): MolliePaymentMethodConfigTranslationTransfer {
         $transfer = new MolliePaymentMethodConfigTranslationTransfer();
         $transfer->fromArray($configTranslation->toArray());
 
