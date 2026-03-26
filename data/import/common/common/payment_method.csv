@@ -12,3 +12,11 @@ mollieBancontactPayment,Bancontact,MollieBancontactPayment,Mollie Bancontact Pay
 mollieKbcPayment,KBC,MollieKbcPayment,Mollie KBC Payment,1
 molliePayByBankPayment,Pay By Bank,MolliePayByBankPayment,Mollie Pay By Bank Payment,1
 mollieApplePayPayment,Apple Pay,MollieApplePayPayment,Mollie Apple Pay Payment,1
+mollieBilliePayment,Billie,MollieBilliePayment,Mollie Billie Payment,1
+mollieRivertyPayment,Riverty,MollieRivertyPayment,Mollie Riverty Payment,1
+mollieIdealIn3Payment,iDEAL in3,MollieIdealIn3Payment,Mollie iDEAL in3 Payment,1
+mollieAlmaPayment,Alma,MollieAlmaPayment,Mollie Alma Payment,1
+molliePrzelewy24Payment,Przelewy 24,MolliePrzelewy24Payment,Mollie Przelewy 24 Payment,1
+mollieBancomatPayPayment,Bancomat Pay,MollieBancomatPayPayment,Mollie Bancomat Pay Payment,1
+mollieMultibancoPayment,Multibanco,MollieMultibancoPayment,Mollie Multibanco Payment,1
+mollieBizumPayment,Bizum,MollieBizumPayment,Mollie Bizum Payment,1
