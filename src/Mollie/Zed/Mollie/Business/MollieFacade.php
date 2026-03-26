@@ -284,7 +284,7 @@ class MollieFacade extends AbstractFacade implements MollieFacadeInterface
 
     public function getPaymentMethodConfigCollection(MolliePaymentMethodConfigCriteriaTransfer $criteriaTransfer): MolliePaymentMethodConfigCollectionTransfer
     {
-        return $this->getFactory()->getRepository()->getPaymentMethodConfigCollection($criteriaTransfer);
+        return $this->getRepository()->getPaymentMethodConfigCollection($criteriaTransfer);
     }
 
 
@@ -295,6 +295,6 @@ class MollieFacade extends AbstractFacade implements MollieFacadeInterface
      */
     public function getPaymentMethodConfigByMollieKey(string $key): ?MolliePaymentMethodConfigTransfer
     {
-        return $this->getFactory()->getRepository()->getPaymentMethodConfigByMollieKey($key);
+        return $this->getRepository()->getPaymentMethodConfigByMollieKey($key);
     }
 }

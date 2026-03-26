@@ -110,6 +110,6 @@ class MolliePaymentMethodConfigMapper implements MolliePaymentMethodConfigMapper
      */
     protected function mapIsActiveToStatus(bool $isActive): string
     {
-        return $isActive ? status::ACTIVATED : status::NOT_ACTIVATED;
+        return $isActive ? static::ACTIVATED : static::NOT_ACTIVATED;
     }
 }

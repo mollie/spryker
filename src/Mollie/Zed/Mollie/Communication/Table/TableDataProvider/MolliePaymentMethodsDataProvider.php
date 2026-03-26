@@ -57,7 +57,7 @@ class MolliePaymentMethodsDataProvider
         $paymentMethods = $responseTransfer->getCollection()->getMethods()->getArrayCopy();
         $mappedPaymentMethods = $this->mapMolliePaymentMethodTransfersToMollieId($responseTransfer->getCollection());
         foreach ($configs as $config) {
-            $paymentId = $config->getPaymentMethodKey();
+            $paymentId = $config->getMollieId();
             if (isset($mappedPaymentMethods[$paymentId])) {
                $this->do($mappedPaymentMethods[$paymentId], $config);
             }
@@ -72,7 +72,7 @@ class MolliePaymentMethodsDataProvider
 
     protected function do(MolliePaymentMethodTransfer $methodTransfer, MolliePaymentMethodConfigTransfer $configTransfer): void
     {
-        if ($configTransfer->getMaxAmount() !== null) {
+        if ($configTransfer->getMaximumAmount() !== null) {
             $methodTransfer->setMaximumAmount(
                 [
                     "value" => (string)$configTransfer->getMaximumAmount()["value"],
@@ -81,7 +81,7 @@ class MolliePaymentMethodsDataProvider
             );
         }
 
-        if ($configTransfer->getMinAmount() !== null) {
+        if ($configTransfer->getMinimumAmount() !== null) {
             $methodTransfer->setMinimumAmount(
                 [
                     "value" => (string)$configTransfer->getMinimumAmount()["value"],
