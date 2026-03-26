@@ -317,8 +317,8 @@ class CreatePaymentApi extends AbstractApiCall
      */
     protected function createCompanyObject(MollieApiRequestTransfer $mollieApiRequestTransfer): array
     {
-        $quoteTransfer = $mollieApiRequestTransfer->getQuote();
-        $billingAddress = $quoteTransfer->getBillingAddress();
+        //$quoteTransfer = $mollieApiRequestTransfer->getQuote();
+        //$billingAddress = $quoteTransfer->getBillingAddress();
 
         //$company[MollieConfig::REQUEST_PARAMETER_CREATE_PAYMENT_BILLIE_COMPANY_BILLING_ADDRESS_ORGANIZATION_NAME] = $billingAddress->getCompany();
         //$company['billingAddress'] = ['organizationName' => $billingAddress->getCompany()];
