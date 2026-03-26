@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Mollie\Zed\Mollie\Business;
 
+use Generated\Shared\Transfer\MolliePaymentMethodConfigCriteriaTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodConfigTransfer;
 use Generated\Shared\Transfer\CheckoutResponseTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodConfigCollectionTransfer;
@@ -281,9 +282,9 @@ class MollieFacade extends AbstractFacade implements MollieFacadeInterface
         return $this->getFactory()->createMollieExpirationWarningHandler()->getExpirationInformation($orderId);
     }
 
-    public function getPaymentMethodConfigCollection(?int $localeId = null): MolliePaymentMethodConfigCollectionTransfer
+    public function getPaymentMethodConfigCollection(MolliePaymentMethodConfigCriteriaTransfer $criteriaTransfer): MolliePaymentMethodConfigCollectionTransfer
     {
-        return $this->getFactory()->createMolliePaymentMethodsConfigReader()->getPaymentMethodConfigCollection($localeId);
+        return $this->getFactory()->getRepository()->getPaymentMethodConfigCollection($criteriaTransfer);
     }
 
 
@@ -294,6 +295,6 @@ class MollieFacade extends AbstractFacade implements MollieFacadeInterface
      */
     public function getPaymentMethodConfigByMollieKey(string $key): ?MolliePaymentMethodConfigTransfer
     {
-        return $this->getFactory()->createMolliePaymentMethodsConfigReader()->getPaymentMethodConfigByMollieKey($key);
+        return $this->getFactory()->getRepository()->getPaymentMethodConfigByMollieKey($key);
     }
 }

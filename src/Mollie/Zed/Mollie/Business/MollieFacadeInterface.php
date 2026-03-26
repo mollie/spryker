@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace Mollie\Zed\Mollie\Business;
 
 use Generated\Shared\Transfer\MolliePaymentMethodConfigCollectionTransfer;
+use Generated\Shared\Transfer\MolliePaymentMethodConfigCriteriaTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodConfigTransfer;
 use Generated\Shared\Transfer\CheckoutResponseTransfer;
 use Generated\Shared\Transfer\MollieExpirationInformationTransfer;
@@ -195,6 +196,9 @@ interface MollieFacadeInterface
      * @return \Generated\Shared\Transfer\MollieExpirationInformationTransfer
      */
     public function getExpirationInformation(int $orderId): MollieExpirationInformationTransfer;
+
+    public function getPaymentMethodConfigCollection(MolliePaymentMethodConfigCriteriaTransfer $criteriaTransfer): MolliePaymentMethodConfigCollectionTransfer;
+
 
     /**
      * @param string $key

@@ -6,6 +6,7 @@ namespace Mollie\Zed\Mollie\Communication\Table\TableDataProvider;
 
 use Generated\Shared\Transfer\MolliePaymentMethodCollectionTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodConfigCollectionTransfer;
+use Generated\Shared\Transfer\MolliePaymentMethodConfigCriteriaTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodsApiResponseTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodConfigTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodTransfer;
@@ -40,7 +41,7 @@ class MolliePaymentMethodsDataProvider
     {
         $localeTransfer = $this->localeFacade->getCurrentLocale();
         $requestTransfer = $this->mapper->createMollieApiRequestTransfer($localeTransfer->getLocaleName());
-        $collection = $this->mollieFacade->getPaymentMethodConfigCollection($localeTransfer->getIdLocale());
+        $collection = $this->mollieFacade->getPaymentMethodConfigCollection((new MolliePaymentMethodConfigCriteriaTransfer()));
         $responseTransfer = $this->getMollieDefaultValues($request, $localeTransfer->getLocaleName());
 
         return $this->overrideMollieDefaultsWithConfigData($collection, $responseTransfer, $localeTransfer->getIdLocale());
@@ -74,7 +75,7 @@ class MolliePaymentMethodsDataProvider
         if ($configTransfer->getMaxAmount() !== null) {
             $methodTransfer->setMaximumAmount(
                 [
-                    "value" => (string)$configTransfer->getMaxAmount(),
+                    "value" => (string)$configTransfer->getMaximumAmount()["value"],
                     "currency" => $methodTransfer->getMaximumAmount()["currency"]
                 ]
             );
@@ -83,29 +84,23 @@ class MolliePaymentMethodsDataProvider
         if ($configTransfer->getMinAmount() !== null) {
             $methodTransfer->setMinimumAmount(
                 [
-                    "value" => (string)$configTransfer->getMinAmount(),
+                    "value" => (string)$configTransfer->getMinimumAmount()["value"],
                     "currency" => $methodTransfer->getMinimumAmount()["currency"]
                 ]
             );
         }
 
-        if ($configTransfer->getLogoUrl() !== null) {
-            $methodTransfer->setImage(
-                [
-//                    "size1x" => $configTransfer->getLogoUrl(),
-                    "size2x" => $configTransfer->getLogoUrl(),
-//                    "svg" => $configTransfer->getLogoUrl()
-                ]
-            );
+        if ($configTransfer->getImage() !== null) {
+            $methodTransfer->setImage($configTransfer->getImage());
         }
 
         if ($configTransfer->getTranslations()->count()) {
             $methodTransfer->setName($configTransfer->getTranslations()->getArrayCopy()[0]->getName());
         }
 
-//        if ($configTransfer->getIsActive() !== null) {
-//            $methodTransfer->setIsActive($configTransfer->getIsActive());
-//        }
+        if ($configTransfer->getIsActive() !== null) {
+            $methodTransfer->setStatus($configTransfer->getStatus());
+        }
     }
 
     protected function mapMolliePaymentMethodTransfersToMollieId(MolliePaymentMethodCollectionTransfer $collection): array

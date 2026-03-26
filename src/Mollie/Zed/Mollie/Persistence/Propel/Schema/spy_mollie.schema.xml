@@ -109,15 +109,15 @@
 
     <table name="spy_mollie_payment_method_config">
         <column name="id_mollie_payment_method_config" type="INTEGER" primaryKey="true" autoIncrement="true"/>
-        <column name="payment_method_key" type="VARCHAR" size="255" required="true"/>
-        <column name="min_amount" type="INTEGER" required="false"/>
-        <column name="max_amount" type="INTEGER" required="false"/>
+        <column name="mollie_id" type="VARCHAR" size="255" required="true"/>
+        <column name="minimum_amount" type="INTEGER" required="false"/>
+        <column name="maximum_amount" type="INTEGER" required="false"/>
         <column name="logo_url" type="VARCHAR" size="255" required="false" />
         <column name="is_active" type="BOOLEAN" required="true" default="true"/>
         <column name="is_logo_visible" type="BOOLEAN" required="true" default="true"/>
 
         <unique name="spy_mollie_payment_method_config_key_unique">
-            <unique-column name="payment_method_key"/>
+            <unique-column name="mollie_id"/>
         </unique>
     </table>
 

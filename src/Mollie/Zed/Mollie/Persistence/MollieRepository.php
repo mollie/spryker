@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Mollie\Zed\Mollie\Persistence;
 
 use Generated\Shared\Transfer\MollieItemPaymentCaptureTransfer;
+use Generated\Shared\Transfer\MolliePaymentMethodConfigCriteriaTransfer;
 use Generated\Shared\Transfer\MolliePaymentLinkTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodConfigCollectionTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodConfigTransfer;
@@ -98,18 +99,18 @@ class MollieRepository extends AbstractRepository implements MollieRepositoryInt
             ->mapMolliePaymentLinkEntityToTransfer($spyMolliePaymentLinkEntity);
     }
 
-    public function getPaymentMethodConfigCollection(?int $localeId): MolliePaymentMethodConfigCollectionTransfer
+    public function getPaymentMethodConfigCollection(MolliePaymentMethodConfigCriteriaTransfer $criteriaTransfer): MolliePaymentMethodConfigCollectionTransfer
     {
         $query = $this->getFactory()
             ->createSpyMolliePaymentMethodConfigQuery()
             ->joinWithSpyMolliePaymentMethodConfigTranslation(Criteria::LEFT_JOIN)
         ;
 
-        if ($localeId) {
+        if ($criteriaTransfer->getLocaleId()) {
 //            $query->addJoinCondition(
 //                'SpyMolliePaymentMethodConfigTranslation',
 //                'SpyMolliePaymentMethodConfigTranslation.FkLocale = ?',
-//                $localeId
+//                $criteriaTransfer->getLocaleId()
 //            );
         }
 

@@ -12,6 +12,10 @@ use Orm\Zed\Mollie\Persistence\SpyPaymentMollie;
 
 class MolliePaymentMethodConfigMapper implements MolliePaymentMethodConfigMapperInterface
 {
+    public const string ACTIVATED = 'activated';
+
+    public const string NOT_ACTIVATED = 'not activated';
+
     public function mapMolliePaymentMethodConfigEntitiesToCollection($entities): MolliePaymentMethodConfigCollectionTransfer
     {
         $collection = new MolliePaymentMethodConfigCollectionTransfer();
@@ -30,7 +34,14 @@ class MolliePaymentMethodConfigMapper implements MolliePaymentMethodConfigMapper
     public function mapMolliePaymentMethodConfigEntityToTransfer(SpyMolliePaymentMethodConfig $spyMolliePaymentMethodConfig): MolliePaymentMethodConfigTransfer
     {
         $paymentMethodConfigTransfer = new MolliePaymentMethodConfigTransfer();
-        $paymentMethodConfigTransfer->fromArray($spyMolliePaymentMethodConfig->toArray(), true);
+        $paymentMethodConfigTransfer
+            ->setMollieId($spyMolliePaymentMethodConfig->getMollieId())
+            ->setMaximumAmount($this->formatMaximumAmount($spyMolliePaymentMethodConfig->getMaximumAmount()))
+            ->setMinimumAmount($this->formatMinimumAmount($spyMolliePaymentMethodConfig->getMinimumAmount()))
+            ->setImage($this->formatImage($spyMolliePaymentMethodConfig->getLogoUrl()))
+            ->setStatus($this->mapIsActiveToStatus($spyMolliePaymentMethodConfig->getIsActive()))
+            ->setIsLogoVisible($spyMolliePaymentMethodConfig->getIsLogoVisible());
+
 
         if (!$spyMolliePaymentMethodConfig->getSpyMolliePaymentMethodConfigTranslations()->getData()) {
             return $paymentMethodConfigTransfer;
@@ -52,5 +63,53 @@ class MolliePaymentMethodConfigMapper implements MolliePaymentMethodConfigMapper
         $transfer->fromArray($configTranslation->toArray());
 
         return $transfer;
+    }
+
+    /**
+     * @param int $minimumAmount
+     *
+     * @return array
+     */
+    protected function formatMinimumAmount(int $minimumAmount): array
+    {
+        return [
+            "value" => $minimumAmount,
+            "currency" => null,
+        ];
+    }
+
+    /**
+     * @param int $maximumAmount
+     *
+     * @return array
+     */
+    protected function formatMaximumAmount(int $maximumAmount): array
+    {
+        return [
+            "value" => $maximumAmount,
+            "currency" => null,
+        ];
+    }
+
+    /**
+     * @param string $imageUrl
+     *
+     * @return array<string, string>
+     */
+    protected function formatImage(string $imageUrl): array
+    {
+        return [
+            "size2x" => $imageUrl
+        ];
+    }
+
+    /**
+     * @param bool $isActiv
+     * e
+     * @return string
+     */
+    protected function mapIsActiveToStatus(bool $isActive): string
+    {
+        return $isActive ? status::ACTIVATED : status::NOT_ACTIVATED;
     }
 }
