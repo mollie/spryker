@@ -184,4 +184,8 @@ interface MollieConstants
      * @var array<string>
      */
     public const array BNPL_PAYMENT_METHODS = ['billie', 'in3', 'klarna', 'riverty', 'voucher'];
+
+    public const string PRODUCT_TYPE_PHYSICAL = 'physical';
+
+    public const string PRODUCT_TYPE_SHIPPING_FEE = 'shipping_fee';
 }

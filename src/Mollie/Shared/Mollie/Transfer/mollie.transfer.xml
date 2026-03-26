@@ -57,9 +57,9 @@
         <property name="mollieBancomatPayPayment" type="[]"/>
         <property name="mollieBizumPayment" type="[]"/>
         <property name="mollieBilliePayment" type="MollieBilliePayment"/>
-        <property name="mollieRivertyPayment" type="MollieRivertyPayment"/>
+        <property name="mollieRivertyPayment" type="[]"/>
         <property name="mollieIdealIn3Payment" type="MollieIdealIn3Payment"/>
-        <property name="mollieAlmaPayment" type="MollieAlmaPayment"/>
+        <property name="mollieAlmaPayment" type="[]"/>
     </transfer>
 
     <transfer name="MolliePaymentMethod">

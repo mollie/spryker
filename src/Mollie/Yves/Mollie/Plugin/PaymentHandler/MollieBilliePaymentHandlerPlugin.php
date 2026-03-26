@@ -4,14 +4,13 @@ declare(strict_types=1);
 
 namespace Mollie\Yves\Mollie\Plugin\PaymentHandler;
 
-use Mollie\Yves\Mollie\MollieFactory;
 use Spryker\Shared\Kernel\Transfer\AbstractTransfer;
 use Spryker\Yves\Kernel\AbstractPlugin;
 use Spryker\Yves\StepEngine\Dependency\Plugin\Handler\StepHandlerPluginInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
- * @method MollieFactory getFactory()
+ * @method \Mollie\Yves\Mollie\MollieFactory getFactory()
  */
 class MollieBilliePaymentHandlerPlugin extends AbstractPlugin implements StepHandlerPluginInterface
 {

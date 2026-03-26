@@ -28,8 +28,8 @@ class MollieAmountConverter implements MollieAmountConverterInterface
         $amount = number_format($decimalAmount, 2, '.', '');
         $mollieAmountTransfer = new MollieAmountTransfer();
         $mollieAmountTransfer->setValue($amount);
-        
-        if($currency){
+
+        if ($currency) {
             $mollieAmountTransfer->setCurrency($currency);
         }
 
