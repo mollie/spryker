@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace Mollie\Yves\Mollie;
 
 use Mollie\Client\Mollie\MollieClientInterface;
+use Mollie\Service\Mollie\MollieServiceInterface;
 use Mollie\Yves\Mollie\Dependency\Client\MollieToLocaleClientInterface;
 use Mollie\Yves\Mollie\Dependency\Client\MollieToQuoteClientInterface;
 use Mollie\Yves\Mollie\Dependency\Client\MollieToStorageClientInterface;
@@ -24,11 +25,17 @@ use Mollie\Yves\Mollie\Handler\Payment\MolliePaymentKlarnaHandler;
 use Mollie\Yves\Mollie\Handler\Payment\MolliePaymentKlarnaPayLaterHandler;
 use Mollie\Yves\Mollie\Handler\Payment\MolliePaymentKlarnaPayNowHandler;
 use Mollie\Yves\Mollie\Handler\Payment\MolliePaymentKlarnaSliceItHandler;
+use Mollie\Yves\Mollie\Handler\Payment\MolliePaymentMbWayHandler;
 use Mollie\Yves\Mollie\Handler\Payment\MolliePaymentMultibancoHandler;
 use Mollie\Yves\Mollie\Handler\Payment\MolliePaymentPayByBankHandler;
 use Mollie\Yves\Mollie\Handler\Payment\MolliePaymentPayconiqHandler;
 use Mollie\Yves\Mollie\Handler\Payment\MolliePaymentPayPalHandler;
 use Mollie\Yves\Mollie\Handler\Payment\MolliePaymentPrzelewy24Handler;
+use Mollie\Yves\Mollie\Handler\Payment\MolliePaymentSatispayHandler;
+use Mollie\Yves\Mollie\Handler\Payment\MolliePaymentSwishHandler;
+use Mollie\Yves\Mollie\Handler\Payment\MolliePaymentTrustlyHandler;
+use Mollie\Yves\Mollie\Handler\Payment\MolliePaymentTwintHandler;
+use Mollie\Yves\Mollie\Handler\Payment\MolliePaymentVippsHandler;
 use Mollie\Yves\Mollie\Mapper\MollieMapper;
 use Mollie\Yves\Mollie\Mapper\MollieMapperInterface;
 use Mollie\Yves\Mollie\PaymentPage\Cache\MollieCachedOptionsExpander;
@@ -46,11 +53,17 @@ use Mollie\Yves\Mollie\PaymentPage\Form\DataProvider\MollieKlarnaPayLaterSubForm
 use Mollie\Yves\Mollie\PaymentPage\Form\DataProvider\MollieKlarnaPayNowSubFormDataProvider;
 use Mollie\Yves\Mollie\PaymentPage\Form\DataProvider\MollieKlarnaSliceItSubFormDataProvider;
 use Mollie\Yves\Mollie\PaymentPage\Form\DataProvider\MollieKlarnaSubFormDataProvider;
+use Mollie\Yves\Mollie\PaymentPage\Form\DataProvider\MollieMbWaySubFormDataProvider;
 use Mollie\Yves\Mollie\PaymentPage\Form\DataProvider\MollieMultibancoSubFormDataProvider;
 use Mollie\Yves\Mollie\PaymentPage\Form\DataProvider\MolliePayByBankSubFormDataProvider;
 use Mollie\Yves\Mollie\PaymentPage\Form\DataProvider\MolliePayconiqSubFormDataProvider;
 use Mollie\Yves\Mollie\PaymentPage\Form\DataProvider\MolliePayPalSubFormDataProvider;
 use Mollie\Yves\Mollie\PaymentPage\Form\DataProvider\MolliePrzelewy24SubFormDataProvider;
+use Mollie\Yves\Mollie\PaymentPage\Form\DataProvider\MollieSatispaySubFormDataProvider;
+use Mollie\Yves\Mollie\PaymentPage\Form\DataProvider\MollieSwishSubFormDataProvider;
+use Mollie\Yves\Mollie\PaymentPage\Form\DataProvider\MollieTrustlySubFormDataProvider;
+use Mollie\Yves\Mollie\PaymentPage\Form\DataProvider\MollieTwintSubFormDataProvider;
+use Mollie\Yves\Mollie\PaymentPage\Form\DataProvider\MollieVippsSubFormDataProvider;
 use Mollie\Yves\Mollie\PaymentPage\Form\MollieApplePaySubForm;
 use Mollie\Yves\Mollie\PaymentPage\Form\MollieBancomatPaySubForm;
 use Mollie\Yves\Mollie\PaymentPage\Form\MollieBancontactSubForm;
@@ -65,11 +78,17 @@ use Mollie\Yves\Mollie\PaymentPage\Form\MollieKlarnaPayLaterSubForm;
 use Mollie\Yves\Mollie\PaymentPage\Form\MollieKlarnaPayNowSubForm;
 use Mollie\Yves\Mollie\PaymentPage\Form\MollieKlarnaSliceItSubForm;
 use Mollie\Yves\Mollie\PaymentPage\Form\MollieKlarnaSubForm;
+use Mollie\Yves\Mollie\PaymentPage\Form\MollieMbWaySubForm;
 use Mollie\Yves\Mollie\PaymentPage\Form\MollieMultibancoSubForm;
 use Mollie\Yves\Mollie\PaymentPage\Form\MolliePayByBankSubForm;
 use Mollie\Yves\Mollie\PaymentPage\Form\MolliePayconiqSubForm;
 use Mollie\Yves\Mollie\PaymentPage\Form\MolliePayPalSubForm;
 use Mollie\Yves\Mollie\PaymentPage\Form\MolliePrzelewy24SubForm;
+use Mollie\Yves\Mollie\PaymentPage\Form\MollieSatispaySubForm;
+use Mollie\Yves\Mollie\PaymentPage\Form\MollieSwishSubForm;
+use Mollie\Yves\Mollie\PaymentPage\Form\MollieTrustlySubForm;
+use Mollie\Yves\Mollie\PaymentPage\Form\MollieTwintSubForm;
+use Mollie\Yves\Mollie\PaymentPage\Form\MollieVippsSubForm;
 use Mollie\Yves\Mollie\Validator\WebhookSignatureValidator;
 use Mollie\Yves\Mollie\Validator\WebhookSignatureValidatorInterface;
 use Spryker\Yves\Kernel\AbstractFactory;
@@ -99,7 +118,11 @@ class MollieFactory extends AbstractFactory
      */
     public function createMollieMapper(): MollieMapperInterface
     {
-        return new MollieMapper();
+        return new MollieMapper(
+            $this->getMollieService(),
+            $this->getLocaleClient(),
+            $this->getConfig(),
+        );
     }
 
     /**
@@ -196,6 +219,114 @@ class MollieFactory extends AbstractFactory
     public function createMolliePayByBankSubForm(): SubFormInterface
     {
         return new MolliePayByBankSubForm();
+    }
+
+    /**
+     * @return \Spryker\Yves\StepEngine\Dependency\Form\SubFormInterface
+     */
+    public function createMollieTrustlySubForm(): SubFormInterface
+    {
+        return new MollieTrustlySubForm();
+    }
+
+    /**
+     * @return \Spryker\Yves\StepEngine\Dependency\Form\StepEngineFormDataProviderInterface
+     */
+    public function createMollieTrustlySubFormDataProvider(): StepEngineFormDataProviderInterface
+    {
+        return new MollieTrustlySubFormDataProvider(
+            $this->createMollieCachedOptionsExpander(),
+        );
+    }
+
+    /**
+     * @return \Spryker\Yves\StepEngine\Dependency\Form\SubFormInterface
+     */
+    public function createMollieMbWaySubForm(): SubFormInterface
+    {
+        return new MollieMbWaySubForm();
+    }
+
+    /**
+     * @return \Spryker\Yves\StepEngine\Dependency\Form\StepEngineFormDataProviderInterface
+     */
+    public function createMollieMbWaySubFormDataProvider(): StepEngineFormDataProviderInterface
+    {
+        return new MollieMbWaySubFormDataProvider(
+            $this->createMollieCachedOptionsExpander(),
+        );
+    }
+
+    /**
+     * @return \Spryker\Yves\StepEngine\Dependency\Form\SubFormInterface
+     */
+    public function createMollieSwishSubForm(): SubFormInterface
+    {
+        return new MollieSwishSubForm();
+    }
+
+    /**
+     * @return \Spryker\Yves\StepEngine\Dependency\Form\StepEngineFormDataProviderInterface
+     */
+    public function createMollieSwishSubFormDataProvider(): StepEngineFormDataProviderInterface
+    {
+        return new MollieSwishSubFormDataProvider(
+            $this->createMollieCachedOptionsExpander(),
+        );
+    }
+
+    /**
+     * @return \Spryker\Yves\StepEngine\Dependency\Form\SubFormInterface
+     */
+    public function createMollieSatispaySubForm(): SubFormInterface
+    {
+        return new MollieSatispaySubForm();
+    }
+
+    /**
+     * @return \Spryker\Yves\StepEngine\Dependency\Form\StepEngineFormDataProviderInterface
+     */
+    public function createMollieSatispaySubFormDataProvider(): StepEngineFormDataProviderInterface
+    {
+        return new MollieSatispaySubFormDataProvider(
+            $this->createMollieCachedOptionsExpander(),
+        );
+    }
+
+    /**
+     * @return \Spryker\Yves\StepEngine\Dependency\Form\SubFormInterface
+     */
+    public function createMollieTwintSubForm(): SubFormInterface
+    {
+        return new MollieTwintSubForm();
+    }
+
+    /**
+     * @return \Spryker\Yves\StepEngine\Dependency\Form\StepEngineFormDataProviderInterface
+     */
+    public function createMollieTwintSubFormDataProvider(): StepEngineFormDataProviderInterface
+    {
+        return new MollieTwintSubFormDataProvider(
+            $this->createMollieCachedOptionsExpander(),
+        );
+    }
+
+    /**
+     * @return \Spryker\Yves\StepEngine\Dependency\Form\SubFormInterface
+     */
+    public function createMollieVippsSubForm(): SubFormInterface
+    {
+        return new MollieVippsSubForm();
+    }
+
+    /**
+     * @return \Spryker\Yves\StepEngine\Dependency\Form\StepEngineFormDataProviderInterface
+     */
+    public function createMollieVippsSubFormDataProvider(): StepEngineFormDataProviderInterface
+    {
+        return new MollieVippsSubFormDataProvider(
+            $this->createMollieCachedOptionsExpander(),
+        );
     }
 
     /**
@@ -548,6 +679,54 @@ class MollieFactory extends AbstractFactory
         return new MolliePaymentApplePayHandler();
     }
 
+     /**
+      * @return \Mollie\Yves\Mollie\Handler\Payment\MolliePaymentHandlerInterface
+      */
+    public function createMollieMbWayPaymentHandler(): MolliePaymentHandlerInterface
+    {
+        return new MolliePaymentMbWayHandler();
+    }
+
+     /**
+      * @return \Mollie\Yves\Mollie\Handler\Payment\MolliePaymentHandlerInterface
+      */
+    public function createMolliePaymentSatispayHandler(): MolliePaymentHandlerInterface
+    {
+        return new MolliePaymentSatispayHandler();
+    }
+
+     /**
+      * @return \Mollie\Yves\Mollie\Handler\Payment\MolliePaymentHandlerInterface
+      */
+    public function createMolliePaymentSwishHandler(): MolliePaymentHandlerInterface
+    {
+        return new MolliePaymentSwishHandler();
+    }
+
+     /**
+      * @return \Mollie\Yves\Mollie\Handler\Payment\MolliePaymentHandlerInterface
+      */
+    public function createMolliePaymentTrustlyHandler(): MolliePaymentHandlerInterface
+    {
+        return new MolliePaymentTrustlyHandler();
+    }
+
+     /**
+      * @return \Mollie\Yves\Mollie\Handler\Payment\MolliePaymentHandlerInterface
+      */
+    public function createMolliePaymentTwintHandler(): MolliePaymentHandlerInterface
+    {
+        return new MolliePaymentTwintHandler();
+    }
+
+     /**
+      * @return \Mollie\Yves\Mollie\Handler\Payment\MolliePaymentHandlerInterface
+      */
+    public function createMolliePaymentVippsHandler(): MolliePaymentHandlerInterface
+    {
+        return new MolliePaymentVippsHandler();
+    }
+
     /**
      * @return \Mollie\Yves\Mollie\Handler\Payment\MolliePaymentHandlerInterface
      */
@@ -660,5 +839,13 @@ class MollieFactory extends AbstractFactory
     public function getLocaleClient(): MollieToLocaleClientInterface
     {
         return $this->getProvidedDependency(MollieDependencyProvider::CLIENT_LOCALE);
+    }
+
+    /**
+     * @return \Mollie\Service\Mollie\MollieServiceInterface
+     */
+    public function getMollieService(): MollieServiceInterface
+    {
+        return $this->getProvidedDependency(MollieDependencyProvider::SERVICE_MOLLIE);
     }
 }

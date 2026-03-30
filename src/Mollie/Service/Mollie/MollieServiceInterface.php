@@ -25,10 +25,11 @@ interface MollieServiceInterface
      * @api
      *
      * @param int $value
+     * @param string|null $currency
      *
      * @return \Generated\Shared\Transfer\MollieAmountTransfer
      */
-    public function convertIntegerToMollieAmount(int $value): MollieAmountTransfer;
+    public function convertIntegerToMollieAmount(int $value, ?string $currency = null): MollieAmountTransfer;
 
     /**
      * Calls UrlResolver class from client layer
@@ -42,4 +43,14 @@ interface MollieServiceInterface
      * @return string
      */
     public function resolveWebhookUrl(string $webhookUrl, string $testEnvironmentWebhookUrl, bool $testMode): string;
+
+    /**
+     * Specification:
+     * - gets number of seconds to be added as expiration time
+     *
+     * @api
+     *
+     * @return string
+     */
+    public function getPaymentLinkDefaultExpirationDateTime(): string;
 }

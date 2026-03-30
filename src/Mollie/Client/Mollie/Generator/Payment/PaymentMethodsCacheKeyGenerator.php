@@ -47,7 +47,6 @@ class PaymentMethodsCacheKeyGenerator implements PaymentMethodsCacheKeyGenerator
             $queryParametersTransfer->getSequenceType(),
             $queryParametersTransfer->getLocale(),
             $amount?->getCurrency(),
-            $amount?->getValue(),
             $queryParametersTransfer->getBillingCountry(),
         ];
 

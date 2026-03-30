@@ -97,7 +97,8 @@ class GetEnabledPaymentMethodsApi extends AbstractApiCall
     protected function getAmount(MolliePaymentMethodQueryParametersTransfer $transfer): Money|null
     {
         $amountTransfer = $transfer->getAmount();
-        if (!$amountTransfer) {
+        $value = $amountTransfer?->getValue();
+        if (!$value) {
             return null;
         }
 

@@ -110,10 +110,10 @@ class MolliePaymentStatusHandler implements MolliePaymentStatusHandlerInterface
         $status = MolliePaymentStatusConstants::CAPTURE_FAILED;
         $mollieItemPaymentCaptureTransfer = $this->mollieRepository->getOrderItemPaymentCapture($idSalesOrderItem);
 
-        if ($mollieItemPaymentCaptureTransfer?->getStatus() === $status) {
+        if (!$mollieItemPaymentCaptureTransfer) {
             return true;
         }
 
-        return false;
+        return $mollieItemPaymentCaptureTransfer->getStatus() === $status;
     }
 }

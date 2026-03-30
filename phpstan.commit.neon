@@ -24,6 +24,9 @@ parameters:
         - '#Call to .+ on an unknown class Orm\\.+\\.+\\Persistence\\.+#'
         - '#Instantiated class Orm\\.+\\.+\\Persistence\\.+ not found#'
         - '#Parameter .+ of method .+ has invalid type .+#'
+        - '#Property .+ has unknown class Orm\\.+\\Persistence\\.+ as its type\.#'
+        - '#Parameter .+ of method .+ expects .+, Orm\\.+\\Persistence\\.+ given\.#'
+        - '#PHPDoc tag @var for variable .+ contains unknown class Orm\\.+\\Persistence\\.+\.#'
 
     reportUnmatchedIgnoredErrors: false
 

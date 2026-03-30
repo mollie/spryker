@@ -61,6 +61,10 @@ class MolliePaymentMethodsFilter implements MolliePaymentMethodsFilterInterface
      */
     protected function createRequestTransfer(QuoteTransfer $quoteTransfer): MollieApiRequestTransfer
     {
+        $grandTotal = $quoteTransfer->getTotals()->getGrandTotal();
+        $currencyCode = $quoteTransfer->getCurrency()?->getCode();
+        $mollieAmount = $this->mollieService->convertIntegerToMollieAmount($grandTotal, $currencyCode);
+
         return (new MollieApiRequestTransfer())
             ->setMolliePaymentMethodQueryParameters(
                 (new MolliePaymentMethodQueryParametersTransfer())
@@ -68,7 +72,8 @@ class MolliePaymentMethodsFilter implements MolliePaymentMethodsFilterInterface
                     ->setBillingCountry($quoteTransfer->getBillingAddress()->getIso2Code())
                     ->setIncludeIssuers(true)
                     ->setIncludeWallets($this->mollieConfig->getMollieIncludeWallets())
-                    ->setSequenceType(MollieConstants::MOLLIE_SEQUENCE_TYPE_ONE_OFF),
+                    ->setSequenceType(MollieConstants::MOLLIE_SEQUENCE_TYPE_ONE_OFF)
+                    ->setAmount($mollieAmount),
             );
     }
 
