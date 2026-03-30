@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace MollieTest\Client\Mollie\Api\Payment;
 
+use Generated\Shared\Transfer\AddressTransfer;
 use Generated\Shared\Transfer\CheckoutResponseTransfer;
 use Generated\Shared\Transfer\CurrencyTransfer;
 use Generated\Shared\Transfer\MollieApiRequestTransfer;
@@ -41,6 +42,20 @@ class CreatePaymentApiTest extends AbstractClientTest
             ->setAmount(100000);
 
         $quoteTransfer->setPayment($paymentTransfer);
+
+        $addressTransfer = new AddressTransfer();
+        $addressTransfer
+            ->setSalutation('Mr.')
+            ->setFirstName('John')
+            ->setLastName('Doe')
+            ->setCompany('Company 1')
+            ->setAddress1('Street 123')
+            ->setZipCode('12345')
+            ->setEmail('john.doe@email.com')
+            ->setPhone('+38523456789')
+            ->setCity('Amsterdam')
+            ->setIso2Code('NL');
+        $quoteTransfer->setBillingAddress($addressTransfer);
 
         $saveOrderTransfer = new SaveOrderTransfer();
         $saveOrderTransfer
