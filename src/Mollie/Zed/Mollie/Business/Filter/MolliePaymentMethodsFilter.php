@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Mollie\Zed\Mollie\Business\Filter;
 
 use ArrayObject;
-use Generated\Shared\Transfer\MollieAmountTransfer;
 use Generated\Shared\Transfer\MollieApiRequestTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodQueryParametersTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodTransfer;
@@ -62,8 +61,9 @@ class MolliePaymentMethodsFilter implements MolliePaymentMethodsFilterInterface
      */
     protected function createRequestTransfer(QuoteTransfer $quoteTransfer): MollieApiRequestTransfer
     {
-        $mollieAmount = new MollieAmountTransfer();
-        $mollieAmount->setCurrency($quoteTransfer->getCurrency()?->getCode());
+        $grandTotal = $quoteTransfer->getTotals()->getGrandTotal();
+        $currencyCode = $quoteTransfer->getCurrency()?->getCode();
+        $mollieAmount = $this->mollieService->convertIntegerToMollieAmount($grandTotal, $currencyCode);
 
         return (new MollieApiRequestTransfer())
             ->setMolliePaymentMethodQueryParameters(
