@@ -56,6 +56,12 @@
         <property name="mollieMultibancoPayment" type="[]"/>
         <property name="mollieBancomatPayPayment" type="[]"/>
         <property name="mollieBizumPayment" type="[]"/>
+        <property name="mollieTrustlyPayment" type="[]"/>
+        <property name="mollieMbWayPayment" type="[]"/>
+        <property name="mollieSwishPayment" type="[]"/>
+        <property name="mollieSatispayPayment" type="[]"/>
+        <property name="mollieTwintPayment" type="[]"/>
+        <property name="mollieVippsPayment" type="[]"/>
         <property name="mollieBilliePayment" type="MollieBilliePayment"/>
         <property name="mollieRivertyPayment" type="[]"/>
         <property name="mollieIdealIn3Payment" type="MollieIdealIn3Payment"/>

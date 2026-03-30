@@ -222,6 +222,66 @@ class MollieConfig extends AbstractSharedConfig
     /**
      * @var string
      */
+    public const MOLLIE_PAYMENT_TRUSTLY = 'mollieTrustlyPayment';
+
+    /**
+     * @var string
+     */
+    public const MOLLIE_PAYMENT_TRUSTLY_PROVIDER = 'MollieTrustlyPayment';
+
+    /**
+     * @var string
+     */
+    public const MOLLIE_PAYMENT_MB_WAY = 'mollieMbWayPayment';
+
+    /**
+     * @var string
+     */
+    public const MOLLIE_PAYMENT_MB_WAY_PROVIDER = 'MollieMbWayPayment';
+
+    /**
+     * @var string
+     */
+    public const MOLLIE_PAYMENT_SWISH = 'mollieSwishPayment';
+
+    /**
+     * @var string
+     */
+    public const MOLLIE_PAYMENT_SWISH_PROVIDER = 'MollieSwishPayment';
+
+    /**
+     * @var string
+     */
+    public const MOLLIE_PAYMENT_SATISPAY = 'mollieSatispayPayment';
+
+    /**
+     * @var string
+     */
+    public const MOLLIE_PAYMENT_SATISPAY_PROVIDER = 'MollieSatispayPayment';
+
+    /**
+     * @var string
+     */
+    public const MOLLIE_PAYMENT_TWINT = 'mollieTwintPayment';
+
+    /**
+     * @var string
+     */
+    public const MOLLIE_PAYMENT_TWINT_PROVIDER = 'MollieTwintPayment';
+
+    /**
+     * @var string
+     */
+    public const MOLLIE_PAYMENT_VIPPS = 'mollieVippsPayment';
+
+    /**
+     * @var string
+     */
+    public const MOLLIE_PAYMENT_VIPPS_PROVIDER = 'MollieVippsPayment';
+
+    /**
+     * @var string
+     */
     public const MOLLIE_PAYMENT_TRANSACTION_STORAGE_KEY_PREFIX = 'mollie:payment';
 
     /**

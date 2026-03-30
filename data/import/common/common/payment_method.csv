@@ -20,3 +20,9 @@ molliePrzelewy24Payment,Przelewy 24,MolliePrzelewy24Payment,Mollie Przelewy 24 P
 mollieBancomatPayPayment,Bancomat Pay,MollieBancomatPayPayment,Mollie Bancomat Pay Payment,1
 mollieMultibancoPayment,Multibanco,MollieMultibancoPayment,Mollie Multibanco Payment,1
 mollieBizumPayment,Bizum,MollieBizumPayment,Mollie Bizum Payment,1
+mollieTrustlyPayment,Trustly,MollieTrustlyPayment,Mollie Trustly Payment,1
+mollieMbWayPayment,MB Way,MollieMbWayPayment,Mollie MB Way Payment,1
+mollieSwishPayment,Swish,MollieSwishPayment,Mollie Swish Payment,1
+mollieSatispayPayment,Satispay,MollieSatispayPayment,Mollie Satispay Payment,1
+mollieTwintPayment,TWINT,MollieTwintPayment,Mollie TWINT Payment,1
+mollieVippsPayment,Vipps,MollieVippsPayment,Mollie Vipps Payment,1
