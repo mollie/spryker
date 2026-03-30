@@ -51,4 +51,16 @@ class MollieService extends AbstractService implements MollieServiceInterface
     {
         return $this->getFactory()->createUrlReolver()->resolveWebhookUrl($webhookUrl, $testEnvironmentWebhookUrl, $testMode);
     }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @api
+     *
+     * @return string
+     */
+    public function getPaymentLinkDefaultExpirationDateTime(): string
+    {
+        return $this->getFactory()->createPaymentLinkHandler()->getPaymentLinkDefaultExpirationDateTime();
+    }
 }

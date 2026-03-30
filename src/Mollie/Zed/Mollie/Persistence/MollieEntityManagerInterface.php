@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Mollie\Zed\Mollie\Persistence;
 
@@ -35,6 +35,13 @@ interface MollieEntityManagerInterface
      * @return void
      */
     public function updateMollieRefundWithStatus(MollieRefundCollectionTransfer $mollieRefundCollectionTransfer): void;
+
+    /**
+     * @param \Generated\Shared\Transfer\MolliePaymentTransfer $molliePaymentTransfer
+     *
+     * @return void
+     */
+    public function saveMolliePaymentReleaseAuthorizationRequest(MolliePaymentTransfer $molliePaymentTransfer): void;
 
     /**
      * @param \Generated\Shared\Transfer\MollieRefundSaveTransfer $mollieRefundSaveTransfer

@@ -28,7 +28,6 @@
 
             {% block paymentDetails %}
                 <div class="row">
-                    {{ form_row(form.type) }}
                     {{ form_row(form.currency) }}
                     {{ form_row(form.amount) }}
                 </div>
@@ -36,11 +35,7 @@
                 {{ form_row(form.description) }}
             {% endblock %}
 
-            <div class="hr-line-dashed"></div>
-
             {% block additionalSettings %}
-                <h3>{{ 'Additional Settings' | trans }}</h3>
-
                 <div class="col lg-4">
                 {{ form_row(form.expiryDate) }}
                 </div>
@@ -64,7 +59,7 @@
 
                 <div class="form-group {% if form.paymentMethods.vars.errors|length %}has-error{% endif %}">
                     {{ form_label(form.paymentMethods) }}
-                    {{ form_widget(form.paymentMethods, {'attr': {'class': 'form-control select2', 'style': 'height: 25vh;'}}) }}
+                    {{ form_widget(form.paymentMethods, {'attr': {'class': 'form-control select2', 'style': 'height: 20vh;'}}) }}
                     {{ form_errors(form.paymentMethods) }}
                     <span
                         class="help-block">{{ 'By default, all methods are offered in your checkout.' | trans }}</span>

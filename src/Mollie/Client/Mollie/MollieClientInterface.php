@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace Mollie\Client\Mollie;
 
 use Generated\Shared\Transfer\MollieApiRequestTransfer;
+use Generated\Shared\Transfer\MollieApiResponseTransfer;
 use Generated\Shared\Transfer\MollieCreateCaptureApiResponseTransfer;
 use Generated\Shared\Transfer\MollieGetCaptureApiResponseTransfer;
 use Generated\Shared\Transfer\MollieGetProfileApiResponseTransfer;
@@ -133,6 +134,19 @@ interface MollieClientInterface
     public function getCapture(MollieApiRequestTransfer $mollieApiRequestTransfer): MollieGetCaptureApiResponseTransfer;
 
     /**
+     *   Specification:
+     *
+     * - Releases the authorization
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\MollieApiRequestTransfer $mollieApiRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieApiResponseTransfer
+     */
+    public function releaseAuthorization(MollieApiRequestTransfer $mollieApiRequestTransfer): MollieApiResponseTransfer;
+
+    /**
      * Specification:
      * - Deletes cache for enabled payment methods API
      *
@@ -215,6 +229,11 @@ interface MollieClientInterface
     public function createPaymentLink(MollieApiRequestTransfer $mollieApiRequestTransfer): MolliePaymentLinkApiResponseTransfer;
 
     /**
+     * Specification:
+     * - Updates existing payment link in DB
+     *
+     * @api
+     *
      * @param \Generated\Shared\Transfer\MolliePaymentLinkTransfer $molliePaymentLinkTransfer
      *
      * @return void

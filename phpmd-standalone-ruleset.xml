@@ -2,5 +2,6 @@
 <ruleset name="Standalone ruleset">
     <rule ref="vendor/spryker/project-architecture-sniffer/src/ruleset.xml">
         <exclude name="ProjectNoBridgeRule"/>
+        <exclude name="OrmAccessRule"/>
     </rule>
 </ruleset>
