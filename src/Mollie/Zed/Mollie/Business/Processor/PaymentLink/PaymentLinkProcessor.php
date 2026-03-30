@@ -59,8 +59,7 @@ class PaymentLinkProcessor implements PaymentLinkProcessorInterface
         $grandTotal = $totalsTransfer->getGrandTotal();
         $currency = $orderTransfer->getCurrency()->getCode();
 
-        $amountTransfer = $this->mollieService->convertIntegerToMollieAmount($grandTotal);
-        $amountTransfer->setCurrency($currency);
+        $amountTransfer = $this->mollieService->convertIntegerToMollieAmount($grandTotal, $currency);
 
         return $amountTransfer;
     }
