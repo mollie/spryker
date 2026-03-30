@@ -4,7 +4,6 @@ declare(strict_types = 1);
 
 namespace Mollie\Yves\Mollie\Mapper;
 
-use Generated\Shared\Transfer\MollieAmountTransfer;
 use Generated\Shared\Transfer\MollieApiRequestTransfer;
 use Generated\Shared\Transfer\MollieCacheOptionsTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodQueryParametersTransfer;
@@ -87,12 +86,8 @@ class MollieMapper implements MollieMapperInterface
         $billingCountry = $quoteTransfer->getBillingAddress()->getIso2Code();
         $currency = $quoteTransfer->getCurrency()?->getCode();
 
-        $mollieAmount = (new MollieAmountTransfer());
         $grandTotal = $quoteTransfer->getTotals()->getGrandTotal();
-        $amountValue = number_format($this->mollieService->convertIntegerToDecimal($grandTotal), 2);
-        $mollieAmount
-            ->setValue($amountValue)
-            ->setCurrency($currency);
+        $mollieAmount = $this->mollieService->convertIntegerToMollieAmount($grandTotal, $currency);
 
         $mollieCacheOptionsTransfer
             ->setLocale($locale)
