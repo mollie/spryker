@@ -46,9 +46,12 @@ class MolliePaymentLinkMapper implements MolliePaymentLinkMapperInterface
             ->setExpiryDate($molliePaymentLinkTransfer->getExpiresAt())
             ->setRedirectUrl($molliePaymentLinkTransfer->getRedirectUrl())
             ->setIsReusable($molliePaymentLinkTransfer->getReusable())
-            ->setPaymentLinkUrl($molliePaymentLinkTransfer->getLinks()->getPaymentLink()->getHref())
             ->setMode($molliePaymentLinkTransfer->getMode())
             ->setProfileid($molliePaymentLinkTransfer->getProfileId());
+
+        if ($molliePaymentLinkTransfer->getLinks()?->getPaymentLink()?->getHref()) {
+            $spyMolliePaymentLinkEntity->setPaymentLinkUrl($molliePaymentLinkTransfer->getLinks()->getPaymentLink()->getHref());
+        }
 
         if ($molliePaymentLinkTransfer->getAllowedMethods()) {
             $allowedMethods = $this->utilEncodingService->encodeJson($molliePaymentLinkTransfer->getAllowedMethods());
