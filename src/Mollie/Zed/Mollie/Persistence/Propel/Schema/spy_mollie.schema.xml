@@ -121,28 +121,4 @@
         </unique>
     </table>
 
-    <table name="spy_mollie_payment_method_config_translation">
-        <column name="id_mollie_payment_method_config_translation" type="INTEGER" primaryKey="true" autoIncrement="true"/>
-        <column name="fk_mollie_payment_method_config" type="INTEGER" required="true"/>
-        <column name="fk_locale" type="INTEGER" required="true"/>
-        <column name="name" type="VARCHAR" size="255" required="false"/>
-        <column name="description" type="VARCHAR" size="2048" required="false"/>
-
-        <foreign-key name="fk_mollie_payment_method_config_translation_config"
-                     foreignTable="spy_mollie_payment_method_config">
-            <reference local="fk_mollie_payment_method_config"
-                       foreign="id_mollie_payment_method_config"/>
-        </foreign-key>
-
-        <foreign-key name="fk_mollie_payment_method_config_translation_locale"
-                     foreignTable="spy_locale">
-            <reference local="fk_locale" foreign="id_locale"/>
-        </foreign-key>
-
-        <unique name="spy_mollie_payment_method_config_translation_unique">
-            <unique-column name="fk_mollie_payment_method_config"/>
-            <unique-column name="fk_locale"/>
-        </unique>
-    </table>
-
 </database>

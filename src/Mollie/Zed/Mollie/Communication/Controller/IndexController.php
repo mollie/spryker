@@ -34,12 +34,6 @@ class IndexController extends AbstractController
 
         return $this->viewResponse($responseData);
     }
-    
-    public function detailAction(Request $request): array 
-    {
-        $mollieId = $request->query->get("mollie_payment_method_id");
-        
-    }
 
     /**
      * @return \Symfony\Component\HttpFoundation\JsonResponse

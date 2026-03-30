@@ -7,6 +7,7 @@ namespace Mollie\Zed\Mollie\Persistence;
 use Generated\Shared\Transfer\MollieItemPaymentCaptureTransfer;
 use Generated\Shared\Transfer\MolliePaymentCaptureTransfer;
 use Generated\Shared\Transfer\MolliePaymentLinkTransfer;
+use Generated\Shared\Transfer\MolliePaymentMethodConfigTransfer;
 use Generated\Shared\Transfer\MolliePaymentTransfer;
 use Generated\Shared\Transfer\MollieRefundCollectionTransfer;
 use Generated\Shared\Transfer\MollieRefundSaveTransfer;
@@ -77,4 +78,25 @@ interface MollieEntityManagerInterface
      * @return \Generated\Shared\Transfer\MolliePaymentLinkTransfer
      */
     public function updatePaymentLink(MolliePaymentLinkTransfer $molliePaymentLinkTransfer): MolliePaymentLinkTransfer;
+
+    /**
+     * @param \Generated\Shared\Transfer\MolliePaymentMethodConfigTransfer $paymentMethodConfigTransfer
+     *
+     * @return \Generated\Shared\Transfer\MolliePaymentMethodConfigTransfer
+     */
+    public function createMolliePaymentMethodConfig(MolliePaymentMethodConfigTransfer $paymentMethodConfigTransfer): MolliePaymentMethodConfigTransfer;
+
+    /**
+     * @param \Generated\Shared\Transfer\MolliePaymentMethodConfigTransfer $paymentMethodConfigTransfer
+     *
+     * @return \Generated\Shared\Transfer\MolliePaymentMethodConfigTransfer
+     */
+    public function updateMolliePaymentMethodConfig(MolliePaymentMethodConfigTransfer $paymentMethodConfigTransfer): MolliePaymentMethodConfigTransfer;
+
+    /**
+     * @param int $id
+     *
+     * @return void
+     */
+    public function deleteMolliePaymentMethodConfig(int $id): void;
 }

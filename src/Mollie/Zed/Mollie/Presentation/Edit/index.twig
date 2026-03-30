@@ -1,0 +1,32 @@
+{% extends '@Gui/Layout/layout.twig' %}
+
+{% set widget_title = 'Edit ' ~ paymentMethodConfig.mollieId ~ ' configuration' %}
+
+{% block head_title %}
+    {{ widget_title | trans }}
+{% endblock %}
+{% block section_title %}
+    {{ widget_title | trans }}
+{% endblock %}
+
+{% block action %}
+    {{ viewActionButton(url('/mollie/detail', {'mollie_payment_method_id': mollieId}), 'View' | trans) }}
+    {{ backActionButton(url('/mollie'), 'Back to Payment Methods' | trans) }}
+{% endblock %}
+
+{% block content %}
+    {% embed '@Gui/Partials/widget.twig' %}
+
+        {% block widget_content %}
+
+            {{ form_start(form) }}
+            {{ form_widget(form) }}
+
+            <input type="submit" class="btn btn-primary safe-submit" value="{{ 'Save' | trans }}" />
+            {{ form_end(form) }}
+
+        {% endblock %}
+
+    {% endembed %}
+
+{% endblock %}

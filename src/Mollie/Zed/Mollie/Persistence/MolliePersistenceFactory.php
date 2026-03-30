@@ -65,8 +65,11 @@ class MolliePersistenceFactory extends AbstractPersistenceFactory
             $this->getMollieService(),
         );
     }
-    
-    public function createMolliePaymentMethodConfigMapper(): MolliePaymentMethodConfigMapperInterface 
+
+    /**
+     * @return \Mollie\Zed\Mollie\Persistence\Propel\Mapper\MolliePaymentMethodConfigMapperInterface
+     */
+    public function createMolliePaymentMethodConfigMapper(): MolliePaymentMethodConfigMapperInterface
     {
         return new MolliePaymentMethodConfigMapper();
     }
@@ -104,7 +107,7 @@ class MolliePersistenceFactory extends AbstractPersistenceFactory
     }
 
     /**
-     * @return SpyMolliePaymentMethodConfigQuery
+     * @return \Orm\Zed\Mollie\Persistence\SpyMolliePaymentMethodConfigQuery
      */
     public function createSpyMolliePaymentMethodConfigQuery(): SpyMolliePaymentMethodConfigQuery
     {
@@ -112,7 +115,7 @@ class MolliePersistenceFactory extends AbstractPersistenceFactory
     }
 
     /**
-     * @return SpyMolliePaymentMethodConfigTranslationQuery
+     * @return \Orm\Zed\Mollie\Persistence\SpyMolliePaymentMethodConfigTranslationQuery
      */
     public function createSpyMolliePaymentMethodConfiTranslationgQuery(): SpyMolliePaymentMethodConfigTranslationQuery
     {

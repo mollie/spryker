@@ -8,8 +8,10 @@ use Mollie\Client\Mollie\MollieClientInterface;
 use Mollie\Service\Mollie\MollieServiceInterface;
 use Mollie\Zed\Mollie\Communication\Cache\MollieCacheInvalidator;
 use Mollie\Zed\Mollie\Communication\Cache\MollieCacheInvalidatorInterface;
+use Mollie\Zed\Mollie\Communication\DataProvider\MolliePaymentMethodsDataProvider;
 use Mollie\Zed\Mollie\Communication\Form\CreatePaymentLinkForm;
 use Mollie\Zed\Mollie\Communication\Form\DataProvider\PaymentLinkFormDataProvider;
+use Mollie\Zed\Mollie\Communication\Form\PaymentMethodConfigForm;
 use Mollie\Zed\Mollie\Communication\Mapper\MollieCommunicationMapper;
 use Mollie\Zed\Mollie\Communication\Mapper\MollieCommunicationMapperInterface;
 use Mollie\Zed\Mollie\Communication\Mapper\Order\OrderItemMapper;
@@ -19,7 +21,6 @@ use Mollie\Zed\Mollie\Communication\Mapper\PaymentLink\MolliePaymentLinkMapperIn
 use Mollie\Zed\Mollie\Communication\Table\MolliePaymentLinkTable;
 use Mollie\Zed\Mollie\Communication\Table\MolliePaymentMethodsTable;
 use Mollie\Zed\Mollie\Communication\Table\TableDataProvider\MolliePaymentLinkDataProvider;
-use Mollie\Zed\Mollie\Communication\Table\TableDataProvider\MolliePaymentMethodsDataProvider;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToCurrencyFacadeInterface;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToLocaleFacadeInterface;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToMailFacadeInterface;
@@ -46,7 +47,7 @@ class MollieCommunicationFactory extends AbstractCommunicationFactory
     }
 
     /**
-     * @return \Mollie\Zed\Mollie\Communication\Table\TableDataProvider\MolliePaymentMethodsDataProvider
+     * @return \Mollie\Zed\Mollie\Communication\DataProvider\MolliePaymentMethodsDataProvider
      */
     public function createMolliePaymentMethodsDataProvider(): MolliePaymentMethodsDataProvider
     {
@@ -142,6 +143,17 @@ class MollieCommunicationFactory extends AbstractCommunicationFactory
     public function createOrderItemMapper(): OrderItemMapperInterface
     {
         return new OrderItemMapper();
+    }
+
+    /**
+     * @param array<string, mixed> $data
+     * @param array<string, mixed> $options
+     *
+     * @return \Symfony\Component\Form\FormInterface
+     */
+    public function createPaymentMethodConfigForm(array $data = [], array $options = []): FormInterface
+    {
+        return $this->getFormFactory()->create(PaymentMethodConfigForm::class, $data, $options);
     }
 
     /**

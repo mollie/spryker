@@ -1,7 +1,64 @@
-<div>
-    {% if test %}
-        {{ test.paymentMethodKey }}
-    {% else %}
-        nope
-    {% endif %}
-</div>
+{% extends '@Gui/Layout/layout.twig' %}
+
+{% set widget_title = 'View ' ~ paymentMethodConfig.mollieId ~ ' configuration' %}
+
+{% block head_title %}
+    {{ widget_title | trans }}
+{% endblock %}
+{% block section_title %}
+    {{ widget_title | trans }}
+{% endblock %}
+
+{% block action %}
+    {{ removeActionButton(url('/mollie/edit/restore-defaults', {'id-mollie-payment-method-config': paymentMethodConfig.idMolliePaymentMethodConfig}), 'Restore defaults' | trans) }}
+    {{ viewActionButton(url('/mollie/edit',  {'mollie_payment_method_id': paymentMethodConfig.mollieId}), 'Edit' | trans) }}
+    {{ backActionButton(url('/mollie'), 'Back to Mollie Payment Methods' | trans) }}
+{% endblock %}
+
+{% block content %}
+    {% embed '@Gui/Partials/widget.twig' %}
+        {% block widget_content %}
+            <div class="row">
+                <table class="table">
+                    <thead></thead>
+                        <tbody>
+                        <tr>
+                            <th>{{ 'Minimum Amount' | trans }}</th>
+                            <td>{{ paymentMethodConfig.minAmount}}</td>
+                        </tr>
+                        <tr>
+                            <th>{{ 'Maximum Amount' | trans }}</th>
+                            <td>{{ paymentMethodConfig.maxAmount }}</td>
+                        </tr>
+                        <tr>
+                            <th>{{ 'Is active' | trans }}</th>
+                            <td>{{ paymentMethodConfig.isActive ? 'true' : 'false' }}</td>
+                        </tr>
+                        <tr>
+                            <th>{{ 'Logo url' | trans }}</th>
+                            <td>{{ paymentMethodConfig.logo }}</td>
+                        </tr>
+                        <tr>
+                            <th>{{ 'Logo preview' | trans }}</th>
+                            <td>
+                                <img
+                                    style="width: 60px; height:40px;"
+                                    class="mollie-logo-preview"
+                                    src={{ paymentMethodConfig.logo }}
+                                >
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>{{ 'Show logo on checkout' | trans }}</th>
+                            <td>{{ paymentMethodConfig.isLogoVisible ? 'true' : 'false' }}</td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                </table>
+            </div>
+
+        {% endblock %}
+
+    {% endembed %}
+
+{% endblock %}

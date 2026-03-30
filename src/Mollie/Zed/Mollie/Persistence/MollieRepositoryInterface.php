@@ -42,13 +42,17 @@ interface MollieRepositoryInterface
      */
     public function getPaymentLinkByFkSalesOrder(int $idSalesOrder): ?MolliePaymentLinkTransfer;
 
-
+    /**
+     * @param \Generated\Shared\Transfer\MolliePaymentMethodConfigCriteriaTransfer $criteriaTransfer
+     *
+     * @return \Generated\Shared\Transfer\MolliePaymentMethodConfigCollectionTransfer
+     */
     public function getPaymentMethodConfigCollection(MolliePaymentMethodConfigCriteriaTransfer $criteriaTransfer): MolliePaymentMethodConfigCollectionTransfer;
 
     /**
      * @param string $mollieKey
      *
-     * @return MolliePaymentMethodConfigTransfer|null
+     * @return \Generated\Shared\Transfer\MolliePaymentMethodConfigTransfer|null
      */
-    public function getMolliePaymentMethodConfigByMollieKey(string $mollieKey): ?MolliePaymentMethodConfigTransfer;
+    public function getPaymentMethodConfigByMollieKey(string $mollieKey): ?MolliePaymentMethodConfigTransfer;
 }

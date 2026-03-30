@@ -330,6 +330,7 @@
     </transfer>
 
     <transfer name="MolliePaymentMethodConfig">
+        <property name="idMolliePaymentMethodConfig" type="int" />
         <property name="mollieId" type="string" />
         <property name="minimumAmount" type="array" />
         <property name="maximumAmount" type="array" />
@@ -343,19 +344,10 @@
     <transfer name="MolliePaymentMethodConfigCriteria">
         <property name="localeId" type="string"/>
     </transfer>
-    
-    <transfer name="MolliePaymentMethodConfigTranslation">
-        <property name="fkMolliePaymentMethodConfig" type="int" />
-        <property name="fkLocale" type="int" />
-        <property name="name" type="string" />
-        <property name="description" type="string" />
-    </transfer>
 
     <transfer name="MolliePaymentMethodConfigCollection">
         <property name="configs" type="MolliePaymentMethodConfig[]" singular="molliePaymentMethodConfig"/>
     </transfer>
-
-
 
     <transfer name="MollieWebhookEvent">
         <property name="resource" type="string"/>

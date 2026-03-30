@@ -5,11 +5,9 @@ declare(strict_types = 1);
 namespace Mollie\Zed\Mollie\Persistence\Propel\Mapper;
 
 use Generated\Shared\Transfer\MolliePaymentLinkTransfer;
-use Generated\Shared\Transfer\MolliePaymentMethodConfigTransfer;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToMoneyFacadeInterface;
 use Mollie\Zed\Mollie\Dependency\Service\MollieToUtilEncodingServiceInterface;
 use Orm\Zed\Mollie\Persistence\SpyMolliePaymentLink;
-use Orm\Zed\Mollie\Persistence\SpyMolliePaymentMethodConfig;
 
 class MolliePaymentLinkMapper implements MolliePaymentLinkMapperInterface
 {
