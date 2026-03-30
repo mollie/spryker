@@ -132,7 +132,7 @@ class CreatePaymentApi extends AbstractApiCall
 
                 break;
             case SharedConfig::MOLLIE_PAYMENT_BILLIE:
-                //$additionalData[MollieConfig::REQUEST_PARAMETER_CREATE_PAYMENT_BILLIE_COMPANY] = $this->createCompanyObject($mollieApiRequestTransfer);
+                $additionalData[MollieConfig::REQUEST_PARAMETER_CREATE_PAYMENT_BILLIE_COMPANY] = $this->createCompanyObject($mollieApiRequestTransfer);
 
                 break;
             case SharedConfig::MOLLIE_PAYMENT_IDEAL_IN3:
@@ -317,16 +317,11 @@ class CreatePaymentApi extends AbstractApiCall
      */
     protected function createCompanyObject(MollieApiRequestTransfer $mollieApiRequestTransfer): array
     {
-        //$quoteTransfer = $mollieApiRequestTransfer->getQuote();
-        //$billingAddress = $quoteTransfer->getBillingAddress();
+        $company = [];
+        $company[MollieConfig::REQUEST_PARAMETER_CREATE_PAYMENT_BILLIE_COMPANY_REGISTRATION_NUMBER] = ''; // no company registration number in spryker?
+        $company[MollieConfig::REQUEST_PARAMETER_CREATE_PAYMENT_BILLIE_COMPANY_VAT_NUMBER] = ''; // no vat numbers in spryker?
 
-        //$company[MollieConfig::REQUEST_PARAMETER_CREATE_PAYMENT_BILLIE_COMPANY_BILLING_ADDRESS_ORGANIZATION_NAME] = $billingAddress->getCompany();
-        //$company['billingAddress'] = ['organizationName' => $billingAddress->getCompany()];
-        //$company[MollieConfig::REQUEST_PARAMETER_CREATE_PAYMENT_BILLIE_COMPANY_REGISTRATION_NUMBER] = 'reg 123'; // no company registration number in spryker?
-        //$company[MollieConfig::REQUEST_PARAMETER_CREATE_PAYMENT_BILLIE_COMPANY_VAT_NUMBER] = 'test 123'; // no vat numbers in spryker?
-        //$company[MollieConfig::REQUEST_PARAMETER_CREATE_PAYMENT_BILLIE_COMPANY_ENTITY_TYPE] = 'gmbh'; // no company entity type
-
-        return [];
+        return $company;
     }
 
     /**
