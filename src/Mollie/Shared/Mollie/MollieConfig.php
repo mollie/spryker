@@ -97,6 +97,16 @@ class MollieConfig extends AbstractSharedConfig
     /**
      * @var string
      */
+    public const MOLLIE_PROVIDER_BLIK = 'MollieBLIKPayment';
+
+    /**
+     * @var string
+     */
+    public const MOLLIE_PROVIDER_PAYCONIQ = 'MolliePayconiqPayment';
+
+    /**
+     * @var string
+     */
     public const MOLLIE_PROVIDER_BILLIE = 'MollieBilliePayment';
 
     /**
@@ -278,6 +288,16 @@ class MollieConfig extends AbstractSharedConfig
      * @var string
      */
     public const MOLLIE_PAYMENT_VIPPS_PROVIDER = 'MollieVippsPayment';
+
+    /**
+     * @var string
+     */
+    public const MOLLIE_PAYMENT_BLIK = 'mollieBLIKPayment';
+
+    /**
+     * @var string
+     */
+    public const MOLLIE_PAYMENT_PAYCONIQ = 'molliePayconiqPayment';
 
     /**
      * @var string
