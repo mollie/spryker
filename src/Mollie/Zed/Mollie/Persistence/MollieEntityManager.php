@@ -249,15 +249,15 @@ class MollieEntityManager extends AbstractEntityManager implements MollieEntityM
     }
 
     /**
-     * @param int $id
+     * @param int $idMolliePaymentMethodConfig
      *
      * @return void
      */
-    public function deleteMolliePaymentMethodConfig(int $id): void
+    public function deleteMolliePaymentMethodConfig(int $idMolliePaymentMethodConfig): void
     {
         $molliePaymentMethodConfigQuery = $this->getFactory()->createSpyMolliePaymentMethodConfigQuery();
         $molliePaymentMethodConfig = $molliePaymentMethodConfigQuery
-            ->filterByIdMolliePaymentMethodConfig($id)
+            ->filterByIdMolliePaymentMethodConfig($idMolliePaymentMethodConfig)
             ->findOne();
 
         if (!$molliePaymentMethodConfig) {

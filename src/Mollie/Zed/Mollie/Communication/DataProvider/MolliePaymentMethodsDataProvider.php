@@ -80,7 +80,6 @@ class MolliePaymentMethodsDataProvider
     public function getTableData(Request $request): MolliePaymentMethodsApiResponseTransfer
     {
         $localeTransfer = $this->localeFacade->getCurrentLocale();
-        $requestTransfer = $this->mapper->createMollieApiRequestTransfer($localeTransfer->getLocaleName());
         $collection = $this->mollieFacade->getPaymentMethodConfigCollection((new MolliePaymentMethodConfigCriteriaTransfer()));
         $responseTransfer = $this->getMollieDefaultValues($request, $localeTransfer->getLocaleName());
 
@@ -100,7 +99,6 @@ class MolliePaymentMethodsDataProvider
         int $localeId,
     ): MolliePaymentMethodsApiResponseTransfer {
         $configs = $collection->getConfigs()->getArrayCopy();
-        $paymentMethods = $responseTransfer->getCollection()->getMethods()->getArrayCopy();
         $mappedPaymentMethods = $this->mapMolliePaymentMethodTransfersToMollieId($responseTransfer->getCollection());
         foreach ($configs as $config) {
             $paymentId = $config->getMollieId();

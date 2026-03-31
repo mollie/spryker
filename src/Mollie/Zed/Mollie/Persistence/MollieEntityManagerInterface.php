@@ -94,9 +94,9 @@ interface MollieEntityManagerInterface
     public function updateMolliePaymentMethodConfig(MolliePaymentMethodConfigTransfer $paymentMethodConfigTransfer): MolliePaymentMethodConfigTransfer;
 
     /**
-     * @param int $id
+     * @param int $idMolliePaymentMethodConfig
      *
      * @return void
      */
-    public function deleteMolliePaymentMethodConfig(int $id): void;
+    public function deleteMolliePaymentMethodConfig(int $idMolliePaymentMethodConfig): void;
 }
