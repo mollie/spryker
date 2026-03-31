@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace Mollie\Zed\Mollie\Persistence;
 
+use Generated\Shared\Transfer\MollieCustomerTransfer;
 use Generated\Shared\Transfer\MollieItemPaymentCaptureTransfer;
 use Generated\Shared\Transfer\MolliePaymentCaptureTransfer;
 use Generated\Shared\Transfer\MolliePaymentLinkTransfer;
@@ -12,6 +13,7 @@ use Generated\Shared\Transfer\MollieRefundCollectionTransfer;
 use Generated\Shared\Transfer\MollieRefundSaveTransfer;
 use Generated\Shared\Transfer\OrderCollectionRequestTransfer;
 use Mollie\Shared\Mollie\MollieConstants;
+use Orm\Zed\Mollie\Persistence\SpyMollieCustomer;
 use Orm\Zed\Mollie\Persistence\SpyMollieOrderItemPaymentCapture;
 use Orm\Zed\Mollie\Persistence\SpyMolliePaymentLink;
 use Orm\Zed\Mollie\Persistence\SpyPaymentMollie;
@@ -203,5 +205,23 @@ class MollieEntityManager extends AbstractEntityManager implements MollieEntityM
         }
 
         return $molliePaymentLinkTransfer;
+    }
+
+    /**
+     * @param MollieCustomerTransfer $mollieCustomerTransfer
+     * @return void
+     */
+    public function createCustomer(MollieCustomerTransfer $mollieCustomerTransfer): void
+    {
+        $spyMollieCustomer = new SpyMollieCustomer();
+        $spyMollieCustomer->fromArray($mollieCustomerTransfer->toArray(), true);
+        
+        $metadata = $mollieCustomerTransfer->getMetadata();
+        if($metadata){
+            
+            $spyMollieCustomer->setFkCustomer($metadata[MollieConstants::MOLLIE_CUSTOMER_METADATA_ID_CUSTOMER] ?? null);
+        }
+        
+        $spyMollieCustomer->save();
     }
 }

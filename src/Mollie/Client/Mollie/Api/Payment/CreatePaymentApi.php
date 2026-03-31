@@ -79,8 +79,8 @@ class CreatePaymentApi extends AbstractApiCall
             webhookUrl: $webhookUrl,
             method: $method,
             metadata: $metadata,
-            additional: $additionalParameters,
             captureMode: $this->getCaptureModeForMethod($method),
+            additional: $additionalParameters,
         );
 
         return $this->request;

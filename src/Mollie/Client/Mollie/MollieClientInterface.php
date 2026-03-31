@@ -7,6 +7,7 @@ namespace Mollie\Client\Mollie;
 use Generated\Shared\Transfer\MollieApiRequestTransfer;
 use Generated\Shared\Transfer\MollieApiResponseTransfer;
 use Generated\Shared\Transfer\MollieCreateCaptureApiResponseTransfer;
+use Generated\Shared\Transfer\MollieCustomerApiResponseTransfer;
 use Generated\Shared\Transfer\MollieGetCaptureApiResponseTransfer;
 use Generated\Shared\Transfer\MollieGetProfileApiResponseTransfer;
 use Generated\Shared\Transfer\MollieLogApiTransfer;
@@ -251,4 +252,10 @@ interface MollieClientInterface
      * @return \Generated\Shared\Transfer\MolliePaymentLinkApiResponseTransfer
      */
     public function getPaymentLinks(MollieApiRequestTransfer $mollieApiRequestTransfer): MolliePaymentLinkApiResponseTransfer;
+
+    /**
+     * @param MollieApiRequestTransfer $mollieApiRequestTransfer
+     * @return MollieCustomerApiResponseTransfer
+     */
+    public function createCustomer(MollieApiRequestTransfer $mollieApiRequestTransfer): MollieCustomerApiResponseTransfer;
 }

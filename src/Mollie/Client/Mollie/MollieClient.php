@@ -7,6 +7,7 @@ namespace Mollie\Client\Mollie;
 use Generated\Shared\Transfer\MollieApiRequestTransfer;
 use Generated\Shared\Transfer\MollieApiResponseTransfer;
 use Generated\Shared\Transfer\MollieCreateCaptureApiResponseTransfer;
+use Generated\Shared\Transfer\MollieCustomerApiResponseTransfer;
 use Generated\Shared\Transfer\MollieGetCaptureApiResponseTransfer;
 use Generated\Shared\Transfer\MollieGetProfileApiResponseTransfer;
 use Generated\Shared\Transfer\MollieLogApiTransfer;
@@ -289,5 +290,14 @@ class MollieClient extends AbstractClient implements MollieClientInterface
     public function getPaymentLinks(MollieApiRequestTransfer $mollieApiRequestTransfer): MolliePaymentLinkApiResponseTransfer
     {
         return $this->getFactory()->createGetPaymentLinksApi()->execute($mollieApiRequestTransfer);
+    }
+
+    /**
+     * @param MollieApiRequestTransfer $mollieApiRequestTransfer
+     * @return MollieCustomerApiResponseTransfer
+     */
+    public function createCustomer(MollieApiRequestTransfer $mollieApiRequestTransfer): MollieCustomerApiResponseTransfer
+    {
+        return $this->getFactory()->createCustomerApi()->execute($mollieApiRequestTransfer);
     }
 }

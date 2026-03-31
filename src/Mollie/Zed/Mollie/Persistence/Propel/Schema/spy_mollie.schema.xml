@@ -107,4 +107,20 @@
         </foreign-key>
     </table>
 
+    <table name="spy_mollie_customer" idMethod="native" allowPkInsert="true" phpName="SpyMollieCustomer">
+        <column name="id_mollie_customer" required="true" type="INTEGER" autoIncrement="true" primaryKey="true"/>
+        <column name="id" required="true" type="VARCHAR" />
+        <column name="fk_customer" type="INTEGER"/>
+        <column name="mode" type="VARCHAR" size="10"/>
+        <column name="name" type="VARCHAR"/>
+        <column name="email" type="VARCHAR"/>
+        <column name="locale" type="VARCHAR" size="10"/>
+        <column name="metadata" type="LONGVARCHAR"/>
+
+        <behavior name="timestampable"/>
+        <foreign-key name="spy_mollie_customer-fk_customer" foreignTable="spy_customer" phpName="SpyCustomer">
+            <reference foreign="id_customer" local="fk_customer"/>
+        </foreign-key>
+    </table>
+
 </database>

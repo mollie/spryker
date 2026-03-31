@@ -12,6 +12,8 @@ use Mollie\Zed\Mollie\Business\Filter\MolliePaymentMethodsFilter;
 use Mollie\Zed\Mollie\Business\Filter\MolliePaymentMethodsFilterInterface;
 use Mollie\Zed\Mollie\Business\Filter\MollieRefundFilter;
 use Mollie\Zed\Mollie\Business\Filter\MollieRefundFilterInterface;
+use Mollie\Zed\Mollie\Business\Handler\MollieCustomerHandler;
+use Mollie\Zed\Mollie\Business\Handler\MollieCustomerHandlerInterface;
 use Mollie\Zed\Mollie\Business\Handler\MollieExpirationWarningHandler;
 use Mollie\Zed\Mollie\Business\Handler\MollieExpirationWarningHandlerInterface;
 use Mollie\Zed\Mollie\Business\Handler\MollieMailHandler;
@@ -314,6 +316,17 @@ class MollieBusinessFactory extends AbstractBusinessFactory
         return new PaymentLinkProcessor(
             $this->getMollieService(),
             $this->getConfig(),
+        );
+    }
+
+    /**
+     * @return MollieCustomerHandlerInterface
+     */
+    public function createMollieCustomerHandler(): MollieCustomerHandlerInterface
+    {
+        return new MollieCustomerHandler(
+            $this->getMollieClient(),
+            $this->getEntityManager(),
         );
     }
 }

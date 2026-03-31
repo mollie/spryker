@@ -178,6 +178,9 @@
         <property name="documentation" type="MollieLink"/>
         <property name="payment" type="MollieLink"/>
         <property name="paymentLink" type="MollieLink"/>
+        <property name="payments" type="MollieLink"/>
+        <property name="mandates" type="MollieLink"/>
+        <property name="subscriptions" type="MollieLink"/>
     </transfer>
 
     <transfer name="MollieLink">
@@ -365,6 +368,28 @@
         <property name="locale" type="string"/>
         <property name="billingCountry" type="string"/>
         <property name="amount" type="MollieAmount"/>
+    </transfer>
+
+    <transfer name="MollieCustomerApiResponse">
+        <property name="isSuccessful" type="bool"/>
+        <property name="message" type="string"/>
+        <property name="mollieCustomer" type="MollieCustomer"/>
+    </transfer>
+
+    <transfer name="MollieCustomer">
+        <property name="resource" type="string"/>
+        <property name="id" type="string"/>
+        <property name="mode" type="string"/>
+        <property name="name" type="string"/>
+        <property name="locale" type="string"/>
+        <property name="metadata" type="string"/>
+        <property name="createdAt" type="array"/>
+        <property name="links" type="MollieLinks"/>
+        <property name="fkCustomer" type="int"/>
+    </transfer>
+
+    <transfer name="Quote">
+        <property name="mollieSingleClickPaymentConsent" type="bool"/>
     </transfer>
 
 </transfers>

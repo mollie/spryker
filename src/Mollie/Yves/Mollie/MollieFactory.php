@@ -79,6 +79,7 @@ use Mollie\Yves\Mollie\PaymentPage\Form\MolliePayByBankSubForm;
 use Mollie\Yves\Mollie\PaymentPage\Form\MolliePayPalSubForm;
 use Mollie\Yves\Mollie\PaymentPage\Form\MolliePrzelewy24SubForm;
 use Mollie\Yves\Mollie\PaymentPage\Form\MollieSatispaySubForm;
+use Mollie\Yves\Mollie\PaymentPage\Form\MollieSingleClickPaymentConsentSubForm;
 use Mollie\Yves\Mollie\PaymentPage\Form\MollieSwishSubForm;
 use Mollie\Yves\Mollie\PaymentPage\Form\MollieTrustlySubForm;
 use Mollie\Yves\Mollie\PaymentPage\Form\MollieTwintSubForm;

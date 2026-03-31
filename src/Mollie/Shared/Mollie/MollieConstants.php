@@ -179,4 +179,6 @@ interface MollieConstants
     public const string LOGO_URL = 'LogoUrl';
 
     public const string MOLLIE_PAYMENT_LINK_EXPIRATION_TIME = 'MOLLIE:MOLLIE_PAYMENT_LINK_EXPIRATION_TIME';
+    
+    public const string MOLLIE_CUSTOMER_METADATA_ID_CUSTOMER = 'idCustomer';
 }

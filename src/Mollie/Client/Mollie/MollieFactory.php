@@ -9,6 +9,7 @@ use Mollie\Api\MollieApiClient;
 use Mollie\Client\Mollie\Api\ApiCallInterface;
 use Mollie\Client\Mollie\Api\Capture\CreatePaymentCaptureApi;
 use Mollie\Client\Mollie\Api\Capture\GetPaymentCaptureApi;
+use Mollie\Client\Mollie\Api\Customer\CreateCustomerApi;
 use Mollie\Client\Mollie\Api\Payment\CreatePaymentApi;
 use Mollie\Client\Mollie\Api\Payment\GetAllPaymentMethodsApi;
 use Mollie\Client\Mollie\Api\Payment\GetEnabledPaymentMethodsApi;
@@ -301,6 +302,19 @@ class MollieFactory extends AbstractFactory
     public function createGetPaymentLinksApi(): ApiCallInterface
     {
         return new GetPaymentLinksApi(
+            $this->createMollieApiClient(),
+            $this->getConfig(),
+            $this->getUtilEncodingService(),
+            $this->createMollieLogger(),
+        );
+    }
+
+    /**
+     * @return ApiCallInterface
+     */
+    public function createCustomerApi(): ApiCallInterface
+    {
+        return new CreateCustomerApi(
             $this->createMollieApiClient(),
             $this->getConfig(),
             $this->getUtilEncodingService(),
