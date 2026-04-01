@@ -20,7 +20,6 @@ class CreatePaymentLinkApiTest extends AbstractClientTest
       */
     public function testCreatePaymentLinkApi(): void
     {
-       // Arrange
         $amountTransfer = (new MollieAmountTransfer())
             ->setCurrency('EUR')
             ->setValue('10.00');
