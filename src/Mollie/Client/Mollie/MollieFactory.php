@@ -25,6 +25,8 @@ use Mollie\Client\Mollie\Dependency\Client\MollieToStorageClientInterface;
 use Mollie\Client\Mollie\Dependency\Service\MollieToUtilEncodingServiceInterface;
 use Mollie\Client\Mollie\Generator\Payment\PaymentMethodsCacheKeyGenerator;
 use Mollie\Client\Mollie\Generator\Payment\PaymentMethodsCacheKeyGeneratorInterface;
+use Mollie\Client\Mollie\Handler\PaymentApiHandler;
+use Mollie\Client\Mollie\Handler\PaymentApiHandlerInterface;
 use Mollie\Client\Mollie\Logger\MollieLogger;
 use Mollie\Client\Mollie\Logger\MollieLoggerInterface;
 use Mollie\Client\Mollie\Mapper\PaymentMethodMapper;
@@ -156,6 +158,17 @@ class MollieFactory extends AbstractFactory
             $this->getConfig(),
             $this->getUtilEncodingService(),
             $this->createMollieLogger(),
+            $this->getMollieService(),
+            $this->createPaymentApiHandler(),
+        );
+    }
+
+    /**
+     * @return \Mollie\Client\Mollie\Handler\PaymentApiHandlerInterface
+     */
+    protected function createPaymentApiHandler(): PaymentApiHandlerInterface
+    {
+        return new PaymentApiHandler(
             $this->getMollieService(),
         );
     }
