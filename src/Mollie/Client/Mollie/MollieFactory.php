@@ -170,6 +170,7 @@ class MollieFactory extends AbstractFactory
     {
         return new PaymentApiHandler(
             $this->getMollieService(),
+            $this->getConfig(),
         );
     }
 

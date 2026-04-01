@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Mollie\Client\Mollie\Handler;
 
 use Generated\Shared\Transfer\CheckoutResponseTransfer;
+use Generated\Shared\Transfer\ExpenseTransfer;
 use Generated\Shared\Transfer\MollieApiRequestTransfer;
 use Generated\Shared\Transfer\MollieLinesTransfer;
 use Generated\Shared\Transfer\QuoteTransfer;
@@ -20,9 +21,11 @@ class PaymentApiHandler implements PaymentApiHandlerInterface
 {
     /**
      * @param \Mollie\Service\Mollie\MollieServiceInterface $mollieService
+     * @param \Mollie\Client\Mollie\MollieConfig $mollieConfig
      */
     public function __construct(
         protected MollieServiceInterface $mollieService,
+        protected MollieConfig $mollieConfig,
     ) {
     }
 
@@ -69,7 +72,7 @@ class PaymentApiHandler implements PaymentApiHandlerInterface
 
                 break;
             case SharedConfig::MOLLIE_PAYMENT_IDEAL_IN3:
-                $additionalData[MollieConfig::REQUEST_PARAMETER_CREATE_PAYMENT_IDEAL_IN3_CONSUMER_DATE_OF_BIRTH] = $this->getCustomerDateOfBirth($mollieApiRequestTransfer);
+                $additionalData[MollieConfig::REQUEST_PARAMETER_CREATE_PAYMENT_IDEAL_IN3_CONSUMER_DATE_OF_BIRTH] = $mollieApiRequestTransfer->getQuote()->getCustomer()?->getDateOfBirth();
 
                 break;
             default:
@@ -77,22 +80,6 @@ class PaymentApiHandler implements PaymentApiHandlerInterface
         }
 
         return $additionalData;
-    }
-
-    /**
-     * @param \Generated\Shared\Transfer\MollieApiRequestTransfer $mollieApiRequestTransfer
-     *
-     * @return string|null
-     */
-    protected function getCustomerDateOfBirth(MollieApiRequestTransfer $mollieApiRequestTransfer): ?string
-    {
-        $dateOfBirth = null;
-        $quoteTransfer = $mollieApiRequestTransfer->getQuote();
-        if ($quoteTransfer->getCustomer()) {
-            $dateOfBirth = $quoteTransfer->getCustomer()->getDateOfBirth();
-        }
-
-        return $dateOfBirth;
     }
 
     /**
@@ -122,11 +109,16 @@ class PaymentApiHandler implements PaymentApiHandlerInterface
 
     /**
      * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
+     * @param string $method
      *
-     * @return \Mollie\Api\Http\Data\DataCollection<array<mixed>>
+     * @return \Mollie\Api\Http\Data\DataCollection<array<mixed>>|null
      */
-    public function createLines(QuoteTransfer $quoteTransfer): DataCollection
+    public function createLines(QuoteTransfer $quoteTransfer, string $method): ?DataCollection
     {
+        if (!in_array($method, $this->mollieConfig->getBNPLPaymentMethods())) {
+            return null;
+        }
+
         $items = $quoteTransfer->getItems();
         $currencyCode = $quoteTransfer->getCurrency()->getCode();
 
@@ -171,30 +163,37 @@ class PaymentApiHandler implements PaymentApiHandlerInterface
      */
     protected function getShippingFee(QuoteTransfer $quoteTransfer): ?array
     {
-        $shippingExpense = null;
-        foreach ($quoteTransfer->getExpenses() as $expense) {
-            if ($expense->getType() === ShipmentConfig::SHIPMENT_EXPENSE_TYPE) {
-                $shippingExpense = $expense;
+        $shippingExpense = $this->getShippingExpense($quoteTransfer);
+        $shippingAmount = $shippingExpense?->getSumPriceToPayAggregation();
 
-                break;
-            }
+        if (!$shippingAmount) {
+            return null;
         }
 
-        if ($shippingExpense) {
-            $shippingAmount = $shippingExpense->getSumPriceToPayAggregation();
-            if ($shippingAmount > 0) {
-                $currencyCode = $quoteTransfer->getCurrency()->getCode();
-                $shippingFee = $this->mollieService->convertIntegerToMollieAmount($shippingAmount, $currencyCode);
+        $currencyCode = $quoteTransfer->getCurrency()->getCode();
+        $shippingFee = $this->mollieService->convertIntegerToMollieAmount($shippingAmount, $currencyCode);
 
-                $linesTransfer = new MollieLinesTransfer();
-                $linesTransfer
-                    ->setType(MollieConstants::PRODUCT_TYPE_SHIPPING_FEE)
-                    ->setDescription('Shipping Fee')
-                    ->setQuantity(1)
-                    ->setUnitPrice($shippingFee)
-                    ->setTotalAmount($shippingFee);
+        $linesTransfer = new MollieLinesTransfer();
+        $linesTransfer
+            ->setType(MollieConstants::PRODUCT_TYPE_SHIPPING_FEE)
+            ->setDescription('Shipping Fee')
+            ->setQuantity(1)
+            ->setUnitPrice($shippingFee)
+            ->setTotalAmount($shippingFee);
 
-                return $linesTransfer->toArray(true, true);
+        return $linesTransfer->toArray(true, true);
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
+     *
+     * @return \Generated\Shared\Transfer\ExpenseTransfer|null
+     */
+    protected function getShippingExpense(QuoteTransfer $quoteTransfer): ?ExpenseTransfer
+    {
+        foreach ($quoteTransfer->getExpenses() as $expense) {
+            if ($expense->getType() === ShipmentConfig::SHIPMENT_EXPENSE_TYPE) {
+                return $expense;
             }
         }
 

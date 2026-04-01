@@ -35,8 +35,9 @@ interface PaymentApiHandlerInterface
 
     /**
      * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
+     * @param string $method
      *
-     * @return \Mollie\Api\Http\Data\DataCollection<array<mixed>>
+     * @return \Mollie\Api\Http\Data\DataCollection<array<mixed>>|null
      */
-    public function createLines(QuoteTransfer $quoteTransfer): DataCollection;
+    public function createLines(QuoteTransfer $quoteTransfer, string $method): ?DataCollection;
 }

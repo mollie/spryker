@@ -73,11 +73,7 @@ class CreatePaymentApi extends AbstractApiCall
         $metadata = $this->apiHandler->createPaymentMetadata($checkoutResponseTransfer);
         $additionalParameters = $this->apiHandler->createAdditionalParameters($mollieApiRequestTransfer);
         $billingAddress = $this->apiHandler->createBillingAddress($quoteTransfer);
-
-        $lines = null;
-        if (in_array($method, $this->mollieConfig->getBNPLPaymentMethods())) {
-            $lines = $this->apiHandler->createLines($quoteTransfer);
-        }
+        $lines = $this->apiHandler->createLines($quoteTransfer, $method);
 
         $this->request = new CreatePaymentRequest(
             description: $checkoutResponseTransfer->getSaveOrderOrFail()->getOrderReference(),
