@@ -15,5 +15,5 @@ mollie.profile.id,Profile ID:
 mollie.profile.status,Profile status:
 mollie.profile.error-message.generic,Error contacting the mollie service to validate profile
 mollie.profile.error-message.not-verified,Payments may not work in live mode until your profile is verified.
-mollie.order.warning.capture-expiring,"Payment capture expiring in %s, please capture manually before that time"
+mollie.order.warning.capture-expiring,"Payment capture expiring in %s hours, please capture manually before that time"
 mollie.order.warning.capture-expired,Capture expired
