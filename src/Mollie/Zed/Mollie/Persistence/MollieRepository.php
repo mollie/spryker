@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace Mollie\Zed\Mollie\Persistence;
 
+use Generated\Shared\Transfer\MollieCustomerTransfer;
 use Generated\Shared\Transfer\MollieItemPaymentCaptureTransfer;
 use Generated\Shared\Transfer\MolliePaymentLinkTransfer;
 use Generated\Shared\Transfer\MolliePaymentTransfer;
 use Generated\Shared\Transfer\MollieRefundResponseTransfer;
+use Orm\Zed\Mollie\Persistence\Base\SpyMollieCustomer;
 use Spryker\Zed\Kernel\Persistence\AbstractRepository;
 
 /**
@@ -93,5 +95,26 @@ class MollieRepository extends AbstractRepository implements MollieRepositoryInt
         return $this->getFactory()
             ->createMolliePaymentLinkMapper()
             ->mapMolliePaymentLinkEntityToTransfer($spyMolliePaymentLinkEntity);
+    }
+
+    /**
+     * @param int $idCustomer
+     * @return MollieCustomerTransfer|null
+     */
+    public function getMollieCustomerByFkCustomer(int $idCustomer): ?MollieCustomerTransfer
+    {
+        /** @var SpyMollieCustomer $spyMollieCustomerEntity */
+        $spyMollieCustomerEntity = $this->getFactory()
+            ->createSpyMollieCustomerQuery()
+            ->filterByFkCustomer($idCustomer)
+            ->findOne();
+
+        if (!$spyMollieCustomerEntity){
+            return null;
+        }
+
+        return $this->getFactory()
+            ->createMollieCustomerMapper()
+            ->mapMollieCustomerEntityToTransfer($spyMollieCustomerEntity);
     }
 }

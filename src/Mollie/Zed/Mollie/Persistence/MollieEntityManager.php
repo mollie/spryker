@@ -211,7 +211,7 @@ class MollieEntityManager extends AbstractEntityManager implements MollieEntityM
      * @param MollieCustomerTransfer $mollieCustomerTransfer
      * @return void
      */
-    public function createCustomer(MollieCustomerTransfer $mollieCustomerTransfer): void
+    public function saveCustomer(MollieCustomerTransfer $mollieCustomerTransfer): void
     {
         $spyMollieCustomer = new SpyMollieCustomer();
         $spyMollieCustomer->fromArray($mollieCustomerTransfer->toArray(), true);

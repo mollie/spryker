@@ -31,6 +31,11 @@ class MollieCustomerHandler implements MollieCustomerHandlerInterface
         $mollieApiRequestTransfer->setQuote($quoteTransfer);
 
         $mollieApiResponseTranfer = $this->mollieClient->createCustomer($mollieApiRequestTransfer);
-        
+
+        if($mollieApiResponseTranfer->getIsSuccessful()){
+            $this->entityManager->saveCustomer($mollieApiResponseTranfer->getMollieCustomer());
+        }
+
+        return $mollieApiResponseTranfer;
     }
 }

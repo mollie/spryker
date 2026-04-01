@@ -8,6 +8,8 @@ use Mollie\Service\Mollie\MollieServiceInterface;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToMoneyFacadeInterface;
 use Mollie\Zed\Mollie\Dependency\Service\MollieToUtilEncodingServiceInterface;
 use Mollie\Zed\Mollie\MollieDependencyProvider;
+use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MollieCustomerMapper;
+use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MollieCustomerMapperInterface;
 use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MollieOrderMapper;
 use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MollieOrderMapperInterface;
 use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MolliePaymentCaptureMapper;
@@ -16,6 +18,7 @@ use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MolliePaymentLinkMapper;
 use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MolliePaymentLinkMapperInterface;
 use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MollieRefundMapper;
 use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MollieRefundMapperInterface;
+use Orm\Zed\Mollie\Persistence\Base\SpyMollieCustomerQuery;
 use Orm\Zed\Mollie\Persistence\SpyMollieOrderItemPaymentCaptureQuery;
 use Orm\Zed\Mollie\Persistence\SpyMolliePaymentLinkQuery;
 use Orm\Zed\Mollie\Persistence\SpyPaymentMollieQuery;
@@ -63,6 +66,14 @@ class MolliePersistenceFactory extends AbstractPersistenceFactory
     }
 
     /**
+     * @return MollieCustomerMapperInterface
+     */
+    public function createMollieCustomerMapper(): MollieCustomerMapperInterface
+    {
+        return new MollieCustomerMapper();
+    }
+
+    /**
      * @return \Orm\Zed\Mollie\Persistence\SpyPaymentMollieQuery
      */
     public function createSpyPaymentMollieQuery(): SpyPaymentMollieQuery
@@ -92,6 +103,14 @@ class MolliePersistenceFactory extends AbstractPersistenceFactory
     public function createSpyMolliePaymentLinkQuery(): SpyMolliePaymentLinkQuery
     {
         return SpyMolliePaymentLinkQuery::create();
+    }
+
+    /**
+     * @return SpyMollieCustomerQuery
+     */
+    public function createSpyMollieCustomerQuery(): SpyMollieCustomerQuery
+    {
+        return SpyMollieCustomerQuery::create();
     }
 
     /**

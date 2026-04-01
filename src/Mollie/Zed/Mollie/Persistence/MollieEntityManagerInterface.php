@@ -83,5 +83,5 @@ interface MollieEntityManagerInterface
      * @param MollieCustomerTransfer $mollieCustomerTransfer
      * @return void
      */
-    public function createCustomer(MollieCustomerTransfer $mollieCustomerTransfer): void;
+    public function saveCustomer(MollieCustomerTransfer $mollieCustomerTransfer): void;
 }
