@@ -46,7 +46,7 @@ This guide provides comprehensive instructions for integrating Mollie payment se
   - [Command Plugins](#command-plugins)
   - [Condition Plugins](#condition-plugins)
   - [3.6. Mail Dependency Provider](#36-mail-dependency-provider)
-  - [Command Plugins](#command-plugins)
+  - [Command Plugins](#command-plugins-1)
 - [4. Glossary Keys and Translations](#4-glossary-keys-and-translations)
   - [Complete Glossary CSV](#complete-glossary-csv)
 - [4. Payment Methods Configuration](#4-payment-methods-configuration)
@@ -71,7 +71,20 @@ This guide provides comprehensive instructions for integrating Mollie payment se
   - [Wallet Configuration](#wallet-configuration)
   - [Apple Pay Integration](#apple-pay-integration)
   - [Setup Steps](#setup-steps)
-- [8. Testing & Debugging](#8-testing--debugging)
+- [8. Payment Links](#8-payment-links)
+  - [Overview](#overview-1)
+  - [API & Configuration Setup](#api--configuration-setup)
+  - [Enabling Payment Links](#enabling-payment-links)
+  - [Configuration Options](#configuration-options)
+  - [Generating a Payment Link](#generating-a-payment-link)
+  - [Backoffice: Creating & Managing Payment Links](#backoffice-creating--managing-payment-links)
+  - [Creating a Link](#creating-a-link)
+  - [Viewing Link Status](#viewing-link-status)
+  - [Webhook Events for Payment Links](#webhook-events-for-payment-links)
+  - [Link-Specific Status Mapping](#link-specific-status-mapping)
+  - [Handling Expiry & Cancellation Events](#handling-expiry--cancellation-events)
+  - [Testing Payment Links](#testing-payment-links)
+- [9. Testing & Debugging](#9-testing--debugging)
   - [Test Mode Setup](#test-mode-setup)
   - [Test Credit Cards](#test-credit-cards)
   - [Debug Logging](#debug-logging)
@@ -79,21 +92,21 @@ This guide provides comprehensive instructions for integrating Mollie payment se
   - [Log Levels and Content](#log-levels-and-content)
   - [Sensitive Data Masking](#sensitive-data-masking)
   - [Common Test Issues](#common-test-issues)
-- [9. Production Deployment](#9-production-deployment)
+- [10. Production Deployment](#10-production-deployment)
   - [Pre-Production Checklist](#pre-production-checklist)
   - [Production Configuration](#production-configuration)
-- [10. Troubleshooting](#10-troubleshooting)
+- [11. Troubleshooting](#11-troubleshooting)
   - [Payment methods not displaying at checkout](#payment-methods-not-displaying-at-checkout)
   - [Webhooks not being received](#webhooks-not-being-received)
   - [Credit card components not loading](#credit-card-components-not-loading)
   - [Apple Pay not appearing](#apple-pay-not-appearing)
-- [11. Webhook Handling](#11-webhook-handling)
+- [12. Webhook Handling](#12-webhook-handling)
   - [How Webhooks Work](#how-webhooks-work)
   - [Webhook Configuration](#webhook-configuration)
   - [Webhook Payload Structure](#webhook-payload-structure)
   - [Payment Status Mapping](#payment-status-mapping)
   - [Webhook Retry Behavior](#webhook-retry-behavior)
-- [12. Webhook Error Troubleshooting](#12-webhook-error-troubleshooting)
+- [13. Webhook Error Troubleshooting](#13-webhook-error-troubleshooting)
   - [Common Webhook Issues](#common-webhook-issues)
   - [Issue 1: Webhooks Not Being Received](#issue-1-webhooks-not-being-received)
   - [Issue 2: Webhooks Received But Not Processed](#issue-2-webhooks-received-but-not-processed)
@@ -1545,7 +1558,129 @@ Apple Pay allows customers to pay using Face ID, Touch ID, or passcode on suppor
 >
 > Apple Pay will only display as a payment option when accessed from compatible devices and browsers. The integration automatically handles device and browser detection.
 
-## 8. Testing & Debugging
+## 8. Payment Links
+
+Payment Links allow merchants to generate shareable URLs that customers can use to complete a payment without going through the standard checkout flow. This is useful for invoicing, customer support scenarios, and manual order processing.
+
+### Overview
+
+A Mollie Payment Link is a hosted payment page that can be sent to a customer via email, SMS, or any other channel. When the customer opens the link, they are presented with Mollie's hosted payment page where they can select a payment method and complete the transaction.
+
+**Key use cases:**
+
+- Sending payment requests for phone or in-person orders
+- Recovering abandoned checkouts
+- Invoicing B2B customers
+- Customer service-initiated payments
+
+### API & Configuration Setup
+
+#### Enabling Payment Links
+
+Payment Links are available through the Mollie API and do not require additional Spryker module configuration beyond your existing API key setup. Ensure your API key has sufficient permissions in the Mollie Dashboard.
+
+#### Configuration Options
+
+The following parameters can be set when generating a payment link:
+
+| Parameter | Required | Description |
+|-----------|----------|-------------|
+| `amount` | Yes | The payment amount (value + currency) |
+| `description` | Yes | A description shown on the hosted payment page |
+| `redirectUrl` | No | Where to redirect the customer after payment |
+| `webhookUrl` | No | Override webhook URL for this specific link |
+| `expiresAt` | No | Expiry date/time for the link (ISO 8601) |
+
+#### Generating a Payment Link
+
+Use the Mollie Facade to generate a payment link programmatically:
+
+```php
+<?php
+
+use Mollie\Zed\Mollie\Business\MollieFacade;
+
+$mollieFacade = new MollieFacade();
+
+$paymentLinkData = [
+    'amount' => [
+        'currency' => 'EUR',
+        'value'    => '25.00',
+    ],
+    'description'  => 'Order #12345',
+    'redirectUrl'  => 'https://www.yourstore.com/order/confirmation',
+    'webhookUrl'   => 'https://www.yourstore.com/mollie/webhook',
+    'expiresAt'    => '2026-12-31T23:59:59+00:00',
+];
+
+$paymentLink = $mollieFacade->createPaymentLink($paymentLinkData);
+
+// $paymentLink->getCheckoutUrl() returns the shareable URL
+```
+
+> **Webhook URL for Payment Links**
+>
+> Payment links use the same webhook endpoint as standard payments (`/mollie/webhook`). See [Section 12: Webhook Handling](#12-webhook-handling) for full webhook configuration details.
+
+### Backoffice: Creating & Managing Payment Links
+
+> **Note:** Payment link management is visible in the Back Office panel. See [Section 5: Backoffice Configuration](#5-backoffice-configuration) for panel setup instructions.
+
+#### Creating a Link
+
+1. Log in to your Spryker Backoffice
+2. Navigate to **Administration > Mollie payment methods**
+3. Select **Payment Links** from the panel
+4. Click **Create Payment Link**
+5. Fill in the required fields: amount, currency, description, and optional expiry date
+6. Click **Generate** — the shareable URL will be displayed and can be copied or sent directly
+
+#### Viewing Link Status
+
+The Payment Links overview table shows:
+
+| Column | Description |
+|--------|-------------|
+| **Link ID** | Unique Mollie identifier for the payment link |
+| **Description** | The description provided when the link was created |
+| **Amount** | Payment amount and currency |
+| **Status** | `open`, `paid`, `expired`, or `canceled` |
+| **Expires At** | Link expiry date/time (if set) |
+| **Created At** | Timestamp of link creation |
+
+### Webhook Events for Payment Links
+
+Payment links trigger the same webhook mechanism as standard payments. When a customer completes (or fails to complete) payment via a link, Mollie sends a POST notification to your configured webhook URL.
+
+#### Link-Specific Status Mapping
+
+| Mollie Status | Description | OMS Action |
+|---------------|-------------|------------|
+| `open` | Link created, awaiting customer action | None |
+| `paid` | Payment successfully completed via link | Mark as paid |
+| `expired` | Link expired before payment was made | Mark as expired |
+| `canceled` | Link was manually canceled | Mark as canceled |
+
+For full webhook handling details, including retry behavior and payload structure, see [Section 12: Webhook Handling](#12-webhook-handling).
+
+#### Handling Expiry & Cancellation Events
+
+If a payment link expires or is canceled, ensure your OMS handles these states gracefully. Configure the appropriate OMS transitions for `payment_expired` and `payment_cancelled` states as described in [Section 3.4](#34-configure-oms--mollie-payment-mapping).
+
+### Testing Payment Links
+
+1. Ensure `MOLLIE_TEST_MODE` is set to `true` and you are using a test API key
+2. Generate a payment link via the Backoffice or API
+3. Open the link in a browser — you will be taken to Mollie's hosted test payment page
+4. Complete the payment using a [test card](#test-credit-cards) or any available test payment method
+5. Verify the webhook is received and the link status updates to `paid` in the Back Office
+
+> **Common Test Issues**
+>
+> - If the payment page does not load, verify your API key is a valid test key (`test_`)
+> - If webhook status does not update, check your test webhook URL configuration (see [Section 9: Testing & Debugging](#9-testing--debugging))
+
+## 9. Testing & Debugging
 
 ### Test Mode Setup
 
@@ -1615,8 +1750,9 @@ When `MOLLIE_DEBUG_MODE` is set to `'Extensive'`, sensitive data is automaticall
 | Payment methods not appearing | Methods not enabled in Mollie Dashboard | Enable payment methods in test mode |
 | Webhook not receiving updates | URL not accessible or incorrect | Test webhook URL manually, check firewall |
 | API errors | Invalid API key or Profile ID | Verify credentials in Mollie Dashboard |
+| Payment link not loading | Invalid or expired test API key | Verify test API key starts with `test_` |
 
-## 9. Production Deployment
+## 10. Production Deployment
 
 ### Pre-Production Checklist
 
@@ -1644,7 +1780,7 @@ $config[MollieConstants::MOLLIE] = [
 > - Always use HTTPS for all production URLs
 > - Implement proper error handling and logging
 
-## 10. Troubleshooting
+## 11. Troubleshooting
 
 ### Payment methods not displaying at checkout
 
@@ -1708,7 +1844,21 @@ $config[MollieConstants::MOLLIE] = [
 3. Test on compatible Apple device with Safari or Chrome
 4. Check that Apple Pay is enabled in device settings
 
-## 11. Webhook Handling
+### Payment link not generating
+
+**Possible Causes:**
+
+- Insufficient API key permissions
+- Missing required parameters (amount, description)
+- Invalid expiry date format
+
+**Solutions:**
+
+1. Verify your API key has payment link creation permissions in the Mollie Dashboard
+2. Ensure `amount.value` is a string with two decimal places (e.g., `"25.00"`)
+3. Ensure `expiresAt` follows ISO 8601 format if provided
+
+## 12. Webhook Handling
 
 Webhooks are asynchronous notifications sent by Mollie to your server when payment status changes occur. Proper webhook handling is critical for accurate order processing and payment status updates.
 
@@ -1775,6 +1925,8 @@ Mollie payment statuses map to OMS states as follows:
 | `canceled` | Payment cancelled by customer | Mark as cancelled | `payment_cancelled` |
 | `expired` | Payment expired (timeout) | Mark as expired | `payment_expired` |
 
+> **Payment Links:** The same status mapping applies to payments made via Payment Links. See [Section 8: Payment Links — Link-Specific Status Mapping](#link-specific-status-mapping) for additional link-specific states.
+
 ### Webhook Retry Behavior
 
 If your server doesn't respond with HTTP 200, Mollie will retry the webhook:
@@ -1796,7 +1948,7 @@ If your server doesn't respond with HTTP 200, Mollie will retry the webhook:
 >
 > Always respond with HTTP 200 immediately, even if processing hasn't completed. Process the webhook asynchronously if needed to avoid timeouts.
 
-## 12. Webhook Error Troubleshooting
+## 13. Webhook Error Troubleshooting
 
 ### Common Webhook Issues
 
