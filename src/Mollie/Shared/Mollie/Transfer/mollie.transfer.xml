@@ -48,8 +48,8 @@
         <property name="id" type="string"/>
         <property name="description" type="string"/>
         <property name="locale" type="string"/>
-        <property name="minimumAmount" type="array"/>
-        <property name="maximumAmount" type="array"/>
+        <property name="minimumAmount" type="MollieAmount"/>
+        <property name="maximumAmount" type="MollieAmount"/>
         <property name="image" type="array"/>
         <property name="issuers" type="array"/>
         <property name="pricing" type="array"/>

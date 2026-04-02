@@ -4,10 +4,9 @@ declare(strict_types = 1);
 
 namespace Mollie\Zed\Mollie\Communication\DataProvider;
 
-use ArrayObject;
+use Generated\Shared\Transfer\MollieAmountTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodCollectionTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodConfigCollectionTransfer;
-use Generated\Shared\Transfer\MolliePaymentMethodConfigCriteriaTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodConfigTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodsApiResponseTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodTransfer;
@@ -127,17 +126,17 @@ class MolliePaymentMethodsDataProvider
     }
 
     /**
-     * @param array<string, mixed> $amount
+     * @param \Generated\Shared\Transfer\MollieAmountTransfer $amountTransfer
      *
      * @return float|null
      */
-    protected function transformAmountToFloat(array $amount): float|null
+    protected function transformAmountToFloat(MollieAmountTransfer $amountTransfer): float|null
     {
-        if (!$amount) {
+        if (!$amountTransfer->getValue()) {
             return null;
         }
 
-        return (float)$amount['value'];
+        return (float)$amountTransfer['value'];
     }
 
     /**
@@ -150,7 +149,8 @@ class MolliePaymentMethodsDataProvider
         $localeTransfer = $this->localeFacade->getCurrentLocale();
         $currency = $this->extractCurrencyCode($request);
         $responseTransfer = $this->getMollieDefaultValues($request, $localeTransfer->getLocaleName());
-        $collection = $this->mollieFacade->getPaymentMethodConfigCollection((new MolliePaymentMethodConfigCriteriaTransfer())->setCurrencyCode($currency));
+        $criteriaTransfer = $this->mapper->createMolliePaymentMethodConfigCriteriaTransfer(null, $currency);
+        $collection = $this->mollieFacade->getPaymentMethodConfigCollection($criteriaTransfer);
 
         return $this->overrideMollieDefaultsWithConfigData($collection, $responseTransfer, $localeTransfer->getIdLocale());
     }
@@ -179,9 +179,7 @@ class MolliePaymentMethodsDataProvider
         }
 
         return $responseTransfer->setCollection(
-            (new MolliePaymentMethodCollectionTransfer())->setMethods(
-                new ArrayObject(array_values($mappedPaymentMethods)),
-            ),
+            $this->mapper->createMolliePaymentMethodCollection(array_values($mappedPaymentMethods)),
         );
     }
 
@@ -195,14 +193,14 @@ class MolliePaymentMethodsDataProvider
     {
         if (
             $methodTransfer->getMaximumAmount()
-            && $methodTransfer->getMaximumAmount()['currency'] === $configTransfer->getCurrencyCode()
+            && $methodTransfer->getMaximumAmount()->getCurrency() === $configTransfer->getCurrencyCode()
         ) {
             return true;
         }
 
         if (
             $methodTransfer->getMinimumAmount()
-            && $methodTransfer->getMinimumAmount()['currency'] === $configTransfer->getCurrencyCode()
+            && $methodTransfer->getMinimumAmount()->getCurrency() === $configTransfer->getCurrencyCode()
         ) {
             return true;
         }
@@ -222,24 +220,14 @@ class MolliePaymentMethodsDataProvider
             $configTransfer->getMaximumAmount()
             && $configTransfer->getMaximumAmount()->getValue()
         ) {
-            $methodTransfer->setMaximumAmount(
-                [
-                    'value' => (string)$configTransfer->getMaximumAmount()->getValue(),
-                    'currency' => $configTransfer->getMaximumAmount()->getCurrency(),
-                ],
-            );
+            $methodTransfer->setMaximumAmount($configTransfer->getMaximumAmount());
         }
 
         if (
             $configTransfer->getMinimumAmount()
             && $configTransfer->getMinimumAmount()->getValue()
         ) {
-            $methodTransfer->setMinimumAmount(
-                [
-                    'value' => (string)$configTransfer->getMinimumAmount()->getValue(),
-                    'currency' => $configTransfer->getMinimumAmount()->getCurrency(),
-                ],
-            );
+            $methodTransfer->setMinimumAmount($configTransfer->getMinimumAmount());
         }
 
         if (
