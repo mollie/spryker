@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Mollie\Client\Mollie;
 
@@ -81,6 +81,21 @@ class MollieConfig extends AbstractBundleConfig
      * @var string
      */
     protected const MOLLIE_MANUAL_CAPTURE_MODE = 'manual';
+
+    /**
+     * @var string
+     */
+    public const SPRYKER_CORE_PACKAGE = 'spryker-feature/spryker-core';
+
+    /**
+     * @var string
+     */
+    public const MOLLIE_PLUGIN_PACKAGE = 'mollie/spryker-payment';
+
+    /**
+     * @var string
+     */
+    public const UAP_IDENTIFIER = 'uap/84vsKAknyrfvkQHs';
 
     /**
      * @return string
@@ -204,5 +219,29 @@ class MollieConfig extends AbstractBundleConfig
     public function getMollieManualCaptureMode(): string
     {
         return static::MOLLIE_MANUAL_CAPTURE_MODE;
+    }
+
+    /**
+     * @return string
+     */
+    public function getUapIdentifier(): string
+    {
+        return static::UAP_IDENTIFIER;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSprykerCorePackage(): string
+    {
+        return static::SPRYKER_CORE_PACKAGE;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMolliePluginPackage(): string
+    {
+        return static::MOLLIE_PLUGIN_PACKAGE;
     }
 }
