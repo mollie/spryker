@@ -58,11 +58,9 @@ class MolliePaymentLinkMapper implements MolliePaymentLinkMapperInterface
             ->setCurrency($formData[static::PAYMENT_LINK_FORM_CURRENCY]);
 
         $expiryDate = $formData[static::PAYMENT_LINK_FORM_EXPIRY_DATE];
-        if ($expiryDate) {
-            $expiryDateTime = $expiryDate->format('Y-m-d\TH:i:sP');
-        } else {
-            $expiryDateTime = $this->mollieService->getPaymentLinkDefaultExpirationDateTime();
-        }
+        $expiryDateTime = $expiryDate
+            ? $expiryDate->format('Y-m-d\TH:i:sP')
+            : $this->mollieService->getPaymentLinkDefaultExpirationDateTime();
 
         $paymentLinkTransfer
             ->setExpiresAt($expiryDateTime)
