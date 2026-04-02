@@ -85,13 +85,8 @@ class MollieCommunicationMapper implements MollieCommunicationMapperInterface
             $configTransfer->setImage(['size2x' => $formData[MolliePaymentMethodConfigTransfer::IMAGE]]);
         }
 
-//        if ($formData[MolliePaymentMethodConfigTransfer::MAXIMUM_AMOUNT] !== null) {
-            $configTransfer->setMaximumAmount($this->formatMollieAmount($formData[MolliePaymentMethodConfigTransfer::MAXIMUM_AMOUNT]));
-//        }
-
-//        if ($formData[MolliePaymentMethodConfigTransfer::MINIMUM_AMOUNT] !== null) {
-            $configTransfer->setMinimumAmount($this->formatMollieAmount($formData[MolliePaymentMethodConfigTransfer::MINIMUM_AMOUNT]));
-//        }
+        $configTransfer->setMaximumAmount($this->formatMollieAmount($formData[MolliePaymentMethodConfigTransfer::MAXIMUM_AMOUNT]));
+        $configTransfer->setMinimumAmount($this->formatMollieAmount($formData[MolliePaymentMethodConfigTransfer::MINIMUM_AMOUNT]));
 
         return $configTransfer;
     }

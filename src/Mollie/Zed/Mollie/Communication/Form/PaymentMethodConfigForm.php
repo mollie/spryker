@@ -95,7 +95,6 @@ class PaymentMethodConfigForm extends AbstractType
             'label' => 'Minimum amount',
             'constraints' => $constraints,
             'required' => false,
-//            'error_bubbling' => false,
         ]);
 
         return $this;
