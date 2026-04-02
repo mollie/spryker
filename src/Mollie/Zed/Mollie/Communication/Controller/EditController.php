@@ -18,6 +18,7 @@ class EditController extends AbstractController
     public const string MOLLIE_VIEW_PATH_WITH_PARAMS = '/mollie/detail?mollie_payment_method_id=%s&currency=%s';
 
     public const string MOLLIE_LIST_PATH = '/mollie';
+
     /**
      * @param \Symfony\Component\HttpFoundation\Request $request
      *
