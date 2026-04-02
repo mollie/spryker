@@ -205,11 +205,13 @@ interface MollieFacadeInterface
     public function getPaymentMethodConfigCollection(MolliePaymentMethodConfigCriteriaTransfer $criteriaTransfer): MolliePaymentMethodConfigCollectionTransfer;
 
     /**
-     * @param string $key
+     * @param \Generated\Shared\Transfer\MolliePaymentMethodConfigCriteriaTransfer $criteriaTransfer
      *
      * @return \Generated\Shared\Transfer\MolliePaymentMethodConfigTransfer|null
      */
-    public function getPaymentMethodConfigByMollieKey(string $key): ?MolliePaymentMethodConfigTransfer;
+    public function getPaymentMethodConfigByMollieKeyAndCurrency(
+        MolliePaymentMethodConfigCriteriaTransfer $criteriaTransfer,
+    ): ?MolliePaymentMethodConfigTransfer;
 
     /**
      * @param \Generated\Shared\Transfer\MolliePaymentMethodConfigTransfer $molliePaymentMethodConfigTransfer

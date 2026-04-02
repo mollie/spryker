@@ -28,7 +28,7 @@ class MollieCacheInvalidator implements MollieCacheInvalidatorInterface
     public function invalidateCache(): void
     {
         $locale = $this->localeFacade->getCurrentLocale()->getLocaleName();
-        $transfer = $this->mapper->createMolliePaymentMethodQueryParametersTransfer($locale);
+        $transfer = $this->mapper->createMolliePaymentMethodQueryParametersTransfer($locale, null);
 
         $this->mollieClient->deleteEnabledPaymentMethodsCache($transfer);
         $this->mollieClient->deleteAllPaymentMethodsCache($transfer);

@@ -10,7 +10,7 @@
 {% endblock %}
 
 {% block action %}
-    {{ viewActionButton(url('/mollie/detail', {'mollie_payment_method_id': mollieId}), 'View' | trans) }}
+    {{ viewActionButton(url('/mollie/detail', {'mollie_payment_method_id': mollieId, 'currency' : paymentMethodConfig.currencyCode}), 'View' | trans) }}
     {{ backActionButton(url('/mollie'), 'Back to Payment Methods' | trans) }}
 {% endblock %}
 
@@ -18,13 +18,11 @@
     {% embed '@Gui/Partials/widget.twig' %}
 
         {% block widget_content %}
-
             {{ form_start(form) }}
             {{ form_widget(form) }}
-
+            {{ form_errors(form) }}
             <input type="submit" class="btn btn-primary safe-submit" value="{{ 'Save' | trans }}" />
             {{ form_end(form) }}
-
         {% endblock %}
 
     {% endembed %}

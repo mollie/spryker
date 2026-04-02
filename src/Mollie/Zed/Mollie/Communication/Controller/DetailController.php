@@ -21,10 +21,14 @@ class DetailController extends AbstractController
     public function indexAction(Request $request): array
     {
         $mollieId = $request->query->get('mollie_payment_method_id');
+        $currency = $request->query->get('currency');
+        $showOnlyEnabled = $request->query->get('showOnlyEnabled');
+
         $dataProvider = $this->getFactory()->createMolliePaymentMethodsDataProvider();
-        $mergedPaymentMethodConfigTransfer = $dataProvider->getFormData($mollieId);
+        $mergedPaymentMethodConfigTransfer = $dataProvider->getFormData($mollieId, $currency);
 
         return [
+            'showOnlyEnabled' => $showOnlyEnabled,
             'paymentMethodConfig' => $mergedPaymentMethodConfigTransfer,
         ];
     }

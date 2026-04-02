@@ -245,7 +245,13 @@ class MolliePaymentMethodsTable extends AbstractTable
      */
     protected function buildViewUrl(MolliePaymentMethodTransfer $transfer): string
     {
-        return sprintf('/mollie/detail?mollie_payment_method_id=%s', $transfer->getId());
+        $currency = $transfer->getMinimumAmount()['currency'] ?? $transfer->getMaximummumAmount()['currency'] ?? null;
+
+        return sprintf(
+            '/mollie/detail?mollie_payment_method_id=%s&currency=%s',
+            $transfer->getId(),
+            $currency,
+        );
     }
 
     /**
@@ -255,6 +261,12 @@ class MolliePaymentMethodsTable extends AbstractTable
      */
     protected function buildEditUrl(MolliePaymentMethodTransfer $transfer): string
     {
-        return sprintf('/mollie/edit?mollie_payment_method_id=%s', $transfer->getId());
+        $currency = $transfer->getMinimumAmount()['currency'] ?? $transfer->getMaximummumAmount()['currency'] ?? null;
+
+        return sprintf(
+            '/mollie/edit?mollie_payment_method_id=%s&currency=%s',
+            $transfer->getId(),
+            $currency,
+        );
     }
 }

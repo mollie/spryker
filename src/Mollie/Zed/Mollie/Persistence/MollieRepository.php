@@ -108,7 +108,8 @@ class MollieRepository extends AbstractRepository implements MollieRepositoryInt
         $query = $this->getFactory()
             ->createSpyMolliePaymentMethodConfigQuery();
 
-        if ($criteriaTransfer->getLocaleId()) {
+        if ($criteriaTransfer->getCurrencyCode()) {
+            $query->filterByCurrencyCode($criteriaTransfer->getCurrencyCode());
         }
 
         $entities = $query->find();
@@ -119,15 +120,17 @@ class MollieRepository extends AbstractRepository implements MollieRepositoryInt
     }
 
     /**
-     * @param string $mollieKey
+     * @param \Generated\Shared\Transfer\MolliePaymentMethodConfigCriteriaTransfer $criteriaTransfer
      *
      * @return \Generated\Shared\Transfer\MolliePaymentMethodConfigTransfer|null
      */
-    public function getPaymentMethodConfigByMollieKey(string $mollieKey): ?MolliePaymentMethodConfigTransfer
-    {
+    public function getPaymentMethodConfigByMollieKeyAndCurrency(
+        MolliePaymentMethodConfigCriteriaTransfer $criteriaTransfer,
+    ): ?MolliePaymentMethodConfigTransfer {
         $spyMolliePaymentMethodConfigEntity = $this->getFactory()
             ->createSpyMolliePaymentMethodConfigQuery()
-            ->filterByMollieId($mollieKey)
+            ->filterByMollieId($criteriaTransfer->getMollieId())
+            ->filterByCurrencyCode($criteriaTransfer->getCurrencyCode())
             ->findOne();
 
         if (!$spyMolliePaymentMethodConfigEntity) {

@@ -71,7 +71,9 @@ class MolliePersistenceFactory extends AbstractPersistenceFactory
      */
     public function createMolliePaymentMethodConfigMapper(): MolliePaymentMethodConfigMapperInterface
     {
-        return new MolliePaymentMethodConfigMapper();
+        return new MolliePaymentMethodConfigMapper(
+            $this->getMollieService(),
+        );
     }
 
     /**

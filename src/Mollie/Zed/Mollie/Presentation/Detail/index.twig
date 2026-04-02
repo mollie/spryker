@@ -11,7 +11,7 @@
 
 {% block action %}
     {{ removeActionButton(url('/mollie/edit/restore-defaults', {'id-mollie-payment-method-config': paymentMethodConfig.idMolliePaymentMethodConfig}), 'Restore defaults' | trans) }}
-    {{ viewActionButton(url('/mollie/edit',  {'mollie_payment_method_id': paymentMethodConfig.mollieId}), 'Edit' | trans) }}
+    {{ viewActionButton(url('/mollie/edit', {'mollie_payment_method_id': paymentMethodConfig.mollieId, 'currency' : paymentMethodConfig.currencyCode}), 'Edit' | trans) }}
     {{ backActionButton(url('/mollie'), 'Back to Mollie Payment Methods' | trans) }}
 {% endblock %}
 
@@ -24,11 +24,11 @@
                         <tbody>
                         <tr>
                             <th>{{ 'Minimum Amount' | trans }}</th>
-                            <td>{{ paymentMethodConfig.minAmount}}</td>
+                            <td>{{ paymentMethodConfig.minimumAmount}}</td>
                         </tr>
                         <tr>
                             <th>{{ 'Maximum Amount' | trans }}</th>
-                            <td>{{ paymentMethodConfig.maxAmount }}</td>
+                            <td>{{ paymentMethodConfig.maximumAmount }}</td>
                         </tr>
                         <tr>
                             <th>{{ 'Is active' | trans }}</th>
@@ -36,7 +36,7 @@
                         </tr>
                         <tr>
                             <th>{{ 'Logo url' | trans }}</th>
-                            <td>{{ paymentMethodConfig.logo }}</td>
+                            <td>{{ paymentMethodConfig.image }}</td>
                         </tr>
                         <tr>
                             <th>{{ 'Logo preview' | trans }}</th>
@@ -44,7 +44,7 @@
                                 <img
                                     style="width: 60px; height:40px;"
                                     class="mollie-logo-preview"
-                                    src={{ paymentMethodConfig.logo }}
+                                    src={{ paymentMethodConfig.image }}
                                 >
                             </td>
                         </tr>

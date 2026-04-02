@@ -23,15 +23,22 @@ class EditController extends AbstractController
     public function indexAction(Request $request): array|RedirectResponse
     {
         $mollieId = $request->query->get('mollie_payment_method_id');
+        $currency = $request->query->get('currency');
+
+        $mapper = $this->getFactory()->createMollieCommunicationMapper();
         $dataProvider = $this->getFactory()->createMolliePaymentMethodsDataProvider();
 
-        $existingPaymentMethodConfigTransfer = $this->getFacade()->getPaymentMethodConfigByMollieKey($mollieId);
+        $criteriaTransfer = $mapper->createMolliePaymentMethodConfigCriteriaTransfer($mollieId, $currency);
+
+        $existingPaymentMethodConfigTransfer = $this->getFacade()->getPaymentMethodConfigByMollieKeyAndCurrency($criteriaTransfer);
         if (!$existingPaymentMethodConfigTransfer) {
             $existingPaymentMethodConfigTransfer = new MolliePaymentMethodConfigTransfer();
+            $existingPaymentMethodConfigTransfer->setCurrencyCode($currency);
         }
 
         $form = $this->getFactory()->createPaymentMethodConfigForm(
-            $dataProvider->getFormData($mollieId),
+            $dataProvider->getFormData($mollieId, $currency),
+            $dataProvider->getFormOptions($request),
         );
 
         $form->handleRequest($request);
@@ -46,14 +53,14 @@ class EditController extends AbstractController
             $this->getFacade()->writeMolliePaymentConfigData($paymentMethodConfigTransfer);
 
             return $this->redirectResponse(
-                '/mollie/detail?mollie_payment_method_id=' . $mollieId,
+                sprintf(
+                    '/mollie/detail?mollie_payment_method_id=%s&currency=%s',
+                    $mollieId,
+                    $currency,
+                ),
                 301,
             );
         }
-
-        $form = $this->getFactory()->createPaymentMethodConfigForm(
-            $dataProvider->getFormData($mollieId),
-        );
 
         return [
             'paymentMethodConfig' => $existingPaymentMethodConfigTransfer,
@@ -69,11 +76,11 @@ class EditController extends AbstractController
      */
     public function restoreDefaultsAction(Request $request): RedirectResponse
     {
-        $mollieId = (int)$request->query->get('id-mollie-payment-method-config');
-        $this->getFacade()->deleteMolliePaymentConfigData($mollieId);
+        $idMolliePaymentMethodConfig = (int)$request->query->get('id-mollie-payment-method-config');
+        $this->getFacade()->deleteMolliePaymentConfigData($idMolliePaymentMethodConfig);
 
         return $this->redirectResponse(
-            '/mollie',
+            '/mollie?',
             301,
         );
     }

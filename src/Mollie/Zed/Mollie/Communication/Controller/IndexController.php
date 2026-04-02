@@ -26,7 +26,15 @@ class IndexController extends AbstractController
         $profileResponseTransfer = $this->getFactory()->getMollieClient()->getCurrentProfile();
         $showOnlyEnabledPaymentMethods = $request->query->get(MollieConstants::MOLLIE_QUERY_PARAMETER_SHOW_ONLY_ENABLED);
         $table = $this->getFactory()->createMolliePaymentMethodsTable();
+        $dataProvider = $this->getFactory()->createPaymentMethodsFilterFormDataProvider();
+        $form = $this->getFactory()->createPaymentMethodsFilterForm(
+            $dataProvider->getData(),
+            $dataProvider->getOptions(),
+        );
+
+        $form->handleRequest($request);
         $responseData = [
+            'form' => $form->createView(),
             'mollieTable' => $table->render(),
             'response' => $profileResponseTransfer,
             MollieConstants::MOLLIE_QUERY_PARAMETER_SHOW_ONLY_ENABLED => $showOnlyEnabledPaymentMethods,

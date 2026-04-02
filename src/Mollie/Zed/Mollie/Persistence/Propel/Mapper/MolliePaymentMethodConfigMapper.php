@@ -2,8 +2,10 @@
 
 namespace Mollie\Zed\Mollie\Persistence\Propel\Mapper;
 
+use Generated\Shared\Transfer\MollieAmountTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodConfigCollectionTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodConfigTransfer;
+use Mollie\Service\Mollie\MollieServiceInterface;
 use Orm\Zed\Mollie\Persistence\SpyMolliePaymentMethodConfig;
 
 class MolliePaymentMethodConfigMapper implements MolliePaymentMethodConfigMapperInterface
@@ -11,6 +13,14 @@ class MolliePaymentMethodConfigMapper implements MolliePaymentMethodConfigMapper
     public const string ACTIVATED = 'activated';
 
     public const string NOT_ACTIVATED = 'not activated';
+
+    /**
+     * @param \Mollie\Service\Mollie\MollieServiceInterface $mollieService
+     */
+    public function __construct(
+        private MollieServiceInterface $mollieService,
+    ) {
+    }
 
     /**
      * @param array<\Orm\Zed\Mollie\Persistence\SpyMolliePaymentMethodConfig> $entities
@@ -34,12 +44,16 @@ class MolliePaymentMethodConfigMapper implements MolliePaymentMethodConfigMapper
      */
     public function mapMolliePaymentMethodConfigEntityToTransfer(SpyMolliePaymentMethodConfig $spyMolliePaymentMethodConfig): MolliePaymentMethodConfigTransfer
     {
+        $maximumAmount = $this->formatAmount($spyMolliePaymentMethodConfig->getMaximumAmount(), $spyMolliePaymentMethodConfig->getCurrencyCode());
+        $minimumAmount = $this->formatAmount($spyMolliePaymentMethodConfig->getMinimumAmount(), $spyMolliePaymentMethodConfig->getCurrencyCode());
+
         $paymentMethodConfigTransfer = new MolliePaymentMethodConfigTransfer();
         $paymentMethodConfigTransfer
             ->setIdMolliePaymentMethodConfig($spyMolliePaymentMethodConfig->getIdMolliePaymentMethodConfig())
             ->setMollieId($spyMolliePaymentMethodConfig->getMollieId())
-//            ->setMaximumAmount($this->formatMaximumAmount($spyMolliePaymentMethodConfig->getMaximumAmount()))
-//            ->setMinimumAmount($this->formatMinimumAmount($spyMolliePaymentMethodConfig->getMinimumAmount()))
+            ->setCurrencyCode($spyMolliePaymentMethodConfig->getCurrencyCode())
+            ->setMaximumAmount($maximumAmount)
+            ->setMinimumAmount($minimumAmount)
             ->setImage($this->formatImage($spyMolliePaymentMethodConfig->getLogoUrl()))
             ->setStatus($this->mapIsActiveToStatus($spyMolliePaymentMethodConfig->getIsActive()))
             ->setIsLogoVisible($spyMolliePaymentMethodConfig->getIsLogoVisible())
@@ -60,10 +74,11 @@ class MolliePaymentMethodConfigMapper implements MolliePaymentMethodConfigMapper
     ): SpyMolliePaymentMethodConfig {
         return $entity
             ->setIsActive($configTransfer->getIsActive())
-//            ->setMollieId($configTransfer->getMollieId())
-//            ->setMaximumAmount((int)($configTransfer->getMaximumAmount()["value"]))
-//            ->setMinimumAmount((int)($configTransfer->getMinimumAmount()["value"]))
-            ->setLogoUrl($configTransfer->getimage()['size2x'])
+            ->setMollieId($configTransfer->getMollieId())
+            ->setCurrencyCode($configTransfer->getCurrencyCode())
+            ->setMaximumAmount($this->transformAmountToInteger($configTransfer->getMaximumAmount()))
+            ->setMinimumAmount($this->transformAmountToInteger($configTransfer->getMinimumAmount()))
+            ->setLogoUrl($configTransfer->getimage()['size2x'] ?? null)
             ->setIsLogoVisible($configTransfer->getIsLogoVisible());
     }
 
@@ -78,48 +93,54 @@ class MolliePaymentMethodConfigMapper implements MolliePaymentMethodConfigMapper
         return (new SpyMolliePaymentMethodConfig())
             ->setIsActive($this->mapIsActiveToStatus($configTransfer->getStatus()))
             ->setMollieId($configTransfer->getMollieId())
-//            ->setMaximumAmount((int)($configTransfer->getMaximumAmount()["value"]))
-//            ->setMinimumAmount((int)($configTransfer->getMinimumAmount()["value"]))
-            ->setLogoUrl($configTransfer->getimage()['size2x'])
+            ->setCurrencyCode($configTransfer->getCurrencyCode())
+            ->setMaximumAmount($this->transformAmountToInteger($configTransfer->getMaximumAmount()))
+            ->setMinimumAmount($this->transformAmountToInteger($configTransfer->getMinimumAmount()))
+            ->setLogoUrl($configTransfer->getimage()['size2x'] ?? null)
             ->setIsLogoVisible($configTransfer->getIsLogoVisible());
     }
 
     /**
-     * @param int $minimumAmount
+     * @param int|null $amount
+     * @param string $currency
      *
-     * @return array<string, mixed>
+     * @return \Generated\Shared\Transfer\MollieAmountTransfer|null
      */
-    protected function formatMinimumAmount(int $minimumAmount): array
+    protected function formatAmount(?int $amount, string $currency): ?MollieAmountTransfer
     {
-        return [
-            'value' => $minimumAmount,
-            'currency' => null,
-        ];
+        if (!$amount) {
+            return null;
+        }
+
+        $amountTransfer = $this->mollieService->convertIntegerToMollieAmount($amount);
+
+        return $amountTransfer->setCurrency($currency);
     }
 
     /**
-     * @param int $maximumAmount
-     *
-     * @return array<string, mixed>
-     */
-    protected function formatMaximumAmount(int $maximumAmount): array
-    {
-        return [
-            'value' => $maximumAmount,
-            'currency' => null,
-        ];
-    }
-
-    /**
-     * @param string $imageUrl
+     * @param string|null $imageUrl
      *
      * @return array<string, string>
      */
-    protected function formatImage(string $imageUrl): array
+    protected function formatImage(?string $imageUrl): array
     {
         return [
             'size2x' => $imageUrl,
         ];
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MollieAmountTransfer|null $amountTransfer
+     *
+     * @return int|null
+     */
+    protected function transformAmountToInteger(?MollieAmountTransfer $amountTransfer): int|null
+    {
+        if (!$amountTransfer || $amountTransfer->getValue() === null) {
+            return null;
+        }
+
+        return (int)round(((float)$amountTransfer->getValue()) * 100);
     }
 
     /**
