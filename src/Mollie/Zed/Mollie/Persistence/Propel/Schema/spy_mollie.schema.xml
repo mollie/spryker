@@ -12,6 +12,8 @@
         <column name="sequence_type" required="true" type="VARCHAR" size="64"/>
         <column name="metadata" type="LONGVARCHAR"/>
         <column name="expires_at" type="TIMESTAMP"/>
+        <column name="capture_before" type="TIMESTAMP"/>
+        <column name="release_authorization_request" type="TIMESTAMP" required="false" />
 
         <foreign-key name="spy_payment_mollie-fk_sales_order" foreignTable="spy_sales_order" phpName="SpySalesOrder">
             <reference foreign="id_sales_order" local="fk_sales_order"/>
@@ -76,6 +78,33 @@
 
         <behavior name="timestampable"/>
         <id-method-parameter value="spy_capture_mollie_order_item_pk_seq"/>
+    </table>
+
+    <table name="spy_mollie_payment_link" idMethod="native" allowPkInsert="true" phpName="SpyMolliePaymentLink">
+        <column name="id_mollie_payment_link" required="true" type="INTEGER" autoIncrement="true" primaryKey="true"/>
+        <column name="id" required="true" type="VARCHAR" />
+        <column name="fk_sales_order" type="INTEGER"/>
+        <column name="description" required="true" type="LONGVARCHAR"/>
+        <column name="type" type="VARCHAR"/>
+        <column name="sequence_type" type="VARCHAR" size="15"/>
+        <column name="currency" required="true" type="VARCHAR" size="3"/>
+        <column name="amount" required="true" type="INTEGER"/>
+        <column name="status" type="VARCHAR" size="64"/>
+        <column name="expiry_date" type="DATETIME"/>
+        <column name="redirect_url" type="VARCHAR" size="500"/>
+        <column name="is_reusable" type="BOOLEAN" default="false"/>
+        <column name="payment_methods" type="LONGVARCHAR"/>
+        <column name="payment_link_url" required="true" type="VARCHAR" size="500"/>
+        <column name="mode" type="VARCHAR"/>
+        <column name="profileId" type="VARCHAR"/>
+
+        <id-method-parameter value="spy_mollie_payment_link_pk_seq"/>
+
+        <behavior name="timestampable"/>
+
+        <foreign-key name="spy_mollie_payment_link-fk_sales_order" foreignTable="spy_sales_order" phpName="SpySalesOrder">
+            <reference foreign="id_sales_order" local="fk_sales_order"/>
+        </foreign-key>
     </table>
 
 </database>

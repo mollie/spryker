@@ -1,0 +1,92 @@
+{% extends '@Gui/Layout/layout.twig' %}
+
+{% set widget_title = 'Create Mollie Payment Link' | trans %}
+
+{% block head_title widget_title %}
+{% block section_title widget_title %}
+
+{% block action %}
+    {{ backActionButton('/mollie/payment-link', 'Back to List' | trans) }}
+{% endblock %}
+
+{% block content %}
+
+    {% embed '@Gui/Partials/widget.twig' %}
+
+        {% block widget_content %}
+
+            {{ form_start(form) }}
+
+            {% block information %}
+                <div class="well">
+                    {% apply trans|raw %}
+                        <h3>{{ 'Create Payment Link' | trans }}</h3>
+                        <p>{{ 'Configure your Mollie payment link with the desired amount, currency, and optional settings.' | trans }}</p>
+                    {% endapply %}
+                </div>
+            {% endblock %}
+
+            {% block paymentDetails %}
+                <div class="row">
+                    {{ form_row(form.currency) }}
+                    {{ form_row(form.amount) }}
+                </div>
+
+                {{ form_row(form.description) }}
+            {% endblock %}
+
+            {% block additionalSettings %}
+                <div class="col lg-4">
+                {{ form_row(form.expiryDate) }}
+                </div>
+                {{ form_row(form.redirectUrl) }}
+            {% endblock %}
+
+            <div class="hr-line-dashed"></div>
+
+            {% block extraOptions %}
+                <h3>{{ 'Extra Options' | trans }}</h3>
+
+                <div class="form-group">
+                    <div class="checkbox">
+                        <label>
+                            {{ form_widget(form.isReusable) }}
+                            {{ form_label(form.isReusable) }}
+                        </label>
+                        {{ form_errors(form.isReusable) }}
+                    </div>
+                </div>
+
+                <div class="form-group {% if form.paymentMethods.vars.errors|length %}has-error{% endif %}">
+                    {{ form_label(form.paymentMethods) }}
+                    {{ form_widget(form.paymentMethods, {'attr': {'class': 'form-control select2', 'style': 'height: 20vh;'}}) }}
+                    {{ form_errors(form.paymentMethods) }}
+                    <span
+                        class="help-block">{{ 'By default, all methods are offered in your checkout.' | trans }}</span>
+                </div>
+            {% endblock %}
+
+            <div class="hr-line-dashed"></div>
+
+            {% block actions %}
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fa fa-save"></i> {{ 'Create link' | trans }}
+                    </button>
+                    <a href="/mollie/payment-link" class="btn btn-default">
+                        {{ 'Cancel' | trans }}
+                    </a>
+                </div>
+            {% endblock %}
+
+            {{ form_end(form) }}
+
+        {% endblock %}
+    {% endembed %}
+{% endblock %}
+
+{% block footer_js %}
+    {{ parent() }}
+{#    <script src="{{ assetsPath('js/spryker-zed-mollie-main.js') }}"></script>#}
+{% endblock %}
+

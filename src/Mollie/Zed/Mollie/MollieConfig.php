@@ -1,6 +1,5 @@
 <?php
 
-
 declare(strict_types = 1);
 
 namespace Mollie\Zed\Mollie;
@@ -94,6 +93,22 @@ class MollieConfig extends AbstractBundleConfig
     }
 
     /**
+     * @return string
+     */
+    public function getMollieWebhookUrl(): string
+    {
+        return $this->get(MollieConstants::MOLLIE)[MollieConstants::MOLLIE_WEBHOOK_URL];
+    }
+
+    /**
+     * @return string
+     */
+    public function getTestEnvironmentMollieWebhookUrl(): string
+    {
+        return $this->get(MollieConstants::MOLLIE)[MollieConstants::MOLLIE_TEST_ENVIRONMENT_WEBHOOK_URL];
+    }
+
+    /**
      * @return array<string>
      */
     public function getMollieIncludeWallets(): array
@@ -110,10 +125,26 @@ class MollieConfig extends AbstractBundleConfig
     }
 
     /**
+     * @return int
+     */
+    public function getExpirationWarningThreshold(): int
+    {
+        return $this->get(MollieConstants::MOLLIE)[MollieConstants::MOLLIE_EXPIRATION_WARNING_THRESHOLD];
+    }
+
+    /**
      * @return array<string>
      */
     public function getPaymentCaptureStates(): array
     {
         return ['captured', 'capture pending'];
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getMollieProfileId(): string|null
+    {
+        return $this->get(MollieConstants::MOLLIE)[MollieConstants::MOLLIE_PROFILE_ID];
     }
 }

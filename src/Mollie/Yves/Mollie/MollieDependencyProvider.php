@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Mollie\Yves\Mollie;
 
 use Mollie\Client\Mollie\MollieClientInterface;
+use Mollie\Service\Mollie\MollieServiceInterface;
 use Mollie\Yves\Mollie\Dependency\Client\MollieToLocaleClientBridge;
 use Mollie\Yves\Mollie\Dependency\Client\MollieToLocaleClientInterface;
 use Mollie\Yves\Mollie\Dependency\Client\MollieToQuoteClientBridge;
@@ -13,6 +14,7 @@ use Mollie\Yves\Mollie\Dependency\Client\MollieToStorageClientBridge;
 use Mollie\Yves\Mollie\Dependency\Client\MollieToStorageClientInterface;
 use Mollie\Yves\Mollie\Dependency\Service\MollieToUtilEncodingServiceBridge;
 use Mollie\Yves\Mollie\Plugin\Webhook\MollieCaptureWebhookHandlerPlugin;
+use Mollie\Yves\Mollie\Plugin\Webhook\MolliePaymentLinkWebhookHandlerPlugin;
 use Mollie\Yves\Mollie\Plugin\Webhook\MolliePaymentWebhookHandlerPlugin;
 use Mollie\Yves\Mollie\Plugin\Webhook\MollieRefundWebhookHandlerPlugin;
 use Spryker\Yves\Kernel\AbstractBundleDependencyProvider;
@@ -48,7 +50,17 @@ class MollieDependencyProvider extends AbstractBundleDependencyProvider
     /**
      * @var string
      */
+    public const SERVICE_MOLLIE = 'SERVICE_MOLLIE';
+
+    /**
+     * @var string
+     */
     public const PLUGINS_MOLLIE_WEBHOOK_HANDLER = 'PLUGINS_MOLLIE_WEBHOOK_HANDLER';
+
+    /**
+     * @var string
+     */
+    public const PLUGINS_MOLLIE_NEXT_GEN_WEBHOOK_HANDLER = 'PLUGINS_MOLLIE_NEXT_GEN_WEBHOOK_HANDLER';
 
     /**
      * @param \Spryker\Yves\Kernel\Container $container
@@ -63,7 +75,9 @@ class MollieDependencyProvider extends AbstractBundleDependencyProvider
         $container = $this->addQuoteClient($container);
         $container = $this->addUtilEncodingService($container);
         $container = $this->addMollieWebhookHandlerPlugins($container);
+        $container = $this->addMollieNextGenWebhookHandlerPlugins($container);
         $container = $this->addLocaleClient($container);
+        $container = $this->addMollieService($container);
 
         return $container;
     }
@@ -144,6 +158,20 @@ class MollieDependencyProvider extends AbstractBundleDependencyProvider
         return $container;
     }
 
+     /**
+      * @param \Spryker\Yves\Kernel\Container $container
+      *
+      * @return \Spryker\Yves\Kernel\Container
+      */
+    protected function addMollieNextGenWebhookHandlerPlugins(Container $container): Container
+    {
+        $container->set(static::PLUGINS_MOLLIE_NEXT_GEN_WEBHOOK_HANDLER, function () {
+            return $this->getMollieNextGenWebhookHandlerPlugins();
+        });
+
+        return $container;
+    }
+
     /**
      * @return array<\Mollie\Yves\Mollie\Plugin\Webhook\MollieWebhookHandlerPluginInterface>
      */
@@ -153,6 +181,16 @@ class MollieDependencyProvider extends AbstractBundleDependencyProvider
             new MollieRefundWebhookHandlerPlugin(),
             new MolliePaymentWebhookHandlerPlugin(),
             new MollieCaptureWebhookHandlerPlugin(),
+        ];
+    }
+
+    /**
+     * @return array<\Mollie\Yves\Mollie\Plugin\Webhook\MollieNextGenWebhookHandlerPluginInterface>
+     */
+    protected function getMollieNextGenWebhookHandlerPlugins(): array
+    {
+        return [
+            new MolliePaymentLinkWebhookHandlerPlugin(),
         ];
     }
 
@@ -167,6 +205,20 @@ class MollieDependencyProvider extends AbstractBundleDependencyProvider
             return new MollieToLocaleClientBridge(
                 $container->getLocator()->locale()->client(),
             );
+        });
+
+        return $container;
+    }
+
+    /**
+     * @param \Spryker\Yves\Kernel\Container $container
+     *
+     * @return \Spryker\Yves\Kernel\Container
+     */
+    protected function addMollieService(Container $container): Container
+    {
+        $container->set(static::SERVICE_MOLLIE, function (Container $container): MollieServiceInterface {
+            return $container->getLocator()->mollie()->service();
         });
 
         return $container;

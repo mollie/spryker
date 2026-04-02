@@ -32,7 +32,17 @@ interface MollieConstants
     /**
      * @var string
      */
+    public const MOLLIE_EXPIRATION_WARNING_THRESHOLD = 'MOLLIE:EXPIRATION_WARNING_THRESHOLD';
+
+    /**
+     * @var string
+     */
     public const MOLLIE_WEBHOOK_URL = 'MOLLIE:WEBHOOK_URL';
+
+    /**
+     * @var string
+     */
+    public const MOLLIE_NEXT_GEN_WEBHOOK_SIGNING_SECRET = 'MOLLIE:MOLLIE_NEXT_GEN_WEBHOOK_SIGNING_SECRET';
 
     /**
      * @var string
@@ -167,4 +177,6 @@ interface MollieConstants
     public const string MOLLIE_SEQUENCE_TYPE_ONE_OFF = 'oneoff';
 
     public const string LOGO_URL = 'LogoUrl';
+
+    public const string MOLLIE_PAYMENT_LINK_EXPIRATION_TIME = 'MOLLIE:MOLLIE_PAYMENT_LINK_EXPIRATION_TIME';
 }

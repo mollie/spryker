@@ -42,6 +42,19 @@
         <property name="mollieKbcPayment" type="[]"/>
         <property name="molliePayByBankPayment" type="[]"/>
         <property name="mollieApplePayPayment" type="MollieApplePayPayment"/>
+        <property name="molliePrzelewy24Payment" type="[]"/>
+        <property name="mollieMultibancoPayment" type="[]"/>
+        <property name="mollieBancomatPayPayment" type="[]"/>
+        <property name="mollieBizumPayment" type="[]"/>
+        <property name="mollieBINKPayment" type="[]"/>
+        <property name="molliePayconiqPayment" type="[]"/>
+
+        <property name="mollieTrustlyPayment" type="[]"/>
+        <property name="mollieMbWayPayment" type="[]"/>
+        <property name="mollieSwishPayment" type="[]"/>
+        <property name="mollieSatispayPayment" type="[]"/>
+        <property name="mollieTwintPayment" type="[]"/>
+        <property name="mollieVippsPayment" type="[]"/>
     </transfer>
 
     <transfer name="MolliePaymentMethod">
@@ -77,10 +90,11 @@
         <property name="isCancelable" type="bool"/>
         <property name="createdAt" type="string"/>
         <property name="expiresAt" type="string"/>
+        <property name="releaseAuthorizationRequest" type="string"/>
+        <property name="captureBefore" type="string"/>
         <property name="embedded" type="array"/>
         <property name="links" type="MollieLinks"/>
     </transfer>
-
 
     <transfer name="MollieCreateCaptureApiResponse">
         <property name="isSuccessful" type="bool"/>
@@ -166,6 +180,7 @@
         <property name="dashboard" type="MollieLink"/>
         <property name="documentation" type="MollieLink"/>
         <property name="payment" type="MollieLink"/>
+        <property name="paymentLink" type="MollieLink"/>
     </transfer>
 
     <transfer name="MollieLink">
@@ -176,6 +191,7 @@
     <transfer name="OrderCollectionRequest">
         <property name="id" type="string" />
         <property name="status" type="string" />
+        <property name="captureBefore" type="string" />
     </transfer>
 
     <transfer name="OrderCollectionResponse">
@@ -229,6 +245,7 @@
         <property name="transactionId" type="string"/>
         <property name="refund" type="MollieRefund"/>
         <property name="paymentCapture" type="MolliePaymentCapture"/>
+        <property name="paymentLink" type="MolliePaymentLink"/>
     </transfer>
 
     <transfer name="MolliePaymentCaptureRequest">
@@ -284,6 +301,73 @@
     <transfer name="MollieWebhookResponse">
         <property name="statusCode" type="int"/>
         <property name="message" type="string"/>
+    </transfer>
+
+    <transfer name="MolliePaymentLink">
+        <property name="idMolliePaymentLink" type="int"/>
+        <property name="resource" type="string"/>
+        <property name="id" type="string"/>
+        <property name="description" type="string"/>
+        <property name="mode" type="string"/>
+        <property name="archived" type="bool"/>
+        <property name="reusable" type="bool"/>
+        <property name="profileId" type="string"/>
+        <property name="amount" type="MollieAmount"/>
+        <property name="webhookUrl" type="string"/>
+        <property name="redirectUrl" type="string"/>
+        <property name="createdAt" type="string"/>
+        <property name="paidAt" type="string"/>
+        <property name="expiresAt" type="string"/>
+        <property name="allowedMethods" type="array" singular="allowedMethod"/>
+        <property name="sequenceType" type="string"/>
+        <property name="links" type="MollieLinks"/>
+        <property name="type" type="string"/>
+        <property name="saveRedirectUrl" type="bool"/>
+        <property name="status" type="string"/>
+        <property name="updatedAt" type="string"/>
+        <property name="fkSalesOrder" type="int"/>
+    </transfer>
+
+    <transfer name="MolliePaymentLinkApiResponse">
+        <property name="isSuccessful" type="bool"/>
+        <property name="message" type="string"/>
+        <property name="molliePaymentLink" type="MolliePaymentLink"/>
+    </transfer>
+
+    <transfer name="MolliePaymentLinkLines">
+        <property name="type" type="string"/>
+        <property name="description" type="string"/>
+        <property name="quantity" type="int"/>
+        <property name="quantityUnit" type="string"/>
+        <property name="unitPrice" type="string"/>
+    </transfer>
+
+    <transfer name="MollieWebhookEvent">
+        <property name="resource" type="string"/>
+        <property name="id" type="string"/>
+        <property name="type" type="string"/>
+        <property name="entityId" type="string"/>
+        <property name="createdAt" type="string"/>
+        <property name="embedded" type="array"/>
+        <property name="links" type="MollieWebhookLinks"/>
+    </transfer>
+
+    <transfer name="MollieWebhookLinks">
+        <property name="self" type="MollieLink"/>
+        <property name="paymentLink" type="MollieLink"/>
+        <property name="documentation" type="MollieLink"/>
+        <property name="payment" type="MollieLink"/>
+    </transfer>
+    <transfer name="MollieExpirationInformation">
+        <property name="showWarningMessage" type="bool" />
+        <property name="warningMessage" type="string" />
+        <property name="expiresIn" type="int" />
+    </transfer>
+
+    <transfer name="MollieCacheOptions">
+        <property name="locale" type="string"/>
+        <property name="billingCountry" type="string"/>
+        <property name="amount" type="MollieAmount"/>
     </transfer>
 
 </transfers>

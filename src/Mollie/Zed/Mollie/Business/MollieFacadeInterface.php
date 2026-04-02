@@ -1,12 +1,15 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Mollie\Zed\Mollie\Business;
 
 use Generated\Shared\Transfer\CheckoutResponseTransfer;
+use Generated\Shared\Transfer\MollieExpirationInformationTransfer;
 use Generated\Shared\Transfer\MolliePaymentCaptureRequestTransfer;
 use Generated\Shared\Transfer\MolliePaymentCaptureResponseTransfer;
+use Generated\Shared\Transfer\MolliePaymentLinkApiResponseTransfer;
+use Generated\Shared\Transfer\MolliePaymentLinkTransfer;
 use Generated\Shared\Transfer\MolliePaymentTransfer;
 use Generated\Shared\Transfer\MollieRefundApiResponseTransfer;
 use Generated\Shared\Transfer\MollieRefundResponseTransfer;
@@ -86,6 +89,13 @@ interface MollieFacadeInterface
         MolliePaymentCaptureRequestTransfer $molliePaymentCaptureRequestTransfer,
     ): MolliePaymentCaptureResponseTransfer;
 
+     /**
+      * @param int $idSalesOrder
+      *
+      * @return void
+      */
+    public function releaseAuthorization(int $idSalesOrder): void;
+
     /**
      * @param int $idSalesOrder
      *
@@ -134,4 +144,53 @@ interface MollieFacadeInterface
      * @return void
      */
     public function sendPaymentConfirmationMail(OrderTransfer $orderTransfer): void;
+
+    /**
+     * @param \Generated\Shared\Transfer\MolliePaymentLinkTransfer $molliePaymentLinkTransfer
+     *
+     * @return \Generated\Shared\Transfer\MolliePaymentLinkApiResponseTransfer
+     */
+    public function createPaymentLink(MolliePaymentLinkTransfer $molliePaymentLinkTransfer): MolliePaymentLinkApiResponseTransfer;
+
+    /**
+     * @param \Generated\Shared\Transfer\OrderTransfer $orderTransfer
+     *
+     * @return \Generated\Shared\Transfer\MolliePaymentLinkTransfer
+     */
+    public function processPaymentLinkData(OrderTransfer $orderTransfer): MolliePaymentLinkTransfer;
+
+    /**
+     * @param int $idSalesOrder
+     *
+     * @return bool
+     */
+    public function isPaymentLinkCreationSuccessful(int $idSalesOrder): bool;
+
+    /**
+     * @param int $idSalesOrder
+     *
+     * @return bool
+     */
+    public function isPaymentLinkStatusPaid(int $idSalesOrder): bool;
+
+    /**
+     * @param int $idSalesOrder
+     *
+     * @return bool
+     */
+    public function isPaymentLinkStatusExpired(int $idSalesOrder): bool;
+
+    /**
+     * @param \Generated\Shared\Transfer\MolliePaymentLinkTransfer $molliePaymentLinkTransfer
+     *
+     * @return \Generated\Shared\Transfer\MolliePaymentLinkTransfer
+     */
+    public function updatePaymentLink(MolliePaymentLinkTransfer $molliePaymentLinkTransfer): MolliePaymentLinkTransfer;
+
+    /**
+     * @param int $orderId
+     *
+     * @return \Generated\Shared\Transfer\MollieExpirationInformationTransfer
+     */
+    public function getExpirationInformation(int $orderId): MollieExpirationInformationTransfer;
 }

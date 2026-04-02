@@ -32,12 +32,13 @@ class MollieService extends AbstractService implements MollieServiceInterface
      * @api
      *
      * @param int $value
+     * @param string|null $currency
      *
      * @return \Generated\Shared\Transfer\MollieAmountTransfer
      */
-    public function convertIntegerToMollieAmount(int $value): MollieAmountTransfer
+    public function convertIntegerToMollieAmount(int $value, ?string $currency = null): MollieAmountTransfer
     {
-        return $this->getFactory()->createMollieAmountConverter()->convertIntegerToMollieAmount($value);
+        return $this->getFactory()->createMollieAmountConverter()->convertIntegerToMollieAmount($value, $currency);
     }
 
     /**
@@ -50,5 +51,17 @@ class MollieService extends AbstractService implements MollieServiceInterface
     public function resolveWebhookUrl(string $webhookUrl, string $testEnvironmentWebhookUrl, bool $testMode): string
     {
         return $this->getFactory()->createUrlReolver()->resolveWebhookUrl($webhookUrl, $testEnvironmentWebhookUrl, $testMode);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @api
+     *
+     * @return string
+     */
+    public function getPaymentLinkDefaultExpirationDateTime(): string
+    {
+        return $this->getFactory()->createPaymentLinkHandler()->getPaymentLinkDefaultExpirationDateTime();
     }
 }

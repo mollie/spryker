@@ -6,11 +6,14 @@ namespace Mollie\Zed\Mollie\Persistence;
 
 use Generated\Shared\Transfer\MollieItemPaymentCaptureTransfer;
 use Generated\Shared\Transfer\MolliePaymentCaptureTransfer;
+use Generated\Shared\Transfer\MolliePaymentLinkTransfer;
 use Generated\Shared\Transfer\MolliePaymentTransfer;
 use Generated\Shared\Transfer\MollieRefundCollectionTransfer;
 use Generated\Shared\Transfer\MollieRefundSaveTransfer;
 use Generated\Shared\Transfer\OrderCollectionRequestTransfer;
+use Mollie\Shared\Mollie\MollieConstants;
 use Orm\Zed\Mollie\Persistence\SpyMollieOrderItemPaymentCapture;
+use Orm\Zed\Mollie\Persistence\SpyMolliePaymentLink;
 use Orm\Zed\Mollie\Persistence\SpyPaymentMollie;
 use Orm\Zed\Mollie\Persistence\SpyRefundMollie;
 use Spryker\Zed\Kernel\Persistence\AbstractEntityManager;
@@ -28,7 +31,7 @@ class MollieEntityManager extends AbstractEntityManager implements MollieEntityM
      *
      * @return void
      */
-    public function updateMolliePaymentWithStatus(OrderCollectionRequestTransfer $updateOrderCollectionRequestTransfer): void
+    public function updateMolliePayment(OrderCollectionRequestTransfer $updateOrderCollectionRequestTransfer): void
     {
         $spyPaymentMolleEntity = $this->getFactory()
             ->createSpyPaymentMollieQuery()
@@ -38,7 +41,29 @@ class MollieEntityManager extends AbstractEntityManager implements MollieEntityM
             return;
         }
 
-        $spyPaymentMolleEntity->setStatus($updateOrderCollectionRequestTransfer->getStatus());
+        $spyPaymentMolleEntity
+            ->setStatus($updateOrderCollectionRequestTransfer->getStatus())
+            ->setCaptureBefore($updateOrderCollectionRequestTransfer->getCaptureBefore());
+
+        $spyPaymentMolleEntity->save();
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MolliePaymentTransfer $molliePaymentTransfer
+     *
+     * @return void
+     */
+    public function saveMolliePaymentReleaseAuthorizationRequest(MolliePaymentTransfer $molliePaymentTransfer): void
+    {
+        $spyPaymentMolleEntity = $this->getFactory()
+            ->createSpyPaymentMollieQuery()
+            ->findOneByTransactionId($molliePaymentTransfer->getId());
+
+        if (!$spyPaymentMolleEntity) {
+            return;
+        }
+
+        $spyPaymentMolleEntity->setReleaseAuthorizationRequest($molliePaymentTransfer->getReleaseAuthorizationRequest());
         $spyPaymentMolleEntity->save();
     }
 
@@ -135,5 +160,48 @@ class MollieEntityManager extends AbstractEntityManager implements MollieEntityM
              $spyMollieOrderItemPaymentCaptureEntity->setStatus($molliePaymentCaptureTransfer->getStatus());
              $spyMollieOrderItemPaymentCaptureEntity->save();
         }
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MolliePaymentLinkTransfer $molliePaymentLinkTransfer
+     *
+     * @return void
+     */
+    public function writePaymentLink(MolliePaymentLinkTransfer $molliePaymentLinkTransfer): void
+    {
+        $spyMolliePaymentLink = new SpyMolliePaymentLink();
+
+        $spyMolliePaymentLink = $this->getFactory()
+            ->createMolliePaymentLinkMapper()
+            ->mapMolliePaymentLinkTransferToEntity($molliePaymentLinkTransfer, $spyMolliePaymentLink);
+
+        $spyMolliePaymentLink->save();
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MolliePaymentLinkTransfer $molliePaymentLinkTransfer
+     *
+     * @return \Generated\Shared\Transfer\MolliePaymentLinkTransfer
+     */
+    public function updatePaymentLink(MolliePaymentLinkTransfer $molliePaymentLinkTransfer): MolliePaymentLinkTransfer
+    {
+        $spyMolliePaymentLinkQuery = $this->getFactory()->createSpyMolliePaymentLinkQuery();
+
+        $spyMolliePaymentLinkEntity = $spyMolliePaymentLinkQuery
+            ->filterById($molliePaymentLinkTransfer->getId())
+            ->findOne();
+
+        if (!$spyMolliePaymentLinkEntity) {
+            return $molliePaymentLinkTransfer;
+        }
+
+        $molliePaymentLinkTransfer->setIdMolliePaymentLink($spyMolliePaymentLinkEntity->getIdMolliePaymentLink());
+
+        if ($molliePaymentLinkTransfer->getPaidAt()) {
+            $spyMolliePaymentLinkEntity->setStatus(MollieConstants::STATUS_PAID);
+            $spyMolliePaymentLinkEntity->save();
+        }
+
+        return $molliePaymentLinkTransfer;
     }
 }

@@ -12,3 +12,9 @@ mollieBancontactPayment,DE
 mollieKbcPayment,DE
 molliePayByBankPayment,DE
 mollieApplePayPayment,DE
+mollieTrustlyPayment,DE
+mollieMbWayPayment,DE
+mollieSwishPayment,DE
+mollieSatispayPayment,DE
+mollieTwintPayment,DE
+mollieVippsPayment,DE

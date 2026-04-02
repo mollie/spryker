@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Mollie\Zed\Mollie\Business;
 
@@ -12,10 +12,14 @@ use Mollie\Zed\Mollie\Business\Filter\MolliePaymentMethodsFilter;
 use Mollie\Zed\Mollie\Business\Filter\MolliePaymentMethodsFilterInterface;
 use Mollie\Zed\Mollie\Business\Filter\MollieRefundFilter;
 use Mollie\Zed\Mollie\Business\Filter\MollieRefundFilterInterface;
+use Mollie\Zed\Mollie\Business\Handler\MollieExpirationWarningHandler;
+use Mollie\Zed\Mollie\Business\Handler\MollieExpirationWarningHandlerInterface;
 use Mollie\Zed\Mollie\Business\Handler\MollieMailHandler;
 use Mollie\Zed\Mollie\Business\Handler\MollieMailHandlerInterface;
 use Mollie\Zed\Mollie\Business\Handler\MolliePaymentHandler;
 use Mollie\Zed\Mollie\Business\Handler\MolliePaymentHandlerInterface;
+use Mollie\Zed\Mollie\Business\Handler\MolliePaymentLinkHandler;
+use Mollie\Zed\Mollie\Business\Handler\MolliePaymentLinkHandlerInterface;
 use Mollie\Zed\Mollie\Business\Mapper\Capture\CaptureMapper;
 use Mollie\Zed\Mollie\Business\Mapper\Capture\CaptureMapperInterface;
 use Mollie\Zed\Mollie\Business\Mapper\Order\OrderMapper;
@@ -26,10 +30,13 @@ use Mollie\Zed\Mollie\Business\Order\OrderUpdater;
 use Mollie\Zed\Mollie\Business\Order\OrderUpdaterInterface;
 use Mollie\Zed\Mollie\Business\Payment\RequestSender\MolliePaymentCaptureRequestSender;
 use Mollie\Zed\Mollie\Business\Payment\RequestSender\MolliePaymentCaptureRequestSenderInterface;
+use Mollie\Zed\Mollie\Business\Payment\RequestSender\MollieReleaseAuthorizationRequestSender;
 use Mollie\Zed\Mollie\Business\Payment\Status\MolliePaymentStatusHandler;
 use Mollie\Zed\Mollie\Business\Payment\Status\MolliePaymentStatusHandlerInterface;
 use Mollie\Zed\Mollie\Business\Processor\Capture\CaptureProcessor;
 use Mollie\Zed\Mollie\Business\Processor\Capture\CaptureProcessorInterface;
+use Mollie\Zed\Mollie\Business\Processor\PaymentLink\PaymentLinkProcessor;
+use Mollie\Zed\Mollie\Business\Processor\PaymentLink\PaymentLinkProcessorInterface;
 use Mollie\Zed\Mollie\Business\Processor\Refund\RefundProcessor;
 use Mollie\Zed\Mollie\Business\Processor\Refund\RefundProcessorInterface;
 use Mollie\Zed\Mollie\Business\Writer\MolliePaymentWriter;
@@ -132,6 +139,18 @@ class MollieBusinessFactory extends AbstractBusinessFactory
             $this->getEntityManager(),
             $this->createCaptureMapper(),
             $this->getConfig(),
+        );
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Business\Payment\RequestSender\MollieReleaseAuthorizationRequestSender
+     */
+    public function createMollieReleaseAuthorizationRequestSender(): MollieReleaseAuthorizationRequestSender
+    {
+        return new MollieReleaseAuthorizationRequestSender(
+            $this->getRepository(),
+            $this->getEntityManager(),
+            $this->getMollieClient(),
         );
     }
 
@@ -257,10 +276,44 @@ class MollieBusinessFactory extends AbstractBusinessFactory
     }
 
     /**
+     * @return \Mollie\Zed\Mollie\Business\Handler\MollieExpirationWarningHandlerInterface
+     */
+    public function createMollieExpirationWarningHandler(): MollieExpirationWarningHandlerInterface
+    {
+        return new MollieExpirationWarningHandler(
+            $this->getConfig(),
+            $this->getRepository(),
+        );
+    }
+
+    /**
      * @return \Mollie\Zed\Mollie\Dependency\Facade\MollieToMailFacadeInterface
      */
     public function getMailFacade(): MollieToMailFacadeInterface
     {
         return $this->getProvidedDependency(MollieDependencyProvider::FACADE_MAIL);
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Business\Handler\MolliePaymentLinkHandler
+     */
+    public function createMolliePaymentLinkHandler(): MolliePaymentLinkHandlerInterface
+    {
+        return new MolliePaymentLinkHandler(
+            $this->getMollieClient(),
+            $this->getEntityManager(),
+            $this->getRepository(),
+        );
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Business\Processor\PaymentLink\PaymentLinkProcessorInterface
+     */
+    public function createPaymentLinkProcessor(): PaymentLinkProcessorInterface
+    {
+        return new PaymentLinkProcessor(
+            $this->getMollieService(),
+            $this->getConfig(),
+        );
     }
 }
