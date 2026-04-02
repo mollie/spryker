@@ -81,14 +81,10 @@ class MollieCommunicationMapper implements MollieCommunicationMapperInterface
             ->setIsActive($formData[MolliePaymentMethodConfigTransfer::IS_ACTIVE])
             ->setStatus($formData[MolliePaymentMethodConfigTransfer::IS_ACTIVE] ? 'activated' : 'not activated')
             ->setIsLogoVisible($formData[MolliePaymentMethodConfigTransfer::IS_LOGO_VISIBLE])
-            ->setMollieId($formData[MolliePaymentMethodConfigTransfer::MOLLIE_ID]);
-
-        if ($formData[MolliePaymentMethodConfigTransfer::IMAGE]) {
-            $configTransfer->setImage(['size2x' => $formData[MolliePaymentMethodConfigTransfer::IMAGE]]);
-        }
-
-        $configTransfer->setMaximumAmount($this->formatMollieAmount($formData[MolliePaymentMethodConfigTransfer::MAXIMUM_AMOUNT]));
-        $configTransfer->setMinimumAmount($this->formatMollieAmount($formData[MolliePaymentMethodConfigTransfer::MINIMUM_AMOUNT]));
+            ->setMollieId($formData[MolliePaymentMethodConfigTransfer::MOLLIE_ID])
+            ->setImage(['size2x' => $formData[MolliePaymentMethodConfigTransfer::IMAGE]])
+            ->setMaximumAmount($this->formatMollieAmount($formData[MolliePaymentMethodConfigTransfer::MAXIMUM_AMOUNT]))
+            ->setMinimumAmount($this->formatMollieAmount($formData[MolliePaymentMethodConfigTransfer::MINIMUM_AMOUNT]));
 
         return $configTransfer;
     }
