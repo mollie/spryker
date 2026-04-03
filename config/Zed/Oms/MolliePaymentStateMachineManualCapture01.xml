@@ -280,7 +280,7 @@
            <event name="start checking" onEnter="true"/>
            <event name="check payment link status" onEnter="true"/>
            <event name="recheck" timeout="10 minute"/>
-           <event name="update payment link status" onEnter="true" command="Mollie/UpdatePaymentLinkStatus"/>
+           <event name="update payment link status" onEnter="true" command="Mollie/SetExpireStatusPaymentLink"/>
     </events>
 
     </process>
