@@ -46,7 +46,7 @@ This guide provides comprehensive instructions for integrating Mollie payment se
   - [Command Plugins](#command-plugins)
   - [Condition Plugins](#condition-plugins)
   - [3.6. Mail Dependency Provider](#36-mail-dependency-provider)
-  - [Command Plugins](#command-plugins)
+  - [Command Plugins](#command-plugins-1)
 - [4. Glossary Keys and Translations](#4-glossary-keys-and-translations)
   - [Complete Glossary CSV](#complete-glossary-csv)
 - [4. Payment Methods Configuration](#4-payment-methods-configuration)
@@ -71,7 +71,20 @@ This guide provides comprehensive instructions for integrating Mollie payment se
   - [Wallet Configuration](#wallet-configuration)
   - [Apple Pay Integration](#apple-pay-integration)
   - [Setup Steps](#setup-steps)
-- [8. Testing & Debugging](#8-testing--debugging)
+- [8. Payment Links](#8-payment-links)
+  - [Overview](#overview-1)
+  - [API & Configuration Setup](#api--configuration-setup)
+  - [Enabling Payment Links](#enabling-payment-links)
+  - [Configuration Options](#configuration-options)
+  - [Generating a Payment Link](#generating-a-payment-link)
+  - [Backoffice: Creating & Managing Payment Links](#backoffice-creating--managing-payment-links)
+  - [Creating a Link](#creating-a-link)
+  - [Viewing Link Status](#viewing-link-status)
+  - [Webhook Events for Payment Links](#webhook-events-for-payment-links)
+  - [Link-Specific Status Mapping](#link-specific-status-mapping)
+  - [Handling Expiry & Cancellation Events](#handling-expiry--cancellation-events)
+  - [Testing Payment Links](#testing-payment-links)
+- [9. Testing & Debugging](#9-testing--debugging)
   - [Test Mode Setup](#test-mode-setup)
   - [Test Credit Cards](#test-credit-cards)
   - [Debug Logging](#debug-logging)
@@ -79,21 +92,38 @@ This guide provides comprehensive instructions for integrating Mollie payment se
   - [Log Levels and Content](#log-levels-and-content)
   - [Sensitive Data Masking](#sensitive-data-masking)
   - [Common Test Issues](#common-test-issues)
-- [9. Production Deployment](#9-production-deployment)
+- [10. Production Deployment](#10-production-deployment)
   - [Pre-Production Checklist](#pre-production-checklist)
   - [Production Configuration](#production-configuration)
-- [10. Troubleshooting](#10-troubleshooting)
+- [11. Troubleshooting](#11-troubleshooting)
   - [Payment methods not displaying at checkout](#payment-methods-not-displaying-at-checkout)
   - [Webhooks not being received](#webhooks-not-being-received)
   - [Credit card components not loading](#credit-card-components-not-loading)
   - [Apple Pay not appearing](#apple-pay-not-appearing)
-- [11. Webhook Handling](#11-webhook-handling)
+- [12. Webhook Handling](#12-webhook-handling)
   - [How Webhooks Work](#how-webhooks-work)
   - [Webhook Configuration](#webhook-configuration)
   - [Webhook Payload Structure](#webhook-payload-structure)
   - [Payment Status Mapping](#payment-status-mapping)
   - [Webhook Retry Behavior](#webhook-retry-behavior)
-- [12. Webhook Error Troubleshooting](#12-webhook-error-troubleshooting)
+- [13. Next-Gen Webhooks](#13-next-gen-webhooks)
+  - [What Are Next-Gen Webhooks?](#what-are-next-gen-webhooks)
+  - [Key Improvements Over Legacy Webhooks](#key-improvements-over-legacy-webhooks)
+  - [Setup & Configuration](#setup--configuration-1)
+  - [Prerequisites](#prerequisites-1)
+  - [Register a Webhook](#register-a-webhook)
+  - [Choose a Delivery Mode](#choose-a-delivery-mode)
+  - [Payload Structure](#payload-structure)
+  - [Payment Link Event Types](#payment-link-event-types)
+  - [Test Your Webhook](#test-your-webhook)
+  - [Manage Webhooks](#manage-webhooks)
+  - [Security & Validation](#security--validation)
+  - [Signature Verification](#signature-verification)
+  - [Validation Checklist](#validation-checklist)
+  - [Idempotency](#idempotency)
+  - [Respond Fast, Process Async](#respond-fast-process-async)
+  - [Security Best Practices](#security-best-practices)
+- [14. Webhook Error Troubleshooting](#14-webhook-error-troubleshooting)
   - [Common Webhook Issues](#common-webhook-issues)
   - [Issue 1: Webhooks Not Being Received](#issue-1-webhooks-not-being-received)
   - [Issue 2: Webhooks Received But Not Processed](#issue-2-webhooks-received-but-not-processed)
@@ -715,7 +745,7 @@ use Spryker\Yves\Router\RouterDependencyProvider as SprykerRouterDependencyProvi
 class RouterDependencyProvider extends SprykerRouterDependencyProvider
 {
     // ... rest of the implementation
-  
+
     /**
      * @return array<\Spryker\Yves\RouterExtension\Dependency\Plugin\RouteProviderPluginInterface>
      */
@@ -752,8 +782,8 @@ use Spryker\Zed\Kernel\Container;
 
 class CheckoutDependencyProvider extends SprykerCheckoutDependencyProvider
 {
-    // ... rest of the implementation 
-  
+    // ... rest of the implementation
+
     /**
      * @param \Spryker\Zed\Kernel\Container $container
      *
@@ -805,7 +835,7 @@ class CheckoutPageDependencyProvider extends SprykerShopCheckoutPageDependencyPr
 {
 
   // ... rest of the implementation
- 
+
  protected function extendPaymentMethodHandler(Container $container): Container
     {
         $container->extend(static::PAYMENT_METHOD_HANDLER, function (StepHandlerPluginCollection $paymentMethodHandler) {
@@ -864,8 +894,8 @@ use Spryker\Yves\StepEngine\Dependency\Plugin\Form\SubFormPluginCollection;
 
 class CheckoutPageDependencyProvider extends SprykerShopCheckoutPageDependencyProvider
 {
-    // ... rest of the implementation 
-  
+    // ... rest of the implementation
+
     /**
      * @param \Spryker\Yves\Kernel\Container $container
      *
@@ -875,7 +905,7 @@ class CheckoutPageDependencyProvider extends SprykerShopCheckoutPageDependencyPr
     {
         $container->extend(static::PAYMENT_SUB_FORMS, function (SubFormPluginCollection $paymentSubFormPluginCollection) {
             // ... other sub-forms
-            
+
             // Mollie Payment Sub-Forms
             $paymentSubFormPluginCollection->add(new MollieCreditCardSubFormPlugin());
             $paymentSubFormPluginCollection->add(new MolliePayPalSubFormPlugin());
@@ -890,10 +920,10 @@ class CheckoutPageDependencyProvider extends SprykerShopCheckoutPageDependencyPr
             $paymentSubFormPluginCollection->add(new MollieKbcSubFormPlugin());
             $paymentSubFormPluginCollection->add(new MolliePayByBankSubFormPlugin());
             $paymentSubFormPluginCollection->add(new MollieApplePaySubFormPlugin());
-            
+
             return $paymentSubFormPluginCollection;
         });
-        
+
         return $container;
     }
 }
@@ -915,8 +945,8 @@ use SprykerShop\Yves\PaymentAppWidget\Plugin\CheckoutPage\PaymentAppCancelOrderO
 
 class CheckoutPageDependencyProvider extends SprykerShopCheckoutPageDependencyProvider
 {
-    // ... rest of the implementation 
-  
+    // ... rest of the implementation
+
     /**
      * @return array<\SprykerShop\Yves\CheckoutPageExtension\Dependency\Plugin\CheckoutStepResolverStrategyPluginInterface>
      */
@@ -956,7 +986,7 @@ use Spryker\Zed\Payment\PaymentDependencyProvider as SprykerPaymentDependencyPro
 class PaymentDependencyProvider extends SprykerPaymentDependencyProvider
 {
     // ... rest of the implementation
-  
+
     /**
      * @return array<\Spryker\Zed\PaymentExtension\Dependency\Plugin\PaymentMethodFilterPluginInterface>
      */
@@ -992,8 +1022,8 @@ use Spryker\Zed\Oms\OmsDependencyProvider as SprykerOmsDependencyProvider;
 
 class OmsDependencyProvider extends SprykerOmsDependencyProvider
 {
-    // ... rest of the implementation 
-  
+    // ... rest of the implementation
+
     /**
      * @param \Spryker\Zed\Kernel\Container $container
      *
@@ -1003,17 +1033,17 @@ class OmsDependencyProvider extends SprykerOmsDependencyProvider
     {
         $container->extend(self::COMMAND_PLUGINS, function (CommandCollectionInterface $commandCollection) {
             // ... other commands
-            
+
             // Mollie OMS Commands
             $commandCollection->add(new MollieRefundCommandPlugin(), 'Mollie/Refund');
             $commandCollection->add(new MolliePaymentConfirmationCommandPlugin(), 'Mollie/PaymentConfirmation');
-            
+
             // If using manual capture:
             $commandCollection->add(new MolliePaymentCaptureCommandPlugin(), 'Mollie/MolliePaymentCapture');
-            
+
             return $commandCollection;
         });
-        
+
         return $container;
     }
 }
@@ -1049,7 +1079,7 @@ use Spryker\Zed\Oms\OmsDependencyProvider as SprykerOmsDependencyProvider;
 class OmsDependencyProvider extends SprykerOmsDependencyProvider
 {
     // ... rest of the implementation
-  
+
     /**
      * @param \Spryker\Zed\Kernel\Container $container
      *
@@ -1059,7 +1089,7 @@ class OmsDependencyProvider extends SprykerOmsDependencyProvider
     {
         $container->extend(self::CONDITION_PLUGINS, function (ConditionCollectionInterface $conditionCollection) {
             // ... other conditions
-            
+
             // Mollie OMS Conditions
             $conditionCollection->add(new MollieIsPaymentStatusPaidConditionPlugin(), 'Mollie/IsPaymentStatusPaid');
             $conditionCollection->add(new MollieIsPaymentStatusExpiredConditionPlugin(), 'Mollie/IsPaymentStatusExpired');
@@ -1067,7 +1097,7 @@ class OmsDependencyProvider extends SprykerOmsDependencyProvider
             $conditionCollection->add(new MollieIsPaymentStatusFailedConditionPlugin(), 'Mollie/IsPaymentStatusFailed');
             $conditionCollection->add(new MollieIsRefundStatusRefundedConditionPlugin(), 'Mollie/IsRefundStatusRefunded');
             $conditionCollection->add(new MollieIsRefundStatusFailedConditionPlugin(), 'Mollie/IsRefundStatusFailed');
-            
+
             // If using manual capture:
             $conditionCollection->add(new IsAuthorizedConditionPlugin(), 'Mollie/IsAuthorized');
             $conditionCollection->add(new IsAuthorizationCanceledConditionPlugin(), 'Mollie/IsAuthorizationCanceled');
@@ -1075,10 +1105,10 @@ class OmsDependencyProvider extends SprykerOmsDependencyProvider
             $conditionCollection->add(new IsAuthorizationFailedConditionPlugin(), 'Mollie/IsAuthorizationFailed');
             $conditionCollection->add(new IsCapturedConditionPlugin(), 'Mollie/IsCaptured');
             $conditionCollection->add(new IsCaptureFailedConditionPlugin(), 'Mollie/IsCaptureFailed');
-          
+
             return $conditionCollection;
         });
-        
+
         return $container;
     }
 }
@@ -1107,7 +1137,7 @@ use Spryker\Zed\Mail\MailDependencyProvider as SprykerMailDependencyProvider;
 class MailDependencyProvider extends SprykerMailDependencyProvider
 {
     // ... rest of the implementation
-  
+
     /**
      * @return array<\Spryker\Zed\MailExtension\Dependency\Plugin\MailTypeBuilderPluginInterface>
      */
@@ -1362,12 +1392,12 @@ Add the following configuration block:
 ```xml
 <navigation>
     <!-- ... other navigation items ... -->
-    
+
     <payment-method>
         <label>Payment Methods</label>
         <!-- payment method config -->
     </payment-method>
-    
+
     <!-- INSERT MOLLIE CONFIG HERE -->
     <mollie-payment-methods>
         <label>Mollie payment methods</label>
@@ -1377,12 +1407,12 @@ Add the following configuration block:
         <action>index</action>
         <visible>1</visible>
     </mollie-payment-methods>
-    
+
     <shipment-method>
         <label>Shipment Methods</label>
         <!-- shipment method config -->
     </shipment-method>
-    
+
     <!-- ... other navigation items ... -->
 </navigation>
 ```
@@ -1545,7 +1575,97 @@ Apple Pay allows customers to pay using Face ID, Touch ID, or passcode on suppor
 >
 > Apple Pay will only display as a payment option when accessed from compatible devices and browsers. The integration automatically handles device and browser detection.
 
-## 8. Testing & Debugging
+## 8. Payment Links
+
+Payment Links allow merchants to generate shareable URLs that customers can use to complete a payment without going through the standard checkout flow. This is useful for invoicing, customer support scenarios, and manual order processing.
+
+### Overview
+
+A Mollie Payment Link is a hosted payment page that can be sent to a customer via email, SMS, or any other channel. When the customer opens the link, they are presented with Mollie's hosted payment page where they can select a payment method and complete the transaction.
+
+**Key use cases:**
+
+- Sending payment requests for phone or in-person orders
+- Recovering abandoned checkouts
+- Invoicing B2B customers
+- Customer service-initiated payments
+
+### API & Configuration Setup
+
+#### Configuration Options
+
+The following parameters can be set when generating a payment link:
+
+| Parameter | Required | Description |
+|-----------|----------|-------------|
+| `amount` | Yes | The payment amount (value + currency) |
+| `description` | Yes | A description shown on the hosted payment page |
+| `redirectUrl` | No | Where to redirect the customer after payment |
+| `webhookUrl` | No | Override webhook URL for this specific link |
+| `expiresAt` | No | Expiry date/time for the link (ISO 8601) |
+
+#### Generating a Payment Link
+
+> **Webhook URL for Payment Links**
+>
+> Payment links use the next-gen webhook endpoint (`mollie/next-gen/webhook`). See [Section 13: Next-Gen Webhooks](#13-next-gen-webhooks) for full webhook configuration details.
+
+### Backoffice: Creating & Managing Payment Links
+
+> **Note:** Payment link management is visible in the Back Office panel. See [Section 5: Backoffice Configuration](#5-backoffice-configuration) for panel setup instructions.
+
+#### Creating a Link
+
+1. Log in to your Spryker Backoffice
+2. Navigate to **Administration > Mollie payment links**
+3. Click **Create Payment Link**
+4. Fill in the required fields: amount, currency, description, and optional expiry date
+5. Click **Create link** — the shareable URL will be displayed and can be copied or sent directly
+
+#### Viewing Link Status
+
+The Payment Links overview table shows:
+
+| Column | Description |
+|--------|-------------|
+| **Link ID** | Unique Mollie identifier for the payment link |
+| **Description** | The description provided when the link was created |
+| **Amount** | Payment amount and currency |
+| **Status** | `open`, `paid`, `expired`, or `canceled` |
+| **Expires At** | Link expiry date/time (if set) |
+| **Created At** | Timestamp of link creation |
+
+### Webhook Events for Payment Links
+
+Payment links use Mollie's Next-Gen Webhooks rather than the legacy webhook mechanism. See [Section 13: Next-Gen Webhooks](#13-next-gen-webhooks) for full details on setup, payload structure, and event types.
+
+#### Link-Specific Status Mapping
+
+| Mollie Status           | Description | OMS Action |
+|-------------------------|-------------|------------|
+| `payment-link.open`     | Link created, awaiting customer action | None |
+| `payment-link.paid`     | Payment successfully completed via link | Mark as paid |
+| `payment-link.expired`  | Link expired before payment was made | Mark as expired |
+| `payment-link.canceled` | Link was manually canceled | Mark as canceled |
+
+#### Handling Expiry & Cancellation Events
+
+If a payment link expires or is canceled, ensure your OMS handles these states gracefully. Configure the appropriate OMS transitions for `payment_expired` and `payment_cancelled` states as described in [Section 3.4](#34-configure-oms--mollie-payment-mapping).
+
+### Testing Payment Links
+
+1. Ensure `MOLLIE_TEST_MODE` is set to `true` and you are using a test API key
+2. Generate a payment link via the Backoffice or API
+3. Open the link in a browser — you will be taken to Mollie's hosted test payment page
+4. Complete the payment using a [test card](#test-credit-cards) or any available test payment method
+5. Verify the webhook is received and the link status updates to `paid` in the Back Office
+
+> **Common Test Issues**
+>
+> - If the payment page does not load, verify your API key is a valid test key (`test_`)
+> - If webhook status does not update, check your test webhook URL configuration (see [Section 9: Testing & Debugging](#9-testing--debugging))
+
+## 9. Testing & Debugging
 
 ### Test Mode Setup
 
@@ -1615,8 +1735,9 @@ When `MOLLIE_DEBUG_MODE` is set to `'Extensive'`, sensitive data is automaticall
 | Payment methods not appearing | Methods not enabled in Mollie Dashboard | Enable payment methods in test mode |
 | Webhook not receiving updates | URL not accessible or incorrect | Test webhook URL manually, check firewall |
 | API errors | Invalid API key or Profile ID | Verify credentials in Mollie Dashboard |
+| Payment link not loading | Invalid or expired test API key | Verify test API key starts with `test_` |
 
-## 9. Production Deployment
+## 10. Production Deployment
 
 ### Pre-Production Checklist
 
@@ -1644,7 +1765,7 @@ $config[MollieConstants::MOLLIE] = [
 > - Always use HTTPS for all production URLs
 > - Implement proper error handling and logging
 
-## 10. Troubleshooting
+## 11. Troubleshooting
 
 ### Payment methods not displaying at checkout
 
@@ -1708,7 +1829,21 @@ $config[MollieConstants::MOLLIE] = [
 3. Test on compatible Apple device with Safari or Chrome
 4. Check that Apple Pay is enabled in device settings
 
-## 11. Webhook Handling
+### Payment link not generating
+
+**Possible Causes:**
+
+- Insufficient API key permissions
+- Missing required parameters (amount, description)
+- Invalid expiry date format
+
+**Solutions:**
+
+1. Verify your API key has payment link creation permissions in the Mollie Dashboard
+2. Ensure `amount.value` is a string with two decimal places (e.g., `"25.00"`)
+3. Ensure `expiresAt` follows ISO 8601 format if provided
+
+## 12. Webhook Handling
 
 Webhooks are asynchronous notifications sent by Mollie to your server when payment status changes occur. Proper webhook handling is critical for accurate order processing and payment status updates.
 
@@ -1775,6 +1910,8 @@ Mollie payment statuses map to OMS states as follows:
 | `canceled` | Payment cancelled by customer | Mark as cancelled | `payment_cancelled` |
 | `expired` | Payment expired (timeout) | Mark as expired | `payment_expired` |
 
+> **Payment Links:** Payment links use Next-Gen Webhooks with an expanded event model. See [Section 13: Next-Gen Webhooks for Payment Links](#13-next-gen-webhooks-for-payment-links) for link-specific status handling.
+
 ### Webhook Retry Behavior
 
 If your server doesn't respond with HTTP 200, Mollie will retry the webhook:
@@ -1796,7 +1933,104 @@ If your server doesn't respond with HTTP 200, Mollie will retry the webhook:
 >
 > Always respond with HTTP 200 immediately, even if processing hasn't completed. Process the webhook asynchronously if needed to avoid timeouts.
 
-## 12. Webhook Error Troubleshooting
+## 13. Next-Gen Webhooks
+
+### What Are Next-Gen Webhooks?
+
+Mollie's **Next-Gen Webhooks** are a modernized event delivery system replacing the legacy approach. Instead of sending only a resource `id` and requiring your server to make a follow-up API call to find out what changed, next-gen webhooks deliver **structured, signed event payloads** directly to your endpoint — including an optional full snapshot of the changed resource.
+
+### Key Improvements Over Legacy Webhooks
+
+| Feature | Legacy | Next-Gen |
+|---------|--------|----------|
+| Payload | Resource `id` only | Full event + optional resource snapshot |
+| Signature verification | Not supported | `Mollie-Signature` header on every request |
+| Event types | Payment status only | Expanded — includes payment links, disputes, etc. |
+| Webhook registration | Per-resource `webhookUrl` param | Centrally managed via Webhooks API |
+| Security model | Trust the ID, fetch manually | Verify signature, consume payload directly |
+
+### Setup & Configuration
+
+#### Prerequisites
+
+- A Mollie account with an active profile.
+- An API key (`test_` or `live_`).
+- A publicly reachable HTTPS endpoint on your server.
+
+> **Internal note:** For local development, use a tunnelling tool such as [ngrok](https://ngrok.com) or [Expose](https://expose.dev) to make your local endpoint reachable by Mollie.
+
+#### Register a Webhook
+
+You can register your endpoint via the Webhooks API or via the Mollie Dashboard. A single webhook subscription can cover multiple event types.
+
+#### Payment Link Event Types
+
+| Event Type | When it fires |
+|------------|---------------|
+| `payment_link.paid` | A customer successfully paid via the link. |
+
+### Security & Validation
+
+#### Signature Verification
+
+Every next-gen webhook request includes a `Mollie-Signature` header. **Always verify this header before processing the event.** Skipping this check means any actor with your endpoint URL can send forged requests.
+
+The signature is an HMAC-SHA256 hash of the raw request body, signed with your webhook secret.
+
+**PHP example:**
+
+```php
+function verifyMollieSignature(
+    string $rawBody,
+    string $signatureHeader,
+    string $webhookSecret
+): bool {
+    $expected = 'sha256=' . hash_hmac('sha256', $rawBody, $webhookSecret);
+    return hash_equals($expected, $signatureHeader);
+}
+
+// In your webhook controller:
+$rawBody   = file_get_contents('php://input');
+$signature = $_SERVER['HTTP_MOLLIE_SIGNATURE'] ?? '';
+
+if (!verifyMollieSignature($rawBody, $signature, $_ENV['MOLLIE_WEBHOOK_SECRET'])) {
+    http_response_code(401);
+    exit;
+}
+
+$event = json_decode($rawBody, true);
+```
+
+> Always use `hash_equals()` instead of `===` for the comparison. This prevents **timing attacks**, where an attacker could infer the correct signature by measuring how long your comparison takes.
+
+#### Validation Checklist
+
+Before acting on any incoming webhook, your handler should verify all of the following:
+
+**Signature**
+- [ ] `Mollie-Signature` header is present.
+- [ ] HMAC-SHA256 of the raw body matches the header value.
+- [ ] Comparison uses `hash_equals()`, not `===`.
+
+#### Respond Fast, Process Async
+
+Mollie expects a `200 OK` response quickly. If your handler takes too long, Mollie may consider the delivery failed and retry.
+
+The recommended pattern:
+
+1. Verify the signature.
+2. Validate the payload structure.
+3. Persist to database.
+4. Return `200 OK` immediately.
+
+#### Security Best Practices
+
+- **Store webhook secrets securely** — never hardcode them in source code. Use environment variables or a secrets manager.
+- **Use HTTPS only** — Mollie will not deliver webhooks to plain HTTP endpoints in production.
+- **Do not expose internal errors** — return a generic `500` on unexpected failures rather than a detailed error message.
+- **Rotate secrets periodically** — update your webhook secret.
+
+## 14. Webhook Error Troubleshooting
 
 ### Common Webhook Issues
 
