@@ -7,6 +7,7 @@ namespace Mollie\Zed\Mollie\Persistence;
 use Generated\Shared\Transfer\MollieItemPaymentCaptureTransfer;
 use Generated\Shared\Transfer\MolliePaymentCaptureTransfer;
 use Generated\Shared\Transfer\MolliePaymentLinkTransfer;
+use Generated\Shared\Transfer\MolliePaymentMethodConfigTransfer;
 use Generated\Shared\Transfer\MolliePaymentTransfer;
 use Generated\Shared\Transfer\MollieRefundCollectionTransfer;
 use Generated\Shared\Transfer\MollieRefundSaveTransfer;
@@ -208,5 +209,46 @@ class MollieEntityManager extends AbstractEntityManager implements MollieEntityM
         }
 
         return $molliePaymentLinkTransfer;
+    }
+
+    /**
+     * @param int $idMolliePaymentMethodConfig
+     *
+     * @return void
+     */
+    public function deleteMolliePaymentMethodConfig(int $idMolliePaymentMethodConfig): void
+    {
+        $molliePaymentMethodConfigQuery = $this->getFactory()->createSpyMolliePaymentMethodConfigQuery();
+        $molliePaymentMethodConfig = $molliePaymentMethodConfigQuery
+            ->filterByIdMolliePaymentMethodConfig($idMolliePaymentMethodConfig)
+            ->findOne();
+
+        if (!$molliePaymentMethodConfig) {
+            return;
+        }
+
+        $molliePaymentMethodConfig->delete();
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MolliePaymentMethodConfigTransfer $paymentMethodConfigTransfer
+     *
+     * @return \Generated\Shared\Transfer\MolliePaymentMethodConfigTransfer
+     */
+    public function writeMolliePaymentMethodConfig(MolliePaymentMethodConfigTransfer $paymentMethodConfigTransfer): MolliePaymentMethodConfigTransfer
+    {
+        $molliePaymentMethodConfigQuery = $this->getFactory()->createSpyMolliePaymentMethodConfigQuery();
+        $molliePaymentMethodConfig = $molliePaymentMethodConfigQuery
+            ->filterByMollieId($paymentMethodConfigTransfer->getMollieId())
+            ->filterByCurrencyCode($paymentMethodConfigTransfer->getCurrencyCode())
+            ->findOneOrCreate();
+
+        $molliePaymentMethodConfig = $this->getFactory()
+            ->createMolliePaymentMethodConfigMapper()
+            ->mapMolliePaymentMethodConfigTransferToEntity($paymentMethodConfigTransfer, $molliePaymentMethodConfig);
+
+        $molliePaymentMethodConfig->save();
+
+        return $paymentMethodConfigTransfer;
     }
 }

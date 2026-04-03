@@ -75,8 +75,8 @@
         <property name="id" type="string"/>
         <property name="description" type="string"/>
         <property name="locale" type="string"/>
-        <property name="minimumAmount" type="array"/>
-        <property name="maximumAmount" type="array"/>
+        <property name="minimumAmount" type="MollieAmount"/>
+        <property name="maximumAmount" type="MollieAmount"/>
         <property name="image" type="array"/>
         <property name="issuers" type="array"/>
         <property name="pricing" type="array"/>
@@ -356,6 +356,29 @@
         <property name="unitPrice" type="string"/>
     </transfer>
 
+    <transfer name="MolliePaymentMethodConfig">
+        <property name="idMolliePaymentMethodConfig" type="int" />
+        <property name="mollieId" type="string" />
+        <property name="currencyCode" type="string" />
+        <property name="minimumAmount" type="MollieAmount" />
+        <property name="maximumAmount" type="MollieAmount" />
+        <property name="isActive" type="bool" />
+        <property name="image" type="string" />
+        <property name="isLogoVisible" type="bool" />
+        <property name="status" type="string" />
+    </transfer>
+
+    <transfer name="MolliePaymentMethodConfigCriteria">
+        <property name="localeId" type="string"/>
+        <property name="mollieId" type="string"/>
+        <property name="currencyCode" type="string"/>
+        <property name="showOnlyEnabled" type="bool" />
+    </transfer>
+
+    <transfer name="MolliePaymentMethodConfigCollection">
+        <property name="configs" type="MolliePaymentMethodConfig[]" singular="molliePaymentMethodConfig"/>
+    </transfer>
+
     <transfer name="MollieWebhookEvent">
         <property name="resource" type="string"/>
         <property name="id" type="string"/>
@@ -372,6 +395,7 @@
         <property name="documentation" type="MollieLink"/>
         <property name="payment" type="MollieLink"/>
     </transfer>
+
     <transfer name="MollieExpirationInformation">
         <property name="showWarningMessage" type="bool" />
         <property name="warningMessage" type="string" />

@@ -5,6 +5,7 @@ namespace MollieTest\Zed\Mollie\Business\Filter;
 use ArrayObject;
 use Faker\Factory;
 use Generated\Shared\Transfer\AddressTransfer;
+use Generated\Shared\Transfer\MollieAmountTransfer;
 use Generated\Shared\Transfer\MollieApiRequestTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodCollectionTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodsApiResponseTransfer;
@@ -14,7 +15,6 @@ use Generated\Shared\Transfer\PaymentMethodTransfer;
 use Generated\Shared\Transfer\PaymentProviderTransfer;
 use Generated\Shared\Transfer\QuoteTransfer;
 use Generated\Shared\Transfer\TotalsTransfer;
-use Mollie\Zed\Mollie\MollieConfig;
 use MollieTest\Zed\Mollie\Business\AbstractBusinessTest;
 
 class MolliePaymentMethodsFilterTest extends AbstractBusinessTest
@@ -296,18 +296,24 @@ class MolliePaymentMethodsFilterTest extends AbstractBusinessTest
         $method = (new MolliePaymentMethodTransfer())->setId($id);
 
         if ($minAmount !== null) {
-            $method->setMinimumAmount([
-                MollieConfig::MOLLIE_PAYMENT_METHOD_AMOUNT_VALUE => (string)$minAmount,
-            ]);
+            $method->setMinimumAmount($this->createMollieAmountTransfer($minAmount));
         }
 
         if ($maxAmount !== null) {
-            $method->setMaximumAmount([
-                MollieConfig::MOLLIE_PAYMENT_METHOD_AMOUNT_VALUE => (string)$maxAmount,
-            ]);
+            $method->setMaximumAmount($this->createMollieAmountTransfer($maxAmount));
         }
 
         return $method;
+    }
+
+    /**
+     * @param float|null $minAmount
+     *
+     * @return \Generated\Shared\Transfer\MollieAmountTransfer
+     */
+    private function createMollieAmountTransfer(?float $minAmount = null): MollieAmountTransfer
+    {
+        return (new MollieAmountTransfer())->setValue((string)$minAmount);
     }
 
     /**

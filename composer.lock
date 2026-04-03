@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "479dbbe2920ee33f53982a413932b57b",
+    "content-hash": "9dea2dbd96f4140cb5790094269f8b8b",
     "packages": [
         {
             "name": "brick/math",
@@ -6311,6 +6311,54 @@
                 "source": "https://github.com/spryker/money/tree/2.15.0"
             },
             "time": "2025-10-15T10:34:36+00:00"
+        },
+        {
+            "name": "spryker/money-gui",
+            "version": "1.4.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/spryker/money-gui.git",
+                "reference": "7c36d6bedb4a68b3108fe7f2839e7a2a61dd2cb5"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/spryker/money-gui/zipball/7c36d6bedb4a68b3108fe7f2839e7a2a61dd2cb5",
+                "reference": "7c36d6bedb4a68b3108fe7f2839e7a2a61dd2cb5",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=8.3",
+                "spryker/currency": "^3.1.0 || ^4.0.0",
+                "spryker/gui": "^3.45.0 || ^4.0.0 || ^5.0.0",
+                "spryker/kernel": "^3.30.0",
+                "spryker/money": "^2.0.0",
+                "spryker/store": "^1.1.0",
+                "spryker/symfony": "^3.0.0",
+                "spryker/transfer": "^3.25.0"
+            },
+            "require-dev": {
+                "spryker/code-sniffer": "*"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Spryker\\": "src/Spryker/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "proprietary"
+            ],
+            "description": "MoneyGui module",
+            "support": {
+                "source": "https://github.com/spryker/money-gui/tree/1.4.0"
+            },
+            "time": "2026-03-13T11:49:27+00:00"
         },
         {
             "name": "spryker/monitoring",

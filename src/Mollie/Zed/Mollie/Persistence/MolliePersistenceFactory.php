@@ -14,14 +14,21 @@ use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MolliePaymentCaptureMapper;
 use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MolliePaymentCaptureMapperInterface;
 use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MolliePaymentLinkMapper;
 use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MolliePaymentLinkMapperInterface;
+use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MolliePaymentMethodConfigMapper;
+use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MolliePaymentMethodConfigMapperInterface;
 use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MollieRefundMapper;
 use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MollieRefundMapperInterface;
 use Orm\Zed\Mollie\Persistence\SpyMollieOrderItemPaymentCaptureQuery;
 use Orm\Zed\Mollie\Persistence\SpyMolliePaymentLinkQuery;
+use Orm\Zed\Mollie\Persistence\SpyMolliePaymentMethodConfigQuery;
+use Orm\Zed\Mollie\Persistence\SpyMolliePaymentMethodConfigTranslationQuery;
 use Orm\Zed\Mollie\Persistence\SpyPaymentMollieQuery;
 use Orm\Zed\Mollie\Persistence\SpyRefundMollieQuery;
 use Spryker\Zed\Kernel\Persistence\AbstractPersistenceFactory;
 
+/**
+ * @method \Mollie\Zed\Mollie\MollieConfig getConfig();
+ */
 class MolliePersistenceFactory extends AbstractPersistenceFactory
 {
     /**
@@ -63,6 +70,17 @@ class MolliePersistenceFactory extends AbstractPersistenceFactory
     }
 
     /**
+     * @return \Mollie\Zed\Mollie\Persistence\Propel\Mapper\MolliePaymentMethodConfigMapperInterface
+     */
+    public function createMolliePaymentMethodConfigMapper(): MolliePaymentMethodConfigMapperInterface
+    {
+        return new MolliePaymentMethodConfigMapper(
+            $this->getMollieService(),
+            $this->getConfig(),
+        );
+    }
+
+    /**
      * @return \Orm\Zed\Mollie\Persistence\SpyPaymentMollieQuery
      */
     public function createSpyPaymentMollieQuery(): SpyPaymentMollieQuery
@@ -92,6 +110,22 @@ class MolliePersistenceFactory extends AbstractPersistenceFactory
     public function createSpyMolliePaymentLinkQuery(): SpyMolliePaymentLinkQuery
     {
         return SpyMolliePaymentLinkQuery::create();
+    }
+
+    /**
+     * @return \Orm\Zed\Mollie\Persistence\SpyMolliePaymentMethodConfigQuery
+     */
+    public function createSpyMolliePaymentMethodConfigQuery(): SpyMolliePaymentMethodConfigQuery
+    {
+        return SpyMolliePaymentMethodConfigQuery::create();
+    }
+
+    /**
+     * @return \Orm\Zed\Mollie\Persistence\SpyMolliePaymentMethodConfigTranslationQuery
+     */
+    public function createSpyMolliePaymentMethodConfiTranslationgQuery(): SpyMolliePaymentMethodConfigTranslationQuery
+    {
+        return SpyMolliePaymentMethodConfigTranslationQuery::create();
     }
 
     /**

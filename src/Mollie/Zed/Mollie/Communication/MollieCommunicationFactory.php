@@ -4,12 +4,18 @@ declare(strict_types=1);
 
 namespace Mollie\Zed\Mollie\Communication;
 
+use Generated\Shared\Transfer\MolliePaymentMethodConfigCriteriaTransfer;
+use Generated\Shared\Transfer\MolliePaymentMethodConfigTransfer;
 use Mollie\Client\Mollie\MollieClientInterface;
 use Mollie\Service\Mollie\MollieServiceInterface;
 use Mollie\Zed\Mollie\Communication\Cache\MollieCacheInvalidator;
 use Mollie\Zed\Mollie\Communication\Cache\MollieCacheInvalidatorInterface;
+use Mollie\Zed\Mollie\Communication\DataProvider\MolliePaymentMethodsDataProvider;
 use Mollie\Zed\Mollie\Communication\Form\CreatePaymentLinkForm;
 use Mollie\Zed\Mollie\Communication\Form\DataProvider\PaymentLinkFormDataProvider;
+use Mollie\Zed\Mollie\Communication\Form\DataProvider\PaymentMethodsFilterFormDataProvider;
+use Mollie\Zed\Mollie\Communication\Form\PaymentMethodConfigForm;
+use Mollie\Zed\Mollie\Communication\Form\PaymentMethodsFilterForm;
 use Mollie\Zed\Mollie\Communication\Mapper\MollieCommunicationMapper;
 use Mollie\Zed\Mollie\Communication\Mapper\MollieCommunicationMapperInterface;
 use Mollie\Zed\Mollie\Communication\Mapper\Order\OrderItemMapper;
@@ -19,11 +25,12 @@ use Mollie\Zed\Mollie\Communication\Mapper\PaymentLink\MolliePaymentLinkMapperIn
 use Mollie\Zed\Mollie\Communication\Table\MolliePaymentLinkTable;
 use Mollie\Zed\Mollie\Communication\Table\MolliePaymentMethodsTable;
 use Mollie\Zed\Mollie\Communication\Table\TableDataProvider\MolliePaymentLinkDataProvider;
-use Mollie\Zed\Mollie\Communication\Table\TableDataProvider\MolliePaymentMethodsDataProvider;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToCurrencyFacadeInterface;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToLocaleFacadeInterface;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToMailFacadeInterface;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToSalesFacadeInterface;
+use Mollie\Zed\Mollie\Dependency\Facade\MollieToStoreFacadeInterface;
+use Mollie\Zed\Mollie\Dependency\Facade\MollieToTranslatorFacadeInterface;
 use Mollie\Zed\Mollie\MollieDependencyProvider;
 use Orm\Zed\Mollie\Persistence\SpyMolliePaymentLinkQuery;
 use Spryker\Zed\Kernel\Communication\AbstractCommunicationFactory;
@@ -46,7 +53,7 @@ class MollieCommunicationFactory extends AbstractCommunicationFactory
     }
 
     /**
-     * @return \Mollie\Zed\Mollie\Communication\Table\TableDataProvider\MolliePaymentMethodsDataProvider
+     * @return \Mollie\Zed\Mollie\Communication\DataProvider\MolliePaymentMethodsDataProvider
      */
     public function createMolliePaymentMethodsDataProvider(): MolliePaymentMethodsDataProvider
     {
@@ -54,6 +61,8 @@ class MollieCommunicationFactory extends AbstractCommunicationFactory
             $this->createMollieCommunicationMapper(),
             $this->getMollieClient(),
             $this->getLocaleFacade(),
+            $this->getFacade(),
+            $this->getConfig(),
         );
     }
 
@@ -121,7 +130,10 @@ class MollieCommunicationFactory extends AbstractCommunicationFactory
      */
     public function createMollieCommunicationMapper(): MollieCommunicationMapperInterface
     {
-        return new MollieCommunicationMapper();
+        return new MollieCommunicationMapper(
+            $this->getMollieService(),
+            $this->getConfig(),
+        );
     }
 
     /**
@@ -141,6 +153,38 @@ class MollieCommunicationFactory extends AbstractCommunicationFactory
     public function createOrderItemMapper(): OrderItemMapperInterface
     {
         return new OrderItemMapper();
+    }
+
+    /**
+     * @param array<string, mixed>|null $data
+     * @param array<string, mixed> $options
+     *
+     * @return \Symfony\Component\Form\FormInterface
+     */
+    public function createPaymentMethodConfigForm(?MolliePaymentMethodConfigTransfer $data = null, array $options = []): FormInterface
+    {
+        return $this->getFormFactory()->create(PaymentMethodConfigForm::class, $data, $options);
+    }
+
+    /**
+     * @param array<string, mixed>|null $data
+     * @param array<string, mixed> $options
+     *
+     * @return \Symfony\Component\Form\FormInterface
+     */
+    public function createPaymentMethodsFilterForm(?MolliePaymentMethodConfigCriteriaTransfer $data = null, array $options = []): FormInterface
+    {
+        return $this->getFormFactory()->create(PaymentMethodsFilterForm::class, $data, $options);
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Communication\Form\DataProvider\PaymentMethodsFilterFormDataProvider
+     */
+    public function createPaymentMethodsFilterFormDataProvider(): PaymentMethodsFilterFormDataProvider
+    {
+        return new PaymentMethodsFilterFormDataProvider(
+            $this->getStoreFacade(),
+        );
     }
 
     /**
@@ -197,5 +241,21 @@ class MollieCommunicationFactory extends AbstractCommunicationFactory
     public function getMollieService(): MollieServiceInterface
     {
         return $this->getProvidedDependency(MollieDependencyProvider::SERVICE_MOLLIE);
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Dependency\Facade\MollieToStoreFacadeInterface
+     */
+    public function getStoreFacade(): MollieToStoreFacadeInterface
+    {
+        return $this->getProvidedDependency(MollieDependencyProvider::FACADE_STORE);
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Dependency\Facade\MollieToTranslatorFacadeInterface
+     */
+    public function getTranslatorFacade(): MollieToTranslatorFacadeInterface
+    {
+        return $this->getProvidedDependency(MollieDependencyProvider::FACADE_TRANSLATOR);
     }
 }
