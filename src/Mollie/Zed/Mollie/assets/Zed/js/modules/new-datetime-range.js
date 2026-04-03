@@ -1,7 +1,5 @@
 'use strict';
 
-const $ = require('jquery');
-
 function getGtmDateTimeString(datetext) {
     var d = new Date();
     d = new Date(d.valueOf() + d.getTimezoneOffset() * 60000);

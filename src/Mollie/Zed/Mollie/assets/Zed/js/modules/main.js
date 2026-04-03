@@ -5,11 +5,10 @@
 
 'use strict';
 
-const $ = require('jquery');
-
 require('../../sass/main.scss');
 
 $(document).ready(function () {
+
     /**
      * @param data
      * @param params

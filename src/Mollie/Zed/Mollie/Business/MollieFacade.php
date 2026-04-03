@@ -278,4 +278,14 @@ class MollieFacade extends AbstractFacade implements MollieFacadeInterface
     {
         return $this->getFactory()->createMollieExpirationWarningHandler()->getExpirationInformation($orderId);
     }
+
+    /**
+     * @param int $idSalesOrder
+     *
+     * @return \Generated\Shared\Transfer\MolliePaymentLinkTransfer|null
+     */
+    public function getMolliePaymentLinkByIdSalesOrder(int $idSalesOrder): ?MolliePaymentLinkTransfer
+    {
+        return $this->getRepository()->getPaymentLinkByFkSalesOrder($idSalesOrder);
+    }
 }

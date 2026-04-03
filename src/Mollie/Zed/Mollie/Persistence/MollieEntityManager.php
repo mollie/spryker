@@ -202,6 +202,11 @@ class MollieEntityManager extends AbstractEntityManager implements MollieEntityM
             $spyMolliePaymentLinkEntity->save();
         }
 
+        if ($molliePaymentLinkTransfer->getStatus() === MollieConstants::STATUS_EXPIRED) {
+            $spyMolliePaymentLinkEntity->setStatus(MollieConstants::STATUS_EXPIRED);
+            $spyMolliePaymentLinkEntity->save();
+        }
+
         return $molliePaymentLinkTransfer;
     }
 }
