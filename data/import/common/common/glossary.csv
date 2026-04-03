@@ -67,7 +67,7 @@ checkout.payment.provider.MollieTrustlyPayment,Mollie Trustly,de_DE
 checkout.payment.provider.MollieMbWayPayment,Mollie MB Way,en_US
 checkout.payment.provider.MollieMbWayPayment,Mollie MB Way,de_DE
 checkout.payment.provider.MollieSwishPayment,Mollie Swish,de_DE
-checkout.payment.provider.MollieSwishPayment,Mollie Swish,de_DE
+checkout.payment.provider.MollieSwishPayment,Mollie Swish,en_US
 checkout.payment.provider.MollieSatispayPayment,Mollie Satispay,en_US
 checkout.payment.provider.MollieSatispayPayment,Mollie Satispay,de_DE
 checkout.payment.provider.MollieTwintPayment,Mollie TWINT payment,en_US
