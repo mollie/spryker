@@ -107,6 +107,26 @@ class MollieConfig extends AbstractSharedConfig
     /**
      * @var string
      */
+    public const MOLLIE_PROVIDER_BILLIE = 'MollieBilliePayment';
+
+    /**
+     * @var string
+     */
+    public const MOLLIE_PROVIDER_RIVERTY = 'MollieRivertyPayment';
+
+    /**
+     * @var string
+     */
+    public const MOLLIE_PROVIDER_IDEAL_IN3 = 'MollieIdealIn3Payment';
+
+    /**
+     * @var string
+     */
+    public const MOLLIE_PROVIDER_ALMA = 'MollieAlmaPayment';
+
+    /**
+     * @var string
+     */
     public const MOLLIE_PAYMENT_CREDIT_CARD = 'mollieCreditCardPayment';
 
     /**
@@ -188,6 +208,26 @@ class MollieConfig extends AbstractSharedConfig
      * @var string
      */
     public const MOLLIE_PAYMENT_BIZUM = 'mollieBizumPayment';
+
+    /**
+     * @var string
+     */
+    public const MOLLIE_PAYMENT_BILLIE = 'mollieBilliePayment';
+
+    /**
+     * @var string
+     */
+    public const MOLLIE_PAYMENT_IDEAL_IN3 = 'mollieIdealIn3Payment';
+
+    /**
+     * @var string
+     */
+    public const MOLLIE_PAYMENT_RIVERTY = 'mollieRivertyPayment';
+
+    /**
+     * @var string
+     */
+    public const MOLLIE_PAYMENT_ALMA = 'mollieAlmaPayment';
 
     /**
      * @var string

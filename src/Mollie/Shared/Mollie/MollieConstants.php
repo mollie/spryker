@@ -179,4 +179,10 @@ interface MollieConstants
     public const string LOGO_URL = 'LogoUrl';
 
     public const string MOLLIE_PAYMENT_LINK_EXPIRATION_TIME = 'MOLLIE:MOLLIE_PAYMENT_LINK_EXPIRATION_TIME';
+
+    public const string PRODUCT_TYPE_PHYSICAL = 'physical';
+
+    public const string PRODUCT_TYPE_SHIPPING_FEE = 'shipping_fee';
+
+    public const string MOLLIE_BNPL_PAYMENT_METHODS = 'MOLLIE:MOLLIE_BNPL_PAYMENT_METHODS';
 }
