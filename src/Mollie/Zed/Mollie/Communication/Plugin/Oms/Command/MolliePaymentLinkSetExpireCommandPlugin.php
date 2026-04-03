@@ -15,7 +15,7 @@ use Spryker\Zed\Oms\Dependency\Plugin\Command\CommandByOrderInterface;
  * @method \Mollie\Zed\Mollie\MollieConfig getConfig()
  * @method \Mollie\Zed\Mollie\Communication\MollieCommunicationFactory getFactory()
  */
-class MolliePaymentLinkStatusUpdateCommandPlugin extends AbstractPlugin implements CommandByOrderInterface
+class MolliePaymentLinkSetExpireCommandPlugin extends AbstractPlugin implements CommandByOrderInterface
 {
     /**
      * @param array<mixed> $orderItems
