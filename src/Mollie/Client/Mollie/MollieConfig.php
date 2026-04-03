@@ -70,31 +70,6 @@ class MollieConfig extends AbstractBundleConfig
     /**
      * @var string
      */
-    public const REQUEST_PARAMETER_CREATE_PAYMENT_BILLIE_COMPANY = 'company';
-
-    /**
-     * @var string
-     */
-    public const REQUEST_PARAMETER_CREATE_PAYMENT_BILLIE_COMPANY_BILLING_ADDRESS_ORGANIZATION_NAME = 'billingAddress.organizationName';
-
-    /**
-     * @var string
-     */
-    public const REQUEST_PARAMETER_CREATE_PAYMENT_BILLIE_COMPANY_REGISTRATION_NUMBER = 'registrationNumber';
-
-    /**
-     * @var string
-     */
-    public const REQUEST_PARAMETER_CREATE_PAYMENT_BILLIE_COMPANY_VAT_NUMBER = 'vatNumber';
-
-    /**
-     * @var string
-     */
-    public const REQUEST_PARAMETER_CREATE_PAYMENT_BILLIE_COMPANY_ENTITY_TYPE = 'entityType';
-
-    /**
-     * @var string
-     */
     public const REQUEST_PARAMETER_CREATE_PAYMENT_IDEAL_IN3_CONSUMER_DATE_OF_BIRTH = 'consumerDateOfBirth';
 
     /**
