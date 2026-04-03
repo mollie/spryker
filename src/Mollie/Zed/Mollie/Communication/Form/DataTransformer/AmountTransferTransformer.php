@@ -8,7 +8,7 @@ use Generated\Shared\Transfer\MollieAmountTransfer;
 use Symfony\Component\Form\DataTransformerInterface;
 
 /**
- * @implements DataTransformerInterface<MollieAmountTransfer|null, float|null>
+ * @implements \Symfony\Component\Form\DataTransformerInterface<\Generated\Shared\Transfer\MollieAmountTransfer|null, float|null>
  */
 class AmountTransferTransformer implements DataTransformerInterface
 {

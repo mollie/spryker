@@ -46,6 +46,7 @@ class MolliePaymentMethodsTable extends AbstractTable
         MolliePaymentMethodTransfer::IMAGE,
         self::HEADER_ACTIONS,
     ];
+
     private ?MolliePaymentMethodConfigCriteriaTransfer $criteria;
 
     /**
