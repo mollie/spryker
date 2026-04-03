@@ -1608,7 +1608,7 @@ The following parameters can be set when generating a payment link:
 
 > **Webhook URL for Payment Links**
 >
-> Payment links use the next-gen webhook endpoint (`mollie/next-gen/webhook`). See [Section 13: Next-Gen Webhooks for Payment Links](#13-next-gen-webhooks-for-payment-links) for full webhook configuration details.
+> Payment links use the next-gen webhook endpoint (`mollie/next-gen/webhook`). See [Section 13: Next-Gen Webhooks](#13-next-gen-webhooks) for full webhook configuration details.
 
 ### Backoffice: Creating & Managing Payment Links
 
@@ -1637,16 +1637,16 @@ The Payment Links overview table shows:
 
 ### Webhook Events for Payment Links
 
-Payment links use Mollie's Next-Gen Webhooks rather than the legacy webhook mechanism. See [Section 13: Next-Gen Webhooks for Payment Links](#13-next-gen-webhooks-for-payment-links) for full details on setup, payload structure, and event types.
+Payment links use Mollie's Next-Gen Webhooks rather than the legacy webhook mechanism. See [Section 13: Next-Gen Webhooks](#13-next-gen-webhooks) for full details on setup, payload structure, and event types.
 
 #### Link-Specific Status Mapping
 
-| Mollie Status | Description | OMS Action |
-|---------------|-------------|------------|
-| `open` | Link created, awaiting customer action | None |
-| `paid` | Payment successfully completed via link | Mark as paid |
-| `expired` | Link expired before payment was made | Mark as expired |
-| `canceled` | Link was manually canceled | Mark as canceled |
+| Mollie Status           | Description | OMS Action |
+|-------------------------|-------------|------------|
+| `payment-link.open`     | Link created, awaiting customer action | None |
+| `payment-link.paid`     | Payment successfully completed via link | Mark as paid |
+| `payment-link.expired`  | Link expired before payment was made | Mark as expired |
+| `payment-link.canceled` | Link was manually canceled | Mark as canceled |
 
 #### Handling Expiry & Cancellation Events
 
