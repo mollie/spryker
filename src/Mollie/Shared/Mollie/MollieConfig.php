@@ -77,6 +77,56 @@ class MollieConfig extends AbstractSharedConfig
     /**
      * @var string
      */
+    public const MOLLIE_PROVIDER_PRZELEWY24 = 'MolliePrzelewy24Payment';
+
+    /**
+     * @var string
+     */
+    public const MOLLIE_PROVIDER_MULTIBANCO = 'MollieMultibancoPayment';
+
+    /**
+     * @var string
+     */
+    public const MOLLIE_PROVIDER_BANCOMAT_PAY = 'MollieBancomatPayPayment';
+
+    /**
+     * @var string
+     */
+    public const MOLLIE_PROVIDER_BIZUM = 'MollieBizumPayment';
+
+    /**
+     * @var string
+     */
+    public const MOLLIE_PROVIDER_BLIK = 'MollieBLIKPayment';
+
+    /**
+     * @var string
+     */
+    public const MOLLIE_PROVIDER_PAYCONIQ = 'MolliePayconiqPayment';
+
+    /**
+     * @var string
+     */
+    public const MOLLIE_PROVIDER_BILLIE = 'MollieBilliePayment';
+
+    /**
+     * @var string
+     */
+    public const MOLLIE_PROVIDER_RIVERTY = 'MollieRivertyPayment';
+
+    /**
+     * @var string
+     */
+    public const MOLLIE_PROVIDER_IDEAL_IN3 = 'MollieIdealIn3Payment';
+
+    /**
+     * @var string
+     */
+    public const MOLLIE_PROVIDER_ALMA = 'MollieAlmaPayment';
+
+    /**
+     * @var string
+     */
     public const MOLLIE_PAYMENT_CREDIT_CARD = 'mollieCreditCardPayment';
 
     /**
@@ -138,6 +188,116 @@ class MollieConfig extends AbstractSharedConfig
      * @var string
      */
     public const MOLLIE_PAYMENT_APPLE_PAY = 'mollieApplePayPayment';
+
+    /**
+     * @var string
+     */
+    public const MOLLIE_PAYMENT_PRZELEWY24 = 'molliePrzelewy24Payment';
+
+    /**
+     * @var string
+     */
+    public const MOLLIE_PAYMENT_MULTIBANCO = 'mollieMultibancoPayment';
+
+    /**
+     * @var string
+     */
+    public const MOLLIE_PAYMENT_BANCOMAT_PAY = 'mollieBancomatPayPayment';
+
+    /**
+     * @var string
+     */
+    public const MOLLIE_PAYMENT_BIZUM = 'mollieBizumPayment';
+
+    /**
+     * @var string
+     */
+    public const MOLLIE_PAYMENT_BILLIE = 'mollieBilliePayment';
+
+    /**
+     * @var string
+     */
+    public const MOLLIE_PAYMENT_IDEAL_IN3 = 'mollieIdealIn3Payment';
+
+    /**
+     * @var string
+     */
+    public const MOLLIE_PAYMENT_RIVERTY = 'mollieRivertyPayment';
+
+    /**
+     * @var string
+     */
+    public const MOLLIE_PAYMENT_ALMA = 'mollieAlmaPayment';
+
+    /**
+     * @var string
+     */
+    public const MOLLIE_PAYMENT_TRUSTLY = 'mollieTrustlyPayment';
+
+    /**
+     * @var string
+     */
+    public const MOLLIE_PAYMENT_TRUSTLY_PROVIDER = 'MollieTrustlyPayment';
+
+    /**
+     * @var string
+     */
+    public const MOLLIE_PAYMENT_MB_WAY = 'mollieMbWayPayment';
+
+    /**
+     * @var string
+     */
+    public const MOLLIE_PAYMENT_MB_WAY_PROVIDER = 'MollieMbWayPayment';
+
+    /**
+     * @var string
+     */
+    public const MOLLIE_PAYMENT_SWISH = 'mollieSwishPayment';
+
+    /**
+     * @var string
+     */
+    public const MOLLIE_PAYMENT_SWISH_PROVIDER = 'MollieSwishPayment';
+
+    /**
+     * @var string
+     */
+    public const MOLLIE_PAYMENT_SATISPAY = 'mollieSatispayPayment';
+
+    /**
+     * @var string
+     */
+    public const MOLLIE_PAYMENT_SATISPAY_PROVIDER = 'MollieSatispayPayment';
+
+    /**
+     * @var string
+     */
+    public const MOLLIE_PAYMENT_TWINT = 'mollieTwintPayment';
+
+    /**
+     * @var string
+     */
+    public const MOLLIE_PAYMENT_TWINT_PROVIDER = 'MollieTwintPayment';
+
+    /**
+     * @var string
+     */
+    public const MOLLIE_PAYMENT_VIPPS = 'mollieVippsPayment';
+
+    /**
+     * @var string
+     */
+    public const MOLLIE_PAYMENT_VIPPS_PROVIDER = 'MollieVippsPayment';
+
+    /**
+     * @var string
+     */
+    public const MOLLIE_PAYMENT_BLIK = 'mollieBLIKPayment';
+
+    /**
+     * @var string
+     */
+    public const MOLLIE_PAYMENT_PAYCONIQ = 'molliePayconiqPayment';
 
     /**
      * @var string

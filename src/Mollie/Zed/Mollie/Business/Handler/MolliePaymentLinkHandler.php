@@ -4,6 +4,8 @@ declare(strict_types = 1);
 
 namespace Mollie\Zed\Mollie\Business\Handler;
 
+use DateTime;
+use DateTimeZone;
 use Generated\Shared\Transfer\MollieApiRequestTransfer;
 use Generated\Shared\Transfer\MolliePaymentLinkApiResponseTransfer;
 use Generated\Shared\Transfer\MolliePaymentLinkTransfer;
@@ -88,6 +90,11 @@ class MolliePaymentLinkHandler implements MolliePaymentLinkHandlerInterface
             return false;
         }
 
-        return $paymentLinkTransfer->getStatus() === MollieConstants::STATUS_EXPIRED;
+        $expiryDateTime = $paymentLinkTransfer->getExpiresAt();
+        $timezone = new DateTimeZone(date_default_timezone_get());
+        $expiryDate = new DateTime($expiryDateTime, $timezone);
+        $now = new DateTime('now', $timezone);
+
+        return $now > $expiryDate;
     }
 }

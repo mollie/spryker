@@ -226,4 +226,11 @@ interface MollieFacadeInterface
      * @return void
      */
     public function deleteMolliePaymentConfigData(int $mollieId): void;
+
+    /**
+     * @param int $idSalesOrder
+     *
+     * @return \Generated\Shared\Transfer\MolliePaymentLinkTransfer|null
+     */
+    public function getMolliePaymentLinkByIdSalesOrder(int $idSalesOrder): ?MolliePaymentLinkTransfer;
 }

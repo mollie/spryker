@@ -25,10 +25,11 @@ interface MollieServiceInterface
      * @api
      *
      * @param int $value
+     * @param string|null $currency
      *
      * @return \Generated\Shared\Transfer\MollieAmountTransfer
      */
-    public function convertIntegerToMollieAmount(int $value): MollieAmountTransfer;
+    public function convertIntegerToMollieAmount(int $value, ?string $currency = null): MollieAmountTransfer;
 
     /**
      * Calls UrlResolver class from client layer

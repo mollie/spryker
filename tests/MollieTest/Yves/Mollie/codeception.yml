@@ -1,0 +1,29 @@
+namespace: MollieTest\Yves\Mollie
+
+paths:
+  tests: .
+  output: _output
+  data: _data
+  support: _support
+
+coverage:
+  enabled: true
+  remote: false
+  whitelist: { include: ['../../../../src/*'] }
+
+suites:
+  Controller:
+    path: .
+    actor: MollieYvesTester
+    modules:
+      enabled:
+        - Asserts
+        - \SprykerTest\Shared\Testify\Helper\Environment
+        - \SprykerTest\Shared\Testify\Helper\ConfigHelper
+        - \SprykerTest\Shared\Config\Helper\ConfigInit
+        - \SprykerTest\Client\Storage\Helper\StorageHelper
+        - \SprykerTest\Client\Testify\Helper\DependencyProviderHelper
+        - \SprykerTest\Client\Testify\Helper\ClientHelper
+        - \SprykerTest\Shared\Testify\Helper\LocatorHelper:
+            projectNamespaces: [ 'Mollie' ]
+        - \SprykerTest\Shared\Testify\Helper\DependencyHelper
