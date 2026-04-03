@@ -193,4 +193,11 @@ interface MollieFacadeInterface
      * @return \Generated\Shared\Transfer\MollieExpirationInformationTransfer
      */
     public function getExpirationInformation(int $orderId): MollieExpirationInformationTransfer;
+
+    /**
+     * @param int $idSalesOrder
+     *
+     * @return \Generated\Shared\Transfer\MolliePaymentLinkTransfer|null
+     */
+    public function getMolliePaymentLinkByIdSalesOrder(int $idSalesOrder): ?MolliePaymentLinkTransfer;
 }

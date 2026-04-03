@@ -70,6 +70,7 @@ class MolliePaymentLinkMapper implements MolliePaymentLinkMapperInterface
     {
         $paymentLinkTransfer = new MolliePaymentLinkTransfer();
         $paymentLinkTransfer->fromArray($spyMolliePaymentLinkEntity->toArray(), true);
+        $paymentLinkTransfer->setExpiresAt($spyMolliePaymentLinkEntity->getExpiryDate()->format('Y-m-d H:i:s'));
 
         return $paymentLinkTransfer;
     }
