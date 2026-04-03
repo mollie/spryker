@@ -1,6 +1,6 @@
 {% extends '@Gui/Layout/layout.twig' %}
 
-{% set widget_title = 'Edit ' ~ paymentMethodConfig.mollieId ~ ' configuration' %}
+{% set widget_title = 'Edit ' ~ mollieId ~ ' configuration' %}
 
 {% block head_title %}
     {{ widget_title | trans }}
@@ -10,7 +10,7 @@
 {% endblock %}
 
 {% block action %}
-    {{ viewActionButton(url('/mollie/detail', {'mollie_payment_method_id': mollieId, 'currency' : paymentMethodConfig.currencyCode}), 'View' | trans) }}
+    {{ viewActionButton(url('/mollie/detail', {'mollie_payment_method_id': mollieId, 'currency' : currency}), 'View' | trans) }}
     {{ backActionButton(url('/mollie'), 'Back to Payment Methods' | trans) }}
 {% endblock %}
 

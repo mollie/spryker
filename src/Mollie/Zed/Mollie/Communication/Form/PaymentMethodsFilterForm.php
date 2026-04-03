@@ -1,8 +1,10 @@
 <?php
 
+declare(strict_types=1);
 
 namespace Mollie\Zed\Mollie\Communication\Form;
 
+use Generated\Shared\Transfer\MolliePaymentMethodConfigCriteriaTransfer;
 use Mollie\Zed\Mollie\Communication\Form\DataProvider\PaymentMethodsFilterFormDataProvider;
 use Spryker\Zed\Kernel\Communication\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -13,7 +15,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class PaymentMethodsFilterForm extends AbstractType
 {
-    protected const string FIELD_CURRENCY = 'currency';
+    protected const string FIELD_CURRENCY = 'currencyCode';
 
     protected const string LABEL_CURRENCY = 'Currency';
 
@@ -33,7 +35,7 @@ class PaymentMethodsFilterForm extends AbstractType
         ]);
 
         $resolver->setDefaults([
-            'csrf_protection' => false,
+            'data_class' => MolliePaymentMethodConfigCriteriaTransfer::class,
         ]);
 
         $resolver->setRequired([
@@ -88,7 +90,6 @@ class PaymentMethodsFilterForm extends AbstractType
     {
         $builder->add(static::FIELD_SHOW_ONLY_ENABLED, CheckboxType::class, [
             'label' => static::LABEL_SHOW_ONLY_ENABLED,
-            'false_values' => [null, ''],
             'required' => false,
         ]);
     }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Mollie\Zed\Mollie\Communication\Form\DataProvider;
 
+use Generated\Shared\Transfer\MolliePaymentMethodConfigCriteriaTransfer;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToStoreFacadeInterface;
 
 class PaymentMethodsFilterFormDataProvider
@@ -19,11 +20,11 @@ class PaymentMethodsFilterFormDataProvider
     }
 
     /**
-     * @return array<mixed>
+     * @return array<mixed>|null
      */
-    public function getData(): array
+    public function getData(): MolliePaymentMethodConfigCriteriaTransfer|null
     {
-        return [];
+        return null;
     }
 
     /**

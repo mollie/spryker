@@ -24,11 +24,11 @@
                         <tbody>
                         <tr>
                             <th>{{ 'Minimum Amount' | trans }}</th>
-                            <td>{{ paymentMethodConfig.minimumAmount}}</td>
+                            <td>{{ paymentMethodConfig.minimumAmount.value}} {{ paymentMethodConfig.currencyCode }}</td>
                         </tr>
                         <tr>
                             <th>{{ 'Maximum Amount' | trans }}</th>
-                            <td>{{ paymentMethodConfig.maximumAmount }}</td>
+                            <td>{{ paymentMethodConfig.maximumAmount.value }} {{ paymentMethodConfig.currencyCode }}</td>
                         </tr>
                         <tr>
                             <th>{{ 'Is active' | trans }}</th>

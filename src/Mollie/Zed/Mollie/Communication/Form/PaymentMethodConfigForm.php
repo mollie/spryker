@@ -1,11 +1,12 @@
 <?php
 
-
 declare(strict_types=1);
 
 namespace Mollie\Zed\Mollie\Communication\Form;
 
+use Generated\Shared\Transfer\MolliePaymentMethodConfigTransfer;
 use Mollie\Zed\Mollie\Communication\DataProvider\MolliePaymentMethodsDataProvider;
+use Mollie\Zed\Mollie\Communication\Form\DataTransformer\AmountTransferTransformer;
 use Spryker\Zed\Kernel\Communication\Form\AbstractType;
 use Spryker\Zed\MoneyGui\Communication\Form\Type\SimpleMoneyType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -13,9 +14,9 @@ use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Constraints\GreaterThanOrEqual;
-use Symfony\Component\Validator\Constraints\LessThanOrEqual;
+use Symfony\Component\Validator\Constraints\Callback;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 /**
  * @method \Mollie\Zed\Mollie\Communication\MollieCommunicationFactory getFactory()
@@ -48,6 +49,10 @@ class PaymentMethodConfigForm extends AbstractType
         $resolver->setDefined([
             MolliePaymentMethodsDataProvider::VALIDATION_MAXIMUM_VALUE,
             MolliePaymentMethodsDataProvider::VALIDATION_MINIMUM_VALUE,
+        ]);
+
+        $resolver->setDefaults([
+            'data_class' => MolliePaymentMethodConfigTransfer::class,
         ]);
     }
 
@@ -84,18 +89,31 @@ class PaymentMethodConfigForm extends AbstractType
                 $options[MolliePaymentMethodsDataProvider::VALIDATION_MINIMUM_VALUE],
             );
 
-            $constraints[] = new GreaterThanOrEqual([
-                'value' => $options[MolliePaymentMethodsDataProvider::VALIDATION_MINIMUM_VALUE],
-                'message' => $errorMessage,
+            $constraints[] = new Callback([
+                'callback' => function (mixed $value, ExecutionContextInterface $context) use ($options): void {
+                    $minimum = $options[MolliePaymentMethodsDataProvider::VALIDATION_MINIMUM_VALUE];
+                    $maximum = $options[MolliePaymentMethodsDataProvider::VALIDATION_MAXIMUM_VALUE];
+                    $amount = $value->getValue();
 
+                    if ($amount === null || $amount < $minimum || $amount > $maximum) {
+                        $errorMessage = sprintf(
+                            $this->getFactory()->getTranslatorFacade()->trans(static::WARNING_MINIMUM_AMOUNT),
+                            $maximum,
+                            $minimum,
+                        );
+                        $context->addViolation($errorMessage);
+                    }
+                },
             ]);
         }
 
         $builder->add(static::FIELD_MINIMUM_AMOUNT, SimpleMoneyType::class, [
             'label' => 'Minimum amount',
             'constraints' => $constraints,
-            'required' => false,
+            'required' => true,
         ]);
+
+        $builder->get(static::FIELD_MINIMUM_AMOUNT)->resetModelTransformers()->addModelTransformer(new AmountTransferTransformer());
 
         return $this;
     }
@@ -116,17 +134,31 @@ class PaymentMethodConfigForm extends AbstractType
                 $options[MolliePaymentMethodsDataProvider::VALIDATION_MAXIMUM_VALUE],
             );
 
-            $constraints[] = new LessThanOrEqual([
-                'value' => $options[MolliePaymentMethodsDataProvider::VALIDATION_MAXIMUM_VALUE],
-                'message' => $errorMessage,
+            $constraints[] = new Callback([
+                'callback' => function (mixed $value, ExecutionContextInterface $context) use ($options): void {
+                    $minimum = $options[MolliePaymentMethodsDataProvider::VALIDATION_MINIMUM_VALUE];
+                    $maximum = $options[MolliePaymentMethodsDataProvider::VALIDATION_MAXIMUM_VALUE];
+                    $amount = $value->getValue();
+
+                    if ($amount === null || $amount > $maximum || $amount < $minimum) {
+                        $errorMessage = sprintf(
+                            $this->getFactory()->getTranslatorFacade()->trans(static::WARNING_MAXIMUM_AMOUNT),
+                            $maximum,
+                            $minimum,
+                        );
+                        $context->addViolation($errorMessage);
+                    }
+                },
             ]);
         }
 
         $builder->add(static::FIELD_MAXIMUM_AMOUNT, SimpleMoneyType::class, [
             'label' => 'Maximum amount',
             'constraints' => $constraints,
-            'required' => false,
+            'required' => true,
         ]);
+
+        $builder->get(static::FIELD_MAXIMUM_AMOUNT)->addModelTransformer(new AmountTransferTransformer());
 
         return $this;
     }
@@ -141,7 +173,7 @@ class PaymentMethodConfigForm extends AbstractType
     {
         $builder->add(static::FIELD_IMAGE, TextType::class, [
             'label' => 'Logo',
-            'required' => false,
+            'required' => true,
         ]);
 
         return $this;

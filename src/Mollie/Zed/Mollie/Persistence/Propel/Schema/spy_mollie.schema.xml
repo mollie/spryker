@@ -111,9 +111,9 @@
         <column name="id_mollie_payment_method_config" type="INTEGER" primaryKey="true" autoIncrement="true"/>
         <column name="currency_code" type="VARCHAR" size="3" required="true"/>
         <column name="mollie_id" type="VARCHAR" size="255" required="true"/>
-        <column name="minimum_amount" type="INTEGER" required="false"/>
-        <column name="maximum_amount" type="INTEGER" required="false"/>
-        <column name="logo_url" type="VARCHAR" size="255" required="false" />
+        <column name="minimum_amount" type="INTEGER" required="true"/>
+        <column name="maximum_amount" type="INTEGER" required="true"/>
+        <column name="image" type="VARCHAR" size="512" required="true" />
         <column name="is_active" type="BOOLEAN" required="true" default="true"/>
         <column name="is_logo_visible" type="BOOLEAN" required="true" default="true"/>
 

@@ -80,23 +80,16 @@ interface MollieEntityManagerInterface
     public function updatePaymentLink(MolliePaymentLinkTransfer $molliePaymentLinkTransfer): MolliePaymentLinkTransfer;
 
     /**
-     * @param \Generated\Shared\Transfer\MolliePaymentMethodConfigTransfer $paymentMethodConfigTransfer
-     *
-     * @return \Generated\Shared\Transfer\MolliePaymentMethodConfigTransfer
-     */
-    public function createMolliePaymentMethodConfig(MolliePaymentMethodConfigTransfer $paymentMethodConfigTransfer): MolliePaymentMethodConfigTransfer;
-
-    /**
-     * @param \Generated\Shared\Transfer\MolliePaymentMethodConfigTransfer $paymentMethodConfigTransfer
-     *
-     * @return \Generated\Shared\Transfer\MolliePaymentMethodConfigTransfer
-     */
-    public function updateMolliePaymentMethodConfig(MolliePaymentMethodConfigTransfer $paymentMethodConfigTransfer): MolliePaymentMethodConfigTransfer;
-
-    /**
      * @param int $idMolliePaymentMethodConfig
      *
      * @return void
      */
     public function deleteMolliePaymentMethodConfig(int $idMolliePaymentMethodConfig): void;
+
+    /**
+     * @param \Generated\Shared\Transfer\MolliePaymentMethodConfigTransfer $paymentMethodConfigTransfer
+     *
+     * @return \Generated\Shared\Transfer\MolliePaymentMethodConfigTransfer
+     */
+    public function writeMolliePaymentMethodConfig(MolliePaymentMethodConfigTransfer $paymentMethodConfigTransfer): MolliePaymentMethodConfigTransfer;
 }

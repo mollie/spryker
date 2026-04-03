@@ -124,7 +124,7 @@ class MollieRepository extends AbstractRepository implements MollieRepositoryInt
      *
      * @return \Generated\Shared\Transfer\MolliePaymentMethodConfigTransfer|null
      */
-    public function getPaymentMethodConfigByMollieKeyAndCurrency(
+    public function getPaymentMethodConfigByCriteria(
         MolliePaymentMethodConfigCriteriaTransfer $criteriaTransfer,
     ): ?MolliePaymentMethodConfigTransfer {
         $spyMolliePaymentMethodConfigEntity = $this->getFactory()

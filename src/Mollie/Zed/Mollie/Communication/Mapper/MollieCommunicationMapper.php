@@ -9,18 +9,20 @@ use Generated\Shared\Transfer\MollieAmountTransfer;
 use Generated\Shared\Transfer\MollieApiRequestTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodCollectionTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodConfigCriteriaTransfer;
-use Generated\Shared\Transfer\MolliePaymentMethodConfigTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodQueryParametersTransfer;
 use Mollie\Service\Mollie\MollieServiceInterface;
 use Mollie\Shared\Mollie\MollieConstants;
+use Mollie\Zed\Mollie\MollieConfig;
 
 class MollieCommunicationMapper implements MollieCommunicationMapperInterface
 {
     /**
      * @param \Mollie\Service\Mollie\MollieServiceInterface $mollieService
+     * @param \Mollie\Zed\Mollie\MollieConfig $config
      */
     public function __construct(
         private MollieServiceInterface $mollieService,
+        private MollieConfig $config,
     ) {
     }
 
@@ -37,56 +39,28 @@ class MollieCommunicationMapper implements MollieCommunicationMapperInterface
         if ($currencyCode) {
             $amountTransfer = (new MollieAmountTransfer())
                 ->setCurrency($currencyCode)
-                ->setValue('100.00');
+                ->setValue($this->config->getMethodsApiDefaultAmountValue());
         }
 
         return (new MollieApiRequestTransfer())
             ->setMolliePaymentMethodQueryParameters(
-                $this->createMolliePaymentMethodQueryParametersTransfer($locale, $amountTransfer),
+                $this->createMolliePaymentMethodQueryParametersTransfer($locale)
+                    ->setAmount($amountTransfer),
             );
     }
 
         /**
          * @param string $locale
-         * @param \Generated\Shared\Transfer\MollieAmountTransfer|null $amountTransfer
          *
          * @return \Generated\Shared\Transfer\MolliePaymentMethodQueryParametersTransfer
          */
     public function createMolliePaymentMethodQueryParametersTransfer(
         string $locale,
-        ?MollieAmountTransfer $amountTransfer,
     ): MolliePaymentMethodQueryParametersTransfer {
         return (new MolliePaymentMethodQueryParametersTransfer())
             ->setLocale($locale)
             ->setIncludeIssuers(true)
-            ->setAmount($amountTransfer)
             ->setSequenceType(MollieConstants::MOLLIE_SEQUENCE_TYPE_ONE_OFF);
-    }
-
-    /**
-     * @param array<string, mixed> $formData
-     * @param \Generated\Shared\Transfer\MolliePaymentMethodConfigTransfer|null $configTransfer
-     *
-     * @return \Generated\Shared\Transfer\MolliePaymentMethodConfigTransfer
-     */
-    public function mapFormDataToPaymentMethodConfigTransfer(
-        array $formData,
-        ?MolliePaymentMethodConfigTransfer $configTransfer,
-    ): MolliePaymentMethodConfigTransfer {
-        if (!$configTransfer) {
-            $configTransfer = new MolliePaymentMethodConfigTransfer();
-        }
-
-        $configTransfer
-            ->setIsActive($formData[MolliePaymentMethodConfigTransfer::IS_ACTIVE])
-            ->setStatus($formData[MolliePaymentMethodConfigTransfer::IS_ACTIVE] ? 'activated' : 'not activated')
-            ->setIsLogoVisible($formData[MolliePaymentMethodConfigTransfer::IS_LOGO_VISIBLE])
-            ->setMollieId($formData[MolliePaymentMethodConfigTransfer::MOLLIE_ID])
-            ->setImage(['size2x' => $formData[MolliePaymentMethodConfigTransfer::IMAGE]])
-            ->setMaximumAmount($this->formatMollieAmount($formData[MolliePaymentMethodConfigTransfer::MAXIMUM_AMOUNT]))
-            ->setMinimumAmount($this->formatMollieAmount($formData[MolliePaymentMethodConfigTransfer::MINIMUM_AMOUNT]));
-
-        return $configTransfer;
     }
 
     /**

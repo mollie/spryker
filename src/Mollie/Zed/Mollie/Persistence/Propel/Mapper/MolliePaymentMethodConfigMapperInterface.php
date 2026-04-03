@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Mollie\Zed\Mollie\Persistence\Propel\Mapper;
 
 use Generated\Shared\Transfer\MolliePaymentMethodConfigCollectionTransfer;
@@ -21,18 +23,9 @@ interface MolliePaymentMethodConfigMapperInterface
      *
      * @return \Orm\Zed\Mollie\Persistence\SpyMolliePaymentMethodConfig
      */
-    public function mapMolliePaymentMethodConfigTransferToExistingEntity(
-        MolliePaymentMethodConfigTransfer $configTransfer,
-        SpyMolliePaymentMethodConfig $entity,
-    ): SpyMolliePaymentMethodConfig;
-
-    /**
-     * @param \Generated\Shared\Transfer\MolliePaymentMethodConfigTransfer $configTransfer
-     *
-     * @return \Orm\Zed\Mollie\Persistence\SpyMolliePaymentMethodConfig
-     */
     public function mapMolliePaymentMethodConfigTransferToEntity(
         MolliePaymentMethodConfigTransfer $configTransfer,
+        SpyMolliePaymentMethodConfig $entity,
     ): SpyMolliePaymentMethodConfig;
 
     /**

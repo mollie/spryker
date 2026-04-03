@@ -1,11 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Mollie\Zed\Mollie\Persistence\Propel\Mapper;
 
 use Generated\Shared\Transfer\MollieAmountTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodConfigCollectionTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodConfigTransfer;
 use Mollie\Service\Mollie\MollieServiceInterface;
+use Mollie\Zed\Mollie\MollieConfig;
 use Orm\Zed\Mollie\Persistence\SpyMolliePaymentMethodConfig;
 
 class MolliePaymentMethodConfigMapper implements MolliePaymentMethodConfigMapperInterface
@@ -16,9 +19,11 @@ class MolliePaymentMethodConfigMapper implements MolliePaymentMethodConfigMapper
 
     /**
      * @param \Mollie\Service\Mollie\MollieServiceInterface $mollieService
+     * @param \Mollie\Zed\Mollie\MollieConfig $config
      */
     public function __construct(
         private MollieServiceInterface $mollieService,
+        private MollieConfig $config,
     ) {
     }
 
@@ -48,16 +53,10 @@ class MolliePaymentMethodConfigMapper implements MolliePaymentMethodConfigMapper
         $minimumAmount = $this->formatAmount($spyMolliePaymentMethodConfig->getMinimumAmount(), $spyMolliePaymentMethodConfig->getCurrencyCode());
 
         $paymentMethodConfigTransfer = new MolliePaymentMethodConfigTransfer();
-        $paymentMethodConfigTransfer
-            ->setIdMolliePaymentMethodConfig($spyMolliePaymentMethodConfig->getIdMolliePaymentMethodConfig())
-            ->setMollieId($spyMolliePaymentMethodConfig->getMollieId())
-            ->setCurrencyCode($spyMolliePaymentMethodConfig->getCurrencyCode())
+        $paymentMethodConfigTransfer->fromArray($spyMolliePaymentMethodConfig->toArray(), true)
             ->setMaximumAmount($maximumAmount)
             ->setMinimumAmount($minimumAmount)
-            ->setImage($this->formatImage($spyMolliePaymentMethodConfig->getLogoUrl()))
-            ->setStatus($this->mapIsActiveToStatus($spyMolliePaymentMethodConfig->getIsActive()))
-            ->setIsLogoVisible($spyMolliePaymentMethodConfig->getIsLogoVisible())
-            ->setIsActive($spyMolliePaymentMethodConfig->getIsActive());
+            ->setStatus($this->mapIsActiveToStatus($spyMolliePaymentMethodConfig->getIsActive()));
 
         return $paymentMethodConfigTransfer;
     }
@@ -68,78 +67,35 @@ class MolliePaymentMethodConfigMapper implements MolliePaymentMethodConfigMapper
      *
      * @return \Orm\Zed\Mollie\Persistence\SpyMolliePaymentMethodConfig
      */
-    public function mapMolliePaymentMethodConfigTransferToExistingEntity(
+    public function mapMolliePaymentMethodConfigTransferToEntity(
         MolliePaymentMethodConfigTransfer $configTransfer,
         SpyMolliePaymentMethodConfig $entity,
     ): SpyMolliePaymentMethodConfig {
-        return $entity
-            ->setIsActive($configTransfer->getIsActive())
-            ->setMollieId($configTransfer->getMollieId())
-            ->setCurrencyCode($configTransfer->getCurrencyCode())
+        return $entity->fromArray($configTransfer->toArray())
             ->setMaximumAmount($this->transformAmountToInteger($configTransfer->getMaximumAmount()))
-            ->setMinimumAmount($this->transformAmountToInteger($configTransfer->getMinimumAmount()))
-            ->setLogoUrl($configTransfer->getimage()['size2x'] ?? null)
-            ->setIsLogoVisible($configTransfer->getIsLogoVisible());
+            ->setMinimumAmount($this->transformAmountToInteger($configTransfer->getMinimumAmount()));
     }
 
     /**
-     * @param \Generated\Shared\Transfer\MolliePaymentMethodConfigTransfer $configTransfer
-     *
-     * @return \Orm\Zed\Mollie\Persistence\SpyMolliePaymentMethodConfig
-     */
-    public function mapMolliePaymentMethodConfigTransferToEntity(
-        MolliePaymentMethodConfigTransfer $configTransfer,
-    ): SpyMolliePaymentMethodConfig {
-        return (new SpyMolliePaymentMethodConfig())
-            ->setIsActive($this->mapIsActiveToStatus($configTransfer->getStatus()))
-            ->setMollieId($configTransfer->getMollieId())
-            ->setCurrencyCode($configTransfer->getCurrencyCode())
-            ->setMaximumAmount($this->transformAmountToInteger($configTransfer->getMaximumAmount()))
-            ->setMinimumAmount($this->transformAmountToInteger($configTransfer->getMinimumAmount()))
-            ->setLogoUrl($configTransfer->getimage()['size2x'] ?? null)
-            ->setIsLogoVisible($configTransfer->getIsLogoVisible());
-    }
-
-    /**
-     * @param int|null $amount
+     * @param int $amount
      * @param string $currency
      *
      * @return \Generated\Shared\Transfer\MollieAmountTransfer|null
      */
-    protected function formatAmount(?int $amount, string $currency): ?MollieAmountTransfer
+    protected function formatAmount(int $amount, string $currency): ?MollieAmountTransfer
     {
-        if (!$amount) {
-            return null;
-        }
-
         $amountTransfer = $this->mollieService->convertIntegerToMollieAmount($amount);
 
         return $amountTransfer->setCurrency($currency);
     }
 
     /**
-     * @param string|null $imageUrl
-     *
-     * @return array<string, string>
-     */
-    protected function formatImage(?string $imageUrl): array
-    {
-        return [
-            'size2x' => $imageUrl,
-        ];
-    }
-
-    /**
      * @param \Generated\Shared\Transfer\MollieAmountTransfer|null $amountTransfer
      *
-     * @return int|null
+     * @return int
      */
-    protected function transformAmountToInteger(?MollieAmountTransfer $amountTransfer): int|null
+    protected function transformAmountToInteger(?MollieAmountTransfer $amountTransfer): int
     {
-        if (!$amountTransfer || $amountTransfer->getValue() === null) {
-            return null;
-        }
-
         return (int)round(((float)$amountTransfer->getValue()) * 100);
     }
 
@@ -150,7 +106,7 @@ class MolliePaymentMethodConfigMapper implements MolliePaymentMethodConfigMapper
      */
     protected function mapIsActiveToStatus(bool $isActive): string
     {
-        return $isActive ? static::ACTIVATED : static::NOT_ACTIVATED;
+        return $isActive ? $this->config::MOLLIE_PAYMENT_METHOD_STATUS_ACTIVATED : $this->config::MOLLIE_PAYMENT_METHOD_STATUS_NOT_ACTIVATED;
     }
 
     /**
@@ -160,6 +116,6 @@ class MolliePaymentMethodConfigMapper implements MolliePaymentMethodConfigMapper
      */
     protected function mapStatusToIsActive(string $status): bool
     {
-        return $status === static::ACTIVATED;
+        return $status === $this->config::MOLLIE_PAYMENT_METHOD_STATUS_ACTIVATED;
     }
 }

@@ -7,13 +7,16 @@ namespace Mollie\Zed\Mollie\Communication\DataProvider;
 use Generated\Shared\Transfer\MollieAmountTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodCollectionTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodConfigCollectionTransfer;
+use Generated\Shared\Transfer\MolliePaymentMethodConfigCriteriaTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodConfigTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodsApiResponseTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodTransfer;
 use Mollie\Client\Mollie\MollieClientInterface;
+use Mollie\Shared\Mollie\MollieConstants;
 use Mollie\Zed\Mollie\Business\MollieFacadeInterface;
 use Mollie\Zed\Mollie\Communication\Mapper\MollieCommunicationMapperInterface;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToLocaleFacadeInterface;
+use Mollie\Zed\Mollie\MollieConfig;
 use Symfony\Component\HttpFoundation\Request;
 
 class MolliePaymentMethodsDataProvider
@@ -27,12 +30,14 @@ class MolliePaymentMethodsDataProvider
      * @param \Mollie\Client\Mollie\MollieClientInterface $mollieClient
      * @param \Mollie\Zed\Mollie\Dependency\Facade\MollieToLocaleFacadeInterface $localeFacade
      * @param \Mollie\Zed\Mollie\Business\MollieFacadeInterface $mollieFacade
+     * @param \Mollie\Zed\Mollie\MollieConfig $config
      */
     public function __construct(
         private MollieCommunicationMapperInterface $mapper,
         private MollieClientInterface $mollieClient,
         protected MollieToLocaleFacadeInterface $localeFacade,
         protected MollieFacadeInterface $mollieFacade,
+        protected MollieConfig $config,
     ) {
     }
 
@@ -40,54 +45,36 @@ class MolliePaymentMethodsDataProvider
      * @param string $mollieId
      * @param string $currencyCode
      *
-     * @return array<string, mixed>
+     * @return \Generated\Shared\Transfer\MolliePaymentMethodConfigTransfer
      */
-    public function getFormData(string $mollieId, string $currencyCode): array
+    public function getFormData(string $mollieId, string $currencyCode): MolliePaymentMethodConfigTransfer
     {
-        $data = [
-            MolliePaymentMethodConfigTransfer::IS_ACTIVE => true,
-            MolliePaymentMethodConfigTransfer::IS_LOGO_VISIBLE => true,
-            MolliePaymentMethodConfigTransfer::ID_MOLLIE_PAYMENT_METHOD_CONFIG => null,
-        ];
-
-        $requestTransfer = $this->mapper->createMollieApiRequestTransfer($this->localeFacade->getCurrentLocale()->getLocaleName(), $currencyCode);
         $criteriaTransfer = $this->mapper->createMolliePaymentMethodConfigCriteriaTransfer($mollieId, $currencyCode);
-        $responseTransfer = $this->mollieClient->getAllPaymentMethods($requestTransfer);
-        $molliePaymentMethodConfigTransfer = $this->mollieFacade->getPaymentMethodConfigByMollieKeyAndCurrency($criteriaTransfer);
-        $defaultValueTransfer = $this->getDefaultValueTransfer($mollieId, $responseTransfer);
-        if ($defaultValueTransfer) {
-            $data[MolliePaymentMethodConfigTransfer::MOLLIE_ID] = $defaultValueTransfer->getId();
-            $data[MolliePaymentMethodConfigTransfer::IMAGE] = $defaultValueTransfer->getImage()['size2x'];
-            $data[MolliePaymentMethodConfigTransfer::MAXIMUM_AMOUNT] = $defaultValueTransfer->getMaximumAmount()['value'] ?? null;
-            $data[MolliePaymentMethodConfigTransfer::MINIMUM_AMOUNT] = $defaultValueTransfer->getMinimumAmount()['value'] ?? null;
-            $data[MolliePaymentMethodConfigTransfer::CURRENCY_CODE] = $defaultValueTransfer->getMinimumAmount()['currency']
-                ?? $defaultValueTransfer->getMaximumAmount()['currency']
-                ?? null;
-        }
+        $molliePaymentMethodConfigTransfer = $this->mollieFacade->getPaymentMethodConfigByCriteria($criteriaTransfer);
 
         if ($molliePaymentMethodConfigTransfer) {
-            if ($molliePaymentMethodConfigTransfer->getImage()['size2x']) {
-                $data[MolliePaymentMethodConfigTransfer::IMAGE] = $molliePaymentMethodConfigTransfer->getImage()['size2x'];
-            }
-
-            $maxAmountField = $molliePaymentMethodConfigTransfer->getMaximumAmount();
-            if ($maxAmountField && isset($maxAmountField['value'])) {
-                $data[MolliePaymentMethodConfigTransfer::MAXIMUM_AMOUNT] = $maxAmountField['value'];
-            }
-
-            $minAmountField = $molliePaymentMethodConfigTransfer->getMinimumAmount();
-            if ($minAmountField && isset($minAmountField['value'])) {
-                $data[MolliePaymentMethodConfigTransfer::MINIMUM_AMOUNT] = $minAmountField['value'];
-            }
-
-            $data[MolliePaymentMethodConfigTransfer::CURRENCY_CODE] = $molliePaymentMethodConfigTransfer->getCurrencyCode();
-            $data[MolliePaymentMethodConfigTransfer::ID_MOLLIE_PAYMENT_METHOD_CONFIG] = $molliePaymentMethodConfigTransfer->getIdMolliePaymentMethodConfig();
-            $data[MolliePaymentMethodConfigTransfer::IS_ACTIVE] = $molliePaymentMethodConfigTransfer->getIsActive();
-            $data[MolliePaymentMethodConfigTransfer::IS_LOGO_VISIBLE] = $molliePaymentMethodConfigTransfer->getisLogoVisible();
-            $data[MolliePaymentMethodConfigTransfer::MOLLIE_ID] = $molliePaymentMethodConfigTransfer->getMollieId();
+            return $molliePaymentMethodConfigTransfer;
         }
 
-        return $data;
+        $requestTransfer = $this->mapper->createMollieApiRequestTransfer($this->localeFacade->getCurrentLocale()->getLocaleName(), $currencyCode);
+        $responseTransfer = $this->mollieClient->getAllPaymentMethods($requestTransfer);
+        $defaultValueTransfer = $this->extractPaymentMethodsByPaymentKeyFromMollieResponse($mollieId, $responseTransfer);
+
+        $paymentMethodConfigTransfer = (new MolliePaymentMethodConfigTransfer())
+            ->setIsLogoVisible(true);
+
+        if ($defaultValueTransfer) {
+            $paymentMethodConfigTransfer->setMollieId($defaultValueTransfer->getId())
+                ->setIsActive($defaultValueTransfer->getStatus() === $this->config::MOLLIE_PAYMENT_METHOD_STATUS_ACTIVATED)
+                ->setImage($defaultValueTransfer->getImage()['size2x'])
+                ->setMaximumAmount($defaultValueTransfer->getMaximumAmount())
+                ->setMinimumAmount($defaultValueTransfer->getMinimumAmount())
+                ->setCurrencyCode($defaultValueTransfer->getMinimumAmount()['currency']
+                    ?? $defaultValueTransfer->getMaximumAmount()['currency']
+                    ?? null);
+        }
+
+        return $paymentMethodConfigTransfer;
     }
 
     /**
@@ -111,11 +98,11 @@ class MolliePaymentMethodsDataProvider
      */
     protected function expandOptionsWithAllowedValues(Request $request, array $options): array
     {
-        $currency = $request->query->get('currency');
-        $mollieId = $request->query->get('mollie_payment_method_id');
+        $currency = $request->query->get(MollieConstants::QUERY_CURRENCY);
+        $mollieId = $request->query->get(MollieConstants::QUERY_MOLLIE_PAYMENT_METHOD_ID);
         $requestTransfer = $this->mapper->createMollieApiRequestTransfer($this->localeFacade->getCurrentLocale()->getLocaleName(), $currency);
         $responseTransfer = $this->mollieClient->getAllPaymentMethods($requestTransfer);
-        $defaultValueTransfer = $this->getDefaultValueTransfer($mollieId, $responseTransfer);
+        $defaultValueTransfer = $this->extractPaymentMethodsByPaymentKeyFromMollieResponse($mollieId, $responseTransfer);
 
         $allowedValues = [
             static::VALIDATION_MAXIMUM_VALUE => $this->transformAmountToFloat($defaultValueTransfer->getMaximumAmount()),
@@ -140,32 +127,30 @@ class MolliePaymentMethodsDataProvider
     }
 
     /**
-     * @param \Symfony\Component\HttpFoundation\Request $request
+     * @param \Generated\Shared\Transfer\MolliePaymentMethodConfigCriteriaTransfer $criteriaTransfer
      *
      * @return \Generated\Shared\Transfer\MolliePaymentMethodsApiResponseTransfer
      */
-    public function getTableData(Request $request): MolliePaymentMethodsApiResponseTransfer
+    public function getTableData(MolliePaymentMethodConfigCriteriaTransfer $criteriaTransfer): MolliePaymentMethodsApiResponseTransfer
     {
         $localeTransfer = $this->localeFacade->getCurrentLocale();
-        $currency = $this->extractCurrencyCode($request);
-        $responseTransfer = $this->getMollieDefaultValues($request, $localeTransfer->getLocaleName());
+        $currency = $criteriaTransfer->getCurrencyCode();
+        $responseTransfer = $this->getMollieDefaultValues($criteriaTransfer, $localeTransfer->getLocaleName());
         $criteriaTransfer = $this->mapper->createMolliePaymentMethodConfigCriteriaTransfer(null, $currency);
         $collection = $this->mollieFacade->getPaymentMethodConfigCollection($criteriaTransfer);
 
-        return $this->overrideMollieDefaultsWithConfigData($collection, $responseTransfer, $localeTransfer->getIdLocale());
+        return $this->overrideMollieDefaultsWithConfigData($collection, $responseTransfer);
     }
 
     /**
      * @param \Generated\Shared\Transfer\MolliePaymentMethodConfigCollectionTransfer $collection
      * @param \Generated\Shared\Transfer\MolliePaymentMethodsApiResponseTransfer $responseTransfer
-     * @param int $localeId
      *
      * @return \Generated\Shared\Transfer\MolliePaymentMethodsApiResponseTransfer
      */
     protected function overrideMollieDefaultsWithConfigData(
         MolliePaymentMethodConfigCollectionTransfer $collection,
         MolliePaymentMethodsApiResponseTransfer $responseTransfer,
-        int $localeId,
     ): MolliePaymentMethodsApiResponseTransfer {
         $configs = $collection->getConfigs()->getArrayCopy();
         $mappedPaymentMethods = $this->mapMolliePaymentMethodTransfersToMollieId($responseTransfer->getCollection());
@@ -230,12 +215,8 @@ class MolliePaymentMethodsDataProvider
             $methodTransfer->setMinimumAmount($configTransfer->getMinimumAmount());
         }
 
-        if (
-            $configTransfer->getImage()
-            && isset($configTransfer->getImage()['size2x'])
-            && $configTransfer->getImage()['size2x']
-        ) {
-            $methodTransfer->setImage($configTransfer->getImage());
+        if ($configTransfer->getImage()) {
+            $methodTransfer->setImage(['size2x' => $configTransfer->getImage()]);
         }
 
         if ($configTransfer->getIsActive() !== null) {
@@ -259,15 +240,17 @@ class MolliePaymentMethodsDataProvider
     }
 
     /**
-     * @param \Symfony\Component\HttpFoundation\Request $request
+     * @param \Generated\Shared\Transfer\MolliePaymentMethodConfigCriteriaTransfer $criteriaTransfer
      * @param string $locale
      *
      * @return \Generated\Shared\Transfer\MolliePaymentMethodsApiResponseTransfer
      */
-    protected function getMollieDefaultValues(Request $request, string $locale): MolliePaymentMethodsApiResponseTransfer
-    {
-        $currency = $this->extractCurrencyCode($request);
-        $showOnlyEnabledPaymentMethods = $request->query->all()['payment_methods_filter_form']['showOnlyEnabled'] ?? false;
+    protected function getMollieDefaultValues(
+        MolliePaymentMethodConfigCriteriaTransfer $criteriaTransfer,
+        string $locale,
+    ): MolliePaymentMethodsApiResponseTransfer {
+        $currency = $criteriaTransfer->getCurrencyCode();
+        $showOnlyEnabledPaymentMethods = $criteriaTransfer->getShowOnlyEnabled();
 
         $requestTransfer = $this->mapper->createMollieApiRequestTransfer($locale, $currency);
         if ($showOnlyEnabledPaymentMethods) {
@@ -283,28 +266,14 @@ class MolliePaymentMethodsDataProvider
      *
      * @return \Generated\Shared\Transfer\MolliePaymentMethodTransfer|null
      */
-    protected function getDefaultValueTransfer(string $mollieId, MolliePaymentMethodsApiResponseTransfer $responseTransfer): ?MolliePaymentMethodTransfer
-    {
+    protected function extractPaymentMethodsByPaymentKeyFromMollieResponse(
+        string $mollieId,
+        MolliePaymentMethodsApiResponseTransfer $responseTransfer,
+    ): ?MolliePaymentMethodTransfer {
         foreach ($responseTransfer->getCollection()->getMethods()->getArrayCopy() as $paymentMethodTransfer) {
             if ($paymentMethodTransfer->getId() === $mollieId) {
                 return $paymentMethodTransfer;
             }
-        }
-
-        return null;
-    }
-
-    /**
-     * @param \Symfony\Component\HttpFoundation\Request $request
-     *
-     * @return string|null
-     */
-    protected function extractCurrencyCode(Request $request): string|null
-    {
-        $formData = $request->query->all()['payment_methods_filter_form'] ?? null;
-
-        if (is_array($formData) && isset($formData['currency']) && $formData['currency'] !== '') {
-            return (string)$formData['currency'];
         }
 
         return null;

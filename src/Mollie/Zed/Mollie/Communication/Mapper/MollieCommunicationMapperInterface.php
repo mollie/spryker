@@ -4,11 +4,9 @@ declare(strict_types=1);
 
 namespace Mollie\Zed\Mollie\Communication\Mapper;
 
-use Generated\Shared\Transfer\MollieAmountTransfer;
 use Generated\Shared\Transfer\MollieApiRequestTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodCollectionTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodConfigCriteriaTransfer;
-use Generated\Shared\Transfer\MolliePaymentMethodConfigTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodQueryParametersTransfer;
 
 interface MollieCommunicationMapperInterface
@@ -23,25 +21,12 @@ interface MollieCommunicationMapperInterface
 
     /**
      * @param string $locale
-     * @param \Generated\Shared\Transfer\MollieAmountTransfer|null $amountTransfer
      *
      * @return \Generated\Shared\Transfer\MolliePaymentMethodQueryParametersTransfer
      */
     public function createMolliePaymentMethodQueryParametersTransfer(
         string $locale,
-        ?MollieAmountTransfer $amountTransfer,
     ): MolliePaymentMethodQueryParametersTransfer;
-
-    /**
-     * @param array<string, mixed> $formData
-     * @param \Generated\Shared\Transfer\MolliePaymentMethodConfigTransfer|null $configTransfer
-     *
-     * @return \Generated\Shared\Transfer\MolliePaymentMethodConfigTransfer
-     */
-    public function mapFormDataToPaymentMethodConfigTransfer(
-        array $formData,
-        ?MolliePaymentMethodConfigTransfer $configTransfer,
-    ): MolliePaymentMethodConfigTransfer;
 
     /**
      * @param string|null $molliePaymentKey

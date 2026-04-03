@@ -17,5 +17,5 @@ mollie.profile.error-message.generic,Fehler beim Kontaktieren des Mollie-Dienste
 mollie.profile.error-message.not-verified,Zahlungen sind im Live-Modus möglicherweise erst nach der Verifizierung Ihres Profils möglich.
 mollie.order.warning.capture-expiring,Die Zahlungserfassung läuft in %s ab. Bitte erfassen Sie die Zahlung manuell vor diesem Zeitpunkt.
 mollie.order.warning.capture-expired,Zahlungserfassung abgelaufen
-mollie.payment-method.warning.minimum-amount,Der Mindestbetrag liegt unterhalb des zulässigen Grenzwerts von %s.
-mollie.payment-method.warning.maximum-amount,Der Höchstbetrag liegt unterhalb des zulässigen Grenzwerts von %s.
+mollie.payment-method.warning.minimum-amount,Der Mindestbetrag muss unter %s oder über %s liegen.
+mollie.payment-method.warning.maximum-amount,Der Höchstbetrag muss unter %s oder über %s liegen.

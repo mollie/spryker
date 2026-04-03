@@ -53,6 +53,11 @@ class MollieConfig extends AbstractBundleConfig
     /**
      * @var string
      */
+    public const MOLLIE_PAYMENT_METHOD_STATUS_NOT_ACTIVATED = 'not activated';
+
+    /**
+     * @var string
+     */
     public const MOLLIE_PAYMENT_PROVIDER = 'mollie';
 
     /**
@@ -64,6 +69,11 @@ class MollieConfig extends AbstractBundleConfig
      * @var string
      */
     public const MOLLIE_WALLET_APPLE_PAY = 'applepay';
+
+    /**
+     * @var string
+     */
+    public const MOLLIE_GET_METHODS_API_DEFAULT_AMOUNT_VALUE = '100.00';
 
     /**
      * @return array<string, string>
@@ -147,5 +157,13 @@ class MollieConfig extends AbstractBundleConfig
     public function getMollieProfileId(): string|null
     {
         return $this->get(MollieConstants::MOLLIE)[MollieConstants::MOLLIE_PROFILE_ID];
+    }
+
+    /**
+     * @return string
+     */
+    public function getMethodsApiDefaultAmountValue(): string
+    {
+        return $this->get(MollieConstants::MOLLIE)[MollieConstants::MOLLIE_GET_METHODS_API_DEFAULT_AMOUNT_VALUE];
     }
 }

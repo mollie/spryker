@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Mollie\Zed\Mollie\Communication\Controller;
 
-use Generated\Shared\Transfer\MolliePaymentMethodConfigTransfer;
+use Mollie\Shared\Mollie\MollieConstants;
 use Spryker\Zed\Kernel\Communication\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -26,19 +26,9 @@ class EditController extends AbstractController
      */
     public function indexAction(Request $request): array|RedirectResponse
     {
-        $mollieId = $request->query->get('mollie_payment_method_id');
-        $currency = $request->query->get('currency');
-
-        $mapper = $this->getFactory()->createMollieCommunicationMapper();
+        $mollieId = $request->query->get(MollieConstants::QUERY_MOLLIE_PAYMENT_METHOD_ID);
+        $currency = $request->query->get(MollieConstants::QUERY_CURRENCY);
         $dataProvider = $this->getFactory()->createMolliePaymentMethodsDataProvider();
-
-        $criteriaTransfer = $mapper->createMolliePaymentMethodConfigCriteriaTransfer($mollieId, $currency);
-
-        $existingPaymentMethodConfigTransfer = $this->getFacade()->getPaymentMethodConfigByMollieKeyAndCurrency($criteriaTransfer);
-        if (!$existingPaymentMethodConfigTransfer) {
-            $existingPaymentMethodConfigTransfer = new MolliePaymentMethodConfigTransfer();
-            $existingPaymentMethodConfigTransfer->setCurrencyCode($currency);
-        }
 
         $form = $this->getFactory()->createPaymentMethodConfigForm(
             $dataProvider->getFormData($mollieId, $currency),
@@ -47,13 +37,8 @@ class EditController extends AbstractController
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $paymentMethodConfigTransfer = $this->getFactory()
-                ->createMollieCommunicationMapper()
-                ->mapFormDataToPaymentMethodConfigTransfer(
-                    $form->getData(),
-                    $existingPaymentMethodConfigTransfer,
-                );
-
+            $paymentMethodConfigTransfer = $form->getData();
+            $paymentMethodConfigTransfer->setCurrencyCode($currency);
             $this->getFacade()->writeMolliePaymentConfigData($paymentMethodConfigTransfer);
 
             return $this->redirectResponse(
@@ -67,7 +52,7 @@ class EditController extends AbstractController
         }
 
         return [
-            'paymentMethodConfig' => $existingPaymentMethodConfigTransfer,
+            'currency' => $currency,
             'mollieId' => $mollieId,
             'form' => $form->createView(),
         ];
@@ -80,7 +65,7 @@ class EditController extends AbstractController
      */
     public function restoreDefaultsAction(Request $request): RedirectResponse
     {
-        $idMolliePaymentMethodConfig = (int)$request->query->get('id-mollie-payment-method-config');
+        $idMolliePaymentMethodConfig = (int)$request->query->get(MollieConstants::QUERY_MOLLIE_PAYMENT_METHOD_CONFIG_ID);
         $this->getFacade()->deleteMolliePaymentConfigData($idMolliePaymentMethodConfig);
 
         return $this->redirectResponse(

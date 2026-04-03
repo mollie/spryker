@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace Mollie\Zed\Mollie\Communication\Table;
 
+use Generated\Shared\Transfer\MolliePaymentMethodConfigCriteriaTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodTransfer;
 use Mollie\Zed\Mollie\Communication\DataProvider\MolliePaymentMethodsDataProvider;
 use Spryker\Service\UtilText\Model\Url\Url;
@@ -45,6 +46,7 @@ class MolliePaymentMethodsTable extends AbstractTable
         MolliePaymentMethodTransfer::IMAGE,
         self::HEADER_ACTIONS,
     ];
+    private ?MolliePaymentMethodConfigCriteriaTransfer $criteria;
 
     /**
      * @param \Mollie\Zed\Mollie\Communication\DataProvider\MolliePaymentMethodsDataProvider $dataProvider
@@ -52,6 +54,16 @@ class MolliePaymentMethodsTable extends AbstractTable
     public function __construct(
         private MolliePaymentMethodsDataProvider $dataProvider,
     ) {
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MolliePaymentMethodConfigCriteriaTransfer|null $transfer
+     *
+     * @return void
+     */
+    public function setCriteria(?MolliePaymentMethodConfigCriteriaTransfer $transfer): void
+    {
+        $this->criteria = $transfer;
     }
 
     /**
@@ -94,7 +106,7 @@ class MolliePaymentMethodsTable extends AbstractTable
      */
     protected function prepareData(TableConfiguration $config): array
     {
-        $responseTransfer = $this->dataProvider->getTableData($this->request);
+        $responseTransfer = $this->dataProvider->getTableData($this->criteria);
         $paymentMethodsCollection = $responseTransfer->getCollection();
 
         return $this->processData($paymentMethodsCollection->getMethods()->getArrayCopy());
@@ -245,7 +257,7 @@ class MolliePaymentMethodsTable extends AbstractTable
      */
     protected function buildViewUrl(MolliePaymentMethodTransfer $transfer): string
     {
-        $currency = $transfer->getMinimumAmount()['currency'] ?? $transfer->getMaximummumAmount()['currency'] ?? null;
+        $currency = $transfer->getMinimumAmount()['currency'] ?? $transfer->getMaximumAmount()['currency'] ?? null;
 
         return sprintf(
             '/mollie/detail?mollie_payment_method_id=%s&currency=%s',
@@ -261,7 +273,7 @@ class MolliePaymentMethodsTable extends AbstractTable
      */
     protected function buildEditUrl(MolliePaymentMethodTransfer $transfer): string
     {
-        $currency = $transfer->getMinimumAmount()['currency'] ?? $transfer->getMaximummumAmount()['currency'] ?? null;
+        $currency = $transfer->getMinimumAmount()['currency'] ?? $transfer->getMaximumAmount()['currency'] ?? null;
 
         return sprintf(
             '/mollie/edit?mollie_payment_method_id=%s&currency=%s',

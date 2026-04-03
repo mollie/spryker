@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Mollie\Zed\Mollie\Communication;
 
+use Generated\Shared\Transfer\MolliePaymentMethodConfigCriteriaTransfer;
+use Generated\Shared\Transfer\MolliePaymentMethodConfigTransfer;
 use Mollie\Client\Mollie\MollieClientInterface;
 use Mollie\Service\Mollie\MollieServiceInterface;
 use Mollie\Zed\Mollie\Communication\Cache\MollieCacheInvalidator;
@@ -60,6 +62,7 @@ class MollieCommunicationFactory extends AbstractCommunicationFactory
             $this->getMollieClient(),
             $this->getLocaleFacade(),
             $this->getFacade(),
+            $this->getConfig(),
         );
     }
 
@@ -129,6 +132,7 @@ class MollieCommunicationFactory extends AbstractCommunicationFactory
     {
         return new MollieCommunicationMapper(
             $this->getMollieService(),
+            $this->getConfig(),
         );
     }
 
@@ -152,23 +156,23 @@ class MollieCommunicationFactory extends AbstractCommunicationFactory
     }
 
     /**
-     * @param array<string, mixed> $data
+     * @param array<string, mixed>|null $data
      * @param array<string, mixed> $options
      *
      * @return \Symfony\Component\Form\FormInterface
      */
-    public function createPaymentMethodConfigForm(array $data = [], array $options = []): FormInterface
+    public function createPaymentMethodConfigForm(?MolliePaymentMethodConfigTransfer $data = null, array $options = []): FormInterface
     {
         return $this->getFormFactory()->create(PaymentMethodConfigForm::class, $data, $options);
     }
 
     /**
-     * @param array<string, mixed> $data
+     * @param array<string, mixed>|null $data
      * @param array<string, mixed> $options
      *
      * @return \Symfony\Component\Form\FormInterface
      */
-    public function createPaymentMethodsFilterForm(array $data = [], array $options = []): FormInterface
+    public function createPaymentMethodsFilterForm(?MolliePaymentMethodConfigCriteriaTransfer $data = null, array $options = []): FormInterface
     {
         return $this->getFormFactory()->create(PaymentMethodsFilterForm::class, $data, $options);
     }

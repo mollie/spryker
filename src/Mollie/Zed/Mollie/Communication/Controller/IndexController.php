@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Mollie\Zed\Mollie\Communication\Controller;
 
+use Generated\Shared\Transfer\MolliePaymentMethodConfigCriteriaTransfer;
 use Mollie\Shared\Mollie\MollieConstants;
 use Spryker\Zed\Kernel\Communication\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -44,11 +45,25 @@ class IndexController extends AbstractController
     }
 
     /**
+     * @param \Symfony\Component\HttpFoundation\Request $request
+     *
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      */
-    public function tableAction(): JsonResponse
+    public function tableAction(Request $request): JsonResponse
     {
+        $dataProvider = $this->getFactory()->createPaymentMethodsFilterFormDataProvider();
+        $form = $this->getFactory()->createPaymentMethodsFilterForm(
+            $dataProvider->getData(),
+            $dataProvider->getOptions(),
+        );
+
+        $criteriaTransfer = $form->handleRequest($request)->getData();
+        if (!$criteriaTransfer) {
+            $criteriaTransfer = new MolliePaymentMethodConfigCriteriaTransfer();
+        }
+
         $reportsTable = $this->getFactory()->createMolliePaymentMethodsTable();
+        $reportsTable->setCriteria($criteriaTransfer);
 
         return $this->jsonResponse(
             $reportsTable->fetchData(),
