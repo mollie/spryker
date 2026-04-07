@@ -110,11 +110,6 @@ class MollieConfig extends AbstractBundleConfig
     /**
      * @var string
      */
-    public const MOLLIE_PLUGIN_PACKAGE = 'mollie/spryker-payment';
-
-    /**
-     * @var string
-     */
     public const UAP_IDENTIFIER = 'uap/84vsKAknyrfvkQHs';
 
     /**
@@ -262,7 +257,7 @@ class MollieConfig extends AbstractBundleConfig
      */
     public function getMolliePluginPackage(): string
     {
-        return static::MOLLIE_PLUGIN_PACKAGE;
+        return $this->getSharedConfig()->getMolliePluginPackage();
     }
 
     /**
