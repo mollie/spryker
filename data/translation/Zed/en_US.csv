@@ -10,7 +10,8 @@ Issuer List,Issuer List
 Images,Images
 Mollie payment methods,Mollie Payment Methods
 mollie.title.profile,Profile overview
-mollie.profile.information,Profile information
+mollie.information,Information
+mollie.package-version,Package version:
 mollie.profile.id,Profile ID:
 mollie.profile.status,Profile status:
 mollie.profile.error-message.generic,Error contacting the mollie service to validate profile

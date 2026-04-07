@@ -22,10 +22,16 @@
             <div class="ibox float-e-margins">
                 <div class="ibox-title clearfix">
                     <h2>
-                        {{ 'mollie.profile.information' | trans }}
+                        {{ 'mollie.information' | trans }}
                     </h2>
                 </div>
                 <div class="ibox-content">
+                    <div>
+                        {{ 'mollie.package-version' | trans }}
+                        <h4 id="mollie-package-version" class="badge">
+                            {{ version }}
+                        </h4>
+                    </div>
                     <div>
                         {{ 'mollie.profile.id' | trans }}
                         <h4 id="mollie-profile-id" class="badge">
