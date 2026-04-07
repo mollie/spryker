@@ -15,19 +15,23 @@ class AmountTransferTransformer implements DataTransformerInterface
     /**
      * @param mixed $amountTransfer
      *
-     * @return float
+     * @return float|null
      */
-    public function transform(mixed $amountTransfer): float
+    public function transform(mixed $amountTransfer): float|null
     {
+        if (!$amountTransfer) {
+            return null;
+        }
+
         return (float)$amountTransfer->getValue();
     }
 
     /**
      * @param mixed $value
      *
-     * @return \Generated\Shared\Transfer\MollieAmountTransfer
+     * @return \Generated\Shared\Transfer\MollieAmountTransfer|null
      */
-    public function reverseTransform(mixed $value): MollieAmountTransfer
+    public function reverseTransform(mixed $value): MollieAmountTransfer|null
     {
         return (new MollieAmountTransfer())->setValue((string)$value);
     }
