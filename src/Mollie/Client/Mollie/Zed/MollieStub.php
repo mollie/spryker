@@ -30,7 +30,9 @@ class MollieStub implements MollieStubInterface
      */
     public function updateOrderCollection(OrderCollectionRequestTransfer $updateOrderCollectionRequestTransfer): OrderCollectionResponseTransfer
     {
-        return $this->zedStub->call('/mollie/gateway/update-order-collection', $updateOrderCollectionRequestTransfer);
+        $updateOrderCollectionResponseTransfer = $this->zedStub->call('/mollie/gateway/update-order-collection', $updateOrderCollectionRequestTransfer);
+
+        return $updateOrderCollectionResponseTransfer;
     }
 
     /**
@@ -40,7 +42,9 @@ class MollieStub implements MollieStubInterface
      */
     public function processRefundData(MolliePaymentTransfer $molliePaymentTransfer): MollieRefundResponseTransfer
     {
-        return $this->zedStub->call('/mollie/gateway/process-refund-data', $molliePaymentTransfer);
+        $mollieRefundResponseTransfer = $this->zedStub->call('/mollie/gateway/process-refund-data', $molliePaymentTransfer);
+
+        return $mollieRefundResponseTransfer;
     }
 
      /**

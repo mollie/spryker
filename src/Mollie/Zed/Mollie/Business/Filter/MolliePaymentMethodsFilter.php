@@ -28,14 +28,12 @@ class MolliePaymentMethodsFilter implements MolliePaymentMethodsFilterInterface
      * @param \Mollie\Service\Mollie\MollieServiceInterface $mollieService
      * @param \Mollie\Zed\Mollie\Dependency\Facade\MollieToLocaleFacadeInterface $localeFacade
      * @param \Mollie\Zed\Mollie\MollieConfig $mollieConfig
-     * @param \Mollie\Zed\Mollie\Business\Reader\MolliePaymentMethodsConfigReaderInterface $molliePaymentMethodsConfigReader
      */
     public function __construct(
         protected MollieClientInterface $mollieClient,
         protected MollieServiceInterface $mollieService,
         protected MollieToLocaleFacadeInterface $localeFacade,
         protected MollieConfig $mollieConfig,
-        protected MolliePaymentMethodsConfigReaderInterface $molliePaymentMethodsConfigReader,
     ) {
     }
 
@@ -113,7 +111,7 @@ class MolliePaymentMethodsFilter implements MolliePaymentMethodsFilterInterface
         ArrayObject $molliePaymentMethods,
     ): PaymentMethodsTransfer {
         $activeMollieMethods = $this->indexMollieMethods($molliePaymentMethods);
-        $indexedMolliePaymentConfigMethods = $this->getIndexedMolliePaymentConfigMethods();
+        $indexedMolliePaymentConfigMethods = $this->getIndexedMolliePaymentConfigMethods($quoteTransfer);
         $grandTotal = $this->mollieService->convertIntegerToDecimal($quoteTransfer->getTotals()->getGrandTotal());
 
         $filteredMethods = new ArrayObject();
@@ -174,15 +172,18 @@ class MolliePaymentMethodsFilter implements MolliePaymentMethodsFilterInterface
     /**
      * @return array<string, \Generated\Shared\Transfer\MolliePaymentMethodConfigTransfer>
      */
-    protected function getIndexedMolliePaymentConfigMethods(): array
+    protected function getIndexedMolliePaymentConfigMethods(QuoteTransfer $quoteTransfer): array
     {
-        $molliePaymentMethodConfigCollectionTransfer = $this->molliePaymentMethodsConfigReader
+        $molliePaymentMethodConfigCriteriaTransfer = new MolliePaymentMethodConfigCriteriaTransfer();
+        $molliePaymentMethodConfigCriteriaTransfer->setCurrencyCode($quoteTransfer->getCurrency()->getCode());
+
+        $molliePaymentMethodConfigCollectionTransfer = $this->mollieClient
             ->getPaymentMethodConfigCollection((new MolliePaymentMethodConfigCriteriaTransfer()));
 
         $indexedPaymentConfigMethods = [];
 
         foreach ($molliePaymentMethodConfigCollectionTransfer->getConfigs() as $molliePaymentMethodConfigTransfer) {
-            $indexedPaymentConfigMethods[$molliePaymentMethodConfigTransfer->getPaymentMethodKey()] = $molliePaymentMethodConfigTransfer;
+            $indexedPaymentConfigMethods[$molliePaymentMethodConfigTransfer->getMollieId()] = $molliePaymentMethodConfigTransfer;
         }
 
         return $indexedPaymentConfigMethods;

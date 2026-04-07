@@ -5,7 +5,6 @@ declare(strict_types = 1);
 namespace Mollie\Yves\Mollie\PaymentPage\Cache;
 
 use Generated\Shared\Transfer\MollieCacheOptionsTransfer;
-use Generated\Shared\Transfer\MolliePaymentMethodConfigCollectionTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodConfigCriteriaTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodsApiResponseTransfer;
 use Generated\Shared\Transfer\QuoteTransfer;
@@ -29,7 +28,10 @@ class MollieCachedOptionsExpander implements MollieCachedOptionsExpanderInterfac
      */
     protected static array $mappedPaymentToLogo = [];
 
-    protected static ?MolliePaymentMethodConfigCollectionTransfer $paymentMethodConfigCollection = null;
+     /**
+      * @var array<string, \Generated\Shared\Transfer\MolliePaymentMethodConfigTransfer>
+      */
+    protected static ?array $indexedPaymentMethodConfigCollection = null;
 
     /**
      * @param \Mollie\Client\Mollie\MollieClientInterface $mollieClient
@@ -55,10 +57,17 @@ class MollieCachedOptionsExpander implements MollieCachedOptionsExpanderInterfac
     public function expandOptions(string $paymentMethod, QuoteTransfer $quoteTransfer, array $options): array
     {
         $omsToPaymentMethodMapping = $this->config->getMollieOmsToPaymentMethodMapping();
-        $molliePaymentMethodConfigCollectionTransfer = $this->getMolliePaymentMethodConfigCollection();
+        $indexedPaymentMethodConfigCollection = $this->getMolliePaymentMethodConfigCollection($quoteTransfer);
+
         $omsToPaymentMethodMapping = array_merge($omsToPaymentMethodMapping, static::MOLLIE_LOGO_MAPPING);
         $key = $omsToPaymentMethodMapping[$paymentMethod];
         $logoUniqueKey = $paymentMethod . MollieConstants::LOGO_URL;
+
+        if (isset(self::$indexedPaymentMethodConfigCollection[$key])) {
+            $options[$logoUniqueKey] = self::$indexedPaymentMethodConfigCollection[$key]->getImage();
+
+            return $options;
+        }
 
         if (isset(self::$mappedPaymentToLogo[$key])) {
             $options[$logoUniqueKey] = self::$mappedPaymentToLogo[$key];
@@ -77,14 +86,33 @@ class MollieCachedOptionsExpander implements MollieCachedOptionsExpanderInterfac
 
         $omsToPaymentMethodMapping = $this->config->getMollieOmsToPaymentMethodMapping();
         $key = $omsToPaymentMethodMapping[$paymentMethod];
-        $logoUrl = '';
 
-        if (isset($mappedMethods[$key])) {
-            $logoUrl = $mappedMethods[$key];
-        }
-        $options[$logoUniqueKey] = $logoUrl;
+        $options[$logoUniqueKey] = $this->getLogoUrl($indexedPaymentMethodConfigCollection, self::$mappedPaymentToLogo, $key);
 
         return $options;
+    }
+
+    /**
+     * @param array<string, \Generated\Shared\Transfer\MolliePaymentMethodConfigTransfer> $indexedPaymentMethodConfigCollection
+     * @param array<string, string> $paymentMethodToLogoMap
+     * @param string $methodKeyIdentifier
+     *
+     * @return string|null
+     */
+    protected function getLogoUrl(
+        array $indexedPaymentMethodConfigCollection,
+        array $paymentMethodToLogoMap,
+        string $methodKeyIdentifier,
+    ): ?string {
+        if (isset($indexedPaymentMethodConfigCollection[$methodKeyIdentifier])) {
+            return $indexedPaymentMethodConfigCollection[$methodKeyIdentifier]->getImage();
+        }
+
+        if (isset($paymentMethodToLogoMap[$methodKeyIdentifier])) {
+            return $paymentMethodToLogoMap[$methodKeyIdentifier];
+        }
+
+        return null;
     }
 
     /**
@@ -122,18 +150,29 @@ class MollieCachedOptionsExpander implements MollieCachedOptionsExpanderInterfac
     }
 
     /**
-     * @return \Generated\Shared\Transfer\MolliePaymentMethodConfigCollectionTransfer
+     * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
+     *
+     * @return array<string, \Generated\Shared\Transfer\MolliePaymentMethodConfigTransfer>
      */
-    protected function getMolliePaymentMethodConfigCollection(): MolliePaymentMethodConfigCollectionTransfer
+    protected function getMolliePaymentMethodConfigCollection(QuoteTransfer $quoteTransfer): array
     {
-        if (static::$paymentMethodConfigCollection !== null) {
-            return static::$paymentMethodConfigCollection;
+        if (static::$indexedPaymentMethodConfigCollection !== null) {
+            return static::$indexedPaymentMethodConfigCollection;
         }
 
-        static::$paymentMethodConfigCollection = $this->mollieClient->getPaymentMethodConfigCollection(
-            new MolliePaymentMethodConfigCriteriaTransfer(),
-        );
+        $molliePaymentMethodConfigCriteriaTransfer = new MolliePaymentMethodConfigCriteriaTransfer();
+        $molliePaymentMethodConfigCriteriaTransfer->setCurrencyCode($quoteTransfer->getCurrency()->getCode());
+        $molliePaymentConfigCollectionTransfer = $this->mollieClient
+            ->getPaymentMethodConfigCollection($molliePaymentMethodConfigCriteriaTransfer);
 
-        return static::$paymentMethodConfigCollection;
+        $indexedPaymentMethodConfigCollection = [];
+
+        foreach ($molliePaymentConfigCollectionTransfer->getConfigs() as $molliePaymentMethodConfigTransfer) {
+            $indexedPaymentMethodConfigCollection[$molliePaymentMethodConfigTransfer->getMollieId()] = $molliePaymentMethodConfigTransfer;
+        }
+
+        static::$indexedPaymentMethodConfigCollection = $indexedPaymentMethodConfigCollection;
+
+        return static::$indexedPaymentMethodConfigCollection;
     }
 }
