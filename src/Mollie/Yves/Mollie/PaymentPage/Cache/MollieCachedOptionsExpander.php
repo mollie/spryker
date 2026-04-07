@@ -98,29 +98,6 @@ class MollieCachedOptionsExpander implements MollieCachedOptionsExpanderInterfac
     }
 
     /**
-     * @param array<string, \Generated\Shared\Transfer\MolliePaymentMethodConfigTransfer> $indexedPaymentMethodConfigCollection
-     * @param array<string, string> $paymentMethodToLogoMap
-     * @param string $methodKeyIdentifier
-     *
-     * @return string|null
-     */
-    protected function getLogoUrl(
-        array $indexedPaymentMethodConfigCollection,
-        array $paymentMethodToLogoMap,
-        string $methodKeyIdentifier,
-    ): ?string {
-        if (isset($indexedPaymentMethodConfigCollection[$methodKeyIdentifier])) {
-            return $indexedPaymentMethodConfigCollection[$methodKeyIdentifier]->getImage();
-        }
-
-        if (isset($paymentMethodToLogoMap[$methodKeyIdentifier])) {
-            return $paymentMethodToLogoMap[$methodKeyIdentifier];
-        }
-
-        return null;
-    }
-
-    /**
      * @param \Generated\Shared\Transfer\MollieCacheOptionsTransfer $mollieCacheOptionsTransfer
      *
      * @return \Generated\Shared\Transfer\MolliePaymentMethodsApiResponseTransfer
