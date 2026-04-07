@@ -171,6 +171,8 @@ class MolliePaymentMethodsFilter implements MolliePaymentMethodsFilterInterface
     }
 
     /**
+     * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
+     *
      * @return array<string, \Generated\Shared\Transfer\MolliePaymentMethodConfigTransfer>
      */
     protected function getIndexedMolliePaymentConfigMethods(QuoteTransfer $quoteTransfer): array
