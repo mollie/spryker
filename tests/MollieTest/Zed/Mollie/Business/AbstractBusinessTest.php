@@ -13,7 +13,6 @@ use Mollie\Zed\Mollie\Business\MollieFacadeInterface;
 use Mollie\Zed\Mollie\MollieConfig;
 use Mollie\Zed\Mollie\MollieDependencyProvider;
 use Mollie\Zed\Mollie\Persistence\MollieRepository;
-use Mollie\Zed\Mollie\Persistence\MollieRepositoryInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use Spryker\Service\Container\Container;
 use Spryker\Shared\Kernel\Container\GlobalContainer;
@@ -40,8 +39,6 @@ abstract class AbstractBusinessTest extends Unit
     protected MollieClientInterface $mollieClient;
 
     protected MollieConfig $mollieConfig;
-
-    protected MollieRepositoryInterface $mollieRepository;
 
     /**
      * @var \Generated\Shared\Transfer\QuoteTransfer
