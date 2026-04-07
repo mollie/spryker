@@ -113,13 +113,13 @@ class MolliePaymentMethodsDataProvider
     }
 
     /**
-     * @param \Generated\Shared\Transfer\MollieAmountTransfer $amountTransfer
+     * @param \Generated\Shared\Transfer\MollieAmountTransfer|null $amountTransfer
      *
      * @return float|null
      */
-    protected function transformAmountToFloat(MollieAmountTransfer $amountTransfer): float|null
+    protected function transformAmountToFloat(?MollieAmountTransfer $amountTransfer): float|null
     {
-        if (!$amountTransfer->getValue()) {
+        if (!$amountTransfer || !$amountTransfer->getValue()) {
             return null;
         }
 

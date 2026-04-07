@@ -40,7 +40,7 @@ class IndexController extends AbstractController
             'mollieTable' => $table->render(),
             'response' => $profileResponseTransfer,
             MollieConstants::MOLLIE_QUERY_PARAMETER_SHOW_ONLY_ENABLED => $showOnlyEnabledPaymentMethods,
-            'version' => InstalledVersions::getPrettyVersion('mollie/spryker-payment'),
+            'version' => InstalledVersions::getPrettyVersion($this->getFactory()->getConfig()->getMolliePluginPackage()),
         ];
 
         return $this->viewResponse($responseData);
