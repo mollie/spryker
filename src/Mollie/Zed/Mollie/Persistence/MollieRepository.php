@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Mollie\Zed\Mollie\Persistence;
 
@@ -11,7 +11,6 @@ use Generated\Shared\Transfer\MolliePaymentMethodConfigCriteriaTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodConfigTransfer;
 use Generated\Shared\Transfer\MolliePaymentTransfer;
 use Generated\Shared\Transfer\MollieRefundResponseTransfer;
-use Propel\Runtime\ActiveQuery\Criteria;
 use Spryker\Zed\Kernel\Persistence\AbstractRepository;
 
 /**
@@ -100,23 +99,17 @@ class MollieRepository extends AbstractRepository implements MollieRepositoryInt
     }
 
     /**
-     * @param \Generated\Shared\Transfer\MolliePaymentMethodConfigCriteriaTransfer $molliePaymentMethodConfigCriteriaTransfer
+     * @param \Generated\Shared\Transfer\MolliePaymentMethodConfigCriteriaTransfer $criteriaTransfer
      *
      * @return \Generated\Shared\Transfer\MolliePaymentMethodConfigCollectionTransfer
      */
-    public function getPaymentMethodConfigCollection(
-        MolliePaymentMethodConfigCriteriaTransfer $molliePaymentMethodConfigCriteriaTransfer,
-    ): MolliePaymentMethodConfigCollectionTransfer {
+    public function getPaymentMethodConfigCollection(MolliePaymentMethodConfigCriteriaTransfer $criteriaTransfer): MolliePaymentMethodConfigCollectionTransfer
+    {
         $query = $this->getFactory()
-            ->createSpyMolliePaymentMethodConfigQuery()
-            ->joinWithSpyMolliePaymentMethodConfigTranslation(Criteria::LEFT_JOIN);
+            ->createSpyMolliePaymentMethodConfigQuery();
 
-        if ($molliePaymentMethodConfigCriteriaTransfer->getLocaleId()) {
-//            $query->addJoinCondition(
-//                'SpyMolliePaymentMethodConfigTranslation',
-//                'SpyMolliePaymentMethodConfigTranslation.FkLocale = ?',
-//                $localeId
-//            );
+        if ($criteriaTransfer->getCurrencyCode()) {
+            $query->filterByCurrencyCode($criteriaTransfer->getCurrencyCode());
         }
 
         $entities = $query->find();
@@ -127,25 +120,25 @@ class MollieRepository extends AbstractRepository implements MollieRepositoryInt
     }
 
     /**
-     * @param string $mollieKey
+     * @param \Generated\Shared\Transfer\MolliePaymentMethodConfigCriteriaTransfer $criteriaTransfer
      *
      * @return \Generated\Shared\Transfer\MolliePaymentMethodConfigTransfer|null
      */
-    public function getMolliePaymentMethodConfigByMollieKey(string $mollieKey): ?MolliePaymentMethodConfigTransfer
-    {
-        $spyMolliePaymentLinkEntity = $this->getFactory()
+    public function getPaymentMethodConfigByCriteria(
+        MolliePaymentMethodConfigCriteriaTransfer $criteriaTransfer,
+    ): ?MolliePaymentMethodConfigTransfer {
+        $spyMolliePaymentMethodConfigEntity = $this->getFactory()
             ->createSpyMolliePaymentMethodConfigQuery()
-            ->filterByPaymentMethodKey($mollieKey)
-            ->joinWithSpyMolliePaymentMethodConfigTranslation(Criteria::LEFT_JOIN)
-            ->find()
-            ->getFirst();
+            ->filterByMollieId($criteriaTransfer->getMollieId())
+            ->filterByCurrencyCode($criteriaTransfer->getCurrencyCode())
+            ->findOne();
 
-        if (!$spyMolliePaymentLinkEntity) {
+        if (!$spyMolliePaymentMethodConfigEntity) {
             return null;
         }
 
         return $this->getFactory()
             ->createMolliePaymentMethodConfigMapper()
-            ->mapMolliePaymentMethodConfigEntityToTransfer($spyMolliePaymentLinkEntity);
+            ->mapMolliePaymentMethodConfigEntityToTransfer($spyMolliePaymentMethodConfigEntity);
     }
 }

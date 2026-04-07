@@ -283,25 +283,53 @@ class MollieFacade extends AbstractFacade implements MollieFacadeInterface
     }
 
     /**
-     * @param \Generated\Shared\Transfer\MolliePaymentMethodConfigCriteriaTransfer $molliePaymentMethodConfigCriteriaTransfer
+     * @param \Generated\Shared\Transfer\MolliePaymentMethodConfigCriteriaTransfer $criteriaTransfer
      *
      * @return \Generated\Shared\Transfer\MolliePaymentMethodConfigCollectionTransfer
      */
-    public function getPaymentMethodConfigCollection(
-        MolliePaymentMethodConfigCriteriaTransfer $molliePaymentMethodConfigCriteriaTransfer,
-    ): MolliePaymentMethodConfigCollectionTransfer {
-        return $this->getFactory()
-            ->createMolliePaymentMethodsConfigReader()
-            ->getPaymentMethodConfigCollection($molliePaymentMethodConfigCriteriaTransfer);
+    public function getPaymentMethodConfigCollection(MolliePaymentMethodConfigCriteriaTransfer $criteriaTransfer): MolliePaymentMethodConfigCollectionTransfer
+    {
+        return $this->getRepository()->getPaymentMethodConfigCollection($criteriaTransfer);
     }
 
     /**
-     * @param string $key
+     * @param \Generated\Shared\Transfer\MolliePaymentMethodConfigCriteriaTransfer $criteriaTransfer
      *
      * @return \Generated\Shared\Transfer\MolliePaymentMethodConfigTransfer|null
      */
-    public function getPaymentMethodConfigByMollieKey(string $key): ?MolliePaymentMethodConfigTransfer
+    public function getPaymentMethodConfigByCriteria(
+        MolliePaymentMethodConfigCriteriaTransfer $criteriaTransfer,
+    ): ?MolliePaymentMethodConfigTransfer {
+        return $this->getRepository()->getPaymentMethodConfigByCriteria($criteriaTransfer);
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MolliePaymentMethodConfigTransfer $molliePaymentMethodConfigTransfer
+     *
+     * @return \Generated\Shared\Transfer\MolliePaymentMethodConfigTransfer
+     */
+    public function writeMolliePaymentConfigData(MolliePaymentMethodConfigTransfer $molliePaymentMethodConfigTransfer): MolliePaymentMethodConfigTransfer
     {
-        return $this->getFactory()->createMolliePaymentMethodsConfigReader()->getPaymentMethodConfigByMollieKey($key);
+        return $this->getEntityManager()->writeMolliePaymentMethodConfig($molliePaymentMethodConfigTransfer);
+    }
+
+    /**
+     * @param int $mollieId
+     *
+     * @return void
+     */
+    public function deleteMolliePaymentConfigData(int $mollieId): void
+    {
+        $this->getEntityManager()->deleteMolliePaymentMethodConfig($mollieId);
+    }
+
+    /**
+     * @param int $idSalesOrder
+     *
+     * @return \Generated\Shared\Transfer\MolliePaymentLinkTransfer|null
+     */
+    public function getMolliePaymentLinkByIdSalesOrder(int $idSalesOrder): ?MolliePaymentLinkTransfer
+    {
+        return $this->getRepository()->getPaymentLinkByFkSalesOrder($idSalesOrder);
     }
 }

@@ -4,8 +4,9 @@ declare(strict_types = 1);
 
 namespace Mollie\Zed\Mollie\Communication\Table;
 
+use Generated\Shared\Transfer\MolliePaymentMethodConfigCriteriaTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodTransfer;
-use Mollie\Zed\Mollie\Communication\Table\TableDataProvider\MolliePaymentMethodsDataProvider;
+use Mollie\Zed\Mollie\Communication\DataProvider\MolliePaymentMethodsDataProvider;
 use Spryker\Service\UtilText\Model\Url\Url;
 use Spryker\Zed\Gui\Communication\Table\AbstractTable;
 use Spryker\Zed\Gui\Communication\Table\TableConfiguration;
@@ -46,12 +47,24 @@ class MolliePaymentMethodsTable extends AbstractTable
         self::HEADER_ACTIONS,
     ];
 
+    private ?MolliePaymentMethodConfigCriteriaTransfer $criteria;
+
     /**
-     * @param \Mollie\Zed\Mollie\Communication\Table\TableDataProvider\MolliePaymentMethodsDataProvider $dataProvider
+     * @param \Mollie\Zed\Mollie\Communication\DataProvider\MolliePaymentMethodsDataProvider $dataProvider
      */
     public function __construct(
         private MolliePaymentMethodsDataProvider $dataProvider,
     ) {
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MolliePaymentMethodConfigCriteriaTransfer|null $transfer
+     *
+     * @return void
+     */
+    public function setCriteria(?MolliePaymentMethodConfigCriteriaTransfer $transfer): void
+    {
+        $this->criteria = $transfer;
     }
 
     /**
@@ -94,7 +107,7 @@ class MolliePaymentMethodsTable extends AbstractTable
      */
     protected function prepareData(TableConfiguration $config): array
     {
-        $responseTransfer = $this->dataProvider->getData($this->request);
+        $responseTransfer = $this->dataProvider->getTableData($this->criteria);
         $paymentMethodsCollection = $responseTransfer->getCollection();
 
         return $this->processData($paymentMethodsCollection->getMethods()->getArrayCopy());
@@ -218,26 +231,55 @@ class MolliePaymentMethodsTable extends AbstractTable
     }
 
     /**
-     * @param \Xiphias\BladeFxApi\DTO\BladeFxReportTransfer $reportListItem
-     * @param array|null $params
+     * @param \Generated\Shared\Transfer\MolliePaymentMethodTransfer $transfer
      *
      * @return string
      */
-    public function getActionButtons(MolliePaymentMethodTransfer $transfer, ?array $params = []): string
+    public function getActionButtons(MolliePaymentMethodTransfer $transfer): string
     {
-        return $this->generateEditButton(
-            $this->buildEditUrl($transfer),
-            'edit',
+        $buttons = [
+            $this->generateViewButton(
+                $this->buildViewUrl($transfer),
+                'view',
+            ),
+            $this->generateEditButton(
+                $this->buildEditUrl($transfer),
+                'edit',
+            ),
+        ];
+
+        return implode(' ', $buttons);
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MolliePaymentMethodTransfer $transfer
+     *
+     * @return string
+     */
+    protected function buildViewUrl(MolliePaymentMethodTransfer $transfer): string
+    {
+        $currency = $transfer->getMinimumAmount()['currency'] ?? $transfer->getMaximumAmount()['currency'] ?? null;
+
+        return sprintf(
+            '/mollie/detail?mollie_payment_method_id=%s&currency=%s',
+            $transfer->getId(),
+            $currency,
         );
     }
 
     /**
-     * @param \Xiphias\BladeFxApi\DTO\BladeFxReportTransfer $reportListItem
+     * @param \Generated\Shared\Transfer\MolliePaymentMethodTransfer $transfer
      *
      * @return string
      */
     protected function buildEditUrl(MolliePaymentMethodTransfer $transfer): string
     {
-        return sprintf('/mollie/detail?mollie_payment_method_id=%s', $transfer->getId());
+        $currency = $transfer->getMinimumAmount()['currency'] ?? $transfer->getMaximumAmount()['currency'] ?? null;
+
+        return sprintf(
+            '/mollie/edit?mollie_payment_method_id=%s&currency=%s',
+            $transfer->getId(),
+            $currency,
+        );
     }
 }

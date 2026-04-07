@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 /**
  * Mollie Payment Configuration Blueprint
@@ -28,11 +28,13 @@ $config[MollieConstants::MOLLIE] = [
     MollieConstants::MOLLIE_OMS_TO_PAYMENT_METHOD_MAPPING => [
         'mollieCreditCardPayment' => 'creditcard',
     ],
-     MollieConstants::MOLLIE_PAYMENT_METHOD_MANUAL_CAPTURE => [
+    MollieConstants::MOLLIE_PAYMENT_METHOD_MANUAL_CAPTURE => [
         'creditcard',
         'klarna',
     ],
-     MollieConstants::MOLLIE_INCLUDE_WALLETS => ['applepay'],
+    MollieConstants::MOLLIE_INCLUDE_WALLETS => ['applepay'],
+    MollieConstants::MOLLIE_PAYMENT_LINK_EXPIRATION_TIME => 10080,
+    MollieConstants::MOLLIE_BNPL_PAYMENT_METHODS => ['billie', 'in3', 'klarna', 'riverty', 'voucher', 'alma'],
 ];
 $config[OmsConstants::PROCESS_LOCATION] = [
     OmsConfig::DEFAULT_PROCESS_LOCATION,

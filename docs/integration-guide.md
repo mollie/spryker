@@ -46,7 +46,7 @@ This guide provides comprehensive instructions for integrating Mollie payment se
   - [Command Plugins](#command-plugins)
   - [Condition Plugins](#condition-plugins)
   - [3.6. Mail Dependency Provider](#36-mail-dependency-provider)
-  - [Command Plugins](#command-plugins)
+  - [Command Plugins](#command-plugins-1)
 - [4. Glossary Keys and Translations](#4-glossary-keys-and-translations)
   - [Complete Glossary CSV](#complete-glossary-csv)
 - [4. Payment Methods Configuration](#4-payment-methods-configuration)
@@ -71,7 +71,20 @@ This guide provides comprehensive instructions for integrating Mollie payment se
   - [Wallet Configuration](#wallet-configuration)
   - [Apple Pay Integration](#apple-pay-integration)
   - [Setup Steps](#setup-steps)
-- [8. Testing & Debugging](#8-testing--debugging)
+- [8. Payment Links](#8-payment-links)
+  - [Overview](#overview-1)
+  - [API & Configuration Setup](#api--configuration-setup)
+  - [Enabling Payment Links](#enabling-payment-links)
+  - [Configuration Options](#configuration-options)
+  - [Generating a Payment Link](#generating-a-payment-link)
+  - [Backoffice: Creating & Managing Payment Links](#backoffice-creating--managing-payment-links)
+  - [Creating a Link](#creating-a-link)
+  - [Viewing Link Status](#viewing-link-status)
+  - [Webhook Events for Payment Links](#webhook-events-for-payment-links)
+  - [Link-Specific Status Mapping](#link-specific-status-mapping)
+  - [Handling Expiry & Cancellation Events](#handling-expiry--cancellation-events)
+  - [Testing Payment Links](#testing-payment-links)
+- [9. Testing & Debugging](#9-testing--debugging)
   - [Test Mode Setup](#test-mode-setup)
   - [Test Credit Cards](#test-credit-cards)
   - [Debug Logging](#debug-logging)
@@ -79,21 +92,38 @@ This guide provides comprehensive instructions for integrating Mollie payment se
   - [Log Levels and Content](#log-levels-and-content)
   - [Sensitive Data Masking](#sensitive-data-masking)
   - [Common Test Issues](#common-test-issues)
-- [9. Production Deployment](#9-production-deployment)
+- [10. Production Deployment](#10-production-deployment)
   - [Pre-Production Checklist](#pre-production-checklist)
   - [Production Configuration](#production-configuration)
-- [10. Troubleshooting](#10-troubleshooting)
+- [11. Troubleshooting](#11-troubleshooting)
   - [Payment methods not displaying at checkout](#payment-methods-not-displaying-at-checkout)
   - [Webhooks not being received](#webhooks-not-being-received)
   - [Credit card components not loading](#credit-card-components-not-loading)
   - [Apple Pay not appearing](#apple-pay-not-appearing)
-- [11. Webhook Handling](#11-webhook-handling)
+- [12. Webhook Handling](#12-webhook-handling)
   - [How Webhooks Work](#how-webhooks-work)
   - [Webhook Configuration](#webhook-configuration)
   - [Webhook Payload Structure](#webhook-payload-structure)
   - [Payment Status Mapping](#payment-status-mapping)
   - [Webhook Retry Behavior](#webhook-retry-behavior)
-- [12. Webhook Error Troubleshooting](#12-webhook-error-troubleshooting)
+- [13. Next-Gen Webhooks](#13-next-gen-webhooks)
+  - [What Are Next-Gen Webhooks?](#what-are-next-gen-webhooks)
+  - [Key Improvements Over Legacy Webhooks](#key-improvements-over-legacy-webhooks)
+  - [Setup & Configuration](#setup--configuration-1)
+  - [Prerequisites](#prerequisites-1)
+  - [Register a Webhook](#register-a-webhook)
+  - [Choose a Delivery Mode](#choose-a-delivery-mode)
+  - [Payload Structure](#payload-structure)
+  - [Payment Link Event Types](#payment-link-event-types)
+  - [Test Your Webhook](#test-your-webhook)
+  - [Manage Webhooks](#manage-webhooks)
+  - [Security & Validation](#security--validation)
+  - [Signature Verification](#signature-verification)
+  - [Validation Checklist](#validation-checklist)
+  - [Idempotency](#idempotency)
+  - [Respond Fast, Process Async](#respond-fast-process-async)
+  - [Security Best Practices](#security-best-practices)
+- [14. Webhook Error Troubleshooting](#14-webhook-error-troubleshooting)
   - [Common Webhook Issues](#common-webhook-issues)
   - [Issue 1: Webhooks Not Being Received](#issue-1-webhooks-not-being-received)
   - [Issue 2: Webhooks Received But Not Processed](#issue-2-webhooks-received-but-not-processed)
@@ -143,21 +173,44 @@ $config[MollieConstants::MOLLIE] = [
         '/mollie/webhook',
     ),
     MollieConstants::MOLLIE_OMS_TO_PAYMENT_METHOD_MAPPING => [
-        'mollieCreditCardPayment' => 'creditcard',
-        'molliePayPalPayment' => 'paypal',
-        'mollieBankTransferPayment' => 'banktransfer',
-        'mollieKlarnaPayment' => 'klarna',
-        'mollieKlarnaPayLaterPayment' => 'klarna',
-        'mollieKlarnaPayNowPayment' => 'klarna',
-        'mollieKlarnaSliceItPayment' => 'klarna',
-        'mollieEpsPayment' => 'eps',
-        'mollieIdealPayment' => 'ideal',
-        'mollieBancontactPayment' => 'bancontact',
-        'mollieKbcPayment' => 'kbc',
-        'molliePayByBankPayment' => 'paybybank',
-        'mollieApplePayPayment' => 'applepay',
+        'mollieCreditCardPayment' => 'creditcard',  
+		'molliePayPalPayment' => 'paypal',  
+		'mollieBankTransferPayment' => 'banktransfer',  
+		'mollieKlarnaPayment' => 'klarna',  
+		'mollieKlarnaPayLaterPayment' => 'klarna',  
+		'mollieKlarnaPayNowPayment' => 'klarna',  
+		'mollieKlarnaSliceItPayment' => 'klarna',  
+		'mollieEpsPayment' => 'eps',  
+		'mollieIdealPayment' => 'ideal',  
+		'mollieBancontactPayment' => 'bancontact',  
+		'mollieKbcPayment' => 'kbc',  
+		'molliePayByBankPayment' => 'paybybank',  
+		'mollieApplePayPayment' => 'applepay',  
+		'molliePrzelewy24Payment' => 'przelewy24',  
+		'mollieMultibancoPayment' => 'multibanco',  
+		'mollieBancomatPayPayment' => 'bancomatpay',  
+		'mollieBizumPayment' => 'bizum',  
+		'mollieBilliePayment' => 'billie',  
+		'mollieRivertyPayment' => 'riverty',  
+		'mollieIdealIn3Payment' => 'in3',  
+		'mollieAlmaPayment' => 'alma',  
+		'mollieBLIKPayment' => 'blik',  
+		'molliePayconiqPayment' => 'payconiq',  
+		'mollieTrustlyPayment' => 'trustly',  
+		'mollieSwishPayment' => 'swish',  
+		'mollieMbWayPayment' => 'mbway',  
+		'mollieSatispayPayment' => 'satispay',  
+		'mollieTwintPayment' => 'twint',  
+		'mollieVippsPayment' => 'vipps',
     ],
     MollieConstants::MOLLIE_INCLUDE_WALLETS => ['applepay'],
+    MollieConstants::MOLLIE_PAYMENT_METHOD_MANUAL_CAPTURE => [  
+	  'klarna',  
+	  'vipps',  
+	],
+    MollieConstants::MOLLIE_PAYMENT_LINK_EXPIRATION_TIME => 10080,  
+	MollieConstants::MOLLIE_NEXT_GEN_WEBHOOK_SIGNING_SECRET => getenv('MOLLIE_NEXT_GEN_WEBHOOK_SIGNING_SECRET') ?: '',  
+	MollieConstants::MOLLIE_BNPL_PAYMENT_METHODS => ['billie', 'in3', 'klarna', 'riverty', 'voucher', 'alma'],
 ];
 ```
 
@@ -450,6 +503,22 @@ mollieBancontactPayment,Bancontact,MollieBancontactPayment,Mollie Bancontact Pay
 mollieKbcPayment,KBC,MollieKbcPayment,Mollie KBC Payment,1
 molliePayByBankPayment,Pay By Bank,MolliePayByBankPayment,Mollie Pay By Bank Payment,1
 mollieApplePayPayment,Apple Pay,MollieApplePayPayment,Mollie Apple Pay Payment,1
+mollieBilliePayment,Billie,MollieBilliePayment,Mollie Billie Payment,1  
+mollieRivertyPayment,Riverty,MollieRivertyPayment,Mollie Riverty Payment,1  
+mollieIdealIn3Payment,iDEAL in3,MollieIdealIn3Payment,Mollie iDEAL in3 Payment,1  
+mollieAlmaPayment,Alma,MollieAlmaPayment,Mollie Alma Payment,1  
+molliePrzelewy24Payment,Przelewy 24,MolliePrzelewy24Payment,Mollie Przelewy 24 Payment,1  
+mollieBancomatPayPayment,Bancomat Pay,MollieBancomatPayPayment,Mollie Bancomat Pay Payment,1  
+mollieMultibancoPayment,Multibanco,MollieMultibancoPayment,Mollie Multibanco Payment,1  
+mollieBizumPayment,Bizum,MollieBizumPayment,Mollie Bizum Payment,1  
+mollieBLIKPayment,BLIK,MollieBLIKPayment,Mollie BLIK Payment,1  
+molliePayconiqPayment,Payconiq,MolliePayconiqPayment,Mollie Payconiq Payment,1  
+mollieTrustlyPayment,Trustly,MollieTrustlyPayment,Mollie Trustly Payment,1  
+mollieMbWayPayment,MB Way,MollieMbWayPayment,Mollie MB Way Payment,1  
+mollieSwishPayment,Swish,MollieSwishPayment,Mollie Swish Payment,1  
+mollieSatispayPayment,Satispay,MollieSatispayPayment,Mollie Satispay Payment,1  
+mollieTwintPayment,TWINT,MollieTwintPayment,Mollie TWINT Payment,1  
+mollieVippsPayment,Vipps,MollieVippsPayment,Mollie Vipps Payment,1
 ```
 
 > **Important**
@@ -520,6 +589,22 @@ $config[MollieConstants::MOLLIE] = [
         'mollieKbcPayment' => 'kbc',
         'molliePayByBankPayment' => 'paybybank',
         'mollieApplePayPayment' => 'applepay',
+        'molliePrzelewy24Payment' => 'przelewy24',  
+		'mollieMultibancoPayment' => 'multibanco',  
+		'mollieBancomatPayPayment' => 'bancomatpay',  
+		'mollieBizumPayment' => 'bizum',  
+		'mollieBilliePayment' => 'billie',  
+		'mollieRivertyPayment' => 'riverty',  
+		'mollieIdealIn3Payment' => 'in3',  
+		'mollieAlmaPayment' => 'alma',  
+		'mollieBLIKPayment' => 'blik',  
+		'molliePayconiqPayment' => 'payconiq',  
+		'mollieTrustlyPayment' => 'trustly',  
+		'mollieSwishPayment' => 'swish',  
+		'mollieMbWayPayment' => 'mbway',  
+		'mollieSatispayPayment' => 'satispay',  
+		'mollieTwintPayment' => 'twint',  
+		'mollieVippsPayment' => 'vipps',
     ],
 ];
 ```
@@ -565,6 +650,22 @@ $config[SalesConstants::PAYMENT_METHOD_STATEMACHINE_MAPPING] = [
     MollieConfig::MOLLIE_PAYMENT_KBC => 'MolliePaymentStateMachine01',
     MollieConfig::MOLLIE_PAYMENT_PAY_BY_BANK => 'MolliePaymentStateMachine01',
     MollieConfig::MOLLIE_PAYMENT_APPLE_PAY => 'MolliePaymentStateMachine01',
+    MollieConfig::MOLLIE_PAYMENT_PRZELEWY24 => 'MolliePaymentStateMachine01',  
+	MollieConfig::MOLLIE_PAYMENT_MULTIBANCO => 'MolliePaymentStateMachine01',  
+	MollieConfig::MOLLIE_PAYMENT_BANCOMAT_PAY => 'MolliePaymentStateMachine01',  
+	MollieConfig::MOLLIE_PAYMENT_BIZUM => 'MolliePaymentStateMachine01',  
+	MollieConfig::MOLLIE_PAYMENT_BILLIE => 'MolliePaymentStateMachine01',  
+	MollieConfig::MOLLIE_PAYMENT_RIVERTY => 'MolliePaymentStateMachine01',  
+	MollieConfig::MOLLIE_PAYMENT_IDEAL_IN3 => 'MolliePaymentStateMachine01',  
+	MollieConfig::MOLLIE_PAYMENT_ALMA => 'MolliePaymentStateMachine01',  
+	MollieConfig::MOLLIE_PAYMENT_BLIK => 'MolliePaymentStateMachine01',  
+	MollieConfig::MOLLIE_PAYMENT_PAYCONIQ => 'MolliePaymentStateMachine01',  
+	MollieConfig::MOLLIE_PAYMENT_TRUSTLY => 'MolliePaymentStateMachine01',  
+	MollieConfig::MOLLIE_PAYMENT_VIPPS => 'MolliePaymentStateMachineManualCapture01',  
+	MollieConfig::MOLLIE_PAYMENT_SWISH => 'MolliePaymentStateMachine01',  
+	MollieConfig::MOLLIE_PAYMENT_MB_WAY => 'MolliePaymentStateMachine01',  
+	MollieConfig::MOLLIE_PAYMENT_TWINT => 'MolliePaymentStateMachine01',  
+	MollieConfig::MOLLIE_PAYMENT_SATISPAY => 'MolliePaymentStateMachine01',
 ];
 ```
 
@@ -578,10 +679,10 @@ To configure which payment method should use manual capturing, add configuration
 
 ```php
 $config[MollieConstants::MOLLIE] = [
-  MollieConstants::MOLLIE_PAYMENT_METHOD_MANUAL_CAPTURE => [
-    'creditcard',
-    'klarna'
-  ],
+  MollieConstants::MOLLIE_PAYMENT_METHOD_MANUAL_CAPTURE => [  
+	  'klarna',  
+	  'vipps',  
+	],
 ]
 ```
 
@@ -620,6 +721,22 @@ Add Mollie forms to `customForms`:
         'MollieKbcPayment/kbc': ['mollie-kbc', 'Mollie'],
         'MolliePayByBankPayment/payByBank': ['mollie-pay-by-bank', 'Mollie'],
         'MollieApplePayPayment/applePay': ['mollie-apple-pay', 'Mollie'],
+        'MolliePrzelewy24Payment/przelewy24': ['mollie-przelewy24', 'Mollie'],  
+		'MollieBancomatPayPayment/bancomatPay': ['mollie-bancomat-pay', 'Mollie'],  
+		'MollieMultibancoPayment/multibanco': ['mollie-multibanco', 'Mollie'],  
+		'MollieBizumPayment/bizum': ['mollie-bizum', 'Mollie'],  
+		'MollieBilliePayment/billie': ['mollie-billie', 'Mollie'],  
+		'MollieRivertyPayment/riverty': ['mollie-riverty', 'Mollie'],  
+		'MollieIdealIn3Payment/in3': ['mollie-ideal-in3', 'Mollie'],  
+		'MollieAlmaPayment/alma': ['mollie-alma', 'Mollie'],  
+		'MollieBLIKPayment/bizum': ['mollie-blik', 'Mollie'],  
+		'MolliePayconiqPayment/bizum': ['mollie-payconiq', 'Mollie'],  
+		'MollieTrustlyPayment/trustly': ['mollie-trustly', 'Mollie'],  
+		'MollieMbWayPayment/mbway': ['mollie-mb-way', 'Mollie'],  
+		'MollieSwishPayment/swish': ['mollie-swish', 'Mollie'],  
+		'MollieSatispayPayment/satispay': ['mollie-satispay', 'Mollie'],  
+		'MollieTwintPayment/twint': ['mollie-twint', 'Mollie'],  
+		'MollieVippsPayment/vipps': ['mollie-vipps', 'Mollie'],
     },
 } %}
 ```
@@ -715,7 +832,7 @@ use Spryker\Yves\Router\RouterDependencyProvider as SprykerRouterDependencyProvi
 class RouterDependencyProvider extends SprykerRouterDependencyProvider
 {
     // ... rest of the implementation
-  
+
     /**
      * @return array<\Spryker\Yves\RouterExtension\Dependency\Plugin\RouteProviderPluginInterface>
      */
@@ -752,8 +869,8 @@ use Spryker\Zed\Kernel\Container;
 
 class CheckoutDependencyProvider extends SprykerCheckoutDependencyProvider
 {
-    // ... rest of the implementation 
-  
+    // ... rest of the implementation
+
     /**
      * @param \Spryker\Zed\Kernel\Container $container
      *
@@ -787,25 +904,42 @@ class CheckoutDependencyProvider extends SprykerCheckoutDependencyProvider
 namespace Pyz\Yves\CheckoutPage;
 
 use Mollie\Shared\Mollie\MollieConfig;
-use Mollie\Yves\Mollie\Plugin\PaymentHandler\MollieApplePayPaymentHandlerPlugin;
-use Mollie\Yves\Mollie\Plugin\PaymentHandler\MollieBancontactPaymentHandlerPlugin;
-use Mollie\Yves\Mollie\Plugin\PaymentHandler\MollieBankTransferPaymentHandlerPlugin;
-use Mollie\Yves\Mollie\Plugin\PaymentHandler\MollieCreditCardPaymentHandlerPlugin;
-use Mollie\Yves\Mollie\Plugin\PaymentHandler\MollieEpsPaymentHandlerPlugin;
-use Mollie\Yves\Mollie\Plugin\PaymentHandler\MollieIdealPaymentHandlerPlugin;
-use Mollie\Yves\Mollie\Plugin\PaymentHandler\MollieKbcPaymentHandlerPlugin;
-use Mollie\Yves\Mollie\Plugin\PaymentHandler\MollieKlarnaPayLaterPaymentHandlerPlugin;
-use Mollie\Yves\Mollie\Plugin\PaymentHandler\MollieKlarnaPaymentHandlerPlugin;
-use Mollie\Yves\Mollie\Plugin\PaymentHandler\MollieKlarnaPayNowPaymentHandlerPlugin;
-use Mollie\Yves\Mollie\Plugin\PaymentHandler\MollieKlarnaSliceItPaymentHandlerPlugin;
-use Mollie\Yves\Mollie\Plugin\PaymentHandler\MolliePayByBankPaymentHandlerPlugin;
-use Mollie\Yves\Mollie\Plugin\PaymentHandler\MolliePayPalPaymentHandlerPlugin;
+use Mollie\Yves\Mollie\Plugin\PaymentHandler\MollieAlmaPaymentHandlerPlugin;  
+use Mollie\Yves\Mollie\Plugin\PaymentHandler\MollieApplePayPaymentHandlerPlugin;  
+use Mollie\Yves\Mollie\Plugin\PaymentHandler\MollieBancomatPayPaymentHandlerPlugin;  
+use Mollie\Yves\Mollie\Plugin\PaymentHandler\MollieBancontactPaymentHandlerPlugin;  
+use Mollie\Yves\Mollie\Plugin\PaymentHandler\MollieBankTransferPaymentHandlerPlugin;  
+use Mollie\Yves\Mollie\Plugin\PaymentHandler\MollieBilliePaymentHandlerPlugin;  
+use Mollie\Yves\Mollie\Plugin\PaymentHandler\MollieBizumPaymentHandlerPlugin;  
+use Mollie\Yves\Mollie\Plugin\PaymentHandler\MollieBLIKPaymentHandlerPlugin;  
+use Mollie\Yves\Mollie\Plugin\PaymentHandler\MollieCreditCardPaymentHandlerPlugin;  
+use Mollie\Yves\Mollie\Plugin\PaymentHandler\MollieEpsPaymentHandlerPlugin;  
+use Mollie\Yves\Mollie\Plugin\PaymentHandler\MollieIdealIn3PaymentHandlerPlugin;  
+use Mollie\Yves\Mollie\Plugin\PaymentHandler\MollieIdealPaymentHandlerPlugin;  
+use Mollie\Yves\Mollie\Plugin\PaymentHandler\MollieKbcPaymentHandlerPlugin;  
+use Mollie\Yves\Mollie\Plugin\PaymentHandler\MollieKlarnaPayLaterPaymentHandlerPlugin;  
+use Mollie\Yves\Mollie\Plugin\PaymentHandler\MollieKlarnaPaymentHandlerPlugin;  
+use Mollie\Yves\Mollie\Plugin\PaymentHandler\MollieKlarnaPayNowPaymentHandlerPlugin;  
+use Mollie\Yves\Mollie\Plugin\PaymentHandler\MollieKlarnaSliceItPaymentHandlerPlugin;  
+use Mollie\Yves\Mollie\Plugin\PaymentHandler\MollieMbWayPaymentHandlerPlugin;  
+use Mollie\Yves\Mollie\Plugin\PaymentHandler\MollieMultibancoPaymentHandlerPlugin;  
+use Mollie\Yves\Mollie\Plugin\PaymentHandler\MolliePayByBankPaymentHandlerPlugin;  
+use Mollie\Yves\Mollie\Plugin\PaymentHandler\MolliePayconiqPaymentHandlerPlugin;  
+use Mollie\Yves\Mollie\Plugin\PaymentHandler\MolliePayPalPaymentHandlerPlugin;  
+use Mollie\Yves\Mollie\Plugin\PaymentHandler\MolliePrzelewy24PaymentHandlerPlugin;  
+use Mollie\Yves\Mollie\Plugin\PaymentHandler\MollieRivertyPaymentHandlerPlugin;  
+use Mollie\Yves\Mollie\Plugin\PaymentHandler\MollieSatispayPaymentHandlerPlugin;  
+use Mollie\Yves\Mollie\Plugin\PaymentHandler\MollieSwishPaymentHandlerPlugin;  
+use Mollie\Yves\Mollie\Plugin\PaymentHandler\MollieTrustlyPaymentHandlerPlugin;  
+use Mollie\Yves\Mollie\Plugin\PaymentHandler\MollieTwintPaymentHandlerPlugin;  
+use Mollie\Yves\Mollie\Plugin\PaymentHandler\MollieVippsPaymentHandlerPlugin;
+
 
 class CheckoutPageDependencyProvider extends SprykerShopCheckoutPageDependencyProvider
 {
 
   // ... rest of the implementation
- 
+
  protected function extendPaymentMethodHandler(Container $container): Container
     {
         $container->extend(static::PAYMENT_METHOD_HANDLER, function (StepHandlerPluginCollection $paymentMethodHandler) {
@@ -824,7 +958,23 @@ class CheckoutPageDependencyProvider extends SprykerShopCheckoutPageDependencyPr
             $paymentMethodHandler->add(new MollieKbcPaymentHandlerPlugin(), MollieConfig::MOLLIE_PAYMENT_KBC);
             $paymentMethodHandler->add(new MolliePayByBankPaymentHandlerPlugin(), MollieConfig::MOLLIE_PAYMENT_PAY_BY_BANK);
             $paymentMethodHandler->add(new MollieApplePayPaymentHandlerPlugin(), MollieConfig::MOLLIE_PAYMENT_APPLE_PAY);
-
+			$paymentMethodHandler->add(new MolliePrzelewy24PaymentHandlerPlugin(), MollieConfig::MOLLIE_PAYMENT_PRZELEWY24);  
+			$paymentMethodHandler->add(new MollieBancomatPayPaymentHandlerPlugin(), MollieConfig::MOLLIE_PAYMENT_BANCOMAT_PAY);  
+			$paymentMethodHandler->add(new MollieMultibancoPaymentHandlerPlugin(), MollieConfig::MOLLIE_PAYMENT_MULTIBANCO);  
+			$paymentMethodHandler->add(new MollieBizumPaymentHandlerPlugin(), MollieConfig::MOLLIE_PAYMENT_BIZUM);  
+			$paymentMethodHandler->add(new MollieBilliePaymentHandlerPlugin(), MollieConfig::MOLLIE_PAYMENT_BILLIE);  
+			$paymentMethodHandler->add(new MollieRivertyPaymentHandlerPlugin(), MollieConfig::MOLLIE_PAYMENT_RIVERTY);  
+			$paymentMethodHandler->add(new MollieIdealIn3PaymentHandlerPlugin(), MollieConfig::MOLLIE_PAYMENT_IDEAL_IN3);  
+			$paymentMethodHandler->add(new MollieAlmaPaymentHandlerPlugin(), MollieConfig::MOLLIE_PAYMENT_ALMA);  
+			$paymentMethodHandler->add(new MollieBLIKPaymentHandlerPlugin(), MollieConfig::MOLLIE_PAYMENT_BLIK);  
+			$paymentMethodHandler->add(new MolliePayconiqPaymentHandlerPlugin(), MollieConfig::MOLLIE_PAYMENT_PAYCONIQ);  
+			$paymentMethodHandler->add(new MollieTrustlyPaymentHandlerPlugin(), MollieConfig::MOLLIE_PAYMENT_TRUSTLY);  
+			$paymentMethodHandler->add(new MollieVippsPaymentHandlerPlugin(), MollieConfig::MOLLIE_PAYMENT_VIPPS);  
+			$paymentMethodHandler->add(new MollieSatispayPaymentHandlerPlugin(), MollieConfig::MOLLIE_PAYMENT_SATISPAY);  
+			$paymentMethodHandler->add(new MollieTwintPaymentHandlerPlugin(), MollieConfig::MOLLIE_PAYMENT_TWINT);  
+			$paymentMethodHandler->add(new MollieSwishPaymentHandlerPlugin(), MollieConfig::MOLLIE_PAYMENT_SWISH);  
+			$paymentMethodHandler->add(new MollieMbWayPaymentHandlerPlugin(), MollieConfig::MOLLIE_PAYMENT_MB_WAY);
+			
             return $paymentMethodHandler;
         });
 
@@ -845,27 +995,43 @@ class CheckoutPageDependencyProvider extends SprykerShopCheckoutPageDependencyPr
 namespace Pyz\Yves\CheckoutPage;
 
 use Mollie\Shared\Mollie\MollieConfig;
-use Mollie\Yves\Mollie\PaymentPage\Plugin\SubFormPlugin\MollieApplePaySubFormPlugin;
-use Mollie\Yves\Mollie\PaymentPage\Plugin\SubFormPlugin\MollieBancontactSubFormPlugin;
-use Mollie\Yves\Mollie\PaymentPage\Plugin\SubFormPlugin\MollieBankTransferSubFormPlugin;
-use Mollie\Yves\Mollie\PaymentPage\Plugin\SubFormPlugin\MollieCreditCardSubFormPlugin;
-use Mollie\Yves\Mollie\PaymentPage\Plugin\SubFormPlugin\MollieEpsSubFormPlugin;
-use Mollie\Yves\Mollie\PaymentPage\Plugin\SubFormPlugin\MollieIdealSubFormPlugin;
-use Mollie\Yves\Mollie\PaymentPage\Plugin\SubFormPlugin\MollieKbcSubFormPlugin;
-use Mollie\Yves\Mollie\PaymentPage\Plugin\SubFormPlugin\MollieKlarnaPayLaterSubFormPlugin;
-use Mollie\Yves\Mollie\PaymentPage\Plugin\SubFormPlugin\MollieKlarnaPayNowSubFormPlugin;
-use Mollie\Yves\Mollie\PaymentPage\Plugin\SubFormPlugin\MollieKlarnaSliceItSubFormPlugin;
-use Mollie\Yves\Mollie\PaymentPage\Plugin\SubFormPlugin\MollieKlarnaSubFormPlugin;
-use Mollie\Yves\Mollie\PaymentPage\Plugin\SubFormPlugin\MolliePayByBankSubFormPlugin;
-use Mollie\Yves\Mollie\PaymentPage\Plugin\SubFormPlugin\MolliePayPalSubFormPlugin;
+use Mollie\Yves\Mollie\PaymentPage\Plugin\SubFormPlugin\MollieAlmaSubFormPlugin;  
+use Mollie\Yves\Mollie\PaymentPage\Plugin\SubFormPlugin\MollieApplePaySubFormPlugin;  
+use Mollie\Yves\Mollie\PaymentPage\Plugin\SubFormPlugin\MollieBancomatPaySubFormPlugin;  
+use Mollie\Yves\Mollie\PaymentPage\Plugin\SubFormPlugin\MollieBancontactSubFormPlugin;  
+use Mollie\Yves\Mollie\PaymentPage\Plugin\SubFormPlugin\MollieBankTransferSubFormPlugin;  
+use Mollie\Yves\Mollie\PaymentPage\Plugin\SubFormPlugin\MollieBillieSubFormPlugin;  
+use Mollie\Yves\Mollie\PaymentPage\Plugin\SubFormPlugin\MollieBizumSubFormPlugin;  
+use Mollie\Yves\Mollie\PaymentPage\Plugin\SubFormPlugin\MollieBLIKSubFormPlugin;  
+use Mollie\Yves\Mollie\PaymentPage\Plugin\SubFormPlugin\MollieCreditCardSubFormPlugin;  
+use Mollie\Yves\Mollie\PaymentPage\Plugin\SubFormPlugin\MollieEpsSubFormPlugin;  
+use Mollie\Yves\Mollie\PaymentPage\Plugin\SubFormPlugin\MollieIdealIn3SubFormPlugin;  
+use Mollie\Yves\Mollie\PaymentPage\Plugin\SubFormPlugin\MollieIdealSubFormPlugin;  
+use Mollie\Yves\Mollie\PaymentPage\Plugin\SubFormPlugin\MollieKbcSubFormPlugin;  
+use Mollie\Yves\Mollie\PaymentPage\Plugin\SubFormPlugin\MollieKlarnaPayLaterSubFormPlugin;  
+use Mollie\Yves\Mollie\PaymentPage\Plugin\SubFormPlugin\MollieKlarnaPayNowSubFormPlugin;  
+use Mollie\Yves\Mollie\PaymentPage\Plugin\SubFormPlugin\MollieKlarnaSliceItSubFormPlugin;  
+use Mollie\Yves\Mollie\PaymentPage\Plugin\SubFormPlugin\MollieKlarnaSubFormPlugin;  
+use Mollie\Yves\Mollie\PaymentPage\Plugin\SubFormPlugin\MollieMbWaySubFormPlugin;  
+use Mollie\Yves\Mollie\PaymentPage\Plugin\SubFormPlugin\MollieMultibancoSubFormPlugin;  
+use Mollie\Yves\Mollie\PaymentPage\Plugin\SubFormPlugin\MolliePayByBankSubFormPlugin;  
+use Mollie\Yves\Mollie\PaymentPage\Plugin\SubFormPlugin\MolliePayconiqSubFormPlugin;  
+use Mollie\Yves\Mollie\PaymentPage\Plugin\SubFormPlugin\MolliePayPalSubFormPlugin;  
+use Mollie\Yves\Mollie\PaymentPage\Plugin\SubFormPlugin\MolliePrzelewy24SubFormPlugin;  
+use Mollie\Yves\Mollie\PaymentPage\Plugin\SubFormPlugin\MollieRivertySubFormPlugin;  
+use Mollie\Yves\Mollie\PaymentPage\Plugin\SubFormPlugin\MollieSatispaySubFormPlugin;  
+use Mollie\Yves\Mollie\PaymentPage\Plugin\SubFormPlugin\MollieSwishSubFormPlugin;  
+use Mollie\Yves\Mollie\PaymentPage\Plugin\SubFormPlugin\MollieTrustlySubFormPlugin;  
+use Mollie\Yves\Mollie\PaymentPage\Plugin\SubFormPlugin\MollieTwintSubFormPlugin;  
+use Mollie\Yves\Mollie\PaymentPage\Plugin\SubFormPlugin\MollieVippsSubFormPlugin;
 use SprykerShop\Yves\CheckoutPage\CheckoutPageDependencyProvider as SprykerShopCheckoutPageDependencyProvider;
 use Spryker\Yves\Kernel\Container;
 use Spryker\Yves\StepEngine\Dependency\Plugin\Form\SubFormPluginCollection;
 
 class CheckoutPageDependencyProvider extends SprykerShopCheckoutPageDependencyProvider
 {
-    // ... rest of the implementation 
-  
+    // ... rest of the implementation
+
     /**
      * @param \Spryker\Yves\Kernel\Container $container
      *
@@ -875,7 +1041,7 @@ class CheckoutPageDependencyProvider extends SprykerShopCheckoutPageDependencyPr
     {
         $container->extend(static::PAYMENT_SUB_FORMS, function (SubFormPluginCollection $paymentSubFormPluginCollection) {
             // ... other sub-forms
-            
+
             // Mollie Payment Sub-Forms
             $paymentSubFormPluginCollection->add(new MollieCreditCardSubFormPlugin());
             $paymentSubFormPluginCollection->add(new MolliePayPalSubFormPlugin());
@@ -890,10 +1056,26 @@ class CheckoutPageDependencyProvider extends SprykerShopCheckoutPageDependencyPr
             $paymentSubFormPluginCollection->add(new MollieKbcSubFormPlugin());
             $paymentSubFormPluginCollection->add(new MolliePayByBankSubFormPlugin());
             $paymentSubFormPluginCollection->add(new MollieApplePaySubFormPlugin());
-            
+            $paymentSubFormPluginCollection->add(new MollieBancomatPaySubFormPlugin());  
+			$paymentSubFormPluginCollection->add(new MollieBizumSubFormPlugin());  
+			$paymentSubFormPluginCollection->add(new MollieMultibancoSubFormPlugin());  
+			$paymentSubFormPluginCollection->add(new MolliePrzelewy24SubFormPlugin());  
+			$paymentSubFormPluginCollection->add(new MollieBLIKSubFormPlugin());  
+			$paymentSubFormPluginCollection->add(new MolliePayconiqSubFormPlugin());  
+			$paymentSubFormPluginCollection->add(new MollieBillieSubFormPlugin());  
+			$paymentSubFormPluginCollection->add(new MollieRivertySubFormPlugin());  
+			$paymentSubFormPluginCollection->add(new MollieIdealIn3SubFormPlugin());  
+			$paymentSubFormPluginCollection->add(new MollieAlmaSubFormPlugin());  
+			$paymentSubFormPluginCollection->add(new MollieTrustlySubFormPlugin());  
+			$paymentSubFormPluginCollection->add(new MollieMbWaySubFormPlugin());  
+			$paymentSubFormPluginCollection->add(new MollieSwishSubFormPlugin());  
+			$paymentSubFormPluginCollection->add(new MollieSatispaySubFormPlugin());  
+			$paymentSubFormPluginCollection->add(new MollieTwintSubFormPlugin());  
+			$paymentSubFormPluginCollection->add(new MollieVippsSubFormPlugin());
+
             return $paymentSubFormPluginCollection;
         });
-        
+
         return $container;
     }
 }
@@ -915,8 +1097,8 @@ use SprykerShop\Yves\PaymentAppWidget\Plugin\CheckoutPage\PaymentAppCancelOrderO
 
 class CheckoutPageDependencyProvider extends SprykerShopCheckoutPageDependencyProvider
 {
-    // ... rest of the implementation 
-  
+    // ... rest of the implementation
+
     /**
      * @return array<\SprykerShop\Yves\CheckoutPageExtension\Dependency\Plugin\CheckoutStepResolverStrategyPluginInterface>
      */
@@ -956,7 +1138,7 @@ use Spryker\Zed\Payment\PaymentDependencyProvider as SprykerPaymentDependencyPro
 class PaymentDependencyProvider extends SprykerPaymentDependencyProvider
 {
     // ... rest of the implementation
-  
+
     /**
      * @return array<\Spryker\Zed\PaymentExtension\Dependency\Plugin\PaymentMethodFilterPluginInterface>
      */
@@ -983,17 +1165,21 @@ class PaymentDependencyProvider extends SprykerPaymentDependencyProvider
 
 namespace Pyz\Zed\Oms;
 
-use Mollie\Zed\Mollie\Communication\Plugin\Oms\Command\MolliePaymentConfirmationCommandPlugin;
-use Mollie\Zed\Mollie\Communication\Plugin\Oms\Command\MollieRefundCommandPlugin;
-use Mollie\Zed\Mollie\Communication\Plugin\Oms\Command\MolliePaymentCaptureCommandPlugin;
+use Mollie\Zed\Mollie\Communication\Plugin\Oms\Command\MolliePaymentCaptureCommandPlugin;  
+use Mollie\Zed\Mollie\Communication\Plugin\Oms\Command\MolliePaymentConfirmationCommandPlugin;  
+use Mollie\Zed\Mollie\Communication\Plugin\Oms\Command\MolliePaymentLinkCreateCommandPlugin;  
+use Mollie\Zed\Mollie\Communication\Plugin\Oms\Command\MolliePaymentLinkSetExpireCommandPlugin;  
+use Mollie\Zed\Mollie\Communication\Plugin\Oms\Command\MollieRefundCommandPlugin;  
+use Mollie\Zed\Mollie\Communication\Plugin\Oms\Command\MollieReleaseAuthorizationCommandPlugin;
+
 use Spryker\Zed\Kernel\Container;
 use Spryker\Zed\Oms\Dependency\Plugin\Command\CommandCollectionInterface;
 use Spryker\Zed\Oms\OmsDependencyProvider as SprykerOmsDependencyProvider;
 
 class OmsDependencyProvider extends SprykerOmsDependencyProvider
 {
-    // ... rest of the implementation 
-  
+    // ... rest of the implementation
+
     /**
      * @param \Spryker\Zed\Kernel\Container $container
      *
@@ -1003,17 +1189,24 @@ class OmsDependencyProvider extends SprykerOmsDependencyProvider
     {
         $container->extend(self::COMMAND_PLUGINS, function (CommandCollectionInterface $commandCollection) {
             // ... other commands
-            
+
             // Mollie OMS Commands
             $commandCollection->add(new MollieRefundCommandPlugin(), 'Mollie/Refund');
             $commandCollection->add(new MolliePaymentConfirmationCommandPlugin(), 'Mollie/PaymentConfirmation');
-            
+
             // If using manual capture:
             $commandCollection->add(new MolliePaymentCaptureCommandPlugin(), 'Mollie/MolliePaymentCapture');
-            
+
+			$commandCollection->add(new MollieReleaseAuthorizationCommandPlugin(), 'Mollie/MollieReleaseAuthorization');  
+
+			// If using payment links:
+			$commandCollection->add(new MolliePaymentConfirmationCommandPlugin(), 'Mollie/PaymentConfirmation');  
+			$commandCollection->add(new MolliePaymentLinkCreateCommandPlugin(), 'Mollie/CreatePaymentLink');  
+			$commandCollection->add(new MolliePaymentLinkSetExpireCommandPlugin(), 'Mollie/SetExpireStatusPaymentLink');
+
             return $commandCollection;
         });
-        
+
         return $container;
     }
 }
@@ -1042,6 +1235,9 @@ use Mollie\Zed\Mollie\Communication\Plugin\Oms\Condition\Authorization\IsAuthori
 use Mollie\Zed\Mollie\Communication\Plugin\Oms\Condition\Authorization\IsAuthorizedConditionPlugin;
 use Mollie\Zed\Mollie\Communication\Plugin\Oms\Condition\Capture\IsCapturedConditionPlugin;
 use Mollie\Zed\Mollie\Communication\Plugin\Oms\Condition\Capture\IsCaptureFailedConditionPlugin;
+use Mollie\Zed\Mollie\Communication\Plugin\Oms\Condition\PaymentLink\MollieIsPaymentLinkCreationSuccessfulConditionPlugin;  
+use Mollie\Zed\Mollie\Communication\Plugin\Oms\Condition\PaymentLink\MollieIsPaymentLinkStatusExpiredConditionPlugin;  
+use Mollie\Zed\Mollie\Communication\Plugin\Oms\Condition\PaymentLink\MollieIsPaymentLinkStatusPaidConditionPlugin;
 use Spryker\Zed\Kernel\Container;
 use Spryker\Zed\Oms\Dependency\Plugin\Condition\ConditionCollectionInterface;
 use Spryker\Zed\Oms\OmsDependencyProvider as SprykerOmsDependencyProvider;
@@ -1049,7 +1245,7 @@ use Spryker\Zed\Oms\OmsDependencyProvider as SprykerOmsDependencyProvider;
 class OmsDependencyProvider extends SprykerOmsDependencyProvider
 {
     // ... rest of the implementation
-  
+
     /**
      * @param \Spryker\Zed\Kernel\Container $container
      *
@@ -1059,7 +1255,7 @@ class OmsDependencyProvider extends SprykerOmsDependencyProvider
     {
         $container->extend(self::CONDITION_PLUGINS, function (ConditionCollectionInterface $conditionCollection) {
             // ... other conditions
-            
+
             // Mollie OMS Conditions
             $conditionCollection->add(new MollieIsPaymentStatusPaidConditionPlugin(), 'Mollie/IsPaymentStatusPaid');
             $conditionCollection->add(new MollieIsPaymentStatusExpiredConditionPlugin(), 'Mollie/IsPaymentStatusExpired');
@@ -1067,7 +1263,7 @@ class OmsDependencyProvider extends SprykerOmsDependencyProvider
             $conditionCollection->add(new MollieIsPaymentStatusFailedConditionPlugin(), 'Mollie/IsPaymentStatusFailed');
             $conditionCollection->add(new MollieIsRefundStatusRefundedConditionPlugin(), 'Mollie/IsRefundStatusRefunded');
             $conditionCollection->add(new MollieIsRefundStatusFailedConditionPlugin(), 'Mollie/IsRefundStatusFailed');
-            
+
             // If using manual capture:
             $conditionCollection->add(new IsAuthorizedConditionPlugin(), 'Mollie/IsAuthorized');
             $conditionCollection->add(new IsAuthorizationCanceledConditionPlugin(), 'Mollie/IsAuthorizationCanceled');
@@ -1075,10 +1271,15 @@ class OmsDependencyProvider extends SprykerOmsDependencyProvider
             $conditionCollection->add(new IsAuthorizationFailedConditionPlugin(), 'Mollie/IsAuthorizationFailed');
             $conditionCollection->add(new IsCapturedConditionPlugin(), 'Mollie/IsCaptured');
             $conditionCollection->add(new IsCaptureFailedConditionPlugin(), 'Mollie/IsCaptureFailed');
-          
+
+			// If using payment links:
+			$conditionCollection->add(new MollieIsPaymentLinkCreationSuccessfulConditionPlugin(), 'Mollie/IsPaymentLinkCreationSuccessful');  
+			$conditionCollection->add(new MollieIsPaymentLinkStatusPaidConditionPlugin(), 'Mollie/IsPaymentLinkStatusPaid');  
+			$conditionCollection->add(new MollieIsPaymentLinkStatusExpiredConditionPlugin(), 'Mollie/IsPaymentLinkStatusExpired');
+
             return $conditionCollection;
         });
-        
+
         return $container;
     }
 }
@@ -1107,7 +1308,7 @@ use Spryker\Zed\Mail\MailDependencyProvider as SprykerMailDependencyProvider;
 class MailDependencyProvider extends SprykerMailDependencyProvider
 {
     // ... rest of the implementation
-  
+
     /**
      * @return array<\Spryker\Zed\MailExtension\Dependency\Plugin\MailTypeBuilderPluginInterface>
      */
@@ -1167,6 +1368,34 @@ molliePayByBankPayment,Per Banküberweisung bezahlen,de_DE
 molliePayByBankPayment,Pay by bank transfer,en_US
 mollieApplePayPayment,Apple Pay,de_DE
 mollieApplePayPayment,Apple Pay,en_US
+mollieBancomatPayPayment,Bancomat Pay,de_DE  
+mollieBancomatPayPayment,Bancomat Pay,en_US  
+mollieMultibancoPayment,Multibanco,de_DE  
+mollieMultibancoPayment,Multibanco,en_US  
+molliePrzelewy24Payment,Przelewy24,de_DE  
+molliePrzelewy24Payment,Przelewy24,en_US  
+mollieBizumPayment,Bizum,de_DE  
+mollieBizumPayment,Bizum,en_US  
+mollieBilliePayment,Billie,de_DE  
+mollieBilliePayment,Billie,en_US  
+mollieRivertyPayment,Riverty,de_DE  
+mollieRivertyPayment,Riverty,en_US  
+mollieIdealIn3Payment,iDEAL in3,de_DE  
+mollieIdealIn3Payment,iDEAL in3,en_US  
+mollieAlmaPayment,Alma,de_DE  
+mollieAlmaPayment,Alma,en_US  
+mollieTrustlyPayment,Trustly,de_DE  
+mollieTrustlyPayment,Trustly,en_US  
+mollieMbWayPayment,MB Way,en_US  
+mollieMbWayPayment,MB Way,de_DE  
+mollieSwishPayment,Swish,en_US  
+mollieSwishPayment,Swish,de_DE  
+mollieSatispayPayment,Satispay,de_DE  
+mollieSatispayPayment,Satispay,en_US  
+mollieTwintPayment,TWINT,en_US  
+mollieTwintPayment,TWINT,de_DE  
+mollieVippsPayment,Vipps,en_US  
+mollieVippsPayment,Vipps,de_DE
 mollie.checkout.payment.credit.card.missing.token,Der Zahlungstoken fehlt. Bitte füllen Sie das Zahlungsformular aus.,de_DE
 mollie.checkout.payment.credit.card.missing.token,Payment token is missing. Please complete the payment form.,en_US
 mollie.checkout.payment.credit.card.holder,Karteninhaber,de_DE
@@ -1203,6 +1432,34 @@ checkout.payment.provider.MolliePayByBankPayment,Mollie per Bank bezahlen,de_DE
 checkout.payment.provider.MolliePayByBankPayment,Mollie Pay By Bank,en_US
 checkout.payment.provider.MollieApplePayPayment,Mollie Apple Pay,de_DE
 checkout.payment.provider.MollieApplePayPayment,Mollie Apple Pay,en_US
+checkout.payment.provider.MollieBancomatPayPayment,Mollie Bancomat Pay,de_DE  
+checkout.payment.provider.MollieBancomatPayPayment,Mollie Bancomat Pay,en_US  
+checkout.payment.provider.MollieMultibancoPayment,Mollie Multibanco,de_DE  
+checkout.payment.provider.MollieMultibancoPayment,Mollie Multibanco,en_US  
+checkout.payment.provider.MolliePrzelewy24Payment,Mollie Przelewy24,de_DE  
+checkout.payment.provider.MolliePrzelewy24Payment,Mollie Przelewy24,en_US  
+checkout.payment.provider.MollieBizumPayment,Mollie Bizum,de_DE  
+checkout.payment.provider.MollieBizumPayment,Mollie Bizum,en_US  
+checkout.payment.provider.MollieBilliePayment,Mollie Billie,de_DE  
+checkout.payment.provider.MollieBilliePayment,Mollie Billie,en_US  
+checkout.payment.provider.MollieIdealIn3Payment,Mollie iDEAL in3,de_DE  
+checkout.payment.provider.MollieIdealIn3Payment,Mollie iDEAL in3,en_US  
+checkout.payment.provider.MollieRivertyPayment,Mollie Riverty,de_DE  
+checkout.payment.provider.MollieRivertyPayment,Mollie Riverty,en_US  
+checkout.payment.provider.MollieAlmaPayment,Mollie Alma,de_DE  
+checkout.payment.provider.MollieAlmaPayment,Mollie Alma,en_US  
+checkout.payment.provider.MollieMbWayPayment,Mollie MB Way,en_US  
+checkout.payment.provider.MollieMbWayPayment,Mollie MB Way,de_DE  
+checkout.payment.provider.MollieSatispayPayment,Mollie Satispay,en_US  
+checkout.payment.provider.MollieSatispayPayment,Mollie Satispay,de_DE  
+checkout.payment.provider.MollieVippsPayment,Mollie Vipps payment,en_US  
+checkout.payment.provider.MollieVippsPayment,Mollie Vipps payment,de_DE  
+checkout.payment.provider.MollieSwishPayment,Mollie Swish,de_DE  
+checkout.payment.provider.MollieSwishPayment,Mollie Swish,en_US  
+checkout.payment.provider.MollieTrustlyPayment,Mollie Trustly,en_US  
+checkout.payment.provider.MollieTrustlyPayment,Mollie Trustly,de_DE  
+checkout.payment.provider.MollieTwintPayment,Mollie Twint,en_US  
+checkout.payment.provider.MollieTwintPayment,Mollie Twint,de_DE
 checkout.payment.provider.mollieCreditCard.descriptionText,Schließen Sie Ihren Einkauf sicher mit Ihren Kreditkartendaten ab.,de_DE
 checkout.payment.provider.mollieCreditCard.descriptionText,Complete your purchase securely using your credit card credentials.,en_US
 checkout.payment.provider.molliePaypal.descriptionText,Schließen Sie Ihren Einkauf sicher mit Ihrem PayPal-Konto ab.,de_DE
@@ -1229,6 +1486,39 @@ checkout.payment.provider.molliePayByBank.descriptionText,Bezahlen Sie per siche
 checkout.payment.provider.molliePayByBank.descriptionText,Pay using a secure bank transfer.,en_US
 checkout.payment.provider.mollieApplePay.descriptionText,Schließen Sie Ihren Einkauf sicher mit Apple Pay ab.,de_DE
 checkout.payment.provider.mollieApplePay.descriptionText,Complete your purchase securely using Apple Pay.,en_US
+checkout.payment.provider.mollieTwintPayment.descriptionText,Complete your purchase securely with TWINT the Swiss mobile payment app.,en_US  
+checkout.payment.provider.mollieTwintPayment.descriptionText,Schließen Sie Ihren Einkauf sicher mit TWINT ab der Schweizer Mobile Payment App.,de_DE  
+checkout.payment.provider.mollieVippsPayment.descriptionText,Complete your purchase securely with Vipps the popular Norwegian mobile payment solution.,en_US  
+checkout.payment.provider.mollieVippsPayment.descriptionText,Schließen Sie Ihren Einkauf sicher mit Vipps ab der beliebten norwegischen Mobile Payment Lösung.,de_DE  
+checkout.payment.provider.mollieSatispayPayment.descriptionText,Complete your purchase securely with Satispay the simple and fast Italian mobile payment app.,en_US  
+checkout.payment.provider.mollieSatispayPayment.descriptionText,Schließen Sie Ihren Einkauf sicher mit Satispay ab der einfachen und schnellen italienischen Zahlungs App.,de_DE  
+checkout.payment.provider.mollieSwishPayment.descriptionText,Complete your purchase securely with Swish the leading mobile payment service in Sweden.,en_US  
+checkout.payment.provider.mollieSwishPayment.descriptionText,Schließen Sie Ihren Einkauf sicher mit Swish ab dem führenden mobilen Bezahldienst in Schweden.,de_DE  
+checkout.payment.provider.mollieMbWayPayment.descriptionText,Complete your purchase securely with MB WAY the fast and convenient Portuguese mobile payment solution.,en_US  
+checkout.payment.provider.mollieMbWayPayment.descriptionText,Schließen Sie Ihren Einkauf sicher mit MB WAY ab der schnellen und bequemen portugiesischen Mobile Payment Lösung.,de_DE  
+checkout.payment.provider.mollieTrustlyPayment.descriptionText,Complete your purchase securely with Trustly and pay directly from your bank account without registration.,en_US  
+checkout.payment.provider.mollieTrustlyPayment.descriptionText,Schließen Sie Ihren Einkauf sicher mit Trustly ab und zahlen Sie direkt von Ihrem Bankkonto ohne Registrierung.,de_DE
+checkout.payment.provider.mollieApplePay.descriptionText,Complete your purchase securely using Apple Pay.,en_US  
+checkout.payment.provider.molliePrzelewy24.descriptionText,Bezahlen Sie sicher mit Przelewy24.,de_DE  
+checkout.payment.provider.molliePrzelewy24.descriptionText,Pay securely with Przelewy24.,en_US  
+checkout.payment.provider.mollieMultibanco.descriptionText,Bezahlen Sie sicher mit Multibanco.,de_DE  
+checkout.payment.provider.mollieMultibanco.descriptionText,Pay securely with Multibanco.,en_US  
+checkout.payment.provider.mollieBancomatPay.descriptionText,Bezahlen Sie sicher mit Bancomat Pay.,de_DE  
+checkout.payment.provider.mollieBancomatPay.descriptionText,Pay securely with Bancomat Pay.,en_US  
+checkout.payment.provider.mollieBizum.descriptionText,Bezahlen Sie sicher mit Bizum.,de_DE  
+checkout.payment.provider.mollieBizum.descriptionText,Pay securely with Bizum.,en_US  
+checkout.payment.provider.mollieBlik.descriptionText,Bezahlen Sie sicher mit BLIK.,de_DE  
+checkout.payment.provider.mollieBlik.descriptionText,Pay securely with BLIK.,en_US  
+checkout.payment.provider.molliePayconiq.descriptionText,Bezahlen Sie sicher mit Payconiq.,de_DE  
+checkout.payment.provider.molliePayconiq.descriptionText,Pay securely with Payconiq.,en_US  
+checkout.payment.provider.mollieBillie.descriptionText,Schließen Sie Ihren Einkauf sicher mit Billie ab.,de_DE  
+checkout.payment.provider.mollieBillie.descriptionText,Complete your purchase securely using Billie.,en_US  
+checkout.payment.provider.mollieIdealIn3.descriptionText,Schließen Sie Ihren Einkauf sicher mit iDEAL in3 ab.,de_DE  
+checkout.payment.provider.mollieIdealIn3.descriptionText,Complete your purchase securely using iDEAL in3.,en_US  
+checkout.payment.provider.mollieRiverty.descriptionText,Schließen Sie Ihren Einkauf sicher mit Riverty ab.,de_DE  
+checkout.payment.provider.mollieRiverty.descriptionText,Complete your purchase securely using Riverty.,en_US  
+checkout.payment.provider.mollieAlma.descriptionText,Schließen Sie Ihren Einkauf sicher mit Alma ab.,de_DE  
+checkout.payment.provider.mollieAlma.descriptionText,Complete your purchase securely using Alma.,en_US
 oms.state.pending,Ausstehende,de_DE
 oms.state.pending,Pending,en_US
 oms.state.expired,Expired,en_US
@@ -1310,6 +1600,22 @@ MollieConstants::MOLLIE_OMS_TO_PAYMENT_METHOD_MAPPING => [
     'mollieKbcPayment' => 'kbc',
     'molliePayByBankPayment' => 'paybybank',
     'mollieApplePayPayment' => 'applepay',
+    'molliePrzelewy24Payment' => 'przelewy24',  
+	'mollieMultibancoPayment' => 'multibanco',  
+	'mollieBancomatPayPayment' => 'bancomatpay',  
+	'mollieBizumPayment' => 'bizum',  
+	'mollieBilliePayment' => 'billie',  
+	'mollieRivertyPayment' => 'riverty',  
+	'mollieIdealIn3Payment' => 'in3',  
+	'mollieAlmaPayment' => 'alma',  
+	'mollieBLIKPayment' => 'blik',  
+	'molliePayconiqPayment' => 'payconiq',  
+	'mollieTrustlyPayment' => 'trustly',  
+	'mollieSwishPayment' => 'swish',  
+	'mollieMbWayPayment' => 'mbway',  
+	'mollieSatispayPayment' => 'satispay',  
+	'mollieTwintPayment' => 'twint',  
+	'mollieVippsPayment' => 'vipps',
 ]
 ```
 
@@ -1327,6 +1633,21 @@ MollieConstants::MOLLIE_OMS_TO_PAYMENT_METHOD_MAPPING => [
 | `mollieKbcPayment` | `kbc` | KBC/CBC Payment Button | Belgium |
 | `molliePayByBankPayment` | `paybybank` | Open Banking payments | UK |
 | `mollieApplePayPayment` | `applepay` | Apple Pay digital wallet | Global |
+| `molliePrzelewy24Payment` | `przelewy24` | Przelewy24 payment | PL |
+| `mollieMultibancoPayment` | `multibanco` | Multibanco payment | PT |
+| `mollieBancomatPayPayment` | `bancomatpay` | BANCOMAT Pay payment | IT |
+| `mollieBizumPayment` | `bizum` | Bizum payment | ES, AD |
+| `mollieBilliePayment` | `billie` | Billie payment | DE, AT, SE, NL, FR, NO, CH, UK, DK, FI, ES, IT |
+| `mollieRivertyPayment` | `riverty` | Riverty payment | NL, BE, DE, AT |
+| `mollieIdealIn3Payment` | `in3` | iDEAL in3 payment | NL |
+| `mollieAlmaPayment` | `alma` | Alma payment | FR, BE |
+| `mollieBLIKPayment` | `blik` | BLIK payment | PL |
+| `mollieTrustlyPayment` | `trustly` | Trustly payment | AT, DE, DK, EE, FI, LT, LV, NL, NO, SE, UK |
+| `mollieSwishPayment` | `swish` | Swish payment | SE |
+| `mollieMbWayPayment` | `mbway` | MB Way payment | PT |
+| `mollieSatispayPayment` | `satispay` | Satispay payment | AT,BG,HR,CY,CH,CZ,DK,EE,FI,FR,DE,GR,HU,IE,IT,LV,LT,LU,MT |
+| `mollieTwintPayment` | `twint` | Twint payment | CH |
+| `mollieVippsPayment` | `vipps` | Vipps payment | NO |
 
 ## 5. Backoffice Configuration
 
@@ -1353,21 +1674,31 @@ Add the following configuration block:
     <action>index</action>
     <visible>1</visible>
 </mollie-payment-methods>
+
+<!-- If using payment links -->
+<mollie-payment-links>  
+ <label>Mollie payment links</label>  
+ <title>Mollie Payment Links</title>  
+ <bundle>mollie</bundle>  
+ <controller>payment-link</controller>  
+ <action>index</action>  
+ <visible>1</visible>  
+</mollie-payment-links>
 ```
 
-**Important:** Insert this block between the `<payment-method>` and `<shipment-method>` nodes in the navigation file.
+**Important:** Insert these blocks between the `<payment-method>` and `<shipment-method>` nodes in the navigation file.
 
 **Example placement:**
 
 ```xml
 <navigation>
     <!-- ... other navigation items ... -->
-    
+
     <payment-method>
         <label>Payment Methods</label>
         <!-- payment method config -->
     </payment-method>
-    
+
     <!-- INSERT MOLLIE CONFIG HERE -->
     <mollie-payment-methods>
         <label>Mollie payment methods</label>
@@ -1378,11 +1709,20 @@ Add the following configuration block:
         <visible>1</visible>
     </mollie-payment-methods>
     
+	<mollie-payment-links>  
+		<label>Mollie payment links</label>  
+		<title>Mollie Payment Links</title>  
+		<bundle>mollie</bundle>  
+		<controller>payment-link</controller>  
+		<action>index</action>  
+		<visible>1</visible>  
+	</mollie-payment-links>
+
     <shipment-method>
         <label>Shipment Methods</label>
         <!-- shipment method config -->
     </shipment-method>
-    
+
     <!-- ... other navigation items ... -->
 </navigation>
 ```
@@ -1432,12 +1772,12 @@ After completing the configuration:
 1. Log in to your Spryker Backoffice
 2. Navigate to **Administration > Mollie payment methods** in the main navigation menu
 3. The panel displays:
-  - All payment methods from your Mollie account
-  - Button for showing only enabled payment methods
-  - Button for clearing payment method cache
-  - Payment method status (active/inactive)
-  - Minimum/maximum transaction amount
-  - Payment method icons
+- All payment methods from your Mollie account
+- Button for showing only enabled payment methods
+- Button for clearing payment method cache
+- Payment method status (active/inactive)
+- Minimum/maximum transaction amount
+- Payment method icons
 
 ### What You Can See in the Back Office Panel
 
@@ -1545,7 +1885,101 @@ Apple Pay allows customers to pay using Face ID, Touch ID, or passcode on suppor
 >
 > Apple Pay will only display as a payment option when accessed from compatible devices and browsers. The integration automatically handles device and browser detection.
 
-## 8. Testing & Debugging
+## 8. Payment Links
+
+Payment Links allow merchants to generate shareable URLs that customers can use to complete a payment without going through the standard checkout flow. This is useful for invoicing, customer support scenarios, and manual order processing.
+
+### Overview
+
+A Mollie Payment Link is a hosted payment page that can be sent to a customer via email, SMS, or any other channel. When the customer opens the link, they are presented with Mollie's hosted payment page where they can select a payment method and complete the transaction.
+
+**Key use cases:**
+
+- Sending payment requests for phone or in-person orders
+- Recovering abandoned checkouts
+- Invoicing B2B customers
+- Customer service-initiated payments
+
+### API & Configuration Setup
+
+#### Configuration Options
+
+The following parameters can be set when generating a payment link:
+
+| Parameter | Required | Description |
+|-----------|----------|-------------|
+| `amount` | Yes | The payment amount (value + currency) |
+| `description` | Yes | A description shown on the hosted payment page |
+| `redirectUrl` | No | Where to redirect the customer after payment |
+| `webhookUrl` | No | Override webhook URL for this specific link |
+| `expiresAt` | No | Expiry date/time for the link (ISO 8601) |
+
+#### Generating a Payment Link
+
+> **Webhook URL for Payment Links**
+>
+> Payment links use the next-gen webhook endpoint (`mollie/next-gen/webhook`). See [Section 13: Next-Gen Webhooks](#13-next-gen-webhooks) for full webhook configuration details.
+
+### Backoffice: Creating & Managing Payment Links
+
+> **Note:** Payment link management is visible in the Back Office panel. See [Section 5: Backoffice Configuration](#5-backoffice-configuration) for panel setup instructions.
+
+#### Creating a Link
+
+1. Log in to your Spryker Backoffice
+2. Navigate to **Administration > Mollie payment links**
+3. Click **Create Payment Link**
+4. Fill in the required fields: amount, currency, description, and optional expiry date
+  - if no expiry date is set, default value will be used which is current datetime + 10080 seconds - configurable in config
+5. Click **Create link** — the shareable URL will be displayed and can be copied or sent directly
+
+#### Viewing Link Status
+
+The Payment Links overview table shows:
+
+| Column | Description |
+|--------|-------------|
+| **Mollie ID** | Unique Mollie identifier for the payment link |
+| **ID Order** | ID of the order for which payment link is generated |
+| **Description** | The description provided when the link was created |
+| **Amount** | Payment amount |
+| **Currency** | Payment currency |
+| **Status** | `open`, `paid`, `expired`, or `canceled` |
+| **Expires At** | Link expiry date/time (if set) |
+| **Payment methods** | Available payment methods for payment link (if set) |
+| **Created At** | Timestamp of link creation |
+
+### Webhook Events for Payment Links
+
+Payment links use Mollie's Next-Gen Webhooks rather than the legacy webhook mechanism. See [Section 13: Next-Gen Webhooks](#13-next-gen-webhooks) for full details on setup, payload structure, and event types.
+
+#### Link-Specific Status Mapping
+
+| Mollie Status           | Description | OMS Action |
+|-------------------------|-------------|------------|
+| `payment-link.open`     | Link created, awaiting customer action | None |
+| `payment-link.paid`     | Payment successfully completed via link | Mark as paid |
+| `payment-link.expired`  | Link expired before payment was made | Mark as expired |
+| `payment-link.canceled` | Link was manually canceled | Mark as canceled |
+
+#### Handling Expiry & Cancellation Events
+
+If a payment link expires or is canceled, ensure your OMS handles these states gracefully. Configure the appropriate OMS transitions for `payment_expired` and `payment_cancelled` states as described in [Section 3.4](#34-configure-oms--mollie-payment-mapping).
+
+### Testing Payment Links
+
+1. Ensure `MOLLIE_TEST_MODE` is set to `true` and you are using a test API key
+2. Generate a payment link via the Backoffice or API
+3. Open the link in a browser — you will be taken to Mollie's hosted test payment page
+4. Complete the payment using a [test card](#test-credit-cards) or any available test payment method
+5. Verify the webhook is received and the link status updates to `paid` in the Back Office
+
+> **Common Test Issues**
+>
+> - If the payment page does not load, verify your API key is a valid test key (`test_`)
+> - If webhook status does not update, check your test webhook URL configuration (see [Section 9: Testing & Debugging](#9-testing--debugging))
+
+## 9. Testing & Debugging
 
 ### Test Mode Setup
 
@@ -1615,8 +2049,9 @@ When `MOLLIE_DEBUG_MODE` is set to `'Extensive'`, sensitive data is automaticall
 | Payment methods not appearing | Methods not enabled in Mollie Dashboard | Enable payment methods in test mode |
 | Webhook not receiving updates | URL not accessible or incorrect | Test webhook URL manually, check firewall |
 | API errors | Invalid API key or Profile ID | Verify credentials in Mollie Dashboard |
+| Payment link not loading | Invalid or expired test API key | Verify test API key starts with `test_` |
 
-## 9. Production Deployment
+## 10. Production Deployment
 
 ### Pre-Production Checklist
 
@@ -1644,7 +2079,7 @@ $config[MollieConstants::MOLLIE] = [
 > - Always use HTTPS for all production URLs
 > - Implement proper error handling and logging
 
-## 10. Troubleshooting
+## 11. Troubleshooting
 
 ### Payment methods not displaying at checkout
 
@@ -1708,7 +2143,21 @@ $config[MollieConstants::MOLLIE] = [
 3. Test on compatible Apple device with Safari or Chrome
 4. Check that Apple Pay is enabled in device settings
 
-## 11. Webhook Handling
+### Payment link not generating
+
+**Possible Causes:**
+
+- Insufficient API key permissions
+- Missing required parameters (amount, description)
+- Invalid expiry date format
+
+**Solutions:**
+
+1. Verify your API key has payment link creation permissions in the Mollie Dashboard
+2. Ensure `amount.value` is a string with two decimal places (e.g., `"25.00"`)
+3. Ensure `expiresAt` follows ISO 8601 format if provided
+
+## 12. Webhook Handling
 
 Webhooks are asynchronous notifications sent by Mollie to your server when payment status changes occur. Proper webhook handling is critical for accurate order processing and payment status updates.
 
@@ -1775,6 +2224,8 @@ Mollie payment statuses map to OMS states as follows:
 | `canceled` | Payment cancelled by customer | Mark as cancelled | `payment_cancelled` |
 | `expired` | Payment expired (timeout) | Mark as expired | `payment_expired` |
 
+> **Payment Links:** Payment links use Next-Gen Webhooks with an expanded event model. See [Section 13: Next-Gen Webhooks for Payment Links](#13-next-gen-webhooks-for-payment-links) for link-specific status handling.
+
 ### Webhook Retry Behavior
 
 If your server doesn't respond with HTTP 200, Mollie will retry the webhook:
@@ -1796,7 +2247,104 @@ If your server doesn't respond with HTTP 200, Mollie will retry the webhook:
 >
 > Always respond with HTTP 200 immediately, even if processing hasn't completed. Process the webhook asynchronously if needed to avoid timeouts.
 
-## 12. Webhook Error Troubleshooting
+## 13. Next-Gen Webhooks
+
+### What Are Next-Gen Webhooks?
+
+Mollie's **Next-Gen Webhooks** are a modernized event delivery system replacing the legacy approach. Instead of sending only a resource `id` and requiring your server to make a follow-up API call to find out what changed, next-gen webhooks deliver **structured, signed event payloads** directly to your endpoint — including an optional full snapshot of the changed resource.
+
+### Key Improvements Over Legacy Webhooks
+
+| Feature | Legacy | Next-Gen |
+|---------|--------|----------|
+| Payload | Resource `id` only | Full event + optional resource snapshot |
+| Signature verification | Not supported | `Mollie-Signature` header on every request |
+| Event types | Payment status only | Expanded — includes payment links, disputes, etc. |
+| Webhook registration | Per-resource `webhookUrl` param | Centrally managed via Webhooks API |
+| Security model | Trust the ID, fetch manually | Verify signature, consume payload directly |
+
+### Setup & Configuration
+
+#### Prerequisites
+
+- A Mollie account with an active profile.
+- An API key (`test_` or `live_`).
+- A publicly reachable HTTPS endpoint on your server.
+
+> **Internal note:** For local development, use a tunnelling tool such as [ngrok](https://ngrok.com) or [Expose](https://expose.dev) to make your local endpoint reachable by Mollie.
+
+#### Register a Webhook
+
+You can register your endpoint via the Webhooks API or via the Mollie Dashboard. A single webhook subscription can cover multiple event types.
+
+#### Payment Link Event Types
+
+| Event Type | When it fires |
+|------------|---------------|
+| `payment_link.paid` | A customer successfully paid via the link. |
+
+### Security & Validation
+
+#### Signature Verification
+
+Every next-gen webhook request includes a `Mollie-Signature` header. **Always verify this header before processing the event.** Skipping this check means any actor with your endpoint URL can send forged requests.
+
+The signature is an HMAC-SHA256 hash of the raw request body, signed with your webhook secret.
+
+**PHP example:**
+
+```php
+function verifyMollieSignature(
+    string $rawBody,
+    string $signatureHeader,
+    string $webhookSecret
+): bool {
+    $expected = 'sha256=' . hash_hmac('sha256', $rawBody, $webhookSecret);
+    return hash_equals($expected, $signatureHeader);
+}
+
+// In your webhook controller:
+$rawBody   = file_get_contents('php://input');
+$signature = $_SERVER['HTTP_MOLLIE_SIGNATURE'] ?? '';
+
+if (!verifyMollieSignature($rawBody, $signature, $_ENV['MOLLIE_WEBHOOK_SECRET'])) {
+    http_response_code(401);
+    exit;
+}
+
+$event = json_decode($rawBody, true);
+```
+
+> Always use `hash_equals()` instead of `===` for the comparison. This prevents **timing attacks**, where an attacker could infer the correct signature by measuring how long your comparison takes.
+
+#### Validation Checklist
+
+Before acting on any incoming webhook, your handler should verify all of the following:
+
+**Signature**
+- [ ] `Mollie-Signature` header is present.
+- [ ] HMAC-SHA256 of the raw body matches the header value.
+- [ ] Comparison uses `hash_equals()`, not `===`.
+
+#### Respond Fast, Process Async
+
+Mollie expects a `200 OK` response quickly. If your handler takes too long, Mollie may consider the delivery failed and retry.
+
+The recommended pattern:
+
+1. Verify the signature.
+2. Validate the payload structure.
+3. Persist to database.
+4. Return `200 OK` immediately.
+
+#### Security Best Practices
+
+- **Store webhook secrets securely** — never hardcode them in source code. Use environment variables or a secrets manager.
+- **Use HTTPS only** — Mollie will not deliver webhooks to plain HTTP endpoints in production.
+- **Do not expose internal errors** — return a generic `500` on unexpected failures rather than a detailed error message.
+- **Rotate secrets periodically** — update your webhook secret.
+
+## 14. Webhook Error Troubleshooting
 
 ### Common Webhook Issues
 

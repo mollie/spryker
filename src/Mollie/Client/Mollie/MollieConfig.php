@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Mollie\Client\Mollie;
 
@@ -68,6 +68,11 @@ class MollieConfig extends AbstractBundleConfig
     public const REQUEST_PARAMETER_CREATE_PAYMENT_APPLE_PAY_PAYMENT_TOKEN = 'applePayPaymentToken';
 
     /**
+     * @var string
+     */
+    public const REQUEST_PARAMETER_CREATE_PAYMENT_IDEAL_IN3_CONSUMER_DATE_OF_BIRTH = 'consumerDateOfBirth';
+
+    /**
      * @var int
      */
     public const MOLLIE_PAYMENT_METHODS_STORAGE_KEY_TTL = 21600;
@@ -96,6 +101,21 @@ class MollieConfig extends AbstractBundleConfig
      * @var string
      */
     public const RESPONSE_CREATE_PAYMENT_LINK_STATUS_OPEN = 'open';
+
+    /**
+     * @var string
+     */
+    public const SPRYKER_CORE_PACKAGE = 'spryker-feature/spryker-core';
+
+    /**
+     * @var string
+     */
+    public const MOLLIE_PLUGIN_PACKAGE = 'mollie/spryker-payment';
+
+    /**
+     * @var string
+     */
+    public const UAP_IDENTIFIER = 'uap/84vsKAknyrfvkQHs';
 
     /**
      * @return string
@@ -189,9 +209,9 @@ class MollieConfig extends AbstractBundleConfig
         return static::MOLLIE_PAYMENT_METHODS_STORAGE_KEY_TTL;
     }
 
-      /**
-       * @return string
-       */
+    /**
+     * @return string
+     */
     public function getCacheKeyPrefixForAllPaymentMethods(): string
     {
         return static::CACHE_KEY_PREFIX_FOR_ALL_PAYMENT_METHODS;
@@ -219,5 +239,37 @@ class MollieConfig extends AbstractBundleConfig
     public function getMollieManualCaptureMode(): string
     {
         return static::MOLLIE_MANUAL_CAPTURE_MODE;
+    }
+
+    /**
+     * @return string
+     */
+    public function getUapIdentifier(): string
+    {
+        return static::UAP_IDENTIFIER;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSprykerCorePackage(): string
+    {
+        return static::SPRYKER_CORE_PACKAGE;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMolliePluginPackage(): string
+    {
+        return static::MOLLIE_PLUGIN_PACKAGE;
+    }
+
+    /**
+     * @return array<string>
+     */
+    public function getBNPLPaymentMethods(): array
+    {
+        return $this->get(MollieConstants::MOLLIE)[MollieConstants::MOLLIE_BNPL_PAYMENT_METHODS];
     }
 }

@@ -257,6 +257,7 @@ jobs:
               MollieConstants::MOLLIE_PAYMENT_METHOD_MANUAL_CAPTURE => [
                   'creditcard',
               ],
+              MollieConstants::MOLLIE_BNPL_PAYMENT_METHODS => ['billie', 'in3', 'klarna', 'riverty', 'voucher', 'alma'],
           ];
           
           EOF

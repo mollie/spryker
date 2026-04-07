@@ -58,6 +58,11 @@ class MollieApiClientTester extends Actor
     protected const MOLLIE_MOCKED_GET_CAPTURE_RESPONSE_PAYLOAD = '{"resource":"capture","id":"cpt_vytxeTZskVKR7C7WgdSP3d","mode":"live","description":"Capture for cart #12345","amount":{"currency":"EUR","value":"35.95"},"metadata":{"bookkeeping_id":12345},"status":"pending","paymentId":"tr_5B8cwPMGnU6qLbRvo7qEZo","createdAt":"2023-08-02T09:29:56+00:00","_links":{"self":{"href":"...","type":"application/hal+json"},"payment":{"href":"https://api.mollie.com/v2/payments/tr_5B8cwPMGnU6qLbRvo7qEZo","type":"application/hal+json"},"documentation":{"href":"...","type":"text/html"}}}';
 
     /**
+     * @var string
+     */
+    protected const MOLLIE_MOCKED_CREATE_PAYMENT_LINK_RESPONSE_PAYLOAD = '{"resource":"payment-link","id":"pl_4Y0eZitmBnQ6IDoMqZQKh","mode":"live","description":"Bicycle tires","amount":{"currency":"EUR","value":"24.95"},"archived":false,"redirectUrl":"https://webshop.example.org/thanks","webhookUrl":"https://webshop.example.org/payment-links/webhook","profileId":"pfl_QkEhN94Ba","createdAt":"2021-03-20T09:29:56+00:00","paidAt":"2022-03-20T09:29:56+00:00","expiresAt":"2023-06-06T11:00:00+00:00","reusable":false,"allowedMethods":["ideal"],"sequenceType":"oneoff","customerId":null,"_links":{"self":{"href":"...","type":"application/hal+json"},"paymentLink":{"href":"https://payment-links.mollie.com/payment/4Y0eZitmBnQ6IDoMqZQKh","type":"text/html"},"documentation":{"href":"...","type":"text/html"}}}';
+
+    /**
      * @return string
      */
     public function getMollieMockedEnabledPaymentMethodResponsePayload(): string
@@ -103,5 +108,13 @@ class MollieApiClientTester extends Actor
     public function getMollieMockedGetCaptureResponsePayload(): string
     {
         return static::MOLLIE_MOCKED_GET_CAPTURE_RESPONSE_PAYLOAD;
+    }
+
+     /**
+      * @return string
+      */
+    public function getMollieMockedCreatePaymentLinkResponsePayload(): string
+    {
+        return static::MOLLIE_MOCKED_CREATE_PAYMENT_LINK_RESPONSE_PAYLOAD;
     }
 }

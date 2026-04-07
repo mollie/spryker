@@ -50,7 +50,8 @@
     "spryker-shop/checkout-page": "^3.39",
     "spryker/cart-extension": "^4.3",
     "spryker/checkout-extension": "^1.5",
-    "spryker/router": "^1.23"
+    "spryker/router": "^1.23",
+    "spryker/money-gui": "^1.2.0"
   },
   "require-dev": {
     "spryker/application": "^3.33",

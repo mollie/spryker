@@ -26,6 +26,9 @@ use Orm\Zed\Mollie\Persistence\SpyPaymentMollieQuery;
 use Orm\Zed\Mollie\Persistence\SpyRefundMollieQuery;
 use Spryker\Zed\Kernel\Persistence\AbstractPersistenceFactory;
 
+/**
+ * @method \Mollie\Zed\Mollie\MollieConfig getConfig();
+ */
 class MolliePersistenceFactory extends AbstractPersistenceFactory
 {
     /**
@@ -66,9 +69,15 @@ class MolliePersistenceFactory extends AbstractPersistenceFactory
         );
     }
 
+    /**
+     * @return \Mollie\Zed\Mollie\Persistence\Propel\Mapper\MolliePaymentMethodConfigMapperInterface
+     */
     public function createMolliePaymentMethodConfigMapper(): MolliePaymentMethodConfigMapperInterface
     {
-        return new MolliePaymentMethodConfigMapper();
+        return new MolliePaymentMethodConfigMapper(
+            $this->getMollieService(),
+            $this->getConfig(),
+        );
     }
 
     /**

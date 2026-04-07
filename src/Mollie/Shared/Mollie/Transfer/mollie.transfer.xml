@@ -28,6 +28,16 @@
         <property name="applePayPaymentToken" type="string"/>
     </transfer>
 
+    <transfer name="MollieBilliePayment">
+        <property name="registrationNumber" type="string"/>
+        <property name="vatNumber" type="string"/>
+        <property name="entityType" type="string"/>
+    </transfer>
+
+    <transfer name="MollieIdealIn3Payment">
+        <property name="consumerDateOfBirth" type="string"/>
+    </transfer>
+
     <transfer name="Payment">
         <property name="mollieCreditCardPayment" type="MollieCreditCardPayment"/>
         <property name="molliePayPalPayment" type="MolliePayPalPayment"/>
@@ -46,14 +56,27 @@
         <property name="mollieMultibancoPayment" type="[]"/>
         <property name="mollieBancomatPayPayment" type="[]"/>
         <property name="mollieBizumPayment" type="[]"/>
+        <property name="mollieBINKPayment" type="[]"/>
+        <property name="molliePayconiqPayment" type="[]"/>
+
+        <property name="mollieTrustlyPayment" type="[]"/>
+        <property name="mollieMbWayPayment" type="[]"/>
+        <property name="mollieSwishPayment" type="[]"/>
+        <property name="mollieSatispayPayment" type="[]"/>
+        <property name="mollieTwintPayment" type="[]"/>
+        <property name="mollieVippsPayment" type="[]"/>
+        <property name="mollieBilliePayment" type="MollieBilliePayment"/>
+        <property name="mollieRivertyPayment" type="[]"/>
+        <property name="mollieIdealIn3Payment" type="MollieIdealIn3Payment"/>
+        <property name="mollieAlmaPayment" type="[]"/>
     </transfer>
 
     <transfer name="MolliePaymentMethod">
         <property name="id" type="string"/>
         <property name="description" type="string"/>
         <property name="locale" type="string"/>
-        <property name="minimumAmount" type="array"/>
-        <property name="maximumAmount" type="array"/>
+        <property name="minimumAmount" type="MollieAmount"/>
+        <property name="maximumAmount" type="MollieAmount"/>
         <property name="image" type="array"/>
         <property name="issuers" type="array"/>
         <property name="pricing" type="array"/>
@@ -334,21 +357,22 @@
     </transfer>
 
     <transfer name="MolliePaymentMethodConfig">
-        <property name="paymentMethodKey" type="string" />
-        <property name="minAmount" type="integer" />
-        <property name="maxAmount" type="integer" />
+        <property name="idMolliePaymentMethodConfig" type="int" />
+        <property name="mollieId" type="string" />
+        <property name="currencyCode" type="string" />
+        <property name="minimumAmount" type="MollieAmount" />
+        <property name="maximumAmount" type="MollieAmount" />
         <property name="isActive" type="bool" />
-        <property name="logoUrl" type="string" />
+        <property name="image" type="string" />
         <property name="isLogoVisible" type="bool" />
-        <property name="isActive" type="bool" />
-        <property name="translations" type="MolliePaymentMethodConfigTranslation[]" />
+        <property name="status" type="string" />
     </transfer>
 
-    <transfer name="MolliePaymentMethodConfigTranslation">
-        <property name="fkMolliePaymentMethodConfig" type="int" />
-        <property name="fkLocale" type="int" />
-        <property name="name" type="string" />
-        <property name="description" type="string" />
+    <transfer name="MolliePaymentMethodConfigCriteria">
+        <property name="localeId" type="string"/>
+        <property name="mollieId" type="string"/>
+        <property name="currencyCode" type="string"/>
+        <property name="showOnlyEnabled" type="bool" />
     </transfer>
 
     <transfer name="MolliePaymentMethodConfigCollection">
@@ -387,4 +411,21 @@
         <property name="billingCountry" type="string"/>
         <property name="amount" type="MollieAmount"/>
     </transfer>
+
+    <transfer name="MollieLines">
+        <property name="type" type="string"/>
+        <property name="description" type="string"/>
+        <property name="quantity" type="integer"/>
+        <property name="quantityUnit" type="string"/>
+        <property name="unitPrice" type="MollieAmount"/>
+        <property name="discountAmount" type="MollieAmount"/>
+        <property name="totalAmount" type="MollieAmount"/>
+        <property name="vatRate" type="string"/>
+        <property name="vatAmount" type="MollieAmount"/>
+        <property name="sku" type="string"/>
+        <property name="categories" type="array"/>
+        <property name="imageUrl" type="string"/>
+        <property name="recurring" type="RecurringBillingCycle"/>
+    </transfer>
+
 </transfers>
