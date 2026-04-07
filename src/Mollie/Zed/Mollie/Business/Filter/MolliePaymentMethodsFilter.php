@@ -178,7 +178,7 @@ class MolliePaymentMethodsFilter implements MolliePaymentMethodsFilterInterface
     protected function getIndexedMolliePaymentConfigMethods(QuoteTransfer $quoteTransfer): array
     {
         $molliePaymentMethodConfigCriteriaTransfer = new MolliePaymentMethodConfigCriteriaTransfer();
-        $molliePaymentMethodConfigCriteriaTransfer->setCurrencyCode($quoteTransfer->getCurrency()->getCode());
+        $molliePaymentMethodConfigCriteriaTransfer->setCurrencyCode($quoteTransfer->getCurrency()?->getCode());
 
         $molliePaymentMethodConfigCollectionTransfer = $this->mollieRepository
             ->getPaymentMethodConfigCollection($molliePaymentMethodConfigCriteriaTransfer);

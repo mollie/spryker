@@ -1,17 +1,19 @@
 <?php
 
-
 declare(strict_types = 1);
 
 namespace MollieTest\Zed\Mollie\Business;
 
 use Codeception\Test\Unit;
+use Generated\Shared\Transfer\MolliePaymentMethodConfigCollectionTransfer;
 use Mollie\Client\Mollie\MollieClientInterface;
 use Mollie\Zed\Mollie\Business\MollieBusinessFactory;
 use Mollie\Zed\Mollie\Business\MollieFacade;
 use Mollie\Zed\Mollie\Business\MollieFacadeInterface;
 use Mollie\Zed\Mollie\MollieConfig;
 use Mollie\Zed\Mollie\MollieDependencyProvider;
+use Mollie\Zed\Mollie\Persistence\MollieRepository;
+use Mollie\Zed\Mollie\Persistence\MollieRepositoryInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use Spryker\Service\Container\Container;
 use Spryker\Shared\Kernel\Container\GlobalContainer;
@@ -38,6 +40,8 @@ abstract class AbstractBusinessTest extends Unit
     protected MollieClientInterface $mollieClient;
 
     protected MollieConfig $mollieConfig;
+
+    protected MollieRepositoryInterface $mollieRepository;
 
     /**
      * @var \Generated\Shared\Transfer\QuoteTransfer
@@ -101,6 +105,7 @@ abstract class AbstractBusinessTest extends Unit
             ->getMock();
 
         $businessFactory->setConfig($this->mollieConfig);
+        $businessFactory->setRepository($this->createMollieRepository());
 
         $dependencyProvider = new MollieDependencyProvider();
         $container = new ZedContainer();
@@ -111,6 +116,21 @@ abstract class AbstractBusinessTest extends Unit
             ->willReturn($this->mollieClient);
 
         return $businessFactory;
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Persistence\MollieRepository
+     */
+    protected function createMollieRepository(): MollieRepository
+    {
+        $mollieRepository = $this->getMockBuilder(MollieRepository::class)
+            ->onlyMethods(['getPaymentMethodConfigCollection'])
+            ->getMock();
+
+        $mollieRepository->method('getPaymentMethodConfigCollection')
+            ->willReturn(new MolliePaymentMethodConfigCollectionTransfer());
+
+        return $mollieRepository;
     }
 
     /**
