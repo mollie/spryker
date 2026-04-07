@@ -31,28 +31,29 @@ This guide provides comprehensive instructions for integrating Mollie payment se
   - [3.6 Add Payment Forms to Twig](#36-add-payment-forms-to-twig)
   - [3.7 Final Steps](#37-final-steps)
   - [3.8 Displaying Payment Method Logos in Checkout](#38-displaying-payment-method-logos-in-checkout)
+  - [3.9 Payment Method Overrides (Names, Logos, Minimum and Maximum amounts)](#39-payment-method-overrides-names-logos-minimum-and-maximum-amounts)
 - [4. Dependency Provider Configuration](#4-dependency-provider-configuration)
-  - [3.1. Router Dependency Provider](#31-router-dependency-provider)
+  - [4.1. Router Dependency Provider](#41-router-dependency-provider)
   - [Route Provider Plugin](#route-provider-plugin)
-  - [3.2. Checkout Dependency Provider (Zed)](#32-checkout-dependency-provider-zed)
+  - [4.2. Checkout Dependency Provider (Zed)](#42-checkout-dependency-provider-zed)
   - [Post Hooks](#post-hooks)
-  - [3.3. Checkout Page Dependency Provider (Yves)](#33-checkout-page-dependency-provider-yves)
+  - [4.3. Checkout Page Dependency Provider (Yves)](#43-checkout-page-dependency-provider-yves)
   - [Payment Method Handlers](#payment-method-handlers)
   - [Subform Plugin Collection](#subform-plugin-collection)
   - [Checkout Summary Step Pre-Condition Plugins](#checkout-summary-step-pre-condition-plugins)
-  - [3.4. Payment Dependency Provider](#34-payment-dependency-provider)
+  - [4.4. Payment Dependency Provider](#44-payment-dependency-provider)
   - [Payment Method Filter Plugins](#payment-method-filter-plugins)
-  - [3.5. OMS Dependency Provider](#35-oms-dependency-provider)
+  - [4.5. OMS Dependency Provider](#45-oms-dependency-provider)
   - [Command Plugins](#command-plugins)
   - [Condition Plugins](#condition-plugins)
-  - [3.6. Mail Dependency Provider](#36-mail-dependency-provider)
+  - [4.6. Mail Dependency Provider](#46-mail-dependency-provider)
   - [Command Plugins](#command-plugins-1)
-- [4. Glossary Keys and Translations](#4-glossary-keys-and-translations)
+- [5. Glossary Keys and Translations](#5-glossary-keys-and-translations)
   - [Complete Glossary CSV](#complete-glossary-csv)
-- [4. Payment Methods Configuration](#4-payment-methods-configuration)
+- [6. Payment Methods Configuration](#6-payment-methods-configuration)
   - [Payment Method Mapping](#payment-method-mapping)
   - [Supported Payment Methods](#supported-payment-methods)
-- [5. Backoffice Configuration](#5-backoffice-configuration)
+- [7. Backoffice Configuration](#7-backoffice-configuration)
   - [Displaying the Mollie Panel in Back Office](#displaying-the-mollie-panel-in-back-office)
   - [Step 1: Update Navigation Configuration](#step-1-update-navigation-configuration)
   - [Step 2: Rebuild Navigation Cache](#step-2-rebuild-navigation-cache)
@@ -61,17 +62,17 @@ This guide provides comprehensive instructions for integrating Mollie payment se
   - [Accessing the Mollie Panel](#accessing-the-mollie-panel)
   - [What You Can See in the Back Office Panel](#what-you-can-see-in-the-back-office-panel)
   - [Troubleshooting Back Office Panel](#troubleshooting-back-office-panel)
-- [6. Credit Card Components](#6-credit-card-components)
+- [8. Credit Card Components](#8-credit-card-components)
   - [Enabling Components](#enabling-components)
   - [JavaScript Library Configuration](#javascript-library-configuration)
   - [Benefits](#benefits)
   - [Implementation Requirements](#implementation-requirements)
   - [Component Example](#component-example)
-- [7. Wallet Payments](#7-wallet-payments)
+- [9. Wallet Payments](#9-wallet-payments)
   - [Wallet Configuration](#wallet-configuration)
   - [Apple Pay Integration](#apple-pay-integration)
   - [Setup Steps](#setup-steps)
-- [8. Payment Links](#8-payment-links)
+- [10. Payment Links](#10-payment-links)
   - [Overview](#overview-1)
   - [API & Configuration Setup](#api--configuration-setup)
   - [Enabling Payment Links](#enabling-payment-links)
@@ -84,7 +85,7 @@ This guide provides comprehensive instructions for integrating Mollie payment se
   - [Link-Specific Status Mapping](#link-specific-status-mapping)
   - [Handling Expiry & Cancellation Events](#handling-expiry--cancellation-events)
   - [Testing Payment Links](#testing-payment-links)
-- [9. Testing & Debugging](#9-testing--debugging)
+- [11. Testing & Debugging](#11-testing--debugging)
   - [Test Mode Setup](#test-mode-setup)
   - [Test Credit Cards](#test-credit-cards)
   - [Debug Logging](#debug-logging)
@@ -92,21 +93,21 @@ This guide provides comprehensive instructions for integrating Mollie payment se
   - [Log Levels and Content](#log-levels-and-content)
   - [Sensitive Data Masking](#sensitive-data-masking)
   - [Common Test Issues](#common-test-issues)
-- [10. Production Deployment](#10-production-deployment)
+- [12. Production Deployment](#12-production-deployment)
   - [Pre-Production Checklist](#pre-production-checklist)
   - [Production Configuration](#production-configuration)
-- [11. Troubleshooting](#11-troubleshooting)
+- [13. Troubleshooting](#13-troubleshooting)
   - [Payment methods not displaying at checkout](#payment-methods-not-displaying-at-checkout)
   - [Webhooks not being received](#webhooks-not-being-received)
   - [Credit card components not loading](#credit-card-components-not-loading)
   - [Apple Pay not appearing](#apple-pay-not-appearing)
-- [12. Webhook Handling](#12-webhook-handling)
+- [14. Webhook Handling](#14-webhook-handling)
   - [How Webhooks Work](#how-webhooks-work)
   - [Webhook Configuration](#webhook-configuration)
   - [Webhook Payload Structure](#webhook-payload-structure)
   - [Payment Status Mapping](#payment-status-mapping)
   - [Webhook Retry Behavior](#webhook-retry-behavior)
-- [13. Next-Gen Webhooks](#13-next-gen-webhooks)
+- [15. Next-Gen Webhooks](#15-next-gen-webhooks)
   - [What Are Next-Gen Webhooks?](#what-are-next-gen-webhooks)
   - [Key Improvements Over Legacy Webhooks](#key-improvements-over-legacy-webhooks)
   - [Setup & Configuration](#setup--configuration-1)
@@ -123,7 +124,7 @@ This guide provides comprehensive instructions for integrating Mollie payment se
   - [Idempotency](#idempotency)
   - [Respond Fast, Process Async](#respond-fast-process-async)
   - [Security Best Practices](#security-best-practices)
-- [14. Webhook Error Troubleshooting](#14-webhook-error-troubleshooting)
+- [16. Webhook Error Troubleshooting](#16-webhook-error-troubleshooting)
   - [Common Webhook Issues](#common-webhook-issues)
   - [Issue 1: Webhooks Not Being Received](#issue-1-webhooks-not-being-received)
   - [Issue 2: Webhooks Received But Not Processed](#issue-2-webhooks-received-but-not-processed)
@@ -805,6 +806,36 @@ This molecule:
 - Ensures correct styling
 - Keeps checkout UI consistent
 
+### 3.9 Payment Method Overrides (Names, Logos, Minimum and Maximum amounts)
+
+To customize payment method settings such as name, logo, and minimum or maximum transaction amounts, navigate to: **Administration → Mollie Payment Methods** in the Backoffice.
+Locate the desired payment method and click the **Edit** button on the right-hand side.
+
+---
+
+#### Override Payment Method Name
+To override the payment method name, update the corresponding glossary key. This can be done either via the Back Office or by modifying the glossary.csv file.
+
+##### Via Backoffice:
+1. Navigate to **Administration → Glossary**
+2. Search for the key in the format: `mollie<PaymentMethodName>Payment` (e.g. molliePaypalPayment)
+3. Click **Edit**, update the value to the desired name, and save the changes
+
+##### Via glossary.csv:
+1. Update the relevant glossary key `mollie<PaymentMethodName>Payment` (e.g. molliePaypalPayment)
+2. Deploy the changes
+3. Run the following command after deployment: `console data:import:glossary`
+---
+#### Override Payment Method Logo
+To change the payment method logo, provide a new image URL in the designated field and click **Save**.
+The updated logo will be displayed on the shop’s payment page.
+
+---
+
+#### Override Payment Method Min/Max Amounts
+To define minimum and maximum transaction limits enter the desired values in the corresponding input fields and click Save to apply the changes.
+
+
 ## 4. Dependency Provider Configuration
 
 To ensure all Mollie functionalities work correctly, you must inject the required dependencies into the appropriate dependency providers. This section lists all dependency providers and their corresponding plugin injections.
@@ -813,7 +844,7 @@ To ensure all Mollie functionalities work correctly, you must inject the require
 >
 > All dependency provider modifications must be completed before configuring the Mollie payment settings. Missing dependencies will cause payment methods to fail.
 
-### 3.1. Router Dependency Provider
+### 4.1. Router Dependency Provider
 
 #### Route Provider Plugin
 
@@ -850,7 +881,7 @@ class RouterDependencyProvider extends SprykerRouterDependencyProvider
 }
 ```
 
-### 3.2. Checkout Dependency Provider (Zed)
+### 4.2. Checkout Dependency Provider (Zed)
 
 #### Post Hooks
 
@@ -890,7 +921,7 @@ class CheckoutDependencyProvider extends SprykerCheckoutDependencyProvider
 }
 ```
 
-### 3.3. Checkout Page Dependency Provider (Yves)
+### 4.3. Checkout Page Dependency Provider (Yves)
 
 #### Payment Method Handlers
 
@@ -1119,7 +1150,7 @@ For **PaymentAppCancelOrderOnSummaryPageAfterRedirectFromHostedPaymentPagePlugin
 
 <img src="../.github/images/spy-payment-method-table.png" alt="Spy Payment Method Table" width="600" />
 
-### 3.4. Payment Dependency Provider
+### 4.4. Payment Dependency Provider
 
 #### Payment Method Filter Plugins
 
@@ -1156,7 +1187,7 @@ class PaymentDependencyProvider extends SprykerPaymentDependencyProvider
 }
 ```
 
-### 3.5. OMS Dependency Provider
+### 4.5. OMS Dependency Provider
 
 #### Command Plugins
 
@@ -1289,7 +1320,7 @@ class OmsDependencyProvider extends SprykerOmsDependencyProvider
 }
 ```
 
-### 3.6. Mail Dependency Provider
+### 4.6. Mail Dependency Provider
 
 #### Command Plugins
 
@@ -1326,7 +1357,7 @@ class MailDependencyProvider extends SprykerMailDependencyProvider
 }
 ```
 
-## 4. Glossary Keys and Translations
+## 5. Glossary Keys and Translations
 
 The Mollie module includes comprehensive translation files for all payment methods, checkout labels, OMS states, and email templates. The translations are available in English (en_US) and German (de_DE).
 
@@ -1583,7 +1614,7 @@ mollie.mail.footer.automatic_message,"This is an automatic message, please do no
 mollie.mail.footer.automatic_message,"Dies ist eine automatische Nachricht, bitte antworten Sie nicht.",de_DE
 ```
 
-## 4. Payment Methods Configuration
+## 6. Payment Methods Configuration
 
 The OMS (Order Management System) mapping connects Spryker payment method names to Mollie payment method identifiers.
 
@@ -1653,7 +1684,7 @@ MollieConstants::MOLLIE_OMS_TO_PAYMENT_METHOD_MAPPING => [
 | `mollieTwintPayment` | `twint` | Twint payment | CH |
 | `mollieVippsPayment` | `vipps` | Vipps payment | NO |
 
-## 5. Backoffice Configuration
+## 7. Backoffice Configuration
 
 The Mollie integration provides a dedicated panel in the Spryker Backoffice where you can view all enabled payment methods and their configuration status.
 
@@ -1824,7 +1855,7 @@ The Mollie payment methods panel provides an overview of:
 - Clear application cache
 - Rebuild translations if needed
 
-## 6. Credit Card Components
+## 8. Credit Card Components
 
 Mollie provides secure, embeddable credit card components that allow customers to enter card details directly on your checkout page without the data passing through your servers.
 
@@ -1862,7 +1893,7 @@ MollieConstants::MOLLIE_CREDIT_CARD_COMPONENTS_JS_SRC => 'https://js.mollie.com/
 
 <img src="../.github/images/credit_card_component.png" alt="Credit Card Component" width="600" />
 
-## 7. Wallet Payments
+## 9. Wallet Payments
 
 Digital wallet payments provide customers with quick, one-click checkout options using stored payment credentials.
 
@@ -1889,7 +1920,7 @@ Apple Pay allows customers to pay using Face ID, Touch ID, or passcode on suppor
 >
 > Apple Pay will only display as a payment option when accessed from compatible devices and browsers. The integration automatically handles device and browser detection.
 
-## 8. Payment Links
+## 10. Payment Links
 
 Payment Links allow merchants to generate shareable URLs that customers can use to complete a payment without going through the standard checkout flow. This is useful for invoicing, customer support scenarios, and manual order processing.
 
@@ -1934,7 +1965,7 @@ The following parameters can be set when generating a payment link:
 2. Navigate to **Administration > Mollie payment links**
 3. Click **Create Payment Link**
 4. Fill in the required fields: amount, currency, description, and optional expiry date
-  - if no expiry date is set, default value will be used which is current datetime + 10080 seconds - configurable in config
+- if no expiry date is set, default value will be used which is current datetime + 10080 seconds - configurable in config
 5. Click **Create link** — the shareable URL will be displayed and can be copied or sent directly
 
 #### Viewing Link Status
@@ -1983,7 +2014,7 @@ If a payment link expires or is canceled, ensure your OMS handles these states g
 > - If the payment page does not load, verify your API key is a valid test key (`test_`)
 > - If webhook status does not update, check your test webhook URL configuration (see [Section 9: Testing & Debugging](#9-testing--debugging))
 
-## 9. Testing & Debugging
+## 11. Testing & Debugging
 
 ### Test Mode Setup
 
@@ -2055,7 +2086,7 @@ When `MOLLIE_DEBUG_MODE` is set to `'Extensive'`, sensitive data is automaticall
 | API errors | Invalid API key or Profile ID | Verify credentials in Mollie Dashboard |
 | Payment link not loading | Invalid or expired test API key | Verify test API key starts with `test_` |
 
-## 10. Production Deployment
+## 12. Production Deployment
 
 ### Pre-Production Checklist
 
@@ -2083,7 +2114,7 @@ $config[MollieConstants::MOLLIE] = [
 > - Always use HTTPS for all production URLs
 > - Implement proper error handling and logging
 
-## 11. Troubleshooting
+## 13. Troubleshooting
 
 ### Payment methods not displaying at checkout
 
@@ -2161,7 +2192,7 @@ $config[MollieConstants::MOLLIE] = [
 2. Ensure `amount.value` is a string with two decimal places (e.g., `"25.00"`)
 3. Ensure `expiresAt` follows ISO 8601 format if provided
 
-## 12. Webhook Handling
+## 14. Webhook Handling
 
 Webhooks are asynchronous notifications sent by Mollie to your server when payment status changes occur. Proper webhook handling is critical for accurate order processing and payment status updates.
 
@@ -2251,7 +2282,7 @@ If your server doesn't respond with HTTP 200, Mollie will retry the webhook:
 >
 > Always respond with HTTP 200 immediately, even if processing hasn't completed. Process the webhook asynchronously if needed to avoid timeouts.
 
-## 13. Next-Gen Webhooks
+## 15. Next-Gen Webhooks
 
 ### What Are Next-Gen Webhooks?
 
@@ -2348,7 +2379,7 @@ The recommended pattern:
 - **Do not expose internal errors** — return a generic `500` on unexpected failures rather than a detailed error message.
 - **Rotate secrets periodically** — update your webhook secret.
 
-## 14. Webhook Error Troubleshooting
+## 16. Webhook Error Troubleshooting
 
 ### Common Webhook Issues
 
