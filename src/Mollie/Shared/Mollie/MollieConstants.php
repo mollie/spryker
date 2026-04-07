@@ -79,6 +79,11 @@ interface MollieConstants
      */
     public const MOLLIE_INCLUDE_WALLETS = 'MOLLIE:MOLLIE_INCLUDE_WALLETS';
 
+    /**
+     * @var string
+     */
+    public const MOLLIE_GET_METHODS_API_DEFAULT_AMOUNT_VALUE = 'MOLLIE_GET_METHODS_API_DEFAULT_AMOUNT_VALUE';
+
     // Payment statuses from Mollie
     /**
      * @var string
@@ -185,4 +190,10 @@ interface MollieConstants
     public const string PRODUCT_TYPE_SHIPPING_FEE = 'shipping_fee';
 
     public const string MOLLIE_BNPL_PAYMENT_METHODS = 'MOLLIE:MOLLIE_BNPL_PAYMENT_METHODS';
+
+    public const string QUERY_CURRENCY = 'currency';
+
+    public const string QUERY_MOLLIE_PAYMENT_METHOD_ID = 'mollie_payment_method_id';
+
+    public const string QUERY_MOLLIE_PAYMENT_METHOD_CONFIG_ID = 'id-mollie-payment-method-config';
 }

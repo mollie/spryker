@@ -15,6 +15,10 @@ use Mollie\Zed\Mollie\Dependency\Facade\MollieToMoneyFacadeInterface;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToOmsBridge;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToSalesFacadeBridge;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToSalesFacadeInterface;
+use Mollie\Zed\Mollie\Dependency\Facade\MollieToStoreFacadeBridge;
+use Mollie\Zed\Mollie\Dependency\Facade\MollieToStoreFacadeInterface;
+use Mollie\Zed\Mollie\Dependency\Facade\MollieToTranslatorFacadeBridge;
+use Mollie\Zed\Mollie\Dependency\Facade\MollieToTranslatorFacadeInterface;
 use Mollie\Zed\Mollie\Dependency\MollieToStorageClientBridge;
 use Mollie\Zed\Mollie\Dependency\MollieToStorageClientInterface;
 use Mollie\Zed\Mollie\Dependency\Service\MollieToUtilEncodingServiceBridge;
@@ -55,6 +59,16 @@ class MollieDependencyProvider extends AbstractBundleDependencyProvider
      * @var string
      */
     public const FACADE_MONEY = 'FACADE_MONEY';
+
+    /**
+     * @var string
+     */
+    public const FACADE_STORE = 'FACADE_STORE';
+
+    /**
+     * @var string
+     */
+    public const FACADE_TRANSLATOR = 'FACADE_TRANSLATOR';
 
     /**
      * @var string
@@ -120,6 +134,8 @@ class MollieDependencyProvider extends AbstractBundleDependencyProvider
         $container = $this->addPaymentLinkQuery($container);
         $container = $this->addCurrencyFacade($container);
         $container = $this->addMollieService($container);
+        $container = $this->addStoreFacade($container);
+        $container = $this->addTranslatorFacade($container);
 
         return $container;
     }
@@ -317,6 +333,38 @@ class MollieDependencyProvider extends AbstractBundleDependencyProvider
         $container->set(static::FACADE_MONEY, function (Container $container): MollieToMoneyFacadeInterface {
             return new MollieToMoneyFacadeBridge(
                 $container->getLocator()->money()->facade(),
+            );
+        });
+
+        return $container;
+    }
+
+    /**
+     * @param \Spryker\Zed\Kernel\Container $container
+     *
+     * @return \Spryker\Zed\Kernel\Container
+     */
+    protected function addStoreFacade(Container $container): Container
+    {
+        $container->set(static::FACADE_STORE, function (Container $container): MollieToStoreFacadeInterface {
+            return new MollieToStoreFacadeBridge(
+                $container->getLocator()->store()->facade(),
+            );
+        });
+
+        return $container;
+    }
+
+    /**
+     * @param \Spryker\Zed\Kernel\Container $container
+     *
+     * @return \Spryker\Zed\Kernel\Container
+     */
+    protected function addTranslatorFacade(Container $container): Container
+    {
+        $container->set(static::FACADE_TRANSLATOR, function (Container $container): MollieToTranslatorFacadeInterface {
+            return new MollieToTranslatorFacadeBridge(
+                $container->getLocator()->translator()->facade(),
             );
         });
 

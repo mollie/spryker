@@ -6,6 +6,9 @@ namespace Mollie\Zed\Mollie\Persistence;
 
 use Generated\Shared\Transfer\MollieItemPaymentCaptureTransfer;
 use Generated\Shared\Transfer\MolliePaymentLinkTransfer;
+use Generated\Shared\Transfer\MolliePaymentMethodConfigCollectionTransfer;
+use Generated\Shared\Transfer\MolliePaymentMethodConfigCriteriaTransfer;
+use Generated\Shared\Transfer\MolliePaymentMethodConfigTransfer;
 use Generated\Shared\Transfer\MolliePaymentTransfer;
 use Generated\Shared\Transfer\MollieRefundResponseTransfer;
 use Spryker\Zed\Kernel\Persistence\AbstractRepository;
@@ -93,5 +96,49 @@ class MollieRepository extends AbstractRepository implements MollieRepositoryInt
         return $this->getFactory()
             ->createMolliePaymentLinkMapper()
             ->mapMolliePaymentLinkEntityToTransfer($spyMolliePaymentLinkEntity);
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MolliePaymentMethodConfigCriteriaTransfer $criteriaTransfer
+     *
+     * @return \Generated\Shared\Transfer\MolliePaymentMethodConfigCollectionTransfer
+     */
+    public function getPaymentMethodConfigCollection(MolliePaymentMethodConfigCriteriaTransfer $criteriaTransfer): MolliePaymentMethodConfigCollectionTransfer
+    {
+        $query = $this->getFactory()
+            ->createSpyMolliePaymentMethodConfigQuery();
+
+        if ($criteriaTransfer->getCurrencyCode()) {
+            $query->filterByCurrencyCode($criteriaTransfer->getCurrencyCode());
+        }
+
+        $entities = $query->find();
+
+        return $this->getFactory()
+            ->createMolliePaymentMethodConfigMapper()
+            ->mapMolliePaymentMethodConfigEntitiesToCollection($entities);
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MolliePaymentMethodConfigCriteriaTransfer $criteriaTransfer
+     *
+     * @return \Generated\Shared\Transfer\MolliePaymentMethodConfigTransfer|null
+     */
+    public function getPaymentMethodConfigByCriteria(
+        MolliePaymentMethodConfigCriteriaTransfer $criteriaTransfer,
+    ): ?MolliePaymentMethodConfigTransfer {
+        $spyMolliePaymentMethodConfigEntity = $this->getFactory()
+            ->createSpyMolliePaymentMethodConfigQuery()
+            ->filterByMollieId($criteriaTransfer->getMollieId())
+            ->filterByCurrencyCode($criteriaTransfer->getCurrencyCode())
+            ->findOne();
+
+        if (!$spyMolliePaymentMethodConfigEntity) {
+            return null;
+        }
+
+        return $this->getFactory()
+            ->createMolliePaymentMethodConfigMapper()
+            ->mapMolliePaymentMethodConfigEntityToTransfer($spyMolliePaymentMethodConfigEntity);
     }
 }
