@@ -62,9 +62,11 @@ class MollieCachedOptionsExpander implements MollieCachedOptionsExpanderInterfac
         $omsToPaymentMethodMapping = array_merge($omsToPaymentMethodMapping, static::MOLLIE_LOGO_MAPPING);
         $key = $omsToPaymentMethodMapping[$paymentMethod];
         $logoUniqueKey = $paymentMethod . MollieConstants::LOGO_URL;
+        $isLogoVisibleUniqueKey = $paymentMethod . MollieConstants::IS_LOGO_VISIBLE;
 
-        if (isset(self::$indexedPaymentMethodConfigCollection[$key])) {
+        if (isset($indexedPaymentMethodConfigCollection[$key])) {
             $options[$logoUniqueKey] = self::$indexedPaymentMethodConfigCollection[$key]->getImage();
+            $options[$isLogoVisibleUniqueKey] = self::$indexedPaymentMethodConfigCollection[$key]->getisLogoVisible();
 
             return $options;
         }
@@ -86,8 +88,11 @@ class MollieCachedOptionsExpander implements MollieCachedOptionsExpanderInterfac
 
         $omsToPaymentMethodMapping = $this->config->getMollieOmsToPaymentMethodMapping();
         $key = $omsToPaymentMethodMapping[$paymentMethod];
-
-        $options[$logoUniqueKey] = $this->getLogoUrl($indexedPaymentMethodConfigCollection, self::$mappedPaymentToLogo, $key);
+        $logoUrl = '';
+        if (isset($mappedMethods[$key])) {
+            $logoUrl = $mappedMethods[$key];
+        }
+        $options[$logoUniqueKey] = $logoUrl;
 
         return $options;
     }

@@ -183,6 +183,8 @@ interface MollieConstants
 
     public const string LOGO_URL = 'LogoUrl';
 
+    public const string IS_LOGO_VISIBLE = 'IsLogoVisible';
+
     public const string MOLLIE_PAYMENT_LINK_EXPIRATION_TIME = 'MOLLIE:MOLLIE_PAYMENT_LINK_EXPIRATION_TIME';
 
     public const string PRODUCT_TYPE_PHYSICAL = 'physical';

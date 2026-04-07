@@ -244,6 +244,7 @@ class MollieBusinessFactory extends AbstractBusinessFactory
             $this->getMollieClient(),
             $this->getMollieService(),
             $this->getLocaleFacade(),
+            $this->getRepository(),
             $this->getConfig(),
         );
     }

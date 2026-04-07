@@ -1,11 +1,11 @@
 <?php
 
-
 declare(strict_types = 1);
 
 namespace Mollie\Zed\Mollie\Business\Filter;
 
 use ArrayObject;
+use Generated\Shared\Transfer\MollieAmountTransfer;
 use Generated\Shared\Transfer\MollieApiRequestTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodConfigCriteriaTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodQueryParametersTransfer;
@@ -14,9 +14,9 @@ use Generated\Shared\Transfer\QuoteTransfer;
 use Mollie\Client\Mollie\MollieClientInterface;
 use Mollie\Service\Mollie\MollieServiceInterface;
 use Mollie\Shared\Mollie\MollieConstants;
-use Mollie\Zed\Mollie\Business\Reader\MolliePaymentMethodsConfigReaderInterface;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToLocaleFacadeInterface;
 use Mollie\Zed\Mollie\MollieConfig;
+use Mollie\Zed\Mollie\Persistence\MollieRepositoryInterface;
 use Spryker\Shared\Log\LoggerTrait;
 
 class MolliePaymentMethodsFilter implements MolliePaymentMethodsFilterInterface
@@ -27,12 +27,14 @@ class MolliePaymentMethodsFilter implements MolliePaymentMethodsFilterInterface
      * @param \Mollie\Client\Mollie\MollieClientInterface $mollieClient
      * @param \Mollie\Service\Mollie\MollieServiceInterface $mollieService
      * @param \Mollie\Zed\Mollie\Dependency\Facade\MollieToLocaleFacadeInterface $localeFacade
+     * @param \Mollie\Zed\Mollie\Persistence\MollieRepositoryInterface $mollieRepository
      * @param \Mollie\Zed\Mollie\MollieConfig $mollieConfig
      */
     public function __construct(
         protected MollieClientInterface $mollieClient,
         protected MollieServiceInterface $mollieService,
         protected MollieToLocaleFacadeInterface $localeFacade,
+        protected MollieRepositoryInterface $mollieRepository,
         protected MollieConfig $mollieConfig,
     ) {
     }
@@ -133,13 +135,12 @@ class MolliePaymentMethodsFilter implements MolliePaymentMethodsFilterInterface
             $molliePaymentMethod = $activeMollieMethods[$mollieMethodId];
             $configMethod = $indexedMolliePaymentConfigMethods[$mollieMethodId] ?? null;
 
-            $minimumAmount = $configMethod
-                ? $configMethod->getMinAmount()
-                : $molliePaymentMethod->getMinimumAmount();
+            if ($configMethod !== null && !$configMethod->getIsActive()) {
+                continue;
+            }
 
-            $maximumAmount = $configMethod
-                ? $configMethod->getMaxAmount()
-                : $molliePaymentMethod->getMaximumAmount();
+            $minimumAmount = $configMethod?->getMinimumAmount() ?? $molliePaymentMethod->getMinimumAmount();
+            $maximumAmount = $configMethod?->getMaximumAmount() ?? $molliePaymentMethod->getMaximumAmount();
 
             if (!$this->isGrandTotalWithinValidMinAndMaxAmount($grandTotal, $minimumAmount, $maximumAmount)) {
                 continue;
@@ -177,8 +178,8 @@ class MolliePaymentMethodsFilter implements MolliePaymentMethodsFilterInterface
         $molliePaymentMethodConfigCriteriaTransfer = new MolliePaymentMethodConfigCriteriaTransfer();
         $molliePaymentMethodConfigCriteriaTransfer->setCurrencyCode($quoteTransfer->getCurrency()->getCode());
 
-        $molliePaymentMethodConfigCollectionTransfer = $this->mollieClient
-            ->getPaymentMethodConfigCollection((new MolliePaymentMethodConfigCriteriaTransfer()));
+        $molliePaymentMethodConfigCollectionTransfer = $this->mollieRepository
+            ->getPaymentMethodConfigCollection($molliePaymentMethodConfigCriteriaTransfer);
 
         $indexedPaymentConfigMethods = [];
 
@@ -201,26 +202,24 @@ class MolliePaymentMethodsFilter implements MolliePaymentMethodsFilterInterface
 
     /**
      * @param float $grandTotal
-     * @param array|null $minimumAmount
-     * @param array|null $maximumAmount
+     * @param \Generated\Shared\Transfer\MollieAmountTransfer|null $minimumAmount
+     * @param \Generated\Shared\Transfer\MollieAmountTransfer|null $maximumAmount
      *
      * @return bool
      */
-    protected function isGrandTotalWithinValidMinAndMaxAmount(float $grandTotal, ?array $minimumAmount, ?array $maximumAmount): bool
-    {
-        $minimumAmount = isset($minimumAmount[MollieConfig::MOLLIE_PAYMENT_METHOD_AMOUNT_VALUE])
-            ? (float)$minimumAmount[MollieConfig::MOLLIE_PAYMENT_METHOD_AMOUNT_VALUE]
-            : null;
+    protected function isGrandTotalWithinValidMinAndMaxAmount(
+        float $grandTotal,
+        ?MollieAmountTransfer $minimumAmount,
+        ?MollieAmountTransfer $maximumAmount,
+    ): bool {
+        $minimumAmount = $minimumAmount?->getValue();
+        $maximumAmount = $maximumAmount?->getValue();
 
-        $maximumAmount = isset($maximumAmount[MollieConfig::MOLLIE_PAYMENT_METHOD_AMOUNT_VALUE])
-            ? (float)$maximumAmount[MollieConfig::MOLLIE_PAYMENT_METHOD_AMOUNT_VALUE]
-            : null;
-
-        if ($minimumAmount !== null && $grandTotal < $minimumAmount) {
+        if ($minimumAmount !== null && $grandTotal < (float)$minimumAmount) {
             return false;
         }
 
-        if ($maximumAmount !== null && $grandTotal > $maximumAmount) {
+        if ($maximumAmount !== null && $grandTotal > (float)$maximumAmount) {
             return false;
         }
 
