@@ -84,11 +84,6 @@ class PaymentMethodConfigForm extends AbstractType
         $constraints = [];
 
         if (isset($options[MolliePaymentMethodsDataProvider::VALIDATION_MINIMUM_VALUE])) {
-            $errorMessage = sprintf(
-                $this->getFactory()->getTranslatorFacade()->trans(static::WARNING_MINIMUM_AMOUNT),
-                $options[MolliePaymentMethodsDataProvider::VALIDATION_MINIMUM_VALUE],
-            );
-
             $constraints[] = new Callback([
                 'callback' => function (mixed $value, ExecutionContextInterface $context) use ($options): void {
                     $minimum = $options[MolliePaymentMethodsDataProvider::VALIDATION_MINIMUM_VALUE];
@@ -129,11 +124,6 @@ class PaymentMethodConfigForm extends AbstractType
         $constraints = [];
 
         if (isset($options[MolliePaymentMethodsDataProvider::VALIDATION_MAXIMUM_VALUE])) {
-            $errorMessage = sprintf(
-                $this->getFactory()->getTranslatorFacade()->trans(static::WARNING_MAXIMUM_AMOUNT),
-                $options[MolliePaymentMethodsDataProvider::VALIDATION_MAXIMUM_VALUE],
-            );
-
             $constraints[] = new Callback([
                 'callback' => function (mixed $value, ExecutionContextInterface $context) use ($options): void {
                     $minimum = $options[MolliePaymentMethodsDataProvider::VALIDATION_MINIMUM_VALUE];
