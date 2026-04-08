@@ -212,6 +212,7 @@ $config[MollieConstants::MOLLIE] = [
     MollieConstants::MOLLIE_PAYMENT_LINK_EXPIRATION_TIME => 10080,  
 	MollieConstants::MOLLIE_NEXT_GEN_WEBHOOK_SIGNING_SECRET => getenv('MOLLIE_NEXT_GEN_WEBHOOK_SIGNING_SECRET') ?: '',  
 	MollieConstants::MOLLIE_BNPL_PAYMENT_METHODS => ['billie', 'in3', 'klarna', 'riverty', 'voucher', 'alma'],
+	MollieConstants::MOLLIE_GET_METHODS_API_DEFAULT_AMOUNT_VALUE => '100.00',
 ];
 ```
 
@@ -590,22 +591,22 @@ $config[MollieConstants::MOLLIE] = [
         'mollieKbcPayment' => 'kbc',
         'molliePayByBankPayment' => 'paybybank',
         'mollieApplePayPayment' => 'applepay',
-        'molliePrzelewy24Payment' => 'przelewy24',  
-		'mollieMultibancoPayment' => 'multibanco',  
-		'mollieBancomatPayPayment' => 'bancomatpay',  
-		'mollieBizumPayment' => 'bizum',  
-		'mollieBilliePayment' => 'billie',  
-		'mollieRivertyPayment' => 'riverty',  
-		'mollieIdealIn3Payment' => 'in3',  
-		'mollieAlmaPayment' => 'alma',  
-		'mollieBLIKPayment' => 'blik',  
-		'molliePayconiqPayment' => 'payconiq',  
-		'mollieTrustlyPayment' => 'trustly',  
-		'mollieSwishPayment' => 'swish',  
-		'mollieMbWayPayment' => 'mbway',  
-		'mollieSatispayPayment' => 'satispay',  
-		'mollieTwintPayment' => 'twint',  
-		'mollieVippsPayment' => 'vipps',
+        'molliePrzelewy24Payment' => 'przelewy24',
+        'mollieMultibancoPayment' => 'multibanco',
+        'mollieBancomatPayPayment' => 'bancomatpay',
+        'mollieBizumPayment' => 'bizum',
+        'mollieBilliePayment' => 'billie',
+        'mollieRivertyPayment' => 'riverty',
+        'mollieIdealIn3Payment' => 'in3',
+        'mollieAlmaPayment' => 'alma',
+        'mollieBLIKPayment' => 'blik',
+        'molliePayconiqPayment' => 'payconiq',
+        'mollieTrustlyPayment' => 'trustly',
+        'mollieSwishPayment' => 'swish',
+        'mollieMbWayPayment' => 'mbway',
+        'mollieSatispayPayment' => 'satispay',
+        'mollieTwintPayment' => 'twint',
+        'mollieVippsPayment' => 'vipps',
     ],
 ];
 ```
@@ -768,28 +769,16 @@ Add the following logic inside the `contentItem` block:
 
 ```twig
 {% block contentItem %}
-    {% set paymentName = embed.form.paymentSelection[key].vars.name %}
-    {% set logoUrl = embed.form[paymentName].vars.logoUrl ?? '' %}
-
-    {% if embed.form.paymentSelection[key].vars.value == 'dummyPaymentInvoice' %}
-        {% include atom('icon') with {
-            modifiers: ['invoice-logo', 'payment-logo'],
-            data: {
-                name: 'dummyPaymentInvoice.icon' | trans,
-            },
-        } only %}
-    {% endif %}
-
-    {% set paymentName = embed.form.paymentSelection[key].vars.name %}
-    {% if embed.form[paymentName].vars.logoUrl is defined %}
-        {% set logoUrl = embed.form[paymentName].vars.logoUrl %}
-        {% include molecule('mollie-logo-image', 'Mollie') with {
-            data: {
-                logoUrl: logoUrl,
-                paymentName: paymentName
-            }
-        } only %}
-    {% endif %}
+    {% set paymentName = embed.form.paymentSelection[key].vars.name %}  
+    {% if embed.form[paymentName].vars.logoUrl is defined %}  
+         {% set logoUrl = embed.form[paymentName].vars.logoUrl %}  
+         {% include molecule('mollie-logo-image', 'Mollie') with {  
+          data: {  
+          logoUrl: logoUrl,  
+          paymentName: paymentName  
+          }  
+         } only %}  
+    {% endif %} 
 
     {# rest of the code ... #}
 
