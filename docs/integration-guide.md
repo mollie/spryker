@@ -769,16 +769,19 @@ Add the following logic inside the `contentItem` block:
 
 ```twig
 {% block contentItem %}
-    {% set paymentName = embed.form.paymentSelection[key].vars.name %}  
-    {% if embed.form[paymentName].vars.logoUrl is defined %}  
-         {% set logoUrl = embed.form[paymentName].vars.logoUrl %}  
-         {% include molecule('mollie-logo-image', 'Mollie') with {  
-          data: {  
-          logoUrl: logoUrl,  
-          paymentName: paymentName  
-          }  
-         } only %}  
-    {% endif %} 
+    {% set paymentName = embed.form.paymentSelection[key].vars.name %}
+    {% set formVars = embed.form[paymentName].vars %}
+    {% if formVars.logoUrl is defined 
+      and formVars.isLogoVisible is defined 
+      and formVars.isLogoVisible is true %}
+      
+      {% set logoUrl = embed.form[paymentName].vars.logoUrl %}
+      {% include molecule('mollie-logo-image', 'Mollie') with {
+          data: {
+            logoUrl: logoUrl,
+            paymentName: paymentName
+          }} only %}
+    {% endif %}
 
     {# rest of the code ... #}
 
