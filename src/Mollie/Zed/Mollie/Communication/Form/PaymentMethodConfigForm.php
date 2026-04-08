@@ -90,11 +90,14 @@ class PaymentMethodConfigForm extends AbstractType
                     $maximum = $options[MolliePaymentMethodsDataProvider::VALIDATION_MAXIMUM_VALUE];
                     $amount = $value->getValue();
 
-                    $condition = $maximum
-                        ? $amount === null || $amount > $maximum || $amount < $minimum
-                        : $amount === null || $amount < $minimum;
+                    $isMinimumAmountValidationFailed = $amount === null || $amount < $minimum;
+                    $isValidationFailed = $isMinimumAmountValidationFailed;
+                    if ($maximum) {
+                        $isValidationFailed = $isMinimumAmountValidationFailed && $amount > $maximum;
+                    }
 
-                    if ($condition) {
+                    $maximum = $maximum ?: 'unlimited';
+                    if ($isValidationFailed) {
                         $errorMessage = sprintf(
                             $this->getFactory()->getTranslatorFacade()->trans(static::WARNING_MINIMUM_AMOUNT),
                             $maximum,
@@ -133,11 +136,15 @@ class PaymentMethodConfigForm extends AbstractType
                     $minimum = $options[MolliePaymentMethodsDataProvider::VALIDATION_MINIMUM_VALUE];
                     $maximum = $options[MolliePaymentMethodsDataProvider::VALIDATION_MAXIMUM_VALUE];
                     $amount = $value->getValue();
-                    $condition = $maximum
-                        ? $amount === null || $amount > $maximum || $amount < $minimum
-                        : $amount === null || $amount < $minimum;
 
-                    if ($condition) {
+                    $isMinimumAmountValidationFailed = $amount === null || $amount < $minimum;
+                    $isValidationFailed = $isMinimumAmountValidationFailed;
+                    if ($maximum) {
+                        $isValidationFailed = $isMinimumAmountValidationFailed && $amount > $maximum;
+                    }
+
+                    $maximum = $maximum ?: 'unlimited';
+                    if ($isValidationFailed) {
                         $errorMessage = sprintf(
                             $this->getFactory()->getTranslatorFacade()->trans(static::WARNING_MAXIMUM_AMOUNT),
                             $maximum,
