@@ -90,13 +90,8 @@ class PaymentMethodConfigForm extends AbstractType
                     $maximum = $options[MolliePaymentMethodsDataProvider::VALIDATION_MAXIMUM_VALUE];
                     $amount = $value->getValue();
 
-                    $isMinimumAmountValidationFailed = $amount < $minimum;
-                    if ($maximum) {
-                        $isMinimumAmountValidationFailed = $isMinimumAmountValidationFailed || $amount > $maximum;
-                    }
-
-                    $maximum = $maximum ?: 'unlimited';
-                    if ($isMinimumAmountValidationFailed) {
+                    if (!$this->isAmountWithinValidRange($amount, $minimum, $maximum)) {
+                        $maximum = $maximum ?: 'unlimited';
                         $errorMessage = sprintf(
                             $this->getFactory()->getTranslatorFacade()->trans(static::WARNING_MINIMUM_AMOUNT),
                             $maximum,
@@ -136,13 +131,8 @@ class PaymentMethodConfigForm extends AbstractType
                     $maximum = $options[MolliePaymentMethodsDataProvider::VALIDATION_MAXIMUM_VALUE];
                     $amount = $value->getValue();
 
-                    $isMaximumAmountValidationFailed = $amount < $minimum;
-                    if ($maximum) {
-                        $isMaximumAmountValidationFailed = $isMaximumAmountValidationFailed || $amount > $maximum;
-                    }
-
-                    $maximum = $maximum ?: 'unlimited';
-                    if ($isMaximumAmountValidationFailed) {
+                    if (!$this->isAmountWithinValidRange($amount, $minimum, $maximum)) {
+                        $maximum = $maximum ?: 'unlimited';
                         $errorMessage = sprintf(
                             $this->getFactory()->getTranslatorFacade()->trans(static::WARNING_MAXIMUM_AMOUNT),
                             $maximum,
@@ -230,5 +220,32 @@ class PaymentMethodConfigForm extends AbstractType
         ]);
 
         return $this;
+    }
+
+    /**
+     * @param string $amount
+     * @param float $minimum
+     * @param float|null $maximum
+     *
+     * @return bool
+     */
+    private function isAmountWithinValidRange(string $amount, float $minimum, ?float $maximum): bool
+    {
+        $amountFloat = (float)$amount;
+        $isAmountValid = true;
+
+        if ($amountFloat < $minimum) {
+            $isAmountValid = false;
+        }
+
+        if (!$maximum) {
+            return $isAmountValid;
+        }
+
+        if ($amountFloat > $maximum) {
+            $isAmountValid = false;
+        }
+
+        return $isAmountValid;
     }
 }
