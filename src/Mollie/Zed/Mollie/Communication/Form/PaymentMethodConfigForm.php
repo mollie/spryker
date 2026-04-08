@@ -90,7 +90,7 @@ class PaymentMethodConfigForm extends AbstractType
                     $maximum = $options[MolliePaymentMethodsDataProvider::VALIDATION_MAXIMUM_VALUE];
                     $amount = $value->getValue();
 
-                    $isMinimumAmountValidationFailed = $amount === null || $amount < $minimum;
+                    $isMinimumAmountValidationFailed = $amount < $minimum;
                     if ($maximum) {
                         $isMinimumAmountValidationFailed = $isMinimumAmountValidationFailed && $amount > $maximum;
                     }
@@ -136,7 +136,7 @@ class PaymentMethodConfigForm extends AbstractType
                     $maximum = $options[MolliePaymentMethodsDataProvider::VALIDATION_MAXIMUM_VALUE];
                     $amount = $value->getValue();
 
-                    $isMaximumAmountValidationFailed = $amount === null || $amount < $minimum;
+                    $isMaximumAmountValidationFailed = $amount < $minimum;
                     if ($maximum) {
                         $isMaximumAmountValidationFailed = $isMaximumAmountValidationFailed && $amount > $maximum;
                     }
