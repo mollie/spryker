@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Mollie\Zed\Mollie\Communication\Controller;
 
+use Composer\InstalledVersions;
 use Generated\Shared\Transfer\MolliePaymentMethodConfigCriteriaTransfer;
 use Mollie\Shared\Mollie\MollieConstants;
 use Spryker\Zed\Kernel\Communication\Controller\AbstractController;
@@ -39,6 +40,7 @@ class IndexController extends AbstractController
             'mollieTable' => $table->render(),
             'response' => $profileResponseTransfer,
             MollieConstants::MOLLIE_QUERY_PARAMETER_SHOW_ONLY_ENABLED => $showOnlyEnabledPaymentMethods,
+            'version' => InstalledVersions::getPrettyVersion($this->getFactory()->getConfig()->getMolliePluginPackage()),
         ];
 
         return $this->viewResponse($responseData);

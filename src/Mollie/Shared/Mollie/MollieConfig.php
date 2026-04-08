@@ -325,6 +325,11 @@ class MollieConfig extends AbstractSharedConfig
     protected const CACHE_KEY_IDENTIFIER_FOR_ENABLED_PAYMENT_METHODS = 'enabled_payment_methods';
 
     /**
+     * @var string
+     */
+    public const MOLLIE_PLUGIN_PACKAGE = 'mollie/spryker-payment';
+
+    /**
      * @return string|null
      */
     public function getMollieApiKey(): string|null
@@ -370,5 +375,13 @@ class MollieConfig extends AbstractSharedConfig
     public function getCacheKeyIdentifierForEnabledPaymentMethods(): string
     {
         return static::CACHE_KEY_IDENTIFIER_FOR_ENABLED_PAYMENT_METHODS;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMolliePluginPackage(): string
+    {
+        return static::MOLLIE_PLUGIN_PACKAGE;
     }
 }

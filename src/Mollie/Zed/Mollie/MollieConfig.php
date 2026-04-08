@@ -7,6 +7,9 @@ namespace Mollie\Zed\Mollie;
 use Mollie\Shared\Mollie\MollieConstants;
 use Spryker\Zed\Kernel\AbstractBundleConfig;
 
+/**
+ * @method \Mollie\Shared\Mollie\MollieConfig getSharedConfig()
+ */
 class MollieConfig extends AbstractBundleConfig
 {
     /**
@@ -164,5 +167,13 @@ class MollieConfig extends AbstractBundleConfig
     public function getMethodsApiDefaultAmountValue(): string
     {
         return $this->get(MollieConstants::MOLLIE)[MollieConstants::MOLLIE_GET_METHODS_API_DEFAULT_AMOUNT_VALUE];
+    }
+
+    /**
+     * @return string
+     */
+    public function getMolliePluginPackage(): string
+    {
+        return $this->getSharedConfig()->getMolliePluginPackage();
     }
 }
