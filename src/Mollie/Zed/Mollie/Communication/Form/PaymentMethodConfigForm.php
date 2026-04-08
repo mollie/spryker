@@ -96,7 +96,7 @@ class PaymentMethodConfigForm extends AbstractType
 
                     if ($condition) {
                         $errorMessage = sprintf(
-                            $this->getFactory()->getTranslatorFacade()->trans(static::WARNING_MAXIMUM_AMOUNT),
+                            $this->getFactory()->getTranslatorFacade()->trans(static::WARNING_MINIMUM_AMOUNT),
                             $maximum,
                             $minimum,
                         );
