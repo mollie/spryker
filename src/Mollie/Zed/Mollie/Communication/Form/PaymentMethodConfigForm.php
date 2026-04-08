@@ -90,7 +90,13 @@ class PaymentMethodConfigForm extends AbstractType
                     $maximum = $options[MolliePaymentMethodsDataProvider::VALIDATION_MAXIMUM_VALUE];
                     $amount = $value->getValue();
 
-                    if ($amount === null || $amount < $minimum || $amount > $maximum) {
+                    $isMinimumAmountValidationFailed = $amount < $minimum;
+                    if ($maximum) {
+                        $isMinimumAmountValidationFailed = $isMinimumAmountValidationFailed && $amount > $maximum;
+                    }
+
+                    $maximum = $maximum ?: 'unlimited';
+                    if ($isMinimumAmountValidationFailed) {
                         $errorMessage = sprintf(
                             $this->getFactory()->getTranslatorFacade()->trans(static::WARNING_MINIMUM_AMOUNT),
                             $maximum,
@@ -130,7 +136,13 @@ class PaymentMethodConfigForm extends AbstractType
                     $maximum = $options[MolliePaymentMethodsDataProvider::VALIDATION_MAXIMUM_VALUE];
                     $amount = $value->getValue();
 
-                    if ($amount === null || $amount > $maximum || $amount < $minimum) {
+                    $isMaximumAmountValidationFailed = $amount < $minimum;
+                    if ($maximum) {
+                        $isMaximumAmountValidationFailed = $isMaximumAmountValidationFailed && $amount > $maximum;
+                    }
+
+                    $maximum = $maximum ?: 'unlimited';
+                    if ($isMaximumAmountValidationFailed) {
                         $errorMessage = sprintf(
                             $this->getFactory()->getTranslatorFacade()->trans(static::WARNING_MAXIMUM_AMOUNT),
                             $maximum,
