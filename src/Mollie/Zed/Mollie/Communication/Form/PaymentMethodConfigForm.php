@@ -91,13 +91,12 @@ class PaymentMethodConfigForm extends AbstractType
                     $amount = $value->getValue();
 
                     $isMinimumAmountValidationFailed = $amount === null || $amount < $minimum;
-                    $isValidationFailed = $isMinimumAmountValidationFailed;
                     if ($maximum) {
-                        $isValidationFailed = $isValidationFailed && $amount > $maximum;
+                        $isMinimumAmountValidationFailed = $isMinimumAmountValidationFailed && $amount > $maximum;
                     }
 
                     $maximum = $maximum ?: 'unlimited';
-                    if ($isValidationFailed) {
+                    if ($isMinimumAmountValidationFailed) {
                         $errorMessage = sprintf(
                             $this->getFactory()->getTranslatorFacade()->trans(static::WARNING_MINIMUM_AMOUNT),
                             $maximum,
@@ -137,14 +136,13 @@ class PaymentMethodConfigForm extends AbstractType
                     $maximum = $options[MolliePaymentMethodsDataProvider::VALIDATION_MAXIMUM_VALUE];
                     $amount = $value->getValue();
 
-                    $isMinimumAmountValidationFailed = $amount === null || $amount < $minimum;
-                    $isValidationFailed = $isMinimumAmountValidationFailed;
+                    $isMaximumAmountValidationFailed = $amount === null || $amount < $minimum;
                     if ($maximum) {
-                        $isValidationFailed = $isValidationFailed && $amount > $maximum;
+                        $isMaximumAmountValidationFailed = $isMaximumAmountValidationFailed && $amount > $maximum;
                     }
 
                     $maximum = $maximum ?: 'unlimited';
-                    if ($isValidationFailed) {
+                    if ($isMaximumAmountValidationFailed) {
                         $errorMessage = sprintf(
                             $this->getFactory()->getTranslatorFacade()->trans(static::WARNING_MAXIMUM_AMOUNT),
                             $maximum,
