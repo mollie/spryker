@@ -93,7 +93,7 @@ class PaymentMethodConfigForm extends AbstractType
                     $isMinimumAmountValidationFailed = $amount === null || $amount < $minimum;
                     $isValidationFailed = $isMinimumAmountValidationFailed;
                     if ($maximum) {
-                        $isValidationFailed = $isMinimumAmountValidationFailed && $amount > $maximum;
+                        $isValidationFailed = $isValidationFailed && $amount > $maximum;
                     }
 
                     $maximum = $maximum ?: 'unlimited';
@@ -140,7 +140,7 @@ class PaymentMethodConfigForm extends AbstractType
                     $isMinimumAmountValidationFailed = $amount === null || $amount < $minimum;
                     $isValidationFailed = $isMinimumAmountValidationFailed;
                     if ($maximum) {
-                        $isValidationFailed = $isMinimumAmountValidationFailed && $amount > $maximum;
+                        $isValidationFailed = $isValidationFailed && $amount > $maximum;
                     }
 
                     $maximum = $maximum ?: 'unlimited';
