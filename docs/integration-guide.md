@@ -27,11 +27,10 @@ This guide provides comprehensive instructions for integrating Mollie payment se
   - [3.2 Assign Payment Methods to Stores](#32-assign-payment-methods-to-stores)
   - [3.3 Import Payment Methods](#33-import-payment-methods)
   - [3.4 Configure OMS → Mollie Payment Mapping](#34-configure-oms--mollie-payment-mapping)
-  - [3.5 Register Payment Handlers (Yves)](#35-register-payment-handlers-yves)
-  - [3.6 Add Payment Forms to Twig](#36-add-payment-forms-to-twig)
-  - [3.7 Final Steps](#37-final-steps)
-  - [3.8 Displaying Payment Method Logos in Checkout](#38-displaying-payment-method-logos-in-checkout)
-  - [3.9 Payment Method Overrides (Names, Logos, Minimum and Maximum amounts)](#39-payment-method-overrides-names-logos-minimum-and-maximum-amounts)
+  - [3.5 Add Payment Forms to Twig](#35-add-payment-forms-to-twig)
+  - [3.6 Final Steps](#36-final-steps)
+  - [3.7 Displaying Payment Method Logos in Checkout](#37-displaying-payment-method-logos-in-checkout)
+  - [3.8 Payment Method Overrides (Names, Logos, Minimum and Maximum amounts)](#38-payment-method-overrides-names-logos-minimum-and-maximum-amounts)
 - [4. Dependency Provider Configuration](#4-dependency-provider-configuration)
   - [4.1. Router Dependency Provider](#41-router-dependency-provider)
   - [Route Provider Plugin](#route-provider-plugin)
@@ -690,13 +689,7 @@ $config[MollieConstants::MOLLIE] = [
 
 Values passed in this collection should match with right hand side values defined in `MOLLIE_OMS_TO_PAYMENT_METHOD_MAPPING`.
 
-### 3.5 Register Payment Handlers (Yves)
-
-Please check dependency provider configuration chapter (section 3.3.).
-
-https://xiphias.atlassian.net/wiki/spaces/NO/pages/2581364767/Mollie+Payment+Integration+for+Spryker+-+Integration+Guide#3.3.-Checkout-Page-Dependency-Provider-(Yves)
-
-### 3.6 Add Payment Forms to Twig
+### 3.5 Add Payment Forms to Twig
 
 Open:
 
@@ -743,7 +736,7 @@ Add Mollie forms to `customForms`:
 } %}
 ```
 
-### 3.7 Final Steps
+### 3.6 Final Steps
 
 After everything:
 
@@ -755,7 +748,7 @@ console data:import:payment-method-store
 
 Clear cache if needed.
 
-### 3.8 Displaying Payment Method Logos in Checkout
+### 3.7 Displaying Payment Method Logos in Checkout
 
 To display Mollie payment method logos on the checkout payment step, you need to extend the `contentItem` block in:
 
@@ -794,7 +787,7 @@ This molecule:
 - Ensures correct styling
 - Keeps checkout UI consistent
 
-### 3.9 Payment Method Overrides (Names, Logos, Minimum and Maximum amounts)
+### 3.8 Payment Method Overrides (Names, Logos, Minimum and Maximum amounts)
 
 To customize payment method settings such as name, logo, and minimum or maximum transaction amounts, navigate to: **Administration → Mollie Payment Methods** in the Backoffice.
 Locate the desired payment method and click the **Edit** button on the right-hand side.
