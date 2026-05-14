@@ -1,6 +1,5 @@
 <?php
 
-
 declare(strict_types = 1);
 
 namespace Mollie\Zed\Mollie;
@@ -8,6 +7,9 @@ namespace Mollie\Zed\Mollie;
 use Mollie\Shared\Mollie\MollieConstants;
 use Spryker\Zed\Kernel\AbstractBundleConfig;
 
+/**
+ * @method \Mollie\Shared\Mollie\MollieConfig getSharedConfig()
+ */
 class MollieConfig extends AbstractBundleConfig
 {
     /**
@@ -115,5 +117,15 @@ class MollieConfig extends AbstractBundleConfig
     public function getPaymentCaptureStates(): array
     {
         return ['captured', 'capture pending'];
+    }
+
+    /**
+     * @param string $paymentProvider
+     *
+     * @return bool
+     */
+    public function isMollieProvider(string $paymentProvider): bool
+    {
+        return str_starts_with(strtolower($paymentProvider), static::MOLLIE_PAYMENT_PROVIDER);
     }
 }

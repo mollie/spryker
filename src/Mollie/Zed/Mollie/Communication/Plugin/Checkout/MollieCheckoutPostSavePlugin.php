@@ -23,6 +23,11 @@ class MollieCheckoutPostSavePlugin extends AbstractPlugin implements CheckoutPos
      */
     public function executeHook(QuoteTransfer $quoteTransfer, CheckoutResponseTransfer $checkoutResponseTransfer): void
     {
+        $paymentProvider = $quoteTransfer->getPayment()?->getPaymentProvider();
+        if (!$paymentProvider || !$this->getConfig()->isMollieProvider($paymentProvider)) {
+            return;
+        }
+
         $this->getFacade()->createPayment($quoteTransfer, $checkoutResponseTransfer);
     }
 }

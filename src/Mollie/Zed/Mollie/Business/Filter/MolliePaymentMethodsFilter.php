@@ -156,7 +156,7 @@ class MolliePaymentMethodsFilter implements MolliePaymentMethodsFilterInterface
      */
     protected function isMollieProvider(string $providerKey): bool
     {
-        return str_starts_with(strtolower($providerKey), MollieConfig::MOLLIE_PAYMENT_PROVIDER);
+        return $this->mollieConfig->isMollieProvider($providerKey);
     }
 
     /**

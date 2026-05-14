@@ -29,3 +29,15 @@ suites:
         - \SprykerTest\Shared\Sales\Helper\SalesDataHelper
         - \SprykerTest\Zed\Oms\Helper\OmsHelper
         - \SprykerTest\Shared\Testify\Helper\LocatorHelper
+  Communication:
+    path: .
+    actor: MollieZedTester
+    modules:
+      enabled:
+        - Asserts
+        - \SprykerTest\Shared\Testify\Helper\Environment
+        - \SprykerTest\Shared\Testify\Helper\ConfigHelper
+        - \SprykerTest\Shared\Config\Helper\ConfigInit
+        - \SprykerTest\Shared\Testify\Helper\LocatorHelper:
+            projectNamespaces: ['Mollie']
+        - \SprykerTest\Shared\Testify\Helper\DependencyHelper
