@@ -13,7 +13,7 @@ coverage:
 
 suites:
   Business:
-    path: .
+    path: Business
     actor: MollieZedTester
     modules:
       enabled:
@@ -30,7 +30,7 @@ suites:
         - \SprykerTest\Zed\Oms\Helper\OmsHelper
         - \SprykerTest\Shared\Testify\Helper\LocatorHelper
   Communication:
-    path: .
+    path: Communication
     actor: MollieZedTester
     modules:
       enabled:
