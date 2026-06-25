@@ -126,7 +126,7 @@ class PaymentApiHandler implements PaymentApiHandlerInterface
             $totalAmount = $this->mollieService->convertIntegerToMollieAmount($item->getSumPriceToPayAggregation(), $currencyCode);
             $discountAmount = $this->mollieService->convertIntegerToMollieAmount($item->getUnitDiscountAmountAggregation(), $currencyCode);
             $vatRate = number_format($item->getTaxRate(), 2);
-            $vatAmount = $this->mollieService->convertIntegerToMollieAmount($item->getUnitTaxAmount(), $currencyCode);
+            $vatAmount = $this->mollieService->convertIntegerToMollieAmount($item->getSumTaxAmountFullAggregation(), $currencyCode);
 
             $linesTransfer
                 ->setType(MollieConstants::PRODUCT_TYPE_PHYSICAL)
