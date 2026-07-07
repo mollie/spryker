@@ -1869,6 +1869,7 @@ MollieConstants::MOLLIE_CREDIT_CARD_COMPONENTS_JS_SRC => 'https://js.mollie.com/
 - HTTPS is required for components to function
 - Components must be initialized with your Mollie Profile ID
 - The integration handles tokenization automatically
+- Add `pay.mollie.nl` to Spryker's `KernelConstants::DOMAIN_WHITELIST` in `config_default.php`. 3D Secure authentication redirects to this domain, and Spryker's `RedirectUrlValidator` will block it otherwise.
 
 ### Component Example
 
