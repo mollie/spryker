@@ -9,6 +9,7 @@ use Generated\Shared\Transfer\MollieApiResponseTransfer;
 use Generated\Shared\Transfer\MollieLinksTransfer;
 use Generated\Shared\Transfer\MolliePaymentApiResponseTransfer;
 use Generated\Shared\Transfer\MolliePaymentTransfer;
+use Mollie\Api\Http\Data\DataCollection;
 use Mollie\Api\Http\Data\Money;
 use Mollie\Api\Http\Request;
 use Mollie\Api\Http\Requests\CreatePaymentRequest;
@@ -56,11 +57,26 @@ class CreatePaymentApi extends AbstractApiCall
         $quoteTransfer = $mollieApiRequestTransfer->getQuote();
         $paymentTransfer = $quoteTransfer->getPayment();
 
-        $value = $this->convertAmountToString($paymentTransfer->getAmount());
-        $amount = new Money(
-            currency: $quoteTransfer->getCurrency()->getCode(),
-            value: $value,
-        );
+        $method = $this->mollieConfig->getMolliePaymentMethod($paymentTransfer->getPaymentMethod());
+
+        // Build lines first so the amount can be derived from them.
+        // Mollie validates that amount == sum(lines.totalAmount) when lines are sent.
+        // The payment transfer's amount may differ from the line total sum when
+        // cart-level reductions (bonus points, gift cards, vouchers) reduce the
+        // grand total without being allocated to individual item
+        // price_to_pay_aggregation values.
+        $lines = $this->apiHandler->createLines($quoteTransfer, $method);
+
+        if ($lines !== null && !$lines->isEmpty()) {
+            $amount = $this->computeAmountFromLines($lines);
+        } else {
+            $value = $this->convertAmountToString($paymentTransfer->getAmount());
+            $amount = new Money(
+                currency: $quoteTransfer->getCurrency()->getCode(),
+                value: $value,
+            );
+        }
+
         $redirectUrl = $this->getRedirectUrl($checkoutResponseTransfer->getSaveOrderOrFail()->getOrderReference());
 
         $webhookUrl = $this->mollieService->resolveWebhookUrl(
@@ -69,11 +85,9 @@ class CreatePaymentApi extends AbstractApiCall
             $this->mollieConfig->isMollieTestModeEnabled(),
         );
 
-        $method = $this->mollieConfig->getMolliePaymentMethod($paymentTransfer->getPaymentMethod());
         $metadata = $this->apiHandler->createPaymentMetadata($checkoutResponseTransfer);
         $additionalParameters = $this->apiHandler->createAdditionalParameters($mollieApiRequestTransfer);
         $billingAddress = $this->apiHandler->createBillingAddress($quoteTransfer);
-        $lines = $this->apiHandler->createLines($quoteTransfer, $method);
 
         $this->request = new CreatePaymentRequest(
             description: $checkoutResponseTransfer->getSaveOrderOrFail()->getOrderReference(),
@@ -169,5 +183,40 @@ class CreatePaymentApi extends AbstractApiCall
         }
 
         return $this->mollieConfig->getMollieAutomaticCaptureMode();
+    }
+
+    /**
+     * Sum totalAmount across all lines and return a Money value.
+     *
+     * Both the amount sent to Mollie and the lines are derived from the same
+     * source (items' sumPriceToPayAggregation + expenses'), so they are
+     * guaranteed to match. This prevents HTTP 422 errors when cart-level
+     * reductions (bonus points, gift cards, vouchers) reduce the payment
+     * transfer's amount without affecting item-level price_to_pay values.
+     *
+     * @param \Mollie\Api\Http\Data\DataCollection<array<string, mixed>> $lines
+     *
+     * @return \Mollie\Api\Http\Data\Money
+     */
+    private function computeAmountFromLines(DataCollection $lines): Money
+    {
+        $currency = null;
+        $sumCents = 0;
+
+        foreach ($lines->toArray() as $line) {
+            $totalAmountArray = $line['totalAmount'] ?? null;
+            if ($totalAmountArray === null) {
+                continue;
+            }
+
+            $currency ??= $totalAmountArray['currency'] ?? 'EUR';
+            $value = $totalAmountArray['value'] ?? '0.00';
+            $sumCents += (int)round((float)$value * 100);
+        }
+
+        return new Money(
+            currency: $currency ?? 'EUR',
+            value: $this->convertAmountToString($sumCents),
+        );
     }
 }
