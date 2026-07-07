@@ -191,6 +191,8 @@ interface MollieConstants
 
     public const string PRODUCT_TYPE_SHIPPING_FEE = 'shipping_fee';
 
+    public const string PRODUCT_TYPE_DISCOUNT = 'discount';
+
     public const string MOLLIE_BNPL_PAYMENT_METHODS = 'MOLLIE:MOLLIE_BNPL_PAYMENT_METHODS';
 
     public const string QUERY_CURRENCY = 'currency';
