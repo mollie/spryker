@@ -59,7 +59,7 @@ class MollieRefundMapper implements MollieRefundMapperInterface
         foreach ($filteredMollieRefunds as $mollieRefund) {
             $mollieRefundTransfer = (new MollieRefundTransfer())->fromArray($mollieRefund, true);
 
-            $mollieRefundCollectionTransfer->addRefunds($mollieRefundTransfer);
+            $mollieRefundCollectionTransfer->addRefund($mollieRefundTransfer);
         }
 
         return $mollieRefundCollectionTransfer;
