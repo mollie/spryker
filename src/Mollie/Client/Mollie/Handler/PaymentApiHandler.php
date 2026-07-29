@@ -96,7 +96,7 @@ class PaymentApiHandler implements PaymentApiHandlerInterface
             givenName: $customerAddress->getFirstName(),
             familyName: $customerAddress->getLastName(),
             organizationName: $customerAddress->getCompany(),
-            streetAndNumber: $customerAddress->getAddress1(),
+            streetAndNumber: trim($customerAddress->getAddress1() . ' ' . $customerAddress->getAddress2()),
             postalCode: $customerAddress->getZipCode(),
             email: $customerAddress->getEmail() ?? $quoteTransfer->getCustomer()?->getEmail(),
             phone: $customerAddress->getPhone(),
