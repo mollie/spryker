@@ -229,6 +229,21 @@ $config[KernelConstants::CORE_NAMESPACES] = [
 
 Without this, Spryker's dependency locator will be unable to resolve Mollie module automatically.
 
+> **Spryker redirect whitelist**
+>
+> If Spryker's strict domain redirect is enabled (`KernelConstants::STRICT_DOMAIN_REDIRECT`), add these Mollie domains to `KernelConstants::DOMAIN_WHITELIST` in `config_default.php`:
+>
+> ```php
+> $config[KernelConstants::DOMAIN_WHITELIST] = array_merge($trustedHosts, [
+>     // …
+>     'pay.mollie.nl',         // 3D Secure authentication redirects
+>     'mollie.com',
+>     'www.mollie.com',        // Mollie hosted checkout pages
+> ]);
+> ```
+>
+> If these domains aren't whitelisted, Spryker's `RedirectUrlValidator` throws `ForbiddenExternalRedirectException` and the checkout fails.
+
 ### TypeScript Component Recognition
 
 To enable TypeScript component recognition for the Mollie module during the frontend build (npm run yves), the Mollie vendor path must be registered in frontend/settings.js.
@@ -1869,6 +1884,7 @@ MollieConstants::MOLLIE_CREDIT_CARD_COMPONENTS_JS_SRC => 'https://js.mollie.com/
 - HTTPS is required for components to function
 - Components must be initialized with your Mollie Profile ID
 - The integration handles tokenization automatically
+
 
 ### Component Example
 
