@@ -43,32 +43,32 @@
         <property name="molliePayPalPayment" type="MolliePayPalPayment"/>
         <property name="mollieBankTransferPayment" type="MollieBankTransferPayment"/>
         <property name="mollieKlarnaPayment" type="MollieKlarnaPayment"/>
-        <property name="mollieKlarnaPayLaterPayment" type="[]"/>
-        <property name="mollieKlarnaPayNowPayment" type="[]"/>
-        <property name="mollieKlarnaSliceItPayment" type="[]"/>
-        <property name="mollieEpsPayment" type="[]"/>
-        <property name="mollieIdealPayment" type="[]"/>
-        <property name="mollieBancontactPayment" type="[]"/>
-        <property name="mollieKbcPayment" type="[]"/>
-        <property name="molliePayByBankPayment" type="[]"/>
+        <property name="mollieKlarnaPayLaterPayment" type="array"/>
+        <property name="mollieKlarnaPayNowPayment" type="array"/>
+        <property name="mollieKlarnaSliceItPayment" type="array"/>
+        <property name="mollieEpsPayment" type="array"/>
+        <property name="mollieIdealPayment" type="array"/>
+        <property name="mollieBancontactPayment" type="array"/>
+        <property name="mollieKbcPayment" type="array"/>
+        <property name="molliePayByBankPayment" type="array"/>
         <property name="mollieApplePayPayment" type="MollieApplePayPayment"/>
-        <property name="molliePrzelewy24Payment" type="[]"/>
-        <property name="mollieMultibancoPayment" type="[]"/>
-        <property name="mollieBancomatPayPayment" type="[]"/>
-        <property name="mollieBizumPayment" type="[]"/>
-        <property name="mollieBLIKPayment" type="[]"/>
-        <property name="molliePayconiqPayment" type="[]"/>
+        <property name="molliePrzelewy24Payment" type="array"/>
+        <property name="mollieMultibancoPayment" type="array"/>
+        <property name="mollieBancomatPayPayment" type="array"/>
+        <property name="mollieBizumPayment" type="array"/>
+        <property name="mollieBLIKPayment" type="array"/>
+        <property name="molliePayconiqPayment" type="array"/>
 
-        <property name="mollieTrustlyPayment" type="[]"/>
-        <property name="mollieMbWayPayment" type="[]"/>
-        <property name="mollieSwishPayment" type="[]"/>
-        <property name="mollieSatispayPayment" type="[]"/>
-        <property name="mollieTwintPayment" type="[]"/>
-        <property name="mollieVippsPayment" type="[]"/>
+        <property name="mollieTrustlyPayment" type="array"/>
+        <property name="mollieMbWayPayment" type="array"/>
+        <property name="mollieSwishPayment" type="array"/>
+        <property name="mollieSatispayPayment" type="array"/>
+        <property name="mollieTwintPayment" type="array"/>
+        <property name="mollieVippsPayment" type="array"/>
         <property name="mollieBilliePayment" type="MollieBilliePayment"/>
-        <property name="mollieRivertyPayment" type="[]"/>
+        <property name="mollieRivertyPayment" type="array"/>
         <property name="mollieIdealIn3Payment" type="MollieIdealIn3Payment"/>
-        <property name="mollieAlmaPayment" type="[]"/>
+        <property name="mollieAlmaPayment" type="array"/>
     </transfer>
 
     <transfer name="MolliePaymentMethod">
@@ -168,7 +168,7 @@
     </transfer>
 
     <transfer name="MollieRefundCollection">
-        <property name="refunds" type="[]"/>
+        <property name="refunds" type="MollieRefund[]" singular="refund"/>
     </transfer>
 
     <transfer name="MollieRefundSave">
@@ -412,7 +412,7 @@
     <transfer name="MollieLines">
         <property name="type" type="string"/>
         <property name="description" type="string"/>
-        <property name="quantity" type="integer"/>
+        <property name="quantity" type="int"/>
         <property name="quantityUnit" type="string"/>
         <property name="unitPrice" type="MollieAmount"/>
         <property name="discountAmount" type="MollieAmount"/>
