@@ -251,4 +251,21 @@ class MollieEntityManager extends AbstractEntityManager implements MollieEntityM
 
         return $paymentMethodConfigTransfer;
     }
+
+    /**
+     * @param string $expressMethod
+     * @param bool $isActive
+     *
+     * @return void
+     */
+    public function saveExpressCheckoutConfig(string $expressMethod, bool $isActive): void
+    {
+        $spyMollieExpressCheckoutConfigEntity = $this->getFactory()
+            ->createSpyMollieExpressCheckoutConfigQuery()
+            ->filterByExpressMethod($expressMethod)
+            ->findOneOrCreate();
+
+        $spyMollieExpressCheckoutConfigEntity->setIsActive($isActive);
+        $spyMollieExpressCheckoutConfigEntity->save();
+    }
 }

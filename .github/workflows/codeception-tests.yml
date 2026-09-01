@@ -258,6 +258,11 @@ jobs:
                   'creditcard',
               ],
               MollieConstants::MOLLIE_BNPL_PAYMENT_METHODS => ['billie', 'in3', 'klarna', 'riverty', 'voucher', 'alma'],
+              MollieConstants::MOLLIE_EXPRESS_CHECKOUT_METHODS_ENABLED => [
+                  MollieConfig::EXPRESS_METHOD_APPLE_PAY => false,
+                  MollieConfig::EXPRESS_METHOD_GOOGLE_PAY => false,
+                  MollieConfig::EXPRESS_METHOD_PAYPAL => false,
+              ],
           ];
           
           EOF

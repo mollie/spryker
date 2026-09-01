@@ -123,4 +123,16 @@
         </unique>
     </table>
 
+    <table name="spy_mollie_express_checkout_config">
+        <column name="id_mollie_express_checkout_config" type="INTEGER" primaryKey="true" autoIncrement="true"/>
+        <column name="express_method" type="VARCHAR" size="64" required="true"/>
+        <column name="is_active" type="BOOLEAN" required="true" default="false"/>
+
+        <unique name="spy_mollie_express_checkout_config-unique-express_method">
+            <unique-column name="express_method"/>
+        </unique>
+
+        <behavior name="timestampable"/>
+    </table>
+
 </database>

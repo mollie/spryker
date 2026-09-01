@@ -141,4 +141,18 @@ class MollieRepository extends AbstractRepository implements MollieRepositoryInt
             ->createMolliePaymentMethodConfigMapper()
             ->mapMolliePaymentMethodConfigEntityToTransfer($spyMolliePaymentMethodConfigEntity);
     }
+
+    /**
+     * @return array<string, bool>
+     */
+    public function getPersistentExpressCheckoutMethodConfig(): array
+    {
+        $entities = $this->getFactory()
+            ->createSpyMollieExpressCheckoutConfigQuery()
+            ->find();
+
+        return $this->getFactory()
+            ->createMollieExpressCheckoutConfigMapper()
+            ->mapEntitiesToMethodConfig($entities);
+    }
 }

@@ -61,6 +61,9 @@ export default class MollieCreditCardComponent extends Component {
     protected initMollieInstance(): void
     {
         this.mollie = window.Mollie(this.profileId,  { locale: this.locale, testmode: this.testMode });
+        const checkout = Mollie.Checkout('clientAccessToken', { locale: 'en-US' });
+        const express = checkout.create('express-component');
+        express.mount('#express-component');
     }
 
     protected initComponents(): void

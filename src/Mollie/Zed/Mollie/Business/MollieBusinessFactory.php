@@ -8,6 +8,10 @@ use Mollie\Client\Mollie\MollieClientInterface;
 use Mollie\Service\Mollie\MollieServiceInterface;
 use Mollie\Zed\Mollie\Business\Calculator\OrderItem\OrderItemGrossAmountCalculator;
 use Mollie\Zed\Mollie\Business\Calculator\OrderItem\OrderItemGrossAmountCalculatorInterface;
+use Mollie\Zed\Mollie\Business\ExpressCheckout\ExpressCheckoutConfigReader;
+use Mollie\Zed\Mollie\Business\ExpressCheckout\ExpressCheckoutConfigReaderInterface;
+use Mollie\Zed\Mollie\Business\ExpressCheckout\ExpressCheckoutConfigWriter;
+use Mollie\Zed\Mollie\Business\ExpressCheckout\ExpressCheckoutConfigWriterInterface;
 use Mollie\Zed\Mollie\Business\Filter\MolliePaymentMethodsFilter;
 use Mollie\Zed\Mollie\Business\Filter\MolliePaymentMethodsFilterInterface;
 use Mollie\Zed\Mollie\Business\Filter\MollieRefundFilter;
@@ -314,6 +318,28 @@ class MollieBusinessFactory extends AbstractBusinessFactory
     {
         return new PaymentLinkProcessor(
             $this->getMollieService(),
+            $this->getConfig(),
+        );
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Business\ExpressCheckout\ExpressCheckoutConfigReaderInterface
+     */
+    public function createExpressCheckoutConfigReader(): ExpressCheckoutConfigReaderInterface
+    {
+        return new ExpressCheckoutConfigReader(
+            $this->getConfig(),
+            $this->getRepository(),
+        );
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Business\ExpressCheckout\ExpressCheckoutConfigWriterInterface
+     */
+    public function createExpressCheckoutConfigWriter(): ExpressCheckoutConfigWriterInterface
+    {
+        return new ExpressCheckoutConfigWriter(
+            $this->getEntityManager(),
             $this->getConfig(),
         );
     }

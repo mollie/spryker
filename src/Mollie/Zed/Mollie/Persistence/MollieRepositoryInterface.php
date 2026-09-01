@@ -57,4 +57,9 @@ interface MollieRepositoryInterface
     public function getPaymentMethodConfigByCriteria(
         MolliePaymentMethodConfigCriteriaTransfer $criteriaTransfer,
     ): ?MolliePaymentMethodConfigTransfer;
+
+    /**
+     * @return array<string, bool>
+     */
+    public function getPersistentExpressCheckoutMethodConfig(): array;
 }

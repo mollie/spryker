@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace Mollie\Client\Mollie\Zed;
 
+use Generated\Shared\Transfer\MollieExpressCheckoutConfigCollectionTransfer;
 use Generated\Shared\Transfer\MolliePaymentCaptureResponseTransfer;
 use Generated\Shared\Transfer\MolliePaymentLinkTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodConfigCollectionTransfer;
@@ -88,5 +89,20 @@ class MollieStub implements MollieStubInterface
             ->call('/mollie/gateway/get-payment-method-config-collection', $molliePaymentMethodConfigCriteriaTransfer);
 
         return $molliePaymentMethodConfigCollectionTransfer;
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MollieExpressCheckoutConfigCollectionTransfer $mollieExpressCheckoutConfigCollectionTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieExpressCheckoutConfigCollectionTransfer
+     */
+    public function getExpressCheckoutConfigCollection(
+        MollieExpressCheckoutConfigCollectionTransfer $mollieExpressCheckoutConfigCollectionTransfer,
+    ): MollieExpressCheckoutConfigCollectionTransfer {
+        /** @var \Generated\Shared\Transfer\MollieExpressCheckoutConfigCollectionTransfer $mollieExpressCheckoutConfigCollectionTransfer */
+        $mollieExpressCheckoutConfigCollectionTransfer = $this->zedStub
+            ->call('/mollie/gateway/get-express-checkout-config-collection', $mollieExpressCheckoutConfigCollectionTransfer);
+
+        return $mollieExpressCheckoutConfigCollectionTransfer;
     }
 }
