@@ -119,6 +119,7 @@ class PaymentApiHandler implements PaymentApiHandlerInterface
         $currencyCode = $quoteTransfer->getCurrency()->getCode();
 
         $lines = [];
+        $linesTotalCents = 0;
         foreach ($items as $item) {
             $linesTransfer = new MollieLinesTransfer();
 
@@ -140,16 +141,21 @@ class PaymentApiHandler implements PaymentApiHandlerInterface
                 ->setSku($item->getSku());
 
             $lines[] = $linesTransfer->toArray(true, true);
+            $linesTotalCents += $item->getSumPriceToPayAggregation();
         }
 
         $shippingFee = $this->getShippingFee($quoteTransfer);
-        if ($shippingFee) {
+        if ($shippingFee !== null) {
             $lines[] = $shippingFee;
+            $linesTotalCents += $this->getShippingExpense($quoteTransfer)?->getSumPriceToPayAggregation() ?? 0;
         }
 
-        $linesCollection = new DataCollection($lines);
+        $discountLine = $this->createDiscountLine($quoteTransfer, $linesTotalCents, $currencyCode);
+        if ($discountLine !== null) {
+            $lines[] = $discountLine;
+        }
 
-        return $linesCollection;
+        return new DataCollection($lines);
     }
 
     /**
@@ -176,6 +182,38 @@ class PaymentApiHandler implements PaymentApiHandlerInterface
             ->setQuantity(1)
             ->setUnitPrice($shippingFee)
             ->setTotalAmount($shippingFee);
+
+        return $linesTransfer->toArray(true, true);
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
+     * @param int $linesTotalCents
+     * @param string $currencyCode
+     *
+     * @return array<string, mixed>|null
+     */
+    protected function createDiscountLine(QuoteTransfer $quoteTransfer, int $linesTotalCents, string $currencyCode): ?array
+    {
+        $paymentTransfer = $quoteTransfer->getPayment();
+        if ($paymentTransfer === null) {
+            return null;
+        }
+
+        $discountCents = $linesTotalCents - $paymentTransfer->getAmount();
+        if ($discountCents <= 0) {
+            return null;
+        }
+
+        $discountAmount = $this->mollieService->convertIntegerToMollieAmount(-$discountCents, $currencyCode);
+
+        $linesTransfer = new MollieLinesTransfer();
+        $linesTransfer
+            ->setType(MollieConstants::PRODUCT_TYPE_DISCOUNT)
+            ->setDescription('Discount')
+            ->setQuantity(1)
+            ->setUnitPrice($discountAmount)
+            ->setTotalAmount($discountAmount);
 
         return $linesTransfer->toArray(true, true);
     }
