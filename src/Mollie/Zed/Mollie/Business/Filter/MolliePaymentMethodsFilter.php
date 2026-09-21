@@ -73,7 +73,7 @@ class MolliePaymentMethodsFilter implements MolliePaymentMethodsFilterInterface
             ->setMolliePaymentMethodQueryParameters(
                 (new MolliePaymentMethodQueryParametersTransfer())
                     ->setLocale($this->localeFacade->getCurrentLocale()->getLocaleName())
-                    ->setBillingCountry($quoteTransfer->getBillingAddress()->getIso2Code())
+                    ->setBillingCountry($quoteTransfer->getBillingAddress()?->getIso2Code())
                     ->setIncludeIssuers(true)
                     ->setIncludeWallets($this->mollieConfig->getMollieIncludeWallets())
                     ->setSequenceType(MollieConstants::MOLLIE_SEQUENCE_TYPE_ONE_OFF)
