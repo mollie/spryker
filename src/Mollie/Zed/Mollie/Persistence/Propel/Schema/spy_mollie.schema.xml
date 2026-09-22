@@ -132,6 +132,8 @@
             <unique-column name="express_method"/>
         </unique>
 
+        <id-method-parameter value="spy_mollie_express_checkout_config_pk_seq"/>
+
         <behavior name="timestampable"/>
     </table>
 
