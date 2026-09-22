@@ -24,7 +24,6 @@ use Orm\Zed\Mollie\Persistence\SpyMollieExpressCheckoutConfigQuery;
 use Orm\Zed\Mollie\Persistence\SpyMollieOrderItemPaymentCaptureQuery;
 use Orm\Zed\Mollie\Persistence\SpyMolliePaymentLinkQuery;
 use Orm\Zed\Mollie\Persistence\SpyMolliePaymentMethodConfigQuery;
-use Orm\Zed\Mollie\Persistence\SpyMolliePaymentMethodConfigTranslationQuery;
 use Orm\Zed\Mollie\Persistence\SpyPaymentMollieQuery;
 use Orm\Zed\Mollie\Persistence\SpyRefundMollieQuery;
 use Spryker\Zed\Kernel\Persistence\AbstractPersistenceFactory;
