@@ -44,7 +44,7 @@
     "spryker/kernel": "^3.79.0",
     "spryker-shop/shop-application": "^1.15.1",
     "spryker-shop/shop-application-extension": "^1.2.0",
-    "mollie/mollie-api-php": "^3.7.0",
+    "mollie/mollie-api-php": "^3.14.0",
     "spryker/step-engine": "^3.7",
     "psr/log": "3.0.2",
     "spryker-shop/checkout-page": "^3.39",
@@ -90,5 +90,6 @@
       "COMPOSER_MEMORY_LIMIT=-1 composer require twig/twig:\"^2.9.0\""
     ]
   },
-  "minimum-stability": "dev"
+  "minimum-stability": "dev",
+  "prefer-stable": true
 }
