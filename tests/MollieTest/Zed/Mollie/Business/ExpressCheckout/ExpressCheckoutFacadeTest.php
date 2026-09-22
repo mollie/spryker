@@ -66,14 +66,22 @@ class ExpressCheckoutFacadeTest extends AbstractBusinessTest
 
         $this->mollieFacade->saveExpressCheckoutConfigCollection($collectionTransfer);
 
-        $googlePayConfigTransfer = null;
+        $googlePayConfigTransfer = $this->getGooglePayConfigTransfer();
+        $this->assertNotNull($googlePayConfigTransfer);
+        $this->assertTrue($googlePayConfigTransfer->getIsEnabled());
+    }
+
+    /**
+     * @return MollieExpressCheckoutConfigTransfer|null
+     */
+    protected function getGooglePayConfigTransfer(): ?MollieExpressCheckoutConfigTransfer
+    {
         foreach ($this->mollieFacade->getExpressCheckoutConfigCollection()->getConfigs() as $configTransfer) {
             if ($configTransfer->getMethod() === static::METHOD_GOOGLE_PAY) {
-                $googlePayConfigTransfer = $configTransfer;
+                return $configTransfer;
             }
         }
 
-        $this->assertNotNull($googlePayConfigTransfer);
-        $this->assertTrue($googlePayConfigTransfer->getIsEnabled());
+        return null;
     }
 }

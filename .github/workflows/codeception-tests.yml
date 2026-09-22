@@ -178,6 +178,7 @@ jobs:
           <?php
           
           use Spryker\Shared\Propel\PropelConstants;
+          use Spryker\Shared\PropelOrm\PropelOrmConstants;
           use Spryker\Shared\Search\SearchConstants;
           use Spryker\Shared\Storage\StorageConstants;
           use Spryker\Shared\Application\ApplicationConstants;
@@ -193,7 +194,8 @@ jobs:
           $config[PropelConstants::ZED_DB_PORT] = 5432;
           $config[PropelConstants::ZED_DB_ENGINE] = $config[PropelConstants::ZED_DB_ENGINE_PGSQL] = 'pgsql';
           $config[PropelConstants::USE_SUDO_TO_MANAGE_DATABASE] = false;
-          
+          $config[PropelOrmConstants::PROPEL_SHOW_EXTENDED_EXCEPTION] = true;
+
           // Force TCP connection instead of Unix socket
           $config[PropelConstants::ZED_DB_ENGINE_PGSQL] = 'pgsql';
           
