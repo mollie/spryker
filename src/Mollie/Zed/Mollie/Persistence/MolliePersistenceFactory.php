@@ -132,14 +132,6 @@ class MolliePersistenceFactory extends AbstractPersistenceFactory
     }
 
     /**
-     * @return \Orm\Zed\Mollie\Persistence\SpyMolliePaymentMethodConfigTranslationQuery
-     */
-    public function createSpyMolliePaymentMethodConfiTranslationgQuery(): SpyMolliePaymentMethodConfigTranslationQuery
-    {
-        return SpyMolliePaymentMethodConfigTranslationQuery::create();
-    }
-
-    /**
      * @return \Orm\Zed\Mollie\Persistence\SpyMollieExpressCheckoutConfigQuery
      */
     public function createSpyMollieExpressCheckoutConfigQuery(): SpyMollieExpressCheckoutConfigQuery
