@@ -314,6 +314,21 @@ class MollieConfig extends AbstractSharedConfig
      */
     public const MOLLIE_PAYMENT_STATUS_FAILED = ['failed', 'expired', 'canceled'];
 
+    /**
+     * @var string
+     */
+    public const EXPRESS_METHOD_APPLE_PAY = 'applepay';
+
+    /**
+     * @var string
+     */
+    public const EXPRESS_METHOD_GOOGLE_PAY = 'googlepay';
+
+    /**
+     * @var string
+     */
+    public const EXPRESS_METHOD_PAYPAL = 'paypal';
+
      /**
       * @var string
       */
@@ -335,6 +350,14 @@ class MollieConfig extends AbstractSharedConfig
     public function getMollieApiKey(): string|null
     {
         return $this->get(MollieConstants::MOLLIE)[MollieConstants::MOLLIE_API_KEY];
+    }
+
+    /**
+     * @return array<string, bool>
+     */
+    public function getDefaultExpressCheckoutMethodConfig(): array
+    {
+        return $this->get(MollieConstants::MOLLIE)[MollieConstants::MOLLIE_EXPRESS_CHECKOUT_METHODS_ENABLED] ?? [];
     }
 
     /**

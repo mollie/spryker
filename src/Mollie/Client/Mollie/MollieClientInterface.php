@@ -7,6 +7,7 @@ namespace Mollie\Client\Mollie;
 use Generated\Shared\Transfer\MollieApiRequestTransfer;
 use Generated\Shared\Transfer\MollieApiResponseTransfer;
 use Generated\Shared\Transfer\MollieCreateCaptureApiResponseTransfer;
+use Generated\Shared\Transfer\MollieExpressCheckoutConfigCollectionTransfer;
 use Generated\Shared\Transfer\MollieGetCaptureApiResponseTransfer;
 use Generated\Shared\Transfer\MollieGetProfileApiResponseTransfer;
 use Generated\Shared\Transfer\MollieLogApiTransfer;
@@ -266,4 +267,19 @@ interface MollieClientInterface
     public function getPaymentMethodConfigCollection(
         MolliePaymentMethodConfigCriteriaTransfer $molliePaymentMethodConfigCriteriaTransfer,
     ): MolliePaymentMethodConfigCollectionTransfer;
+
+    /**
+     *  Specification:
+     *
+     *  - Gets the resolved express checkout toggle state for every supported express method from Zed
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\MollieExpressCheckoutConfigCollectionTransfer $mollieExpressCheckoutConfigCollectionTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieExpressCheckoutConfigCollectionTransfer
+     */
+    public function getExpressCheckoutConfigCollection(
+        MollieExpressCheckoutConfigCollectionTransfer $mollieExpressCheckoutConfigCollectionTransfer,
+    ): MollieExpressCheckoutConfigCollectionTransfer;
 }

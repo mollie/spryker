@@ -12,8 +12,10 @@ use Mollie\Zed\Mollie\Communication\Cache\MollieCacheInvalidator;
 use Mollie\Zed\Mollie\Communication\Cache\MollieCacheInvalidatorInterface;
 use Mollie\Zed\Mollie\Communication\DataProvider\MolliePaymentMethodsDataProvider;
 use Mollie\Zed\Mollie\Communication\Form\CreatePaymentLinkForm;
+use Mollie\Zed\Mollie\Communication\Form\DataProvider\ExpressCheckoutConfigFormDataProvider;
 use Mollie\Zed\Mollie\Communication\Form\DataProvider\PaymentLinkFormDataProvider;
 use Mollie\Zed\Mollie\Communication\Form\DataProvider\PaymentMethodsFilterFormDataProvider;
+use Mollie\Zed\Mollie\Communication\Form\ExpressCheckoutConfigForm;
 use Mollie\Zed\Mollie\Communication\Form\PaymentMethodConfigForm;
 use Mollie\Zed\Mollie\Communication\Form\PaymentMethodsFilterForm;
 use Mollie\Zed\Mollie\Communication\Mapper\MollieCommunicationMapper;
@@ -184,6 +186,27 @@ class MollieCommunicationFactory extends AbstractCommunicationFactory
     {
         return new PaymentMethodsFilterFormDataProvider(
             $this->getStoreFacade(),
+        );
+    }
+
+    /**
+     * @param array<string, bool> $data
+     * @param array<string, mixed> $options
+     *
+     * @return \Symfony\Component\Form\FormInterface
+     */
+    public function createExpressCheckoutConfigForm(array $data = [], array $options = []): FormInterface
+    {
+        return $this->getFormFactory()->create(ExpressCheckoutConfigForm::class, $data, $options);
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Communication\Form\DataProvider\ExpressCheckoutConfigFormDataProvider
+     */
+    public function createExpressCheckoutConfigFormDataProvider(): ExpressCheckoutConfigFormDataProvider
+    {
+        return new ExpressCheckoutConfigFormDataProvider(
+            $this->getFacade(),
         );
     }
 

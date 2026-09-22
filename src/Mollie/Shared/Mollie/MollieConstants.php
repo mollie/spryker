@@ -82,6 +82,11 @@ interface MollieConstants
     /**
      * @var string
      */
+    public const MOLLIE_EXPRESS_CHECKOUT_METHODS_ENABLED = 'MOLLIE:EXPRESS_CHECKOUT_METHODS_ENABLED';
+
+    /**
+     * @var string
+     */
     public const MOLLIE_GET_METHODS_API_DEFAULT_AMOUNT_VALUE = 'MOLLIE_GET_METHODS_API_DEFAULT_AMOUNT_VALUE';
 
     // Payment statuses from Mollie

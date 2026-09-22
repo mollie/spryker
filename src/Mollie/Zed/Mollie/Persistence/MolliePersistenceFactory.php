@@ -8,6 +8,8 @@ use Mollie\Service\Mollie\MollieServiceInterface;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToMoneyFacadeInterface;
 use Mollie\Zed\Mollie\Dependency\Service\MollieToUtilEncodingServiceInterface;
 use Mollie\Zed\Mollie\MollieDependencyProvider;
+use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MollieExpressCheckoutConfigMapper;
+use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MollieExpressCheckoutConfigMapperInterface;
 use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MollieOrderMapper;
 use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MollieOrderMapperInterface;
 use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MolliePaymentCaptureMapper;
@@ -18,10 +20,10 @@ use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MolliePaymentMethodConfigMapper;
 use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MolliePaymentMethodConfigMapperInterface;
 use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MollieRefundMapper;
 use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MollieRefundMapperInterface;
+use Orm\Zed\Mollie\Persistence\SpyMollieExpressCheckoutConfigQuery;
 use Orm\Zed\Mollie\Persistence\SpyMollieOrderItemPaymentCaptureQuery;
 use Orm\Zed\Mollie\Persistence\SpyMolliePaymentLinkQuery;
 use Orm\Zed\Mollie\Persistence\SpyMolliePaymentMethodConfigQuery;
-use Orm\Zed\Mollie\Persistence\SpyMolliePaymentMethodConfigTranslationQuery;
 use Orm\Zed\Mollie\Persistence\SpyPaymentMollieQuery;
 use Orm\Zed\Mollie\Persistence\SpyRefundMollieQuery;
 use Spryker\Zed\Kernel\Persistence\AbstractPersistenceFactory;
@@ -81,6 +83,14 @@ class MolliePersistenceFactory extends AbstractPersistenceFactory
     }
 
     /**
+     * @return \Mollie\Zed\Mollie\Persistence\Propel\Mapper\MollieExpressCheckoutConfigMapperInterface
+     */
+    public function createMollieExpressCheckoutConfigMapper(): MollieExpressCheckoutConfigMapperInterface
+    {
+        return new MollieExpressCheckoutConfigMapper();
+    }
+
+    /**
      * @return \Orm\Zed\Mollie\Persistence\SpyPaymentMollieQuery
      */
     public function createSpyPaymentMollieQuery(): SpyPaymentMollieQuery
@@ -121,11 +131,11 @@ class MolliePersistenceFactory extends AbstractPersistenceFactory
     }
 
     /**
-     * @return \Orm\Zed\Mollie\Persistence\SpyMolliePaymentMethodConfigTranslationQuery
+     * @return \Orm\Zed\Mollie\Persistence\SpyMollieExpressCheckoutConfigQuery
      */
-    public function createSpyMolliePaymentMethodConfiTranslationgQuery(): SpyMolliePaymentMethodConfigTranslationQuery
+    public function createSpyMollieExpressCheckoutConfigQuery(): SpyMollieExpressCheckoutConfigQuery
     {
-        return SpyMolliePaymentMethodConfigTranslationQuery::create();
+        return SpyMollieExpressCheckoutConfigQuery::create();
     }
 
     /**

@@ -380,6 +380,15 @@
         <property name="configs" type="MolliePaymentMethodConfig[]" singular="molliePaymentMethodConfig"/>
     </transfer>
 
+    <transfer name="MollieExpressCheckoutConfig">
+        <property name="method" type="string"/>
+        <property name="isEnabled" type="bool"/>
+    </transfer>
+
+    <transfer name="MollieExpressCheckoutConfigCollection">
+        <property name="configs" type="MollieExpressCheckoutConfig[]" singular="config"/>
+    </transfer>
+
     <transfer name="MollieWebhookEvent">
         <property name="resource" type="string"/>
         <property name="id" type="string"/>

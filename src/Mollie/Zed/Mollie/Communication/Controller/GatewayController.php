@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace Mollie\Zed\Mollie\Communication\Controller;
 
+use Generated\Shared\Transfer\MollieExpressCheckoutConfigCollectionTransfer;
 use Generated\Shared\Transfer\MolliePaymentCaptureResponseTransfer;
 use Generated\Shared\Transfer\MolliePaymentLinkTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodConfigCollectionTransfer;
@@ -69,5 +70,16 @@ class GatewayController extends AbstractGatewayController
         MolliePaymentMethodConfigCriteriaTransfer $molliePaymentMethodConfigCriteriaTransfer,
     ): MolliePaymentMethodConfigCollectionTransfer {
         return $this->getFacade()->getPaymentMethodConfigCollection($molliePaymentMethodConfigCriteriaTransfer);
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MollieExpressCheckoutConfigCollectionTransfer $mollieExpressCheckoutConfigCollectionTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieExpressCheckoutConfigCollectionTransfer
+     */
+    public function getExpressCheckoutConfigCollectionAction(
+        MollieExpressCheckoutConfigCollectionTransfer $mollieExpressCheckoutConfigCollectionTransfer,
+    ): MollieExpressCheckoutConfigCollectionTransfer {
+        return $this->getFacade()->getExpressCheckoutConfigCollection();
     }
 }

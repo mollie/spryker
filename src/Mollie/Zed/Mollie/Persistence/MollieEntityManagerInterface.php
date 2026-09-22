@@ -92,4 +92,12 @@ interface MollieEntityManagerInterface
      * @return \Generated\Shared\Transfer\MolliePaymentMethodConfigTransfer
      */
     public function writeMolliePaymentMethodConfig(MolliePaymentMethodConfigTransfer $paymentMethodConfigTransfer): MolliePaymentMethodConfigTransfer;
+
+    /**
+     * @param string $expressMethod
+     * @param bool $isActive
+     *
+     * @return void
+     */
+    public function saveExpressCheckoutConfig(string $expressMethod, bool $isActive): void;
 }
