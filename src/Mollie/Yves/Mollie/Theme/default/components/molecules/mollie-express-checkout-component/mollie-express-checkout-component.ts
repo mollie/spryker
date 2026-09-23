@@ -3,7 +3,7 @@ import ScriptLoader from 'ShopUi/components/molecules/script-loader/script-loade
 
 declare global {
   interface Window {
-    Mollie: {
+    Mollie2: {
       Checkout(clientAccessToken: string, options?: MollieCheckoutOptions): MollieCheckoutInstance;
     };
   }
@@ -24,18 +24,34 @@ interface MollieComponentInstance {
 }
 
 interface MollieCheckoutInstance {
-  create(type: string, options?: object): MollieComponentInstance;
+  create(type: string, options?: MollieExpressComponentOptions): MollieComponentInstance;
   on(eventName: string, handler: (event: MollieSubmitEvent) => void): void;
 }
 
-interface MollieExpressCheckoutInitResponse {
-  enabledMethods: string[];
-  clientAccessToken?: string;
+interface MollieExpressComponentButtonOptions {
+  visibility: 'hidden';
 }
+
+interface MollieExpressComponentOptions {
+  buttons: {
+    [expressMethod: string]: MollieExpressComponentButtonOptions;
+  };
+}
+
+interface MollieResolveEnabledMethodsResponse {
+  enabledMethods: string[];
+}
+
+interface MollieCreateSessionResponse {
+  clientAccessToken: string;
+}
+
+const EXPRESS_METHODS = ['applepay', 'googlepay', 'paypal'];
 
 export default class MollieExpressCheckoutComponent extends Component {
     protected scriptLoader: ScriptLoader;
     protected checkout: MollieCheckoutInstance;
+    protected enabledMethods: string[];
 
     protected readyCallback(): void {}
 
@@ -49,22 +65,38 @@ export default class MollieExpressCheckoutComponent extends Component {
     }
 
     protected onScriptLoad(): void {
-        this.initExpressCheckout();
+        this.resolveEnabledMethods();
     }
 
-    protected initExpressCheckout(): void {
-        fetch(this.expressCheckoutInitEndpoint, { method: 'POST', credentials: 'same-origin' })
+    protected resolveEnabledMethods(): void {
+        fetch(this.expressCheckoutResolveEnabledMethodsEndpoint, { method: 'POST', credentials: 'same-origin' })
             .then((response) => response.json())
-            .then((initResponse: MollieExpressCheckoutInitResponse) => this.onInitResponse(initResponse))
+            .then((resolveEnabledMethodsResponse: MollieResolveEnabledMethodsResponse) => this.onEnabledMethodsResolved(resolveEnabledMethodsResponse))
             .catch(() => {});
     }
 
-    protected onInitResponse(initResponse: MollieExpressCheckoutInitResponse): void {
-        if (!initResponse.enabledMethods.length || !initResponse.clientAccessToken) {
+    protected onEnabledMethodsResolved(resolveEnabledMethodsResponse: MollieResolveEnabledMethodsResponse): void {
+        if (!resolveEnabledMethodsResponse.enabledMethods.length) {
             return;
         }
 
-        this.checkout = window.Mollie.Checkout(initResponse.clientAccessToken, { locale: this.locale });
+        this.enabledMethods = resolveEnabledMethodsResponse.enabledMethods;
+        this.createSession();
+    }
+
+    protected createSession(): void {
+        fetch(this.expressCheckoutCreateSessionEndpoint, { method: 'POST', credentials: 'same-origin' })
+            .then((response) => response.json())
+            .then((createSessionResponse: MollieCreateSessionResponse) => this.onSessionCreated(createSessionResponse))
+            .catch(() => {});
+    }
+
+    protected onSessionCreated(createSessionResponse: MollieCreateSessionResponse): void {
+        if (!createSessionResponse.clientAccessToken) {
+            return;
+        }
+
+        this.checkout = window.Mollie2.Checkout(createSessionResponse.clientAccessToken, { locale: this.locale });
         this.mapSubmitEvent();
         this.mountExpressComponent();
     }
@@ -74,8 +106,20 @@ export default class MollieExpressCheckoutComponent extends Component {
     }
 
     protected mountExpressComponent(): void {
-        const expressComponent = this.checkout.create('express-component');
+        const expressComponent = this.checkout.create('express-component', this.buildExpressComponentOptions());
         expressComponent.mount(this.mountSelector);
+    }
+
+    protected buildExpressComponentOptions(): MollieExpressComponentOptions {
+        const buttons: { [expressMethod: string]: MollieExpressComponentButtonOptions } = {};
+
+        EXPRESS_METHODS.forEach((expressMethod) => {
+            if (!this.enabledMethods.includes(expressMethod)) {
+                buttons[expressMethod] = { visibility: 'hidden' };
+            }
+        });
+
+        return { buttons };
     }
 
     protected onSubmit(event: MollieSubmitEvent): void {
@@ -95,7 +139,11 @@ export default class MollieExpressCheckoutComponent extends Component {
         return this.getAttribute('locale');
     }
 
-    protected get expressCheckoutInitEndpoint(): string {
-        return this.getAttribute('express-checkout-init-endpoint');
+    protected get expressCheckoutResolveEnabledMethodsEndpoint(): string {
+        return this.getAttribute('express-checkout-resolve-enabled-methods-endpoint');
+    }
+
+    protected get expressCheckoutCreateSessionEndpoint(): string {
+        return this.getAttribute('express-checkout-create-session-endpoint');
     }
 }

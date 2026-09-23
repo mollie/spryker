@@ -6,14 +6,16 @@
 } %}
 
 {% define data = {
-    expressCheckoutInitEndpoint: required,
+    expressCheckoutResolveEnabledMethodsEndpoint: required,
+    expressCheckoutCreateSessionEndpoint: required,
     jsSrc: required,
     locale: required,
 } %}
 
 {% define attributes = {
     'locale': data.locale,
-    'express-checkout-init-endpoint': data.expressCheckoutInitEndpoint,
+    'express-checkout-resolve-enabled-methods-endpoint': data.expressCheckoutResolveEnabledMethodsEndpoint,
+    'express-checkout-create-session-endpoint': data.expressCheckoutCreateSessionEndpoint,
     'mount-id': 'mollie-express-checkout',
 } %}
 

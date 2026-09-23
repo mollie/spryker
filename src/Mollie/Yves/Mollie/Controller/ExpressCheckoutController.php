@@ -25,9 +25,6 @@ class ExpressCheckoutController extends AbstractController
     protected const EXPRESS_CHECKOUT_SESSION_DESCRIPTION = 'Express Checkout Session';
 
     /**
-     * Placeholder until the dedicated Express Checkout redirect/reconciliation controller exists (see
-     * MOLLIE_EXPRESS_CHECKOUT_CONTEXT.md §8 step 7) — not decided/built yet.
-     *
      * @var string
      */
     protected const EXPRESS_CHECKOUT_REDIRECT_URL_PLACEHOLDER = 'https://example.org/checkout/express-redirect';
@@ -37,7 +34,7 @@ class ExpressCheckoutController extends AbstractController
      *
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      */
-    public function initAction(Request $request): JsonResponse
+    public function resolveEnabledMethodsAction(Request $request): JsonResponse
     {
         $mollieExpressCheckoutConfigCollectionTransfer = $this->getClient()->getExpressCheckoutConfigCollection(
             new MollieExpressCheckoutConfigCriteriaTransfer(),
@@ -45,10 +42,16 @@ class ExpressCheckoutController extends AbstractController
 
         $enabledMethods = $this->extractEnabledMethods($mollieExpressCheckoutConfigCollectionTransfer);
 
-        if (!$enabledMethods) {
-            return new JsonResponse(['enabledMethods' => []]);
-        }
+        return new JsonResponse(['enabledMethods' => $enabledMethods]);
+    }
 
+    /**
+     * @param \Symfony\Component\HttpFoundation\Request $request
+     *
+     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     */
+    public function createSessionAction(Request $request): JsonResponse
+    {
         $mollieExpressCheckoutSessionApiResponseTransfer = $this->createExpressCheckoutSession();
 
         if (!$mollieExpressCheckoutSessionApiResponseTransfer->getIsSuccessful()) {
@@ -59,7 +62,6 @@ class ExpressCheckoutController extends AbstractController
         }
 
         return new JsonResponse([
-            'enabledMethods' => $enabledMethods,
             'clientAccessToken' => $mollieExpressCheckoutSessionApiResponseTransfer->getExpressCheckoutSession()->getClientAccessToken(),
         ]);
     }
