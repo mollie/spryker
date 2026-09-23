@@ -68,16 +68,6 @@ class PaymentApiHandlerCreateLinesTest extends Unit
     }
 
     /**
-     * A line with quantity > 1 was sent to Mollie with its totalAmount aggregated over all
-     * units (sumPriceToPayAggregation) but its discountAmount taken from a single unit
-     * (unitDiscountAmountAggregation), so Mollie rejected the session with HTTP 422:
-     *
-     *   "Line item 1 is invalid. The 'totalAmount' field is off.
-     *    Expected to be 1,372.27 (198.88 x 7 - 19.89), got 1,252.94"
-     *
-     * The line's discountAmount must be the full aggregated discount (sumDiscountAmountAggregation)
-     * so it matches the aggregated totalAmount, the same fix already applied to vatAmount above.
-     *
      * @return void
      */
     public function testMultiQuantityLineUsesAggregatedDiscountAmount(): void
