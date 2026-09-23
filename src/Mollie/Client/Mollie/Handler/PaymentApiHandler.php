@@ -1,5 +1,6 @@
 <?php
 
+
 declare(strict_types=1);
 
 namespace Mollie\Client\Mollie\Handler;
@@ -124,7 +125,7 @@ class PaymentApiHandler implements PaymentApiHandlerInterface
 
             $unitPrice = $this->mollieService->convertIntegerToMollieAmount($item->getUnitPrice(), $currencyCode);
             $totalAmount = $this->mollieService->convertIntegerToMollieAmount($item->getSumPriceToPayAggregation(), $currencyCode);
-            $discountAmount = $this->mollieService->convertIntegerToMollieAmount($item->getUnitDiscountAmountAggregation(), $currencyCode);
+            $discountAmount = $this->mollieService->convertIntegerToMollieAmount($item->getSumDiscountAmountAggregation(), $currencyCode);
             $vatRate = number_format($item->getTaxRate(), 2);
             $vatAmount = $this->mollieService->convertIntegerToMollieAmount($item->getSumTaxAmountFullAggregation(), $currencyCode);
 

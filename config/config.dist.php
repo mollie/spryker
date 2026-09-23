@@ -22,6 +22,7 @@ $config[MollieConstants::MOLLIE] = [
     MollieConstants::MOLLIE_REDIRECT_URL => '',
     MollieConstants::MOLLIE_CREDIT_CARD_COMPONENTS_ENABLED => true,
     MollieConstants::MOLLIE_CREDIT_CARD_COMPONENTS_JS_SRC => '', //Example: https://js.mollie.com/v1/mollie.js
+    MollieConstants::MOLLIE_EXPRESS_CHECKOUT_JS_SRC => '', //Example: https://js.mollie.com/v2/mollie.js
     MollieConstants::MOLLIE_WEBHOOK_URL => '',
     MollieConstants::MOLLIE_TEST_ENVIRONMENT_WEBHOOK_URL => '',
     MollieConstants::MOLLIE_NEXT_GEN_WEBHOOK_SIGNING_SECRET => '',

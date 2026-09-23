@@ -1,5 +1,6 @@
 <?php
 
+
 declare(strict_types=1);
 
 namespace MollieTest\Client\Mollie\Handler;
@@ -37,6 +38,8 @@ class PaymentApiHandlerCreateLinesTest extends Unit
      * so it matches the aggregated totalAmount. This bug affected BNPL payments since lines
      * were introduced; PR #102 broadened line-sending to all payment methods, surfacing it
      * more widely.
+     *
+     * @return void
      */
     public function testMultiQuantityLineUsesAggregatedVatAmount(): void
     {
@@ -50,6 +53,7 @@ class PaymentApiHandlerCreateLinesTest extends Unit
                     ->setUnitPrice(34995)
                     ->setSumPriceToPayAggregation(69990)
                     ->setUnitDiscountAmountAggregation(0)
+                    ->setSumDiscountAmountAggregation(0)
                     ->setUnitTaxAmount(5587)
                     ->setSumTaxAmountFullAggregation(11175)
                     ->setQuantity(2)
@@ -63,6 +67,48 @@ class PaymentApiHandlerCreateLinesTest extends Unit
         $this->assertSame('111.75', $lines[0]['vatAmount']['value']);
     }
 
+    /**
+     * A line with quantity > 1 was sent to Mollie with its totalAmount aggregated over all
+     * units (sumPriceToPayAggregation) but its discountAmount taken from a single unit
+     * (unitDiscountAmountAggregation), so Mollie rejected the session with HTTP 422:
+     *
+     *   "Line item 1 is invalid. The 'totalAmount' field is off.
+     *    Expected to be 1,372.27 (198.88 x 7 - 19.89), got 1,252.94"
+     *
+     * The line's discountAmount must be the full aggregated discount (sumDiscountAmountAggregation)
+     * so it matches the aggregated totalAmount, the same fix already applied to vatAmount above.
+     *
+     * @return void
+     */
+    public function testMultiQuantityLineUsesAggregatedDiscountAmount(): void
+    {
+        $paymentApiHandler = $this->createHandler();
+        $quoteTransfer = (new QuoteTransfer())
+            ->setCurrency((new CurrencyTransfer())->setCode(self::CURRENCY_EUR))
+            ->setItems(new ArrayObject([
+                (new ItemTransfer())
+                    ->setSku('202500000066')
+                    ->setName('Twin Stroller')
+                    ->setUnitPrice(10000)
+                    ->setSumPriceToPayAggregation(49000)
+                    ->setUnitDiscountAmountAggregation(200)
+                    ->setSumDiscountAmountAggregation(1000)
+                    ->setUnitTaxAmount(0)
+                    ->setSumTaxAmountFullAggregation(0)
+                    ->setQuantity(5)
+                    ->setTaxRate(0.0),
+            ]));
+
+        $lines = $paymentApiHandler->createLines($quoteTransfer, 'paypal')->toArray();
+
+        $this->assertCount(1, $lines);
+        $this->assertSame('490.00', $lines[0]['totalAmount']['value']);
+        $this->assertSame('10.00', $lines[0]['discountAmount']['value']);
+    }
+
+    /**
+     * @return \Mollie\Client\Mollie\Handler\PaymentApiHandler
+     */
     protected function createHandler(): PaymentApiHandler
     {
         $mollieService = $this->createMock(MollieServiceInterface::class);

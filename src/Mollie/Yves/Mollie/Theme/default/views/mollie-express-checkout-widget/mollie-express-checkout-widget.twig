@@ -1,0 +1,17 @@
+{% extends template('widget') %}
+
+{% define data = {
+    expressCheckoutInitEndpoint: _widget.expressCheckoutInitEndpoint | default,
+    jsSrc: _widget.jsSrc | default,
+    locale: _widget.locale | default,
+} %}
+
+{% block body %}
+    {% include molecule('mollie-express-checkout-component', 'Mollie') with {
+        data: {
+            expressCheckoutInitEndpoint: data.expressCheckoutInitEndpoint,
+            jsSrc: data.jsSrc,
+            locale: data.locale,
+        }
+    } only %}
+{% endblock %}

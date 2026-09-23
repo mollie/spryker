@@ -1,9 +1,11 @@
 <?php
 
+
 declare(strict_types=1);
 
 namespace Mollie\Zed\Mollie\Persistence;
 
+use Generated\Shared\Transfer\MollieExpressCheckoutConfigCriteriaTransfer;
 use Generated\Shared\Transfer\MollieItemPaymentCaptureTransfer;
 use Generated\Shared\Transfer\MolliePaymentLinkTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodConfigCollectionTransfer;
@@ -143,13 +145,21 @@ class MollieRepository extends AbstractRepository implements MollieRepositoryInt
     }
 
     /**
+     * @param \Generated\Shared\Transfer\MollieExpressCheckoutConfigCriteriaTransfer $criteriaTransfer
+     *
      * @return array<string, bool>
      */
-    public function getPersistentExpressCheckoutMethodConfig(): array
-    {
-        $entities = $this->getFactory()
-            ->createSpyMollieExpressCheckoutConfigQuery()
-            ->find();
+    public function getPersistentExpressCheckoutMethodConfig(
+        MollieExpressCheckoutConfigCriteriaTransfer $criteriaTransfer,
+    ): array {
+        $query = $this->getFactory()
+            ->createSpyMollieExpressCheckoutConfigQuery();
+
+        if ($criteriaTransfer->getExpressMethod()) {
+            $query->filterByExpressMethod($criteriaTransfer->getExpressMethod());
+        }
+
+        $entities = $query->find();
 
         return $this->getFactory()
             ->createMollieExpressCheckoutConfigMapper()

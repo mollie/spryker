@@ -1,5 +1,6 @@
 <?php
 
+
 declare(strict_types=1);
 
 namespace Mollie\Yves\Mollie\Plugin\Router;
@@ -25,6 +26,11 @@ class MollieRouteProviderPlugin extends AbstractRouteProviderPlugin
     public const ROUTE_MOLLIE_NEXT_GEN_WEBHOOK = 'mollie/next-gen/webhook';
 
     /**
+     * @var string
+     */
+    public const ROUTE_MOLLIE_EXPRESS_CHECKOUT_INIT = 'mollie/express-checkout/init';
+
+    /**
      * @param \Spryker\Yves\Router\Route\RouteCollection $routeCollection
      *
      * @return \Spryker\Yves\Router\Route\RouteCollection
@@ -34,6 +40,7 @@ class MollieRouteProviderPlugin extends AbstractRouteProviderPlugin
         $routeCollection = $this->addPaymentStatusRoute($routeCollection);
         $routeCollection = $this->addWebhookRoute($routeCollection);
         $routeCollection = $this->addNextGenWebhookRoute($routeCollection);
+        $routeCollection = $this->addExpressCheckoutInitRoute($routeCollection);
 
         return $routeCollection;
     }
@@ -76,6 +83,20 @@ class MollieRouteProviderPlugin extends AbstractRouteProviderPlugin
         $route = $this->buildRoute('/mollie/next-gen/webhook', 'Mollie', 'Webhook', 'nextGenWebhookAction');
         $route = $route->setMethods(['POST']);
         $routeCollection->add(static::ROUTE_MOLLIE_NEXT_GEN_WEBHOOK, $route);
+
+        return $routeCollection;
+    }
+
+    /**
+     * @param \Spryker\Yves\Router\Route\RouteCollection $routeCollection
+     *
+     * @return \Spryker\Yves\Router\Route\RouteCollection
+     */
+    protected function addExpressCheckoutInitRoute(RouteCollection $routeCollection): RouteCollection
+    {
+        $route = $this->buildRoute('/mollie/express-checkout/init', 'Mollie', 'ExpressCheckout', 'initAction');
+        $route = $route->setMethods(['POST']);
+        $routeCollection->add(static::ROUTE_MOLLIE_EXPRESS_CHECKOUT_INIT, $route);
 
         return $routeCollection;
     }

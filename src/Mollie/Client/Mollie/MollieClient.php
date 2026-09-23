@@ -1,6 +1,7 @@
 <?php
 
-declare(strict_types = 1);
+
+declare(strict_types=1);
 
 namespace Mollie\Client\Mollie;
 
@@ -8,6 +9,8 @@ use Generated\Shared\Transfer\MollieApiRequestTransfer;
 use Generated\Shared\Transfer\MollieApiResponseTransfer;
 use Generated\Shared\Transfer\MollieCreateCaptureApiResponseTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutConfigCollectionTransfer;
+use Generated\Shared\Transfer\MollieExpressCheckoutConfigCriteriaTransfer;
+use Generated\Shared\Transfer\MollieExpressCheckoutSessionApiResponseTransfer;
 use Generated\Shared\Transfer\MollieGetCaptureApiResponseTransfer;
 use Generated\Shared\Transfer\MollieGetProfileApiResponseTransfer;
 use Generated\Shared\Transfer\MollieLogApiTransfer;
@@ -316,15 +319,49 @@ class MollieClient extends AbstractClient implements MollieClientInterface
      *
      * @api
      *
-     * @param \Generated\Shared\Transfer\MollieExpressCheckoutConfigCollectionTransfer $mollieExpressCheckoutConfigCollectionTransfer
+     * @param \Generated\Shared\Transfer\MollieExpressCheckoutConfigCriteriaTransfer $mollieExpressCheckoutConfigCriteriaTransfer
      *
      * @return \Generated\Shared\Transfer\MollieExpressCheckoutConfigCollectionTransfer
      */
     public function getExpressCheckoutConfigCollection(
-        MollieExpressCheckoutConfigCollectionTransfer $mollieExpressCheckoutConfigCollectionTransfer,
+        MollieExpressCheckoutConfigCriteriaTransfer $mollieExpressCheckoutConfigCriteriaTransfer,
     ): MollieExpressCheckoutConfigCollectionTransfer {
         return $this->getFactory()
             ->createZedMollieStub()
-            ->getExpressCheckoutConfigCollection($mollieExpressCheckoutConfigCollectionTransfer);
+            ->getExpressCheckoutConfigCollection($mollieExpressCheckoutConfigCriteriaTransfer);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\MollieApiRequestTransfer $mollieApiRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieExpressCheckoutSessionApiResponseTransfer
+     */
+    public function createExpressCheckoutSession(MollieApiRequestTransfer $mollieApiRequestTransfer): MollieExpressCheckoutSessionApiResponseTransfer
+    {
+        /** @var \Generated\Shared\Transfer\MollieExpressCheckoutSessionApiResponseTransfer $mollieExpressCheckoutSessionApiResponseTransfer */
+        $mollieExpressCheckoutSessionApiResponseTransfer = $this->getFactory()->createExpressCheckoutSessionApi()->execute($mollieApiRequestTransfer);
+
+        return $mollieExpressCheckoutSessionApiResponseTransfer;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\MollieApiRequestTransfer $mollieApiRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieExpressCheckoutSessionApiResponseTransfer
+     */
+    public function getExpressCheckoutSession(MollieApiRequestTransfer $mollieApiRequestTransfer): MollieExpressCheckoutSessionApiResponseTransfer
+    {
+        /** @var \Generated\Shared\Transfer\MollieExpressCheckoutSessionApiResponseTransfer $mollieExpressCheckoutSessionApiResponseTransfer */
+        $mollieExpressCheckoutSessionApiResponseTransfer = $this->getFactory()->createGetExpressCheckoutSessionApi()->execute($mollieApiRequestTransfer);
+
+        return $mollieExpressCheckoutSessionApiResponseTransfer;
     }
 }

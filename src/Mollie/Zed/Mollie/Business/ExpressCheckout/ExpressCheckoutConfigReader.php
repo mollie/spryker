@@ -1,10 +1,12 @@
 <?php
 
+
 declare(strict_types=1);
 
 namespace Mollie\Zed\Mollie\Business\ExpressCheckout;
 
 use Generated\Shared\Transfer\MollieExpressCheckoutConfigCollectionTransfer;
+use Generated\Shared\Transfer\MollieExpressCheckoutConfigCriteriaTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutConfigTransfer;
 use Mollie\Zed\Mollie\MollieConfig;
 use Mollie\Zed\Mollie\Persistence\MollieRepositoryInterface;
@@ -22,11 +24,18 @@ class ExpressCheckoutConfigReader implements ExpressCheckoutConfigReaderInterfac
     }
 
     /**
+     * @param \Generated\Shared\Transfer\MollieExpressCheckoutConfigCriteriaTransfer $criteriaTransfer
+     *
      * @return \Generated\Shared\Transfer\MollieExpressCheckoutConfigCollectionTransfer
      */
-    public function getExpressCheckoutConfigCollection(): MollieExpressCheckoutConfigCollectionTransfer
-    {
+    public function getExpressCheckoutConfigCollection(
+        MollieExpressCheckoutConfigCriteriaTransfer $criteriaTransfer,
+    ): MollieExpressCheckoutConfigCollectionTransfer {
         $expressMethods = array_keys($this->config->getDefaultExpressCheckoutMethodConfig());
+
+        if ($criteriaTransfer->getExpressMethod()) {
+            $expressMethods = array_intersect($expressMethods, [$criteriaTransfer->getExpressMethod()]);
+        }
 
         $collectionTransfer = new MollieExpressCheckoutConfigCollectionTransfer();
         foreach ($expressMethods as $expressMethod) {
@@ -49,7 +58,8 @@ class ExpressCheckoutConfigReader implements ExpressCheckoutConfigReaderInterfac
      */
     protected function isExpressMethodEnabled(string $expressMethod): bool
     {
-        $persistentConfig = $this->repository->getPersistentExpressCheckoutMethodConfig();
+        $methodCriteriaTransfer = (new MollieExpressCheckoutConfigCriteriaTransfer())->setExpressMethod($expressMethod);
+        $persistentConfig = $this->repository->getPersistentExpressCheckoutMethodConfig($methodCriteriaTransfer);
         $defaultConfig = $this->config->getDefaultExpressCheckoutMethodConfig();
 
         if (array_key_exists($expressMethod, $persistentConfig)) {

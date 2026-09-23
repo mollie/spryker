@@ -1,5 +1,6 @@
 <?php
 
+
 declare(strict_types=1);
 
 namespace Mollie\Yves\Mollie;
@@ -30,6 +31,14 @@ class MollieConfig extends AbstractBundleConfig
     public function getMollieCreditCardComponentsJsSrc(): string
     {
         return $this->get(MollieConstants::MOLLIE)[MollieConstants::MOLLIE_CREDIT_CARD_COMPONENTS_JS_SRC];
+    }
+
+    /**
+     * @return string
+     */
+    public function getMollieExpressCheckoutJsSrc(): string
+    {
+        return $this->get(MollieConstants::MOLLIE)[MollieConstants::MOLLIE_EXPRESS_CHECKOUT_JS_SRC];
     }
 
     /**

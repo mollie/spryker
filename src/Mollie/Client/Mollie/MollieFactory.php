@@ -1,7 +1,7 @@
 <?php
 
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Mollie\Client\Mollie;
 
@@ -19,6 +19,8 @@ use Mollie\Client\Mollie\Api\PaymentLink\GetPaymentLinksApi;
 use Mollie\Client\Mollie\Api\Profile\GetCurrentProfileApi;
 use Mollie\Client\Mollie\Api\Refund\CreateRefundApi;
 use Mollie\Client\Mollie\Api\Refund\GetRefundByRefundIdApi;
+use Mollie\Client\Mollie\Api\Session\CreateExpressCheckoutSessionApi;
+use Mollie\Client\Mollie\Api\Session\GetExpressCheckoutSessionApi;
 use Mollie\Client\Mollie\Deleter\Payment\PaymentMethodsCacheDeleter;
 use Mollie\Client\Mollie\Deleter\Payment\PaymentMethodsCacheDeleterInterface;
 use Mollie\Client\Mollie\Dependency\Client\MollieToStorageClientInterface;
@@ -315,6 +317,34 @@ class MollieFactory extends AbstractFactory
     public function createGetPaymentLinksApi(): ApiCallInterface
     {
         return new GetPaymentLinksApi(
+            $this->createMollieApiClient(),
+            $this->getConfig(),
+            $this->getUtilEncodingService(),
+            $this->createMollieLogger(),
+        );
+    }
+
+    /**
+     * @return \Mollie\Client\Mollie\Api\ApiCallInterface
+     */
+    public function createExpressCheckoutSessionApi(): ApiCallInterface
+    {
+        return new CreateExpressCheckoutSessionApi(
+            $this->createMollieApiClient(),
+            $this->getConfig(),
+            $this->getUtilEncodingService(),
+            $this->createMollieLogger(),
+            $this->getMollieService(),
+            $this->createPaymentApiHandler(),
+        );
+    }
+
+    /**
+     * @return \Mollie\Client\Mollie\Api\ApiCallInterface
+     */
+    public function createGetExpressCheckoutSessionApi(): ApiCallInterface
+    {
+        return new GetExpressCheckoutSessionApi(
             $this->createMollieApiClient(),
             $this->getConfig(),
             $this->getUtilEncodingService(),
