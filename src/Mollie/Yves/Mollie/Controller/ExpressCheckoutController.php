@@ -40,9 +40,9 @@ class ExpressCheckoutController extends AbstractController
             new MollieExpressCheckoutConfigCriteriaTransfer(),
         );
 
-        $enabledMethods = $this->extractEnabledMethods($mollieExpressCheckoutConfigCollectionTransfer);
+        $expressMethods = $this->mapExpressMethodsToIsEnabled($mollieExpressCheckoutConfigCollectionTransfer);
 
-        return new JsonResponse(['enabledMethods' => $enabledMethods]);
+        return new JsonResponse(['expressMethods' => $expressMethods]);
     }
 
     /**
@@ -69,19 +69,17 @@ class ExpressCheckoutController extends AbstractController
     /**
      * @param \Generated\Shared\Transfer\MollieExpressCheckoutConfigCollectionTransfer $mollieExpressCheckoutConfigCollectionTransfer
      *
-     * @return list<string>
+     * @return array<string, bool>
      */
-    protected function extractEnabledMethods(
+    protected function mapExpressMethodsToIsEnabled(
         MollieExpressCheckoutConfigCollectionTransfer $mollieExpressCheckoutConfigCollectionTransfer,
     ): array {
-        $enabledMethods = [];
+        $expressMethods = [];
         foreach ($mollieExpressCheckoutConfigCollectionTransfer->getConfigs() as $mollieExpressCheckoutConfigTransfer) {
-            if ($mollieExpressCheckoutConfigTransfer->getIsEnabled()) {
-                $enabledMethods[] = $mollieExpressCheckoutConfigTransfer->getMethod();
-            }
+            $expressMethods[$mollieExpressCheckoutConfigTransfer->getMethod()] = $mollieExpressCheckoutConfigTransfer->getIsEnabled();
         }
 
-        return $enabledMethods;
+        return $expressMethods;
     }
 
     /**

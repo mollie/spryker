@@ -133,7 +133,6 @@ class MollieCommunicationFactory extends AbstractCommunicationFactory
     public function createMollieCommunicationMapper(): MollieCommunicationMapperInterface
     {
         return new MollieCommunicationMapper(
-            $this->getMollieService(),
             $this->getConfig(),
         );
     }

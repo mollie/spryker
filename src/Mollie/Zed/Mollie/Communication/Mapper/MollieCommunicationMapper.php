@@ -10,20 +10,16 @@ use Generated\Shared\Transfer\MollieApiRequestTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodCollectionTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodConfigCriteriaTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodQueryParametersTransfer;
-use Mollie\Service\Mollie\MollieServiceInterface;
 use Mollie\Shared\Mollie\MollieConstants;
 use Mollie\Zed\Mollie\MollieConfig;
 
 class MollieCommunicationMapper implements MollieCommunicationMapperInterface
 {
     /**
-     * @param \Mollie\Service\Mollie\MollieServiceInterface $mollieService
      * @param \Mollie\Zed\Mollie\MollieConfig $config
      */
-    public function __construct(
-        private MollieServiceInterface $mollieService,
-        private MollieConfig $config,
-    ) {
+    public function __construct(private MollieConfig $config)
+    {
     }
 
     /**
@@ -86,15 +82,5 @@ class MollieCommunicationMapper implements MollieCommunicationMapperInterface
         return (new MolliePaymentMethodCollectionTransfer())->setMethods(
             new ArrayObject($paymentMethodTransfers),
         );
-    }
-
-    /**
-     * @param float|null $amount
-     *
-     * @return \Generated\Shared\Transfer\MollieAmountTransfer
-     */
-    protected function formatMollieAmount(?float $amount): MollieAmountTransfer
-    {
-        return $amount === null ? new MollieAmountTransfer() : $this->mollieService->convertIntegerToMollieAmount((int)($amount * 100));
     }
 }

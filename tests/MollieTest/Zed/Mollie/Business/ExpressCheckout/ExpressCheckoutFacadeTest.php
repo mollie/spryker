@@ -8,6 +8,7 @@ namespace MollieTest\Zed\Mollie\Business\ExpressCheckout;
 use Generated\Shared\Transfer\MollieExpressCheckoutConfigCollectionTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutConfigCriteriaTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutConfigTransfer;
+use Mollie\Shared\Mollie\MollieConfig;
 use MollieTest\Zed\Mollie\Business\AbstractBusinessTest;
 
 /**
@@ -20,21 +21,6 @@ use MollieTest\Zed\Mollie\Business\AbstractBusinessTest;
  */
 class ExpressCheckoutFacadeTest extends AbstractBusinessTest
 {
-    /**
-     * @var string
-     */
-    protected const METHOD_APPLE_PAY = 'applepay';
-
-    /**
-     * @var string
-     */
-    protected const METHOD_GOOGLE_PAY = 'googlepay';
-
-    /**
-     * @var string
-     */
-    protected const METHOD_PAYPAL = 'paypal';
-
     /**
      * @return void
      */
@@ -51,7 +37,7 @@ class ExpressCheckoutFacadeTest extends AbstractBusinessTest
 
         sort($methods);
         $this->assertSame(
-            [static::METHOD_APPLE_PAY, static::METHOD_GOOGLE_PAY, static::METHOD_PAYPAL],
+            [MollieConfig::EXPRESS_METHOD_APPLE_PAY, MollieConfig::EXPRESS_METHOD_GOOGLE_PAY, MollieConfig::EXPRESS_METHOD_PAYPAL],
             $methods,
         );
     }
@@ -62,7 +48,7 @@ class ExpressCheckoutFacadeTest extends AbstractBusinessTest
     public function testGetExpressCheckoutConfigCollectionFiltersByExpressMethodWhenCriteriaIsSet(): void
     {
         $criteriaTransfer = (new MollieExpressCheckoutConfigCriteriaTransfer())
-            ->setExpressMethod(static::METHOD_PAYPAL);
+            ->setExpressMethod(MollieConfig::EXPRESS_METHOD_PAYPAL);
 
         $collectionTransfer = $this->mollieFacade->getExpressCheckoutConfigCollection($criteriaTransfer);
 
@@ -71,7 +57,7 @@ class ExpressCheckoutFacadeTest extends AbstractBusinessTest
             $methods[] = $configTransfer->getMethod();
         }
 
-        $this->assertSame([static::METHOD_PAYPAL], $methods);
+        $this->assertSame([MollieConfig::EXPRESS_METHOD_PAYPAL], $methods);
     }
 
     /**
@@ -82,7 +68,7 @@ class ExpressCheckoutFacadeTest extends AbstractBusinessTest
         $collectionTransfer = (new MollieExpressCheckoutConfigCollectionTransfer())
             ->addConfig(
                 (new MollieExpressCheckoutConfigTransfer())
-                    ->setMethod(static::METHOD_GOOGLE_PAY)
+                    ->setMethod(MollieConfig::EXPRESS_METHOD_GOOGLE_PAY)
                     ->setIsEnabled(true),
             );
 
@@ -99,7 +85,7 @@ class ExpressCheckoutFacadeTest extends AbstractBusinessTest
     protected function getGooglePayConfigTransfer(): ?MollieExpressCheckoutConfigTransfer
     {
         $criteriaTransfer = (new MollieExpressCheckoutConfigCriteriaTransfer())
-            ->setExpressMethod(static::METHOD_GOOGLE_PAY);
+            ->setExpressMethod(MollieConfig::EXPRESS_METHOD_GOOGLE_PAY);
 
         $configTransfers = $this->mollieFacade
             ->getExpressCheckoutConfigCollection($criteriaTransfer)

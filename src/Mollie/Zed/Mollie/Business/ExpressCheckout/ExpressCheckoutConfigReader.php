@@ -31,7 +31,7 @@ class ExpressCheckoutConfigReader implements ExpressCheckoutConfigReaderInterfac
     public function getExpressCheckoutConfigCollection(
         MollieExpressCheckoutConfigCriteriaTransfer $criteriaTransfer,
     ): MollieExpressCheckoutConfigCollectionTransfer {
-        $expressMethods = array_keys($this->config->getDefaultExpressCheckoutMethodConfig());
+        $expressMethods = $this->config->getExpressMethods();
 
         if ($criteriaTransfer->getExpressMethod()) {
             $expressMethods = array_intersect($expressMethods, [$criteriaTransfer->getExpressMethod()]);

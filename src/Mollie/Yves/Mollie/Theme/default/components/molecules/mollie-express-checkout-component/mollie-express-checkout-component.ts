@@ -39,19 +39,19 @@ interface MollieExpressComponentOptions {
 }
 
 interface MollieResolveEnabledMethodsResponse {
-  enabledMethods: string[];
+  expressMethods: {
+    [expressMethod: string]: boolean;
+  };
 }
 
 interface MollieCreateSessionResponse {
   clientAccessToken: string;
 }
 
-const EXPRESS_METHODS = ['applepay', 'googlepay', 'paypal'];
-
 export default class MollieExpressCheckoutComponent extends Component {
     protected scriptLoader: ScriptLoader;
     protected checkout: MollieCheckoutInstance;
-    protected enabledMethods: string[];
+    protected expressMethods: { [expressMethod: string]: boolean };
 
     protected readyCallback(): void {}
 
@@ -76,11 +76,13 @@ export default class MollieExpressCheckoutComponent extends Component {
     }
 
     protected onEnabledMethodsResolved(resolveEnabledMethodsResponse: MollieResolveEnabledMethodsResponse): void {
-        if (!resolveEnabledMethodsResponse.enabledMethods.length) {
+        const hasEnabledExpressMethod = Object.values(resolveEnabledMethodsResponse.expressMethods).includes(true);
+
+        if (!hasEnabledExpressMethod) {
             return;
         }
 
-        this.enabledMethods = resolveEnabledMethodsResponse.enabledMethods;
+        this.expressMethods = resolveEnabledMethodsResponse.expressMethods;
         this.createSession();
     }
 
@@ -113,8 +115,8 @@ export default class MollieExpressCheckoutComponent extends Component {
     protected buildExpressComponentOptions(): MollieExpressComponentOptions {
         const buttons: { [expressMethod: string]: MollieExpressComponentButtonOptions } = {};
 
-        EXPRESS_METHODS.forEach((expressMethod) => {
-            if (!this.enabledMethods.includes(expressMethod)) {
+        Object.entries(this.expressMethods).forEach(([expressMethod, isEnabled]) => {
+            if (!isEnabled) {
                 buttons[expressMethod] = { visibility: 'hidden' };
             }
         });
@@ -123,8 +125,8 @@ export default class MollieExpressCheckoutComponent extends Component {
     }
 
     protected onSubmit(event: MollieSubmitEvent): void {
-        event.defer();
-        event.reject();
+        console.log('Submitted');
+        event.resolve();
     }
 
     protected get scriptLoaderTag(): string {
