@@ -28,12 +28,24 @@ class MollieRouteProviderPlugin extends AbstractRouteProviderPlugin
     /**
      * @var string
      */
-    public const ROUTE_MOLLIE_EXPRESS_CHECKOUT_RESOLVE_ENABLED_METHODS = 'mollie/express-checkout/resolve-enabled-methods';
+    public const ROUTE_MOLLIE_EXPRESS_CHECKOUT_RESOLVE_ENABLED_METHODS
+        = 'mollie/express-checkout/resolve-enabled-methods';
 
     /**
      * @var string
      */
     public const ROUTE_MOLLIE_EXPRESS_CHECKOUT_CREATE_SESSION = 'mollie/express-checkout/create-session';
+
+    /**
+     * @var string
+     */
+    public const ROUTE_PATH_MOLLIE_EXPRESS_CHECKOUT_RESOLVE_ENABLED_METHODS
+        = '/mollie/express-checkout/resolve-enabled-methods';
+
+    /**
+     * @var string
+     */
+    public const ROUTE_PATH_MOLLIE_EXPRESS_CHECKOUT_CREATE_SESSION = '/mollie/express-checkout/create-session';
 
     /**
      * @param \Spryker\Yves\Router\Route\RouteCollection $routeCollection
@@ -101,7 +113,7 @@ class MollieRouteProviderPlugin extends AbstractRouteProviderPlugin
     protected function addExpressCheckoutResolveEnabledMethodsRoute(RouteCollection $routeCollection): RouteCollection
     {
         $route = $this->buildRoute(
-            '/mollie/express-checkout/resolve-enabled-methods',
+            static::ROUTE_PATH_MOLLIE_EXPRESS_CHECKOUT_RESOLVE_ENABLED_METHODS,
             'Mollie',
             'ExpressCheckout',
             'resolveEnabledMethodsAction',
@@ -120,7 +132,7 @@ class MollieRouteProviderPlugin extends AbstractRouteProviderPlugin
     protected function addExpressCheckoutCreateSessionRoute(RouteCollection $routeCollection): RouteCollection
     {
         $route = $this->buildRoute(
-            '/mollie/express-checkout/create-session',
+            static::ROUTE_PATH_MOLLIE_EXPRESS_CHECKOUT_CREATE_SESSION,
             'Mollie',
             'ExpressCheckout',
             'createSessionAction',

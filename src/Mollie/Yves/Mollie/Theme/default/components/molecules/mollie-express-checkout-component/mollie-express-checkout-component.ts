@@ -125,7 +125,6 @@ export default class MollieExpressCheckoutComponent extends Component {
     }
 
     protected onSubmit(event: MollieSubmitEvent): void {
-        console.log('Submitted');
         event.resolve();
     }
 

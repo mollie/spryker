@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace Mollie\Yves\Mollie\Widget;
 
+use Mollie\Yves\Mollie\Plugin\Router\MollieRouteProviderPlugin;
 use Spryker\Yves\Kernel\Widget\AbstractWidget;
 
 /**
@@ -14,10 +15,16 @@ class MollieExpressCheckoutWidget extends AbstractWidget
 {
     public function __construct()
     {
-        $this->addParameter('expressCheckoutResolveEnabledMethodsEndpoint', '/mollie/express-checkout/resolve-enabled-methods')
-            ->addParameter('expressCheckoutCreateSessionEndpoint', '/mollie/express-checkout/create-session')
-            ->addParameter('jsSrc', $this->getConfig()->getMollieExpressCheckoutJsSrc())
-            ->addParameter('locale', $this->getLocale());
+        $this->addParameter(
+            'expressCheckoutResolveEnabledMethodsEndpoint',
+            MollieRouteProviderPlugin::ROUTE_PATH_MOLLIE_EXPRESS_CHECKOUT_RESOLVE_ENABLED_METHODS,
+        );
+        $this->addParameter(
+            'expressCheckoutCreateSessionEndpoint',
+            MollieRouteProviderPlugin::ROUTE_PATH_MOLLIE_EXPRESS_CHECKOUT_CREATE_SESSION,
+        );
+        $this->addParameter('jsSrc', $this->getConfig()->getMollieExpressCheckoutJsSrc());
+        $this->addParameter('locale', $this->getLocale());
     }
 
     /**
