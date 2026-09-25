@@ -108,14 +108,4 @@ class MolliePaymentMethodConfigMapper implements MolliePaymentMethodConfigMapper
     {
         return $isActive ? $this->config::MOLLIE_PAYMENT_METHOD_STATUS_ACTIVATED : $this->config::MOLLIE_PAYMENT_METHOD_STATUS_NOT_ACTIVATED;
     }
-
-    /**
-     * @param string $status
-     *
-     * @return bool
-     */
-    protected function mapStatusToIsActive(string $status): bool
-    {
-        return $status === $this->config::MOLLIE_PAYMENT_METHOD_STATUS_ACTIVATED;
-    }
 }

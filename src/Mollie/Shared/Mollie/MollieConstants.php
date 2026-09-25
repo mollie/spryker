@@ -1,6 +1,7 @@
 <?php
 
-declare(strict_types = 1);
+
+declare(strict_types=1);
 
 namespace Mollie\Shared\Mollie;
 
@@ -83,6 +84,11 @@ interface MollieConstants
      * @var string
      */
     public const MOLLIE_EXPRESS_CHECKOUT_METHODS_ENABLED = 'MOLLIE:EXPRESS_CHECKOUT_METHODS_ENABLED';
+
+    /**
+     * @var string
+     */
+    public const MOLLIE_EXPRESS_CHECKOUT_JS_SRC = 'MOLLIE:MOLLIE_EXPRESS_CHECKOUT_JS_SRC';
 
     /**
      * @var string

@@ -1,0 +1,19 @@
+{% extends template('widget') %}
+
+{% define data = {
+    expressCheckoutResolveEnabledMethodsEndpoint: _widget.expressCheckoutResolveEnabledMethodsEndpoint | default,
+    expressCheckoutCreateSessionEndpoint: _widget.expressCheckoutCreateSessionEndpoint | default,
+    jsSrc: _widget.jsSrc | default,
+    locale: _widget.locale | default,
+} %}
+
+{% block body %}
+    {% include molecule('mollie-express-checkout-component', 'Mollie') with {
+        data: {
+            expressCheckoutResolveEnabledMethodsEndpoint: data.expressCheckoutResolveEnabledMethodsEndpoint,
+            expressCheckoutCreateSessionEndpoint: data.expressCheckoutCreateSessionEndpoint,
+            jsSrc: data.jsSrc,
+            locale: data.locale,
+        }
+    } only %}
+{% endblock %}

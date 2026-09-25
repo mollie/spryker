@@ -261,6 +261,9 @@
         <property name="paymentCapture" type="MolliePaymentCapture"/>
         <property name="paymentLink" type="MolliePaymentLink"/>
         <property name="idempotencyKey" type="string"/>
+        <property name="sessionId" type="string"/>
+        <property name="redirectUrl" type="string"/>
+        <property name="description" type="string"/>
     </transfer>
 
     <transfer name="MolliePaymentCaptureRequest">
@@ -389,6 +392,10 @@
         <property name="configs" type="MollieExpressCheckoutConfig[]" singular="config"/>
     </transfer>
 
+    <transfer name="MollieExpressCheckoutConfigCriteria">
+        <property name="expressMethod" type="string"/>
+    </transfer>
+
     <transfer name="MollieWebhookEvent">
         <property name="resource" type="string"/>
         <property name="id" type="string"/>
@@ -432,6 +439,32 @@
         <property name="categories" type="array"/>
         <property name="imageUrl" type="string"/>
         <property name="recurring" type="RecurringBillingCycle"/>
+    </transfer>
+
+    <transfer name="MollieExpressCheckoutSession">
+        <property name="resource" type="string"/>
+        <property name="id" type="string"/>
+        <property name="mode" type="string"/>
+        <property name="clientAccessToken" type="string"/>
+        <property name="status" type="string"/>
+        <property name="amount" type="MollieAmount"/>
+        <property name="description" type="string"/>
+        <property name="lines" type="MollieLines[]" singular="line"/>
+        <property name="redirectUrl" type="string"/>
+        <property name="customerId" type="string"/>
+        <property name="sequenceType" type="string"/>
+        <property name="metadata" type="array" singular="metadata"/>
+        <property name="profileId" type="string"/>
+        <property name="createdAt" type="string"/>
+        <property name="expiresAt" type="string"/>
+        <property name="completedAt" type="string"/>
+        <property name="links" type="MollieLinks"/>
+    </transfer>
+
+    <transfer name="MollieExpressCheckoutSessionApiResponse">
+        <property name="isSuccessful" type="bool"/>
+        <property name="message" type="string"/>
+        <property name="expressCheckoutSession" type="MollieExpressCheckoutSession"/>
     </transfer>
 
 </transfers>

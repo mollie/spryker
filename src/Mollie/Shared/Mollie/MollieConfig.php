@@ -329,15 +329,14 @@ class MollieConfig extends AbstractSharedConfig
      */
     public const EXPRESS_METHOD_PAYPAL = 'paypal';
 
-     /**
-      * @var string
-      */
-    protected const CACHE_KEY_IDENTIFIER_FOR_ALL_PAYMENT_METHODS = 'all_payment_methods';
-
-     /**
-      * @var string
-      */
-    protected const CACHE_KEY_IDENTIFIER_FOR_ENABLED_PAYMENT_METHODS = 'enabled_payment_methods';
+    /**
+     * @var list<string>
+     */
+    public const EXPRESS_METHODS = [
+        self::EXPRESS_METHOD_APPLE_PAY,
+        self::EXPRESS_METHOD_GOOGLE_PAY,
+        self::EXPRESS_METHOD_PAYPAL,
+    ];
 
     /**
      * @var string
@@ -350,6 +349,14 @@ class MollieConfig extends AbstractSharedConfig
     public function getMollieApiKey(): string|null
     {
         return $this->get(MollieConstants::MOLLIE)[MollieConstants::MOLLIE_API_KEY];
+    }
+
+    /**
+     * @return list<string>
+     */
+    public function getExpressMethods(): array
+    {
+        return static::EXPRESS_METHODS;
     }
 
     /**
@@ -382,22 +389,6 @@ class MollieConfig extends AbstractSharedConfig
     public function getMollieLoggingMode(): string
     {
         return $this->get(MollieConstants::MOLLIE)[MollieConstants::MOLLIE_DEBUG_MODE];
-    }
-
-    /**
-     * @return string
-     */
-    public function getCacheKeyIdentifierForAllPaymentMethods(): string
-    {
-        return static::CACHE_KEY_IDENTIFIER_FOR_ALL_PAYMENT_METHODS;
-    }
-
-    /**
-     * @return string
-     */
-    public function getCacheKeyIdentifierForEnabledPaymentMethods(): string
-    {
-        return static::CACHE_KEY_IDENTIFIER_FOR_ENABLED_PAYMENT_METHODS;
     }
 
     /**

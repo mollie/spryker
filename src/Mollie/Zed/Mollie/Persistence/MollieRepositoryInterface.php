@@ -1,9 +1,11 @@
 <?php
 
+
 declare(strict_types=1);
 
 namespace Mollie\Zed\Mollie\Persistence;
 
+use Generated\Shared\Transfer\MollieExpressCheckoutConfigCriteriaTransfer;
 use Generated\Shared\Transfer\MollieItemPaymentCaptureTransfer;
 use Generated\Shared\Transfer\MolliePaymentLinkTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodConfigCollectionTransfer;
@@ -59,7 +61,11 @@ interface MollieRepositoryInterface
     ): ?MolliePaymentMethodConfigTransfer;
 
     /**
+     * @param \Generated\Shared\Transfer\MollieExpressCheckoutConfigCriteriaTransfer $criteriaTransfer
+     *
      * @return array<string, bool>
      */
-    public function getPersistentExpressCheckoutMethodConfig(): array;
+    public function getPersistentExpressCheckoutMethodConfig(
+        MollieExpressCheckoutConfigCriteriaTransfer $criteriaTransfer,
+    ): array;
 }

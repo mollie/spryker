@@ -188,6 +188,14 @@ class MollieConfig extends AbstractBundleConfig
     }
 
     /**
+     * @return list<string>
+     */
+    public function getExpressMethods(): array
+    {
+        return $this->getSharedConfig()->getExpressMethods();
+    }
+
+    /**
      * @return array<string, bool>
      */
     public function getDefaultExpressCheckoutMethodConfig(): array

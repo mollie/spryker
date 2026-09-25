@@ -28,7 +28,7 @@ class ExpressCheckoutConfigWriter implements ExpressCheckoutConfigWriterInterfac
     public function saveExpressCheckoutConfigCollection(
         MollieExpressCheckoutConfigCollectionTransfer $mollieExpressCheckoutConfigCollectionTransfer,
     ): void {
-        $knownExpressMethods = array_keys($this->config->getDefaultExpressCheckoutMethodConfig());
+        $knownExpressMethods = $this->config->getExpressMethods();
 
         foreach ($mollieExpressCheckoutConfigCollectionTransfer->getConfigs() as $mollieExpressCheckoutConfigTransfer) {
             $expressMethod = $mollieExpressCheckoutConfigTransfer->getMethod();

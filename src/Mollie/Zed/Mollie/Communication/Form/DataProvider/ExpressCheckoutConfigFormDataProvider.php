@@ -1,10 +1,12 @@
 <?php
 
+
 declare(strict_types=1);
 
 namespace Mollie\Zed\Mollie\Communication\Form\DataProvider;
 
 use Generated\Shared\Transfer\MollieExpressCheckoutConfigCollectionTransfer;
+use Generated\Shared\Transfer\MollieExpressCheckoutConfigCriteriaTransfer;
 use Mollie\Zed\Mollie\Business\MollieFacadeInterface;
 use Mollie\Zed\Mollie\Communication\Form\ExpressCheckoutConfigForm;
 
@@ -23,7 +25,7 @@ class ExpressCheckoutConfigFormDataProvider
      */
     public function getExpressCheckoutConfigCollection(): MollieExpressCheckoutConfigCollectionTransfer
     {
-        return $this->mollieFacade->getExpressCheckoutConfigCollection();
+        return $this->mollieFacade->getExpressCheckoutConfigCollection(new MollieExpressCheckoutConfigCriteriaTransfer());
     }
 
     /**

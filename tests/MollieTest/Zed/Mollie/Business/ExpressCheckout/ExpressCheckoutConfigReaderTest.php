@@ -1,10 +1,13 @@
 <?php
 
+
 declare(strict_types=1);
 
 namespace MollieTest\Zed\Mollie\Business\ExpressCheckout;
 
 use Codeception\Test\Unit;
+use Generated\Shared\Transfer\MollieExpressCheckoutConfigCriteriaTransfer;
+use Mollie\Shared\Mollie\MollieConfig as SharedMollieConfig;
 use Mollie\Zed\Mollie\Business\ExpressCheckout\ExpressCheckoutConfigReader;
 use Mollie\Zed\Mollie\MollieConfig;
 use Mollie\Zed\Mollie\Persistence\MollieRepositoryInterface;
@@ -20,42 +23,27 @@ use Mollie\Zed\Mollie\Persistence\MollieRepositoryInterface;
 class ExpressCheckoutConfigReaderTest extends Unit
 {
     /**
-     * @var string
-     */
-    protected const METHOD_APPLE_PAY = 'applepay';
-
-    /**
-     * @var string
-     */
-    protected const METHOD_GOOGLE_PAY = 'googlepay';
-
-    /**
-     * @var string
-     */
-    protected const METHOD_PAYPAL = 'paypal';
-
-    /**
      * @return void
      */
     public function testGetExpressCheckoutConfigCollectionReturnsOneEntryPerConfiguredMethod(): void
     {
         $defaultConfig = [
-            static::METHOD_APPLE_PAY => false,
-            static::METHOD_GOOGLE_PAY => false,
-            static::METHOD_PAYPAL => false,
+            SharedMollieConfig::EXPRESS_METHOD_APPLE_PAY => false,
+            SharedMollieConfig::EXPRESS_METHOD_GOOGLE_PAY => false,
+            SharedMollieConfig::EXPRESS_METHOD_PAYPAL => false,
         ];
 
         $reader = $this->createReader($defaultConfig, []);
 
-        $enabledByMethod = $this->getEnabledByMethod($reader->getExpressCheckoutConfigCollection());
+        $enabledByMethod = $this->getEnabledByMethod($reader->getExpressCheckoutConfigCollection(new MollieExpressCheckoutConfigCriteriaTransfer()));
 
         $this->assertSame(
-            [static::METHOD_APPLE_PAY, static::METHOD_GOOGLE_PAY, static::METHOD_PAYPAL],
+            [SharedMollieConfig::EXPRESS_METHOD_APPLE_PAY, SharedMollieConfig::EXPRESS_METHOD_GOOGLE_PAY, SharedMollieConfig::EXPRESS_METHOD_PAYPAL],
             array_keys($enabledByMethod),
         );
-        $this->assertFalse($enabledByMethod[static::METHOD_APPLE_PAY]);
-        $this->assertFalse($enabledByMethod[static::METHOD_GOOGLE_PAY]);
-        $this->assertFalse($enabledByMethod[static::METHOD_PAYPAL]);
+        $this->assertFalse($enabledByMethod[SharedMollieConfig::EXPRESS_METHOD_APPLE_PAY]);
+        $this->assertFalse($enabledByMethod[SharedMollieConfig::EXPRESS_METHOD_GOOGLE_PAY]);
+        $this->assertFalse($enabledByMethod[SharedMollieConfig::EXPRESS_METHOD_PAYPAL]);
     }
 
     /**
@@ -64,18 +52,18 @@ class ExpressCheckoutConfigReaderTest extends Unit
     public function testGetExpressCheckoutConfigCollectionUsesDefaultConfigWhenPersistentConfigIsEmpty(): void
     {
         $defaultConfig = [
-            static::METHOD_APPLE_PAY => true,
-            static::METHOD_GOOGLE_PAY => false,
-            static::METHOD_PAYPAL => false,
+            SharedMollieConfig::EXPRESS_METHOD_APPLE_PAY => true,
+            SharedMollieConfig::EXPRESS_METHOD_GOOGLE_PAY => false,
+            SharedMollieConfig::EXPRESS_METHOD_PAYPAL => false,
         ];
 
         $reader = $this->createReader($defaultConfig, []);
 
-        $enabledByMethod = $this->getEnabledByMethod($reader->getExpressCheckoutConfigCollection());
+        $enabledByMethod = $this->getEnabledByMethod($reader->getExpressCheckoutConfigCollection(new MollieExpressCheckoutConfigCriteriaTransfer()));
 
-        $this->assertTrue($enabledByMethod[static::METHOD_APPLE_PAY]);
-        $this->assertFalse($enabledByMethod[static::METHOD_GOOGLE_PAY]);
-        $this->assertFalse($enabledByMethod[static::METHOD_PAYPAL]);
+        $this->assertTrue($enabledByMethod[SharedMollieConfig::EXPRESS_METHOD_APPLE_PAY]);
+        $this->assertFalse($enabledByMethod[SharedMollieConfig::EXPRESS_METHOD_GOOGLE_PAY]);
+        $this->assertFalse($enabledByMethod[SharedMollieConfig::EXPRESS_METHOD_PAYPAL]);
     }
 
     /**
@@ -83,15 +71,36 @@ class ExpressCheckoutConfigReaderTest extends Unit
      */
     public function testGetExpressCheckoutConfigCollectionPersistentConfigOverridesDefaultConfig(): void
     {
-        $defaultConfig = [static::METHOD_APPLE_PAY => true, static::METHOD_GOOGLE_PAY => false];
-        $persistentConfig = [static::METHOD_APPLE_PAY => false, static::METHOD_GOOGLE_PAY => true];
+        $defaultConfig = [SharedMollieConfig::EXPRESS_METHOD_APPLE_PAY => true, SharedMollieConfig::EXPRESS_METHOD_GOOGLE_PAY => false];
+        $persistentConfig = [SharedMollieConfig::EXPRESS_METHOD_APPLE_PAY => false, SharedMollieConfig::EXPRESS_METHOD_GOOGLE_PAY => true];
 
         $reader = $this->createReader($defaultConfig, $persistentConfig);
 
-        $enabledByMethod = $this->getEnabledByMethod($reader->getExpressCheckoutConfigCollection());
+        $enabledByMethod = $this->getEnabledByMethod($reader->getExpressCheckoutConfigCollection(new MollieExpressCheckoutConfigCriteriaTransfer()));
 
-        $this->assertFalse($enabledByMethod[static::METHOD_APPLE_PAY]);
-        $this->assertTrue($enabledByMethod[static::METHOD_GOOGLE_PAY]);
+        $this->assertFalse($enabledByMethod[SharedMollieConfig::EXPRESS_METHOD_APPLE_PAY]);
+        $this->assertTrue($enabledByMethod[SharedMollieConfig::EXPRESS_METHOD_GOOGLE_PAY]);
+    }
+
+    /**
+     * @return void
+     */
+    public function testGetExpressCheckoutConfigCollectionFiltersByExpressMethodWhenCriteriaIsSet(): void
+    {
+        $defaultConfig = [
+            SharedMollieConfig::EXPRESS_METHOD_APPLE_PAY => true,
+            SharedMollieConfig::EXPRESS_METHOD_GOOGLE_PAY => true,
+            SharedMollieConfig::EXPRESS_METHOD_PAYPAL => true,
+        ];
+
+        $reader = $this->createReader($defaultConfig, []);
+
+        $criteriaTransfer = (new MollieExpressCheckoutConfigCriteriaTransfer())
+            ->setExpressMethod(SharedMollieConfig::EXPRESS_METHOD_GOOGLE_PAY);
+
+        $enabledByMethod = $this->getEnabledByMethod($reader->getExpressCheckoutConfigCollection($criteriaTransfer));
+
+        $this->assertSame([SharedMollieConfig::EXPRESS_METHOD_GOOGLE_PAY], array_keys($enabledByMethod));
     }
 
     /**
@@ -103,8 +112,9 @@ class ExpressCheckoutConfigReaderTest extends Unit
     protected function createReader(array $defaultConfig, array $persistentConfig): ExpressCheckoutConfigReader
     {
         $configMock = $this->getMockBuilder(MollieConfig::class)
-            ->onlyMethods(['getDefaultExpressCheckoutMethodConfig'])
+            ->onlyMethods(['getExpressMethods', 'getDefaultExpressCheckoutMethodConfig'])
             ->getMock();
+        $configMock->method('getExpressMethods')->willReturn(SharedMollieConfig::EXPRESS_METHODS);
         $configMock->method('getDefaultExpressCheckoutMethodConfig')->willReturn($defaultConfig);
 
         $repositoryMock = $this->getMockBuilder(MollieRepositoryInterface::class)->getMock();

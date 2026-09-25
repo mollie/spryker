@@ -22,6 +22,7 @@ $config[MollieConstants::MOLLIE] = [
     MollieConstants::MOLLIE_REDIRECT_URL => '',
     MollieConstants::MOLLIE_CREDIT_CARD_COMPONENTS_ENABLED => true,
     MollieConstants::MOLLIE_CREDIT_CARD_COMPONENTS_JS_SRC => '', //Example: https://js.mollie.com/v1/mollie.js
+    MollieConstants::MOLLIE_EXPRESS_CHECKOUT_JS_SRC => '', //Example: https://js.mollie.com/v2/mollie.js?compatible
     MollieConstants::MOLLIE_WEBHOOK_URL => '',
     MollieConstants::MOLLIE_TEST_ENVIRONMENT_WEBHOOK_URL => '',
     MollieConstants::MOLLIE_NEXT_GEN_WEBHOOK_SIGNING_SECRET => '',
@@ -34,9 +35,9 @@ $config[MollieConstants::MOLLIE] = [
     ],
     MollieConstants::MOLLIE_INCLUDE_WALLETS => ['applepay'],
     MollieConstants::MOLLIE_EXPRESS_CHECKOUT_METHODS_ENABLED => [
-        MollieConfig::EXPRESS_METHOD_APPLE_PAY => false,
-        MollieConfig::EXPRESS_METHOD_GOOGLE_PAY => false,
-        MollieConfig::EXPRESS_METHOD_PAYPAL => false,
+        MollieConfig::EXPRESS_METHOD_APPLE_PAY => true,
+        MollieConfig::EXPRESS_METHOD_GOOGLE_PAY => true,
+        MollieConfig::EXPRESS_METHOD_PAYPAL => true,
     ],
     MollieConstants::MOLLIE_PAYMENT_LINK_EXPIRATION_TIME => 10080,
     MollieConstants::MOLLIE_BNPL_PAYMENT_METHODS => ['billie', 'in3', 'klarna', 'riverty', 'voucher', 'alma'],
