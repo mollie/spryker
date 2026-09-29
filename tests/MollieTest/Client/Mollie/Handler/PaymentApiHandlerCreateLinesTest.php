@@ -60,7 +60,7 @@ class PaymentApiHandlerCreateLinesTest extends Unit
                     ->setTaxRate(19.0),
             ]));
 
-        $lines = $paymentApiHandler->createLines($quoteTransfer, 'paypal')->toArray();
+        $lines = $paymentApiHandler->createLines($quoteTransfer)->toArray();
 
         $this->assertCount(1, $lines);
         $this->assertSame('699.90', $lines[0]['totalAmount']['value']);
@@ -89,7 +89,7 @@ class PaymentApiHandlerCreateLinesTest extends Unit
                     ->setTaxRate(0.0),
             ]));
 
-        $lines = $paymentApiHandler->createLines($quoteTransfer, 'paypal')->toArray();
+        $lines = $paymentApiHandler->createLines($quoteTransfer)->toArray();
 
         $this->assertCount(1, $lines);
         $this->assertSame('490.00', $lines[0]['totalAmount']['value']);

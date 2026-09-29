@@ -74,7 +74,7 @@ class CreateExpressCheckoutSessionApi extends AbstractApiCall
             value: $value,
         );
 
-        $lines = $this->apiHandler->createLines($quoteTransfer, '');
+        $lines = $this->apiHandler->createLines($quoteTransfer);
 
         $metadata = [
             SharedConfig::EXPRESS_CHECKOUT_METADATA_KEY_UUID => $mollieApiRequestTransfer->getExpressCheckoutUuidOrFail(),
