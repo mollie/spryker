@@ -374,10 +374,9 @@ class MollieFacade extends AbstractFacade implements MollieFacadeInterface
         QuoteTransfer $quoteTransfer,
         CheckoutResponseTransfer $checkoutResponseTransfer,
     ): void {
-        $this->getFactory()->createExpressCheckoutMolliePaymentWriter()->createExpressCheckoutMolliePayment(
-            $quoteTransfer,
-            $checkoutResponseTransfer,
-        );
+        $this->getFactory()
+            ->createExpressCheckoutMolliePaymentHandler()
+            ->createExpressCheckoutMolliePayment($quoteTransfer, $checkoutResponseTransfer);
     }
 
     /**
@@ -389,7 +388,7 @@ class MollieFacade extends AbstractFacade implements MollieFacadeInterface
         MollieExpressCheckoutPaymentUpdateRequestTransfer $mollieExpressCheckoutPaymentUpdateRequestTransfer,
     ): MollieExpressCheckoutPaymentUpdateResponseTransfer {
         return $this->getFactory()
-            ->createExpressCheckoutMolliePaymentUpdater()
+            ->createExpressCheckoutMolliePaymentHandler()
             ->updateExpressCheckoutMolliePayment($mollieExpressCheckoutPaymentUpdateRequestTransfer);
     }
 }

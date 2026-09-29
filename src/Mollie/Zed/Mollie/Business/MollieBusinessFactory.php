@@ -12,14 +12,12 @@ use Mollie\Zed\Mollie\Business\ExpressCheckout\ExpressCheckoutConfigReader;
 use Mollie\Zed\Mollie\Business\ExpressCheckout\ExpressCheckoutConfigReaderInterface;
 use Mollie\Zed\Mollie\Business\ExpressCheckout\ExpressCheckoutConfigWriter;
 use Mollie\Zed\Mollie\Business\ExpressCheckout\ExpressCheckoutConfigWriterInterface;
-use Mollie\Zed\Mollie\Business\ExpressCheckout\ExpressCheckoutMolliePaymentUpdater;
-use Mollie\Zed\Mollie\Business\ExpressCheckout\ExpressCheckoutMolliePaymentUpdaterInterface;
-use Mollie\Zed\Mollie\Business\ExpressCheckout\ExpressCheckoutMolliePaymentWriter;
-use Mollie\Zed\Mollie\Business\ExpressCheckout\ExpressCheckoutMolliePaymentWriterInterface;
 use Mollie\Zed\Mollie\Business\Filter\MolliePaymentMethodsFilter;
 use Mollie\Zed\Mollie\Business\Filter\MolliePaymentMethodsFilterInterface;
 use Mollie\Zed\Mollie\Business\Filter\MollieRefundFilter;
 use Mollie\Zed\Mollie\Business\Filter\MollieRefundFilterInterface;
+use Mollie\Zed\Mollie\Business\Handler\ExpressCheckoutMolliePaymentHandler;
+use Mollie\Zed\Mollie\Business\Handler\ExpressCheckoutMolliePaymentHandlerInterface;
 use Mollie\Zed\Mollie\Business\Handler\MollieExpirationWarningHandler;
 use Mollie\Zed\Mollie\Business\Handler\MollieExpirationWarningHandlerInterface;
 use Mollie\Zed\Mollie\Business\Handler\MollieMailHandler;
@@ -349,21 +347,11 @@ class MollieBusinessFactory extends AbstractBusinessFactory
     }
 
     /**
-     * @return \Mollie\Zed\Mollie\Business\ExpressCheckout\ExpressCheckoutMolliePaymentWriterInterface
+     * @return \Mollie\Zed\Mollie\Business\Handler\ExpressCheckoutMolliePaymentHandlerInterface
      */
-    public function createExpressCheckoutMolliePaymentWriter(): ExpressCheckoutMolliePaymentWriterInterface
+    public function createExpressCheckoutMolliePaymentHandler(): ExpressCheckoutMolliePaymentHandlerInterface
     {
-        return new ExpressCheckoutMolliePaymentWriter(
-            $this->getEntityManager(),
-        );
-    }
-
-    /**
-     * @return \Mollie\Zed\Mollie\Business\ExpressCheckout\ExpressCheckoutMolliePaymentUpdaterInterface
-     */
-    public function createExpressCheckoutMolliePaymentUpdater(): ExpressCheckoutMolliePaymentUpdaterInterface
-    {
-        return new ExpressCheckoutMolliePaymentUpdater(
+        return new ExpressCheckoutMolliePaymentHandler(
             $this->getEntityManager(),
         );
     }
