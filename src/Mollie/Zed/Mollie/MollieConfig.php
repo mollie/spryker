@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace Mollie\Zed\Mollie;
 
+use Mollie\Shared\Mollie\MollieConfig as SharedConfig;
 use Mollie\Shared\Mollie\MollieConstants;
 use Spryker\Zed\Kernel\AbstractBundleConfig;
 
@@ -177,6 +178,16 @@ class MollieConfig extends AbstractBundleConfig
     public function isMollieProvider(string $paymentProvider): bool
     {
         return str_starts_with(strtolower($paymentProvider), static::MOLLIE_PAYMENT_PROVIDER);
+    }
+
+    /**
+     * @param string $paymentMethod
+     *
+     * @return bool
+     */
+    public function isMollieExpressPaymentMethod(string $paymentMethod): bool
+    {
+        return $paymentMethod === SharedConfig::MOLLIE_PAYMENT_EXPRESS;
     }
 
     /**

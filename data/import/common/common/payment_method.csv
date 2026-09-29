@@ -26,3 +26,4 @@ mollieSwishPayment,Swish,MollieSwishPayment,Mollie Swish Payment,1
 mollieSatispayPayment,Satispay,MollieSatispayPayment,Mollie Satispay Payment,1
 mollieTwintPayment,TWINT,MollieTwintPayment,Mollie TWINT Payment,1
 mollieVippsPayment,Vipps,MollieVippsPayment,Mollie Vipps Payment,1
+mollieExpressPayment,Express Checkout,MollieExpressPayment,Mollie Express Payment,1

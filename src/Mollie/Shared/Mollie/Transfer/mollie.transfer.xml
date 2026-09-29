@@ -206,6 +206,7 @@
         <property name="id" type="string" />
         <property name="status" type="string" />
         <property name="captureBefore" type="string" />
+        <property name="expressCheckoutUuid" type="string" />
     </transfer>
 
     <transfer name="OrderCollectionResponse">
@@ -264,6 +265,7 @@
         <property name="sessionId" type="string"/>
         <property name="redirectUrl" type="string"/>
         <property name="description" type="string"/>
+        <property name="expressCheckoutUuid" type="string"/>
     </transfer>
 
     <transfer name="MolliePaymentCaptureRequest">
@@ -306,6 +308,7 @@
 
     <transfer name="Quote">
         <property name="molliePaymentId" type="string"/>
+        <property name="mollieExpressCheckoutUuid" type="string"/>
     </transfer>
 
     <transfer name="Order">
@@ -459,6 +462,8 @@
         <property name="expiresAt" type="string"/>
         <property name="completedAt" type="string"/>
         <property name="links" type="MollieLinks"/>
+        <property name="billingAddress" type="array" singular="billingAddressField"/>
+        <property name="shippingAddress" type="array" singular="shippingAddressField"/>
     </transfer>
 
     <transfer name="MollieExpressCheckoutSessionApiResponse">

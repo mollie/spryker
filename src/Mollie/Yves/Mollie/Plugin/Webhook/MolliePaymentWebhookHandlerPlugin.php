@@ -7,6 +7,7 @@ namespace Mollie\Yves\Mollie\Plugin\Webhook;
 use Generated\Shared\Transfer\MolliePaymentTransfer;
 use Generated\Shared\Transfer\MollieWebhookResponseTransfer;
 use Generated\Shared\Transfer\OrderCollectionRequestTransfer;
+use Mollie\Shared\Mollie\MollieConfig;
 use Spryker\Yves\Kernel\AbstractPlugin;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -80,6 +81,25 @@ class MolliePaymentWebhookHandlerPlugin extends AbstractPlugin implements Mollie
             ->setStatus($molliePaymentTransfer->getStatus())
             ->setCaptureBefore($molliePaymentTransfer->getCaptureBefore());
 
+        $expressCheckoutUuid = $this->findExpressCheckoutUuidInMetadata($molliePaymentTransfer);
+        $orderCollectionRequestTransfer->setExpressCheckoutUuid($expressCheckoutUuid);
+
         return $orderCollectionRequestTransfer;
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MolliePaymentTransfer $molliePaymentTransfer
+     *
+     * @return string|null
+     */
+    protected function findExpressCheckoutUuidInMetadata(MolliePaymentTransfer $molliePaymentTransfer): ?string
+    {
+        $metadata = $molliePaymentTransfer->getMetadata();
+
+        if (!array_key_exists(MollieConfig::EXPRESS_CHECKOUT_METADATA_KEY_UUID, $metadata)) {
+            return null;
+        }
+
+        return $metadata[MollieConfig::EXPRESS_CHECKOUT_METADATA_KEY_UUID];
     }
 }

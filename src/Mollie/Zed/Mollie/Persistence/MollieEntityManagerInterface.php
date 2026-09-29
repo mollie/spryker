@@ -31,6 +31,14 @@ interface MollieEntityManagerInterface
     public function addMolliePaymentData(int $idSalesOrder, MolliePaymentTransfer $molliePaymentTransfer): void;
 
     /**
+     * @param int $idSalesOrder
+     * @param string $expressCheckoutUuid
+     *
+     * @return void
+     */
+    public function createExpressCheckoutMolliePayment(int $idSalesOrder, string $expressCheckoutUuid): void;
+
+    /**
      * @param \Generated\Shared\Transfer\MollieRefundCollectionTransfer $mollieRefundCollectionTransfer
      *
      * @return void

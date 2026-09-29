@@ -9,6 +9,7 @@ use Generated\Shared\Transfer\MollieApiRequestTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutConfigCollectionTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutConfigCriteriaTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutSessionApiResponseTransfer;
+use Ramsey\Uuid\Uuid;
 use SprykerShop\Yves\ShopApplication\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -89,10 +90,13 @@ class ExpressCheckoutController extends AbstractController
     {
         $quoteTransfer = $this->getFactory()->getQuoteClient()->getQuote();
 
+        $expressCheckoutUuid = Uuid::uuid4()->toString();
+
         $mollieApiRequestTransfer = (new MollieApiRequestTransfer())
             ->setQuote($quoteTransfer)
             ->setDescription(static::EXPRESS_CHECKOUT_SESSION_DESCRIPTION)
-            ->setRedirectUrl(static::EXPRESS_CHECKOUT_REDIRECT_URL_PLACEHOLDER);
+            ->setRedirectUrl(static::EXPRESS_CHECKOUT_REDIRECT_URL_PLACEHOLDER)
+            ->setExpressCheckoutUuid($expressCheckoutUuid);
 
         return $this->getClient()->createExpressCheckoutSession($mollieApiRequestTransfer);
     }
