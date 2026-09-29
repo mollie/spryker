@@ -32,6 +32,8 @@ mollieIdealIn3Payment,iDEAL in3,de_DE
 mollieIdealIn3Payment,iDEAL in3,en_US
 mollieAlmaPayment,Alma,de_DE
 mollieAlmaPayment,Alma,en_US
+mollieExpressPayment,Express Checkout,de_DE
+mollieExpressPayment,Express Checkout,en_US
 mollieTrustlyPayment,Trustly,de_DE
 mollieTrustlyPayment,Trustly,en_US
 mollieMbWayPayment,MB Way,en_US
@@ -78,6 +80,8 @@ checkout.payment.provider.MollieRivertyPayment,Mollie Riverty,de_DE
 checkout.payment.provider.MollieRivertyPayment,Mollie Riverty,en_US
 checkout.payment.provider.MollieAlmaPayment,Mollie Alma,de_DE
 checkout.payment.provider.MollieAlmaPayment,Mollie Alma,en_US
+checkout.payment.provider.MollieExpressPayment,Mollie Express Checkout,de_DE
+checkout.payment.provider.MollieExpressPayment,Mollie Express Checkout,en_US
 checkout.payment.provider.MollieTrustlyPayment,Mollie Trustly,en_US
 checkout.payment.provider.MollieTrustlyPayment,Mollie Trustly,de_DE
 checkout.payment.provider.MollieMbWayPayment,Mollie MB Way,en_US
