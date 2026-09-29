@@ -4,6 +4,8 @@ declare(strict_types = 1);
 
 namespace Mollie\Zed\Mollie\Persistence;
 
+use Generated\Shared\Transfer\MollieExpressCheckoutPaymentUpdateRequestTransfer;
+use Generated\Shared\Transfer\MollieExpressCheckoutPaymentUpdateResponseTransfer;
 use Generated\Shared\Transfer\MollieItemPaymentCaptureTransfer;
 use Generated\Shared\Transfer\MolliePaymentCaptureTransfer;
 use Generated\Shared\Transfer\MolliePaymentLinkTransfer;
@@ -17,7 +19,6 @@ use Orm\Zed\Mollie\Persistence\SpyMollieOrderItemPaymentCapture;
 use Orm\Zed\Mollie\Persistence\SpyMolliePaymentLink;
 use Orm\Zed\Mollie\Persistence\SpyPaymentMollie;
 use Orm\Zed\Mollie\Persistence\SpyRefundMollie;
-use Propel\Runtime\ActiveQuery\Criteria;
 use Spryker\Zed\Kernel\Persistence\AbstractEntityManager;
 use Spryker\Zed\Kernel\Persistence\EntityManager\TransactionTrait;
 
@@ -40,15 +41,7 @@ class MollieEntityManager extends AbstractEntityManager implements MollieEntityM
             ->findOneByTransactionId($updateOrderCollectionRequestTransfer->getId());
 
         if (!$spyPaymentMolleEntity) {
-            $spyPaymentMolleEntity = $this->findExpressCheckoutMolliePaymentWithoutTransactionId($updateOrderCollectionRequestTransfer);
-        }
-
-        if (!$spyPaymentMolleEntity) {
             return;
-        }
-
-        if (!$spyPaymentMolleEntity->getTransactionId()) {
-            $spyPaymentMolleEntity->setTransactionId($updateOrderCollectionRequestTransfer->getId());
         }
 
         $spyPaymentMolleEntity
@@ -56,28 +49,6 @@ class MollieEntityManager extends AbstractEntityManager implements MollieEntityM
             ->setCaptureBefore($updateOrderCollectionRequestTransfer->getCaptureBefore());
 
         $spyPaymentMolleEntity->save();
-    }
-
-    /**
-     * @param \Generated\Shared\Transfer\OrderCollectionRequestTransfer $updateOrderCollectionRequestTransfer
-     *
-     * @return \Orm\Zed\Mollie\Persistence\SpyPaymentMollie|null
-     */
-    protected function findExpressCheckoutMolliePaymentWithoutTransactionId(
-        OrderCollectionRequestTransfer $updateOrderCollectionRequestTransfer,
-    ): ?SpyPaymentMollie {
-        $expressCheckoutUuid = $updateOrderCollectionRequestTransfer->getExpressCheckoutUuid();
-
-        if (!$expressCheckoutUuid) {
-            return null;
-        }
-
-        $spyPaymentMollieEntity = $this->getFactory()
-            ->createSpyPaymentMollieQuery()
-            ->filterByTransactionId(null, Criteria::ISNULL)
-            ->findOneByExpressCheckoutUuid($expressCheckoutUuid);
-
-        return $spyPaymentMollieEntity;
     }
 
     /**
@@ -96,6 +67,36 @@ class MollieEntityManager extends AbstractEntityManager implements MollieEntityM
             ->setSequenceType(MollieConstants::MOLLIE_SEQUENCE_TYPE_ONE_OFF);
 
         $spyPaymentMollieEntity->save();
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MollieExpressCheckoutPaymentUpdateRequestTransfer $mollieExpressCheckoutPaymentUpdateRequestTransfer
+     *
+     * @return bool
+     */
+    public function updateExpressCheckoutMolliePayment(
+        MollieExpressCheckoutPaymentUpdateRequestTransfer $mollieExpressCheckoutPaymentUpdateRequestTransfer,
+    ): bool {
+        $expressCheckoutUuid = $mollieExpressCheckoutPaymentUpdateRequestTransfer->getExpressCheckoutUuidOrFail();
+
+        $spyPaymentMollieEntity = $this->getFactory()
+            ->createSpyPaymentMollieQuery()
+            ->findOneByExpressCheckoutUuid($expressCheckoutUuid);
+
+        if (!$spyPaymentMollieEntity) {
+            return false;
+        }
+
+        $transactionId = $mollieExpressCheckoutPaymentUpdateRequestTransfer->getTransactionIdOrFail();
+        $status = $mollieExpressCheckoutPaymentUpdateRequestTransfer->getStatusOrFail();
+
+        $spyPaymentMollieEntity
+            ->setTransactionId($transactionId)
+            ->setStatus($status);
+
+        $spyPaymentMollieEntity->save();
+
+        return true;
     }
 
     /**

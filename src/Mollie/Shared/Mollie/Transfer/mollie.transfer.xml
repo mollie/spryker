@@ -211,7 +211,16 @@
         <property name="id" type="string" />
         <property name="status" type="string" />
         <property name="captureBefore" type="string" />
-        <property name="expressCheckoutUuid" type="string" />
+    </transfer>
+
+    <transfer name="MollieExpressCheckoutPaymentUpdateRequest">
+        <property name="expressCheckoutUuid" type="string"/>
+        <property name="transactionId" type="string"/>
+        <property name="status" type="string"/>
+    </transfer>
+
+    <transfer name="MollieExpressCheckoutPaymentUpdateResponse">
+        <property name="isSuccessful" type="bool"/>
     </transfer>
 
     <transfer name="OrderCollectionResponse">

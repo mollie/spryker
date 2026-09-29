@@ -23,15 +23,8 @@ class MollieExpressCheckoutPostSavePlugin extends AbstractPlugin implements Chec
      */
     public function executeHook(QuoteTransfer $quoteTransfer, CheckoutResponseTransfer $checkoutResponseTransfer): void
     {
-        $paymentTransfer = $quoteTransfer->getPayment();
-        if (!$paymentTransfer) {
-            return;
-        }
-
-        $paymentMethod = $paymentTransfer->getPaymentMethod();
-        if (!$paymentMethod) {
-            return;
-        }
+        $paymentTransfer = $quoteTransfer->getPaymentOrFail();
+        $paymentMethod = $paymentTransfer->getPaymentMethodOrFail();
 
         if (!$this->getConfig()->isMollieExpressPaymentMethod($paymentMethod)) {
             return;
