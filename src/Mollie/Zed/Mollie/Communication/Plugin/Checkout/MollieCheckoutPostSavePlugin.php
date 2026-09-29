@@ -28,7 +28,8 @@ class MollieCheckoutPostSavePlugin extends AbstractPlugin implements CheckoutPos
             return;
         }
 
-        $paymentMethod = $quoteTransfer->getPayment()->getPaymentMethod();
+        $paymentTransfer = $quoteTransfer->getPayment();
+        $paymentMethod = $paymentTransfer->getPaymentMethod();
         if ($paymentMethod && $this->getConfig()->isMollieExpressPaymentMethod($paymentMethod)) {
             return;
         }

@@ -28,8 +28,12 @@ class ExpressCheckoutMolliePaymentWriter implements ExpressCheckoutMolliePayment
         QuoteTransfer $quoteTransfer,
         CheckoutResponseTransfer $checkoutResponseTransfer,
     ): void {
-        $idSalesOrder = $checkoutResponseTransfer->getSaveOrderOrFail()->getIdSalesOrderOrFail();
-        $expressCheckoutUuid = $quoteTransfer->getMollieExpressCheckoutUuidOrFail();
+        $saveOrderTransfer = $checkoutResponseTransfer->getSaveOrderOrFail();
+        $idSalesOrder = $saveOrderTransfer->getIdSalesOrderOrFail();
+
+        $paymentTransfer = $quoteTransfer->getPaymentOrFail();
+        $mollieExpressPaymentTransfer = $paymentTransfer->getMollieExpressPaymentOrFail();
+        $expressCheckoutUuid = $mollieExpressPaymentTransfer->getExpressCheckoutUuidOrFail();
 
         $this->entityManager->createExpressCheckoutMolliePayment($idSalesOrder, $expressCheckoutUuid);
     }

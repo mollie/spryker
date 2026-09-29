@@ -88,9 +88,11 @@ class ExpressCheckoutController extends AbstractController
      */
     protected function createExpressCheckoutSession(): MollieExpressCheckoutSessionApiResponseTransfer
     {
-        $quoteTransfer = $this->getFactory()->getQuoteClient()->getQuote();
+        $quoteClient = $this->getFactory()->getQuoteClient();
+        $quoteTransfer = $quoteClient->getQuote();
 
-        $expressCheckoutUuid = Uuid::uuid4()->toString();
+        $uuid = Uuid::uuid4();
+        $expressCheckoutUuid = $uuid->toString();
 
         $mollieApiRequestTransfer = (new MollieApiRequestTransfer())
             ->setQuote($quoteTransfer)

@@ -69,6 +69,11 @@
         <property name="mollieRivertyPayment" type="array"/>
         <property name="mollieIdealIn3Payment" type="MollieIdealIn3Payment"/>
         <property name="mollieAlmaPayment" type="array"/>
+        <property name="mollieExpressPayment" type="MollieExpressPayment"/>
+    </transfer>
+
+    <transfer name="MollieExpressPayment">
+        <property name="expressCheckoutUuid" type="string"/>
     </transfer>
 
     <transfer name="MolliePaymentMethod">
@@ -308,7 +313,6 @@
 
     <transfer name="Quote">
         <property name="molliePaymentId" type="string"/>
-        <property name="mollieExpressCheckoutUuid" type="string"/>
     </transfer>
 
     <transfer name="Order">
