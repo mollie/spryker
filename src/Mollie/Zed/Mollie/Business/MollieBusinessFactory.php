@@ -12,6 +12,16 @@ use Mollie\Zed\Mollie\Business\ExpressCheckout\ExpressCheckoutConfigReader;
 use Mollie\Zed\Mollie\Business\ExpressCheckout\ExpressCheckoutConfigReaderInterface;
 use Mollie\Zed\Mollie\Business\ExpressCheckout\ExpressCheckoutConfigWriter;
 use Mollie\Zed\Mollie\Business\ExpressCheckout\ExpressCheckoutConfigWriterInterface;
+use Mollie\Zed\Mollie\Business\ExpressCheckout\Order\Expander\AddressExpander;
+use Mollie\Zed\Mollie\Business\ExpressCheckout\Order\Expander\ExpressCheckoutQuoteExpanderInterface;
+use Mollie\Zed\Mollie\Business\ExpressCheckout\Order\Expander\PaymentExpander;
+use Mollie\Zed\Mollie\Business\ExpressCheckout\Order\Expander\ShipmentMethodExpander;
+use Mollie\Zed\Mollie\Business\ExpressCheckout\Order\ExpressCheckoutOrderPlacer;
+use Mollie\Zed\Mollie\Business\ExpressCheckout\Order\ExpressCheckoutOrderPlacerInterface;
+use Mollie\Zed\Mollie\Business\ExpressCheckout\Order\ExpressCheckoutQuoteAddressWriter;
+use Mollie\Zed\Mollie\Business\ExpressCheckout\Order\ExpressCheckoutQuoteAddressWriterInterface;
+use Mollie\Zed\Mollie\Business\ExpressCheckout\Order\ExpressCheckoutQuotePreparer;
+use Mollie\Zed\Mollie\Business\ExpressCheckout\Order\ExpressCheckoutQuotePreparerInterface;
 use Mollie\Zed\Mollie\Business\Filter\MolliePaymentMethodsFilter;
 use Mollie\Zed\Mollie\Business\Filter\MolliePaymentMethodsFilterInterface;
 use Mollie\Zed\Mollie\Business\Filter\MollieRefundFilter;
@@ -45,9 +55,12 @@ use Mollie\Zed\Mollie\Business\Processor\Refund\RefundProcessor;
 use Mollie\Zed\Mollie\Business\Processor\Refund\RefundProcessorInterface;
 use Mollie\Zed\Mollie\Business\Writer\MolliePaymentWriter;
 use Mollie\Zed\Mollie\Business\Writer\MolliePaymentWriterInterface;
+use Mollie\Zed\Mollie\Dependency\Facade\MollieToCalculationFacadeInterface;
+use Mollie\Zed\Mollie\Dependency\Facade\MollieToCheckoutFacadeInterface;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToLocaleFacadeInterface;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToMailFacadeInterface;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToOmsInterface;
+use Mollie\Zed\Mollie\Dependency\Facade\MollieToShipmentFacadeInterface;
 use Mollie\Zed\Mollie\Dependency\MollieToStorageClientInterface;
 use Mollie\Zed\Mollie\Dependency\Service\MollieToUtilEncodingServiceInterface;
 use Mollie\Zed\Mollie\MollieDependencyProvider;
@@ -342,5 +355,109 @@ class MollieBusinessFactory extends AbstractBusinessFactory
             $this->getEntityManager(),
             $this->getConfig(),
         );
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Business\ExpressCheckout\Order\ExpressCheckoutOrderPlacerInterface
+     */
+    public function createExpressCheckoutOrderPlacer(): ExpressCheckoutOrderPlacerInterface
+    {
+        return new ExpressCheckoutOrderPlacer(
+            new ExpressCheckoutQuotePreparer($this->getExpressCheckoutOrderQuoteExpanders(), $this->getCalculationFacade()),
+            $this->getCheckoutFacade(),
+        );
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Business\ExpressCheckout\Order\ExpressCheckoutQuoteAddressWriterInterface
+     */
+    public function createExpressCheckoutQuoteAddressWriter(): ExpressCheckoutQuoteAddressWriterInterface
+    {
+        return new ExpressCheckoutQuoteAddressWriter($this->createExpressCheckoutAddressQuotePreparer());
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Business\ExpressCheckout\Order\ExpressCheckoutQuotePreparerInterface
+     */
+    public function createExpressCheckoutAddressQuotePreparer(): ExpressCheckoutQuotePreparerInterface
+    {
+        return new ExpressCheckoutQuotePreparer($this->getExpressCheckoutAddressQuoteExpanders(), $this->getCalculationFacade());
+    }
+
+    /**
+     * Used when the shopper saves the address form: addresses + shipment, so the cart total includes shipping.
+     * Order matters: the shipment method needs the shipping address, so AddressExpander runs first.
+     *
+     * @return array<\Mollie\Zed\Mollie\Business\ExpressCheckout\Order\Expander\ExpressCheckoutQuoteExpanderInterface>
+     */
+    public function getExpressCheckoutAddressQuoteExpanders(): array
+    {
+        return [
+            $this->createExpressCheckoutAddressExpander(),
+            // TODO: temporarily disabled for the 1-cent live test - shipping cost would raise the amount Mollie charges.
+            // Re-enable before release: express orders need a shipment method.
+            // $this->createExpressCheckoutShipmentMethodExpander(),
+        ];
+    }
+
+    /**
+     * Used when the order is placed: the address expanders plus the Mollie payment.
+     *
+     * @return array<\Mollie\Zed\Mollie\Business\ExpressCheckout\Order\Expander\ExpressCheckoutQuoteExpanderInterface>
+     */
+    public function getExpressCheckoutOrderQuoteExpanders(): array
+    {
+        return array_merge(
+            $this->getExpressCheckoutAddressQuoteExpanders(),
+            [$this->createExpressCheckoutPaymentExpander()],
+        );
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Business\ExpressCheckout\Order\Expander\ExpressCheckoutQuoteExpanderInterface
+     */
+    public function createExpressCheckoutAddressExpander(): ExpressCheckoutQuoteExpanderInterface
+    {
+        return new AddressExpander();
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Business\ExpressCheckout\Order\Expander\ExpressCheckoutQuoteExpanderInterface
+     */
+    public function createExpressCheckoutShipmentMethodExpander(): ExpressCheckoutQuoteExpanderInterface
+    {
+        return new ShipmentMethodExpander($this->getShipmentFacade());
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Business\ExpressCheckout\Order\Expander\ExpressCheckoutQuoteExpanderInterface
+     */
+    public function createExpressCheckoutPaymentExpander(): ExpressCheckoutQuoteExpanderInterface
+    {
+        return new PaymentExpander($this->getConfig());
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Dependency\Facade\MollieToCheckoutFacadeInterface
+     */
+    public function getCheckoutFacade(): MollieToCheckoutFacadeInterface
+    {
+        return $this->getProvidedDependency(MollieDependencyProvider::FACADE_CHECKOUT);
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Dependency\Facade\MollieToCalculationFacadeInterface
+     */
+    public function getCalculationFacade(): MollieToCalculationFacadeInterface
+    {
+        return $this->getProvidedDependency(MollieDependencyProvider::FACADE_CALCULATION);
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Dependency\Facade\MollieToShipmentFacadeInterface
+     */
+    public function getShipmentFacade(): MollieToShipmentFacadeInterface
+    {
+        return $this->getProvidedDependency(MollieDependencyProvider::FACADE_SHIPMENT);
     }
 }

@@ -10,6 +10,8 @@
     expressCheckoutCreateSessionEndpoint: required,
     jsSrc: required,
     locale: required,
+    isDisabled: false,
+    disabledMessage: '',
 } %}
 
 {% define attributes = {
@@ -17,6 +19,7 @@
     'express-checkout-resolve-enabled-methods-endpoint': data.expressCheckoutResolveEnabledMethodsEndpoint,
     'express-checkout-create-session-endpoint': data.expressCheckoutCreateSessionEndpoint,
     'mount-id': 'mollie-express-checkout',
+    'is-disabled': data.isDisabled ? 'true' : 'false',
 } %}
 
 {% block body %}
@@ -25,5 +28,20 @@
             src: data.jsSrc
         }
     } only %}
-    <div id="mollie-express-checkout"></div>
+    {# The Mollie buttons live in a cross-origin iframe and cannot be disabled directly, so a transparent
+       overlay greys them out and catches the click while express checkout is disabled. #}
+    <div class="{{ config.name }}__buttons" style="position: relative;">
+        <div id="mollie-express-checkout" {% if data.isDisabled %}style="opacity: 0.5;"{% endif %}></div>
+
+        {% if data.isDisabled %}
+            <button type="button"
+                    class="{{ config.name }}__disabled-overlay"
+                    aria-label="{{ data.disabledMessage }}"
+                    style="position: absolute; inset: 0; width: 100%; background: transparent; border: 0; cursor: not-allowed;"></button>
+        {% endif %}
+    </div>
+
+    {% if data.isDisabled %}
+        <p class="{{ config.name }}__disabled-message is-hidden" style="color: #e30613;">{{ data.disabledMessage }}</p>
+    {% endif %}
 {% endblock %}

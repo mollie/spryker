@@ -18,6 +18,16 @@ class MollieConfig extends AbstractBundleConfig
     /**
      * @var string
      */
+    protected const EXPRESS_CHECKOUT_SESSION_ID_SESSION_KEY = 'mollie_express_checkout_session_id';
+
+    /**
+     * @var string
+     */
+    protected const EXPRESS_CHECKOUT_REFERENCE_SESSION_KEY = 'mollie_express_checkout_reference';
+
+    /**
+     * @var string
+     */
     protected const ERROR_MESSAGE_ORDER_STATUS_PAYMENT_ERROR = 'Payment did not get processed (status: %s). Please try again.';
 
     /**
@@ -87,6 +97,22 @@ class MollieConfig extends AbstractBundleConfig
     public function getOrderReferenceQueryParamName(): string
     {
         return static::ORDER_REFERENCE_QUERY_PARAM_NAME;
+    }
+
+    /**
+     * @return string
+     */
+    public function getExpressCheckoutSessionIdSessionKey(): string
+    {
+        return static::EXPRESS_CHECKOUT_SESSION_ID_SESSION_KEY;
+    }
+
+    /**
+     * @return string
+     */
+    public function getExpressCheckoutReferenceSessionKey(): string
+    {
+        return static::EXPRESS_CHECKOUT_REFERENCE_SESSION_KEY;
     }
 
     /**

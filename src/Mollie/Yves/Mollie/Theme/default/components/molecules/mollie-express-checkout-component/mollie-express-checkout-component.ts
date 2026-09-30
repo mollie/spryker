@@ -6,6 +6,8 @@ declare global {
     Mollie2: {
       Checkout(clientAccessToken: string, options?: MollieCheckoutOptions): MollieCheckoutInstance;
     };
+    // TODO: POC only - set in the browser console to choose how onSubmit ends.
+    mollieExpressPocDecision?: 'resolve' | 'reject';
   }
 }
 
@@ -58,6 +60,7 @@ export default class MollieExpressCheckoutComponent extends Component {
     protected init(): void {
         this.scriptLoader = <ScriptLoader>this.querySelector(this.scriptLoaderTag);
         this.mapEvents();
+        this.mapDisabledOverlayEvents();
     }
 
     protected mapEvents(): void {
@@ -124,12 +127,66 @@ export default class MollieExpressCheckoutComponent extends Component {
         return { buttons };
     }
 
+    // TODO: POC only - proves that defer() pauses the payment until resolve()/reject() is called asynchronously.
+    // Decision comes from window.mollieExpressPocDecision ('resolve' charges, anything else rejects = no charge).
+    // Express checkout is disabled until the cart's address form is saved: the overlay over the Mollie buttons
+    // catches the click and shows the message instead of starting the payment.
+    protected mapDisabledOverlayEvents(): void {
+        const overlay = this.querySelector(`.${this.name}__disabled-overlay`);
+
+        if (!overlay) {
+            return;
+        }
+
+        overlay.addEventListener('click', () => this.showDisabledMessage());
+    }
+
+    protected showDisabledMessage(): void {
+        this.querySelector(`.${this.name}__disabled-message`)?.classList.remove('is-hidden');
+    }
+
     protected onSubmit(event: MollieSubmitEvent): void {
-        event.resolve();
+        // Safety net: the overlay should prevent this, but never let a payment through without addresses.
+        if (this.isDisabled) {
+            event.reject();
+            this.showDisabledMessage();
+
+            return;
+        }
+
+        const startedAt = Date.now();
+        const log = (message: string) => console.log(`[mollie-express-poc] +${Date.now() - startedAt}ms ${message}`);
+        const waitMs = 10000;
+
+        log('onSubmit called by Mollie');
+        event.defer();
+        log(`defer() called - payment should now be paused for ${waitMs / 1000}s`);
+
+        const countdown = window.setInterval(() => log('still waiting, Mollie has not created the payment yet'), 2000);
+
+        window.setTimeout(() => {
+            window.clearInterval(countdown);
+
+            if (window.mollieExpressPocDecision === 'resolve') {
+                log('calling resolve() - Mollie should create and charge the payment now');
+                event.resolve();
+
+                return;
+            }
+
+            log('calling reject() - Mollie should abort, no payment is created');
+            event.reject();
+        }, waitMs);
+
+        log('onSubmit returned - JS thread is free, Mollie is waiting for our decision');
     }
 
     protected get scriptLoaderTag(): string {
         return 'script-loader';
+    }
+
+    protected get isDisabled(): boolean {
+        return this.getAttribute('is-disabled') === 'true';
     }
 
     protected get mountSelector(): string {

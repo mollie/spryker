@@ -9,11 +9,13 @@ use Generated\Shared\Transfer\MollieApiRequestTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutConfigCollectionTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutConfigCriteriaTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutSessionApiResponseTransfer;
+use Mollie\Yves\Mollie\Plugin\Router\MollieRouteProviderPlugin;
 use SprykerShop\Yves\ShopApplication\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
+ * @method \Mollie\Yves\Mollie\MollieConfig getConfig()
  * @method \Mollie\Yves\Mollie\MollieFactory getFactory()
  * @method \Mollie\Client\Mollie\MollieClient getClient()
  */
@@ -23,11 +25,6 @@ class ExpressCheckoutController extends AbstractController
      * @var string
      */
     protected const EXPRESS_CHECKOUT_SESSION_DESCRIPTION = 'Express Checkout Session';
-
-    /**
-     * @var string
-     */
-    protected const EXPRESS_CHECKOUT_REDIRECT_URL_PLACEHOLDER = 'https://example.org/checkout/express-redirect';
 
     /**
      * @param \Symfony\Component\HttpFoundation\Request $request
@@ -52,7 +49,7 @@ class ExpressCheckoutController extends AbstractController
      */
     public function createSessionAction(Request $request): JsonResponse
     {
-        $mollieExpressCheckoutSessionApiResponseTransfer = $this->createExpressCheckoutSession();
+        $mollieExpressCheckoutSessionApiResponseTransfer = $this->createExpressCheckoutSession($request);
 
         if (!$mollieExpressCheckoutSessionApiResponseTransfer->getIsSuccessful()) {
             return new JsonResponse(
@@ -61,8 +58,14 @@ class ExpressCheckoutController extends AbstractController
             );
         }
 
+        $mollieExpressCheckoutSessionTransfer = $mollieExpressCheckoutSessionApiResponseTransfer->getExpressCheckoutSession();
+        $request->getSession()->set(
+            $this->getFactory()->getConfig()->getExpressCheckoutSessionIdSessionKey(),
+            $mollieExpressCheckoutSessionTransfer->getId(),
+        );
+
         return new JsonResponse([
-            'clientAccessToken' => $mollieExpressCheckoutSessionApiResponseTransfer->getExpressCheckoutSession()->getClientAccessToken(),
+            'clientAccessToken' => $mollieExpressCheckoutSessionTransfer->getClientAccessToken(),
         ]);
     }
 
@@ -83,16 +86,29 @@ class ExpressCheckoutController extends AbstractController
     }
 
     /**
+     * @param \Symfony\Component\HttpFoundation\Request $request
+     *
      * @return \Generated\Shared\Transfer\MollieExpressCheckoutSessionApiResponseTransfer
      */
-    protected function createExpressCheckoutSession(): MollieExpressCheckoutSessionApiResponseTransfer
+    protected function createExpressCheckoutSession(Request $request): MollieExpressCheckoutSessionApiResponseTransfer
     {
         $quoteTransfer = $this->getFactory()->getQuoteClient()->getQuote();
 
+        // Our own reference on the session metadata, used to match the payment Mollie creates (webhook) to this checkout.
+        // probaj maknuti to
+        $expressCheckoutReference = bin2hex(random_bytes(16));
+        $request->getSession()->set(
+            $this->getFactory()->getConfig()->getExpressCheckoutReferenceSessionKey(),
+            $expressCheckoutReference,
+        );
+
         $mollieApiRequestTransfer = (new MollieApiRequestTransfer())
+            ->setExpressCheckoutReference($expressCheckoutReference)
             ->setQuote($quoteTransfer)
             ->setDescription(static::EXPRESS_CHECKOUT_SESSION_DESCRIPTION)
-            ->setRedirectUrl(static::EXPRESS_CHECKOUT_REDIRECT_URL_PLACEHOLDER);
+            ->setRedirectUrl(
+                $request->getSchemeAndHttpHost() . MollieRouteProviderPlugin::ROUTE_PATH_MOLLIE_EXPRESS_CHECKOUT_REDIRECT,
+            );
 
         return $this->getClient()->createExpressCheckoutSession($mollieApiRequestTransfer);
     }

@@ -9,6 +9,9 @@ use Generated\Shared\Transfer\CheckoutResponseTransfer;
 use Generated\Shared\Transfer\MollieExpirationInformationTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutConfigCollectionTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutConfigCriteriaTransfer;
+use Generated\Shared\Transfer\MollieExpressCheckoutOrderRequestTransfer;
+use Generated\Shared\Transfer\MollieExpressCheckoutOrderResponseTransfer;
+use Generated\Shared\Transfer\MollieExpressCheckoutQuoteResponseTransfer;
 use Generated\Shared\Transfer\MolliePaymentCaptureRequestTransfer;
 use Generated\Shared\Transfer\MolliePaymentCaptureResponseTransfer;
 use Generated\Shared\Transfer\MolliePaymentLinkApiResponseTransfer;
@@ -258,4 +261,40 @@ interface MollieFacadeInterface
     public function saveExpressCheckoutConfigCollection(
         MollieExpressCheckoutConfigCollectionTransfer $mollieExpressCheckoutConfigCollectionTransfer,
     ): void;
+
+    /**
+     * Specification:
+     * - Places a Spryker order for an express checkout (Apple Pay, PayPal via the Mollie express component).
+     * - Sets billing and shipping address: request addresses first, then the quote's, then the customer's first stored address.
+     * - Assigns the first available shipment method and adds its expense.
+     * - Sets the Mollie payment matching `expressMethod` and marks the quote with `mollieExpressCheckoutReference`,
+     *   so no second Mollie payment is created on checkout post-save.
+     * - Recalculates the quote and places the order via the Checkout facade.
+     * - Returns `isSuccessful`, `orderReference` and `idSalesOrder`, or `errors` on failure (never throws).
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\MollieExpressCheckoutOrderRequestTransfer $mollieExpressCheckoutOrderRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieExpressCheckoutOrderResponseTransfer
+     */
+    public function placeExpressCheckoutOrder(
+        MollieExpressCheckoutOrderRequestTransfer $mollieExpressCheckoutOrderRequestTransfer,
+    ): MollieExpressCheckoutOrderResponseTransfer;
+
+    /**
+     * Specification:
+     * - Saves the express checkout addresses from the request on the request quote (billing, shipping, item shipments).
+     * - Assigns the first available shipment method and recalculates, so the grand total includes shipping.
+     * - Returns `isSuccessful` and the updated `quote`, or `errors` on failure (never throws).
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\MollieExpressCheckoutOrderRequestTransfer $mollieExpressCheckoutOrderRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieExpressCheckoutQuoteResponseTransfer
+     */
+    public function saveExpressCheckoutAddresses(
+        MollieExpressCheckoutOrderRequestTransfer $mollieExpressCheckoutOrderRequestTransfer,
+    ): MollieExpressCheckoutQuoteResponseTransfer;
 }

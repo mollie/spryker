@@ -39,6 +39,16 @@ class MollieRouteProviderPlugin extends AbstractRouteProviderPlugin
     /**
      * @var string
      */
+    public const ROUTE_MOLLIE_EXPRESS_CHECKOUT_REDIRECT = 'mollie/express-checkout/redirect';
+
+    /**
+     * @var string
+     */
+    public const ROUTE_MOLLIE_EXPRESS_CHECKOUT_SAVE_ADDRESSES = 'mollie/express-checkout/save-addresses';
+
+    /**
+     * @var string
+     */
     public const ROUTE_PATH_MOLLIE_EXPRESS_CHECKOUT_RESOLVE_ENABLED_METHODS
         = '/mollie/express-checkout/resolve-enabled-methods';
 
@@ -46,6 +56,16 @@ class MollieRouteProviderPlugin extends AbstractRouteProviderPlugin
      * @var string
      */
     public const ROUTE_PATH_MOLLIE_EXPRESS_CHECKOUT_CREATE_SESSION = '/mollie/express-checkout/create-session';
+
+    /**
+     * @var string
+     */
+    public const ROUTE_PATH_MOLLIE_EXPRESS_CHECKOUT_REDIRECT = '/mollie/express-checkout/redirect';
+
+    /**
+     * @var string
+     */
+    public const ROUTE_PATH_MOLLIE_EXPRESS_CHECKOUT_SAVE_ADDRESSES = '/mollie/express-checkout/save-addresses';
 
     /**
      * @param \Spryker\Yves\Router\Route\RouteCollection $routeCollection
@@ -59,6 +79,8 @@ class MollieRouteProviderPlugin extends AbstractRouteProviderPlugin
         $routeCollection = $this->addNextGenWebhookRoute($routeCollection);
         $routeCollection = $this->addExpressCheckoutResolveEnabledMethodsRoute($routeCollection);
         $routeCollection = $this->addExpressCheckoutCreateSessionRoute($routeCollection);
+        $routeCollection = $this->addExpressCheckoutRedirectRoute($routeCollection);
+        $routeCollection = $this->addExpressCheckoutSaveAddressesRoute($routeCollection);
 
         return $routeCollection;
     }
@@ -139,6 +161,44 @@ class MollieRouteProviderPlugin extends AbstractRouteProviderPlugin
         );
         $route = $route->setMethods(['POST']);
         $routeCollection->add(static::ROUTE_MOLLIE_EXPRESS_CHECKOUT_CREATE_SESSION, $route);
+
+        return $routeCollection;
+    }
+
+    /**
+     * @param \Spryker\Yves\Router\Route\RouteCollection $routeCollection
+     *
+     * @return \Spryker\Yves\Router\Route\RouteCollection
+     */
+    protected function addExpressCheckoutRedirectRoute(RouteCollection $routeCollection): RouteCollection
+    {
+        $route = $this->buildRoute(
+            static::ROUTE_PATH_MOLLIE_EXPRESS_CHECKOUT_REDIRECT,
+            'Mollie',
+            'ExpressCheckoutRedirect',
+            'expressCheckoutRedirectAction',
+        );
+        $route = $route->setMethods(['GET']);
+        $routeCollection->add(static::ROUTE_MOLLIE_EXPRESS_CHECKOUT_REDIRECT, $route);
+
+        return $routeCollection;
+    }
+
+    /**
+     * @param \Spryker\Yves\Router\Route\RouteCollection $routeCollection
+     *
+     * @return \Spryker\Yves\Router\Route\RouteCollection
+     */
+    protected function addExpressCheckoutSaveAddressesRoute(RouteCollection $routeCollection): RouteCollection
+    {
+        $route = $this->buildRoute(
+            static::ROUTE_PATH_MOLLIE_EXPRESS_CHECKOUT_SAVE_ADDRESSES,
+            'Mollie',
+            'ExpressCheckoutAddress',
+            'saveAddressesAction',
+        );
+        $route = $route->setMethods(['POST']);
+        $routeCollection->add(static::ROUTE_MOLLIE_EXPRESS_CHECKOUT_SAVE_ADDRESSES, $route);
 
         return $routeCollection;
     }

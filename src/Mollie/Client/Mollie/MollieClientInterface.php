@@ -10,6 +10,9 @@ use Generated\Shared\Transfer\MollieApiResponseTransfer;
 use Generated\Shared\Transfer\MollieCreateCaptureApiResponseTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutConfigCollectionTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutConfigCriteriaTransfer;
+use Generated\Shared\Transfer\MollieExpressCheckoutOrderRequestTransfer;
+use Generated\Shared\Transfer\MollieExpressCheckoutOrderResponseTransfer;
+use Generated\Shared\Transfer\MollieExpressCheckoutQuoteResponseTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutSessionApiResponseTransfer;
 use Generated\Shared\Transfer\MollieGetCaptureApiResponseTransfer;
 use Generated\Shared\Transfer\MollieGetProfileApiResponseTransfer;
@@ -309,4 +312,35 @@ interface MollieClientInterface
      * @return \Generated\Shared\Transfer\MollieExpressCheckoutSessionApiResponseTransfer
      */
     public function getExpressCheckoutSession(MollieApiRequestTransfer $mollieApiRequestTransfer): MollieExpressCheckoutSessionApiResponseTransfer;
+
+    /**
+     * Specification:
+     * - Places a Spryker order for an express checkout via Zed (see MollieFacade::placeExpressCheckoutOrder()).
+     * - Returns `isSuccessful`, `orderReference` and `idSalesOrder`, or `errors` on failure.
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\MollieExpressCheckoutOrderRequestTransfer $mollieExpressCheckoutOrderRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieExpressCheckoutOrderResponseTransfer
+     */
+    public function placeExpressCheckoutOrder(
+        MollieExpressCheckoutOrderRequestTransfer $mollieExpressCheckoutOrderRequestTransfer,
+    ): MollieExpressCheckoutOrderResponseTransfer;
+
+    /**
+     * Specification:
+     * - Saves the express checkout addresses on the given quote via Zed (see MollieFacade::saveExpressCheckoutAddresses()).
+     * - Returns the updated quote (addresses, first shipment method, recalculated totals), or `errors` on failure.
+     * - Does not persist the quote; the caller stores the returned quote.
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\MollieExpressCheckoutOrderRequestTransfer $mollieExpressCheckoutOrderRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieExpressCheckoutQuoteResponseTransfer
+     */
+    public function saveExpressCheckoutAddresses(
+        MollieExpressCheckoutOrderRequestTransfer $mollieExpressCheckoutOrderRequestTransfer,
+    ): MollieExpressCheckoutQuoteResponseTransfer;
 }

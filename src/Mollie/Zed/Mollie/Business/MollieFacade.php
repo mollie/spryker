@@ -9,6 +9,9 @@ use Generated\Shared\Transfer\CheckoutResponseTransfer;
 use Generated\Shared\Transfer\MollieExpirationInformationTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutConfigCollectionTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutConfigCriteriaTransfer;
+use Generated\Shared\Transfer\MollieExpressCheckoutOrderRequestTransfer;
+use Generated\Shared\Transfer\MollieExpressCheckoutOrderResponseTransfer;
+use Generated\Shared\Transfer\MollieExpressCheckoutQuoteResponseTransfer;
 use Generated\Shared\Transfer\MolliePaymentCaptureRequestTransfer;
 use Generated\Shared\Transfer\MolliePaymentCaptureResponseTransfer;
 use Generated\Shared\Transfer\MolliePaymentLinkApiResponseTransfer;
@@ -360,5 +363,39 @@ class MollieFacade extends AbstractFacade implements MollieFacadeInterface
         $this->getFactory()->createExpressCheckoutConfigWriter()->saveExpressCheckoutConfigCollection(
             $mollieExpressCheckoutConfigCollectionTransfer,
         );
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\MollieExpressCheckoutOrderRequestTransfer $mollieExpressCheckoutOrderRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieExpressCheckoutOrderResponseTransfer
+     */
+    public function placeExpressCheckoutOrder(
+        MollieExpressCheckoutOrderRequestTransfer $mollieExpressCheckoutOrderRequestTransfer,
+    ): MollieExpressCheckoutOrderResponseTransfer {
+        return $this->getFactory()
+            ->createExpressCheckoutOrderPlacer()
+            ->placeOrder($mollieExpressCheckoutOrderRequestTransfer);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\MollieExpressCheckoutOrderRequestTransfer $mollieExpressCheckoutOrderRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieExpressCheckoutQuoteResponseTransfer
+     */
+    public function saveExpressCheckoutAddresses(
+        MollieExpressCheckoutOrderRequestTransfer $mollieExpressCheckoutOrderRequestTransfer,
+    ): MollieExpressCheckoutQuoteResponseTransfer {
+        return $this->getFactory()
+            ->createExpressCheckoutQuoteAddressWriter()
+            ->writeAddresses($mollieExpressCheckoutOrderRequestTransfer);
     }
 }

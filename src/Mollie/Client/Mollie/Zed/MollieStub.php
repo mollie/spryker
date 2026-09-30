@@ -7,6 +7,9 @@ namespace Mollie\Client\Mollie\Zed;
 
 use Generated\Shared\Transfer\MollieExpressCheckoutConfigCollectionTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutConfigCriteriaTransfer;
+use Generated\Shared\Transfer\MollieExpressCheckoutOrderRequestTransfer;
+use Generated\Shared\Transfer\MollieExpressCheckoutOrderResponseTransfer;
+use Generated\Shared\Transfer\MollieExpressCheckoutQuoteResponseTransfer;
 use Generated\Shared\Transfer\MolliePaymentCaptureResponseTransfer;
 use Generated\Shared\Transfer\MolliePaymentLinkTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodConfigCollectionTransfer;
@@ -106,5 +109,35 @@ class MollieStub implements MollieStubInterface
             ->call('/mollie/gateway/get-express-checkout-config-collection', $mollieExpressCheckoutConfigCriteriaTransfer);
 
         return $mollieExpressCheckoutConfigCollectionTransfer;
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MollieExpressCheckoutOrderRequestTransfer $mollieExpressCheckoutOrderRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieExpressCheckoutOrderResponseTransfer
+     */
+    public function placeExpressCheckoutOrder(
+        MollieExpressCheckoutOrderRequestTransfer $mollieExpressCheckoutOrderRequestTransfer,
+    ): MollieExpressCheckoutOrderResponseTransfer {
+        /** @var \Generated\Shared\Transfer\MollieExpressCheckoutOrderResponseTransfer $mollieExpressCheckoutOrderResponseTransfer */
+        $mollieExpressCheckoutOrderResponseTransfer = $this->zedStub
+            ->call('/mollie/gateway/place-express-checkout-order', $mollieExpressCheckoutOrderRequestTransfer);
+
+        return $mollieExpressCheckoutOrderResponseTransfer;
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MollieExpressCheckoutOrderRequestTransfer $mollieExpressCheckoutOrderRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieExpressCheckoutQuoteResponseTransfer
+     */
+    public function saveExpressCheckoutAddresses(
+        MollieExpressCheckoutOrderRequestTransfer $mollieExpressCheckoutOrderRequestTransfer,
+    ): MollieExpressCheckoutQuoteResponseTransfer {
+        /** @var \Generated\Shared\Transfer\MollieExpressCheckoutQuoteResponseTransfer $mollieExpressCheckoutQuoteResponseTransfer */
+        $mollieExpressCheckoutQuoteResponseTransfer = $this->zedStub
+            ->call('/mollie/gateway/save-express-checkout-addresses', $mollieExpressCheckoutOrderRequestTransfer);
+
+        return $mollieExpressCheckoutQuoteResponseTransfer;
     }
 }

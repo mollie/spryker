@@ -10,6 +10,9 @@ use Generated\Shared\Transfer\MollieApiResponseTransfer;
 use Generated\Shared\Transfer\MollieCreateCaptureApiResponseTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutConfigCollectionTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutConfigCriteriaTransfer;
+use Generated\Shared\Transfer\MollieExpressCheckoutOrderRequestTransfer;
+use Generated\Shared\Transfer\MollieExpressCheckoutOrderResponseTransfer;
+use Generated\Shared\Transfer\MollieExpressCheckoutQuoteResponseTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutSessionApiResponseTransfer;
 use Generated\Shared\Transfer\MollieGetCaptureApiResponseTransfer;
 use Generated\Shared\Transfer\MollieGetProfileApiResponseTransfer;
@@ -363,5 +366,39 @@ class MollieClient extends AbstractClient implements MollieClientInterface
         $mollieExpressCheckoutSessionApiResponseTransfer = $this->getFactory()->createGetExpressCheckoutSessionApi()->execute($mollieApiRequestTransfer);
 
         return $mollieExpressCheckoutSessionApiResponseTransfer;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\MollieExpressCheckoutOrderRequestTransfer $mollieExpressCheckoutOrderRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieExpressCheckoutOrderResponseTransfer
+     */
+    public function placeExpressCheckoutOrder(
+        MollieExpressCheckoutOrderRequestTransfer $mollieExpressCheckoutOrderRequestTransfer,
+    ): MollieExpressCheckoutOrderResponseTransfer {
+        return $this->getFactory()
+            ->createZedMollieStub()
+            ->placeExpressCheckoutOrder($mollieExpressCheckoutOrderRequestTransfer);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\MollieExpressCheckoutOrderRequestTransfer $mollieExpressCheckoutOrderRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieExpressCheckoutQuoteResponseTransfer
+     */
+    public function saveExpressCheckoutAddresses(
+        MollieExpressCheckoutOrderRequestTransfer $mollieExpressCheckoutOrderRequestTransfer,
+    ): MollieExpressCheckoutQuoteResponseTransfer {
+        return $this->getFactory()
+            ->createZedMollieStub()
+            ->saveExpressCheckoutAddresses($mollieExpressCheckoutOrderRequestTransfer);
     }
 }

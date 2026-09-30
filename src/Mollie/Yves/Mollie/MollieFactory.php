@@ -4,12 +4,18 @@ declare(strict_types = 1);
 
 namespace Mollie\Yves\Mollie;
 
+use Generated\Shared\Transfer\QuoteTransfer;
 use Mollie\Client\Mollie\MollieClientInterface;
 use Mollie\Service\Mollie\MollieServiceInterface;
 use Mollie\Yves\Mollie\Dependency\Client\MollieToLocaleClientInterface;
 use Mollie\Yves\Mollie\Dependency\Client\MollieToQuoteClientInterface;
 use Mollie\Yves\Mollie\Dependency\Client\MollieToStorageClientInterface;
+use Mollie\Yves\Mollie\Dependency\Client\MollieToStoreClientInterface;
 use Mollie\Yves\Mollie\Dependency\Service\MollieToUtilEncodingServiceInterface;
+use Mollie\Yves\Mollie\ExpressCheckout\ExpressCheckoutAddressChecker;
+use Mollie\Yves\Mollie\ExpressCheckout\ExpressCheckoutAddressCheckerInterface;
+use Mollie\Yves\Mollie\Form\ExpressCheckout\DataProvider\ExpressCheckoutAddressFormDataProvider;
+use Mollie\Yves\Mollie\Form\ExpressCheckout\ExpressCheckoutAddressForm;
 use Mollie\Yves\Mollie\Handler\Payment\MolliePaymentAlmaHandler;
 use Mollie\Yves\Mollie\Handler\Payment\MolliePaymentApplePayHandler;
 use Mollie\Yves\Mollie\Handler\Payment\MolliePaymentBancomatPayHandler;
@@ -103,9 +109,12 @@ use Mollie\Yves\Mollie\PaymentPage\Form\MollieTwintSubForm;
 use Mollie\Yves\Mollie\PaymentPage\Form\MollieVippsSubForm;
 use Mollie\Yves\Mollie\Validator\WebhookSignatureValidator;
 use Mollie\Yves\Mollie\Validator\WebhookSignatureValidatorInterface;
+use Spryker\Shared\Application\ApplicationConstants;
 use Spryker\Yves\Kernel\AbstractFactory;
 use Spryker\Yves\StepEngine\Dependency\Form\StepEngineFormDataProviderInterface;
 use Spryker\Yves\StepEngine\Dependency\Form\SubFormInterface;
+use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\Form\FormInterface;
 
 /**
  * @method \Mollie\Yves\Mollie\MollieConfig getConfig()
@@ -963,5 +972,53 @@ class MollieFactory extends AbstractFactory
     public function getMollieService(): MollieServiceInterface
     {
         return $this->getProvidedDependency(MollieDependencyProvider::SERVICE_MOLLIE);
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
+     *
+     * @return \Symfony\Component\Form\FormInterface
+     */
+    public function getExpressCheckoutAddressForm(QuoteTransfer $quoteTransfer): FormInterface
+    {
+        $dataProvider = $this->createExpressCheckoutAddressFormDataProvider();
+
+        return $this->getFormFactory()->create(
+            ExpressCheckoutAddressForm::class,
+            $dataProvider->getData($quoteTransfer),
+            $dataProvider->getOptions(),
+        );
+    }
+
+    /**
+     * @return \Mollie\Yves\Mollie\Form\ExpressCheckout\DataProvider\ExpressCheckoutAddressFormDataProvider
+     */
+    public function createExpressCheckoutAddressFormDataProvider(): ExpressCheckoutAddressFormDataProvider
+    {
+        return new ExpressCheckoutAddressFormDataProvider($this->getStoreClient());
+    }
+
+    /**
+     * @return \Symfony\Component\Form\FormFactoryInterface
+     */
+    public function getFormFactory(): FormFactoryInterface
+    {
+        return $this->getProvidedDependency(ApplicationConstants::FORM_FACTORY);
+    }
+
+    /**
+     * @return \Mollie\Yves\Mollie\Dependency\Client\MollieToStoreClientInterface
+     */
+    public function getStoreClient(): MollieToStoreClientInterface
+    {
+        return $this->getProvidedDependency(MollieDependencyProvider::CLIENT_STORE);
+    }
+
+    /**
+     * @return \Mollie\Yves\Mollie\ExpressCheckout\ExpressCheckoutAddressCheckerInterface
+     */
+    public function createExpressCheckoutAddressChecker(): ExpressCheckoutAddressCheckerInterface
+    {
+        return new ExpressCheckoutAddressChecker();
     }
 }

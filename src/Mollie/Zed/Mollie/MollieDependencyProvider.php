@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Mollie\Zed\Mollie;
 
+use Mollie\Zed\Mollie\Dependency\Facade\MollieToCalculationFacadeBridge;
+use Mollie\Zed\Mollie\Dependency\Facade\MollieToCalculationFacadeInterface;
+use Mollie\Zed\Mollie\Dependency\Facade\MollieToCheckoutFacadeBridge;
+use Mollie\Zed\Mollie\Dependency\Facade\MollieToCheckoutFacadeInterface;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToCurrencyFacadeBridge;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToCurrencyFacadeInterface;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToLocaleFacadeBridge;
@@ -15,6 +19,8 @@ use Mollie\Zed\Mollie\Dependency\Facade\MollieToMoneyFacadeInterface;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToOmsBridge;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToSalesFacadeBridge;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToSalesFacadeInterface;
+use Mollie\Zed\Mollie\Dependency\Facade\MollieToShipmentFacadeBridge;
+use Mollie\Zed\Mollie\Dependency\Facade\MollieToShipmentFacadeInterface;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToStoreFacadeBridge;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToStoreFacadeInterface;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToTranslatorFacadeBridge;
@@ -44,6 +50,21 @@ class MollieDependencyProvider extends AbstractBundleDependencyProvider
      * @var string
      */
     public const FACADE_SALES = 'FACADE_SALES';
+
+    /**
+     * @var string
+     */
+    public const FACADE_CHECKOUT = 'FACADE_CHECKOUT';
+
+    /**
+     * @var string
+     */
+    public const FACADE_CALCULATION = 'FACADE_CALCULATION';
+
+    /**
+     * @var string
+     */
+    public const FACADE_SHIPMENT = 'FACADE_SHIPMENT';
 
     /**
      * @var string
@@ -116,6 +137,9 @@ class MollieDependencyProvider extends AbstractBundleDependencyProvider
         $container = $this->addLocaleFacade($container);
         $container = $this->addMailFacade($container);
         $container = $this->addUtilEncodingService($container);
+        $container = $this->addCheckoutFacade($container);
+        $container = $this->addCalculationFacade($container);
+        $container = $this->addShipmentFacade($container);
 
         return $container;
     }
@@ -365,6 +389,54 @@ class MollieDependencyProvider extends AbstractBundleDependencyProvider
         $container->set(static::FACADE_TRANSLATOR, function (Container $container): MollieToTranslatorFacadeInterface {
             return new MollieToTranslatorFacadeBridge(
                 $container->getLocator()->translator()->facade(),
+            );
+        });
+
+        return $container;
+    }
+
+    /**
+     * @param \Spryker\Zed\Kernel\Container $container
+     *
+     * @return \Spryker\Zed\Kernel\Container
+     */
+    protected function addCheckoutFacade(Container $container): Container
+    {
+        $container->set(static::FACADE_CHECKOUT, function (Container $container): MollieToCheckoutFacadeInterface {
+            return new MollieToCheckoutFacadeBridge(
+                $container->getLocator()->checkout()->facade(),
+            );
+        });
+
+        return $container;
+    }
+
+    /**
+     * @param \Spryker\Zed\Kernel\Container $container
+     *
+     * @return \Spryker\Zed\Kernel\Container
+     */
+    protected function addCalculationFacade(Container $container): Container
+    {
+        $container->set(static::FACADE_CALCULATION, function (Container $container): MollieToCalculationFacadeInterface {
+            return new MollieToCalculationFacadeBridge(
+                $container->getLocator()->calculation()->facade(),
+            );
+        });
+
+        return $container;
+    }
+
+    /**
+     * @param \Spryker\Zed\Kernel\Container $container
+     *
+     * @return \Spryker\Zed\Kernel\Container
+     */
+    protected function addShipmentFacade(Container $container): Container
+    {
+        $container->set(static::FACADE_SHIPMENT, function (Container $container): MollieToShipmentFacadeInterface {
+            return new MollieToShipmentFacadeBridge(
+                $container->getLocator()->shipment()->facade(),
             );
         });
 

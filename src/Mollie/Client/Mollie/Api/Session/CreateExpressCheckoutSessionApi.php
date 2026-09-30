@@ -24,6 +24,23 @@ use Spryker\Shared\Kernel\Transfer\AbstractTransfer;
 class CreateExpressCheckoutSessionApi extends AbstractApiCall
 {
     /**
+     * @var string
+     */
+    protected const PAYLOAD_KEY_REQUIRED_CUSTOMER_DETAILS = 'requiredCustomerDetails';
+
+    /**
+     * Customer details Mollie collects in the express component and returns on the session's and payment's addresses.
+     *
+     * @var array<string>
+     */
+    protected const REQUIRED_CUSTOMER_DETAILS = ['email', 'billing-address', 'shipping-address'];
+
+    /**
+     * @var string
+     */
+    protected const METADATA_KEY_EXPRESS_CHECKOUT_REFERENCE = 'expressCheckoutReference';
+
+    /**
      * @param \Mollie\Api\MollieApiClient $mollieApiClient
      * @param \Mollie\Client\Mollie\MollieConfig $mollieConfig
      * @param \Mollie\Client\Mollie\Dependency\Service\MollieToUtilEncodingServiceInterface $utilEncodingService
@@ -68,7 +85,14 @@ class CreateExpressCheckoutSessionApi extends AbstractApiCall
             description: $mollieApiRequestTransfer->getDescriptionOrFail(),
             redirectUrl: $mollieApiRequestTransfer->getRedirectUrlOrFail(),
             lines: $lines,
+            metadata: [
+                static::METADATA_KEY_EXPRESS_CHECKOUT_REFERENCE => $mollieApiRequestTransfer->getExpressCheckoutReferenceOrFail(),
+            ],
+            paymentWebhook: $this->mollieConfig->getMollieWebhookUrl(),
         );
+
+        // Not supported by the SDK's CreateSessionRequest yet, so it is added to the payload directly.
+        //$this->request->payload()->add(static::PAYLOAD_KEY_REQUIRED_CUSTOMER_DETAILS, static::REQUIRED_CUSTOMER_DETAILS);
 
         return $this->request;
     }

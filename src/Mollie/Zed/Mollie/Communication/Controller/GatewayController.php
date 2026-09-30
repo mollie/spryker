@@ -7,6 +7,9 @@ namespace Mollie\Zed\Mollie\Communication\Controller;
 
 use Generated\Shared\Transfer\MollieExpressCheckoutConfigCollectionTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutConfigCriteriaTransfer;
+use Generated\Shared\Transfer\MollieExpressCheckoutOrderRequestTransfer;
+use Generated\Shared\Transfer\MollieExpressCheckoutOrderResponseTransfer;
+use Generated\Shared\Transfer\MollieExpressCheckoutQuoteResponseTransfer;
 use Generated\Shared\Transfer\MolliePaymentCaptureResponseTransfer;
 use Generated\Shared\Transfer\MolliePaymentLinkTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodConfigCollectionTransfer;
@@ -83,5 +86,27 @@ class GatewayController extends AbstractGatewayController
         MollieExpressCheckoutConfigCriteriaTransfer $mollieExpressCheckoutConfigCriteriaTransfer,
     ): MollieExpressCheckoutConfigCollectionTransfer {
         return $this->getFacade()->getExpressCheckoutConfigCollection($mollieExpressCheckoutConfigCriteriaTransfer);
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MollieExpressCheckoutOrderRequestTransfer $mollieExpressCheckoutOrderRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieExpressCheckoutOrderResponseTransfer
+     */
+    public function placeExpressCheckoutOrderAction(
+        MollieExpressCheckoutOrderRequestTransfer $mollieExpressCheckoutOrderRequestTransfer,
+    ): MollieExpressCheckoutOrderResponseTransfer {
+        return $this->getFacade()->placeExpressCheckoutOrder($mollieExpressCheckoutOrderRequestTransfer);
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MollieExpressCheckoutOrderRequestTransfer $mollieExpressCheckoutOrderRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieExpressCheckoutQuoteResponseTransfer
+     */
+    public function saveExpressCheckoutAddressesAction(
+        MollieExpressCheckoutOrderRequestTransfer $mollieExpressCheckoutOrderRequestTransfer,
+    ): MollieExpressCheckoutQuoteResponseTransfer {
+        return $this->getFacade()->saveExpressCheckoutAddresses($mollieExpressCheckoutOrderRequestTransfer);
     }
 }

@@ -48,6 +48,10 @@ class MolliePaymentHandler implements MolliePaymentHandlerInterface
      */
     public function createPayment(QuoteTransfer $quoteTransfer, CheckoutResponseTransfer $checkoutResponseTransfer): CheckoutResponseTransfer
     {
+        if ($quoteTransfer->getMollieExpressCheckoutReference()) {
+            return $this->handleExpressCheckoutPayment($quoteTransfer, $checkoutResponseTransfer);
+        }
+
         $mollieApiRequestTransfer = (new MollieApiRequestTransfer())
             ->setCheckoutResponse($checkoutResponseTransfer)
             ->setQuote($quoteTransfer);
@@ -75,6 +79,39 @@ class MolliePaymentHandler implements MolliePaymentHandlerInterface
             ->setIsSuccess(true)
             ->setIsExternalRedirect(true)
             ->setRedirectUrl($redirectUrl);
+    }
+
+    /**
+     * The Mollie express component creates the payment itself, so no second payment is created here.
+     * When the payment id is already known, the payment is linked to the order; otherwise it is linked later.
+     *
+     * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
+     * @param \Generated\Shared\Transfer\CheckoutResponseTransfer $checkoutResponseTransfer
+     *
+     * @return \Generated\Shared\Transfer\CheckoutResponseTransfer
+     */
+    protected function handleExpressCheckoutPayment(
+        QuoteTransfer $quoteTransfer,
+        CheckoutResponseTransfer $checkoutResponseTransfer,
+    ): CheckoutResponseTransfer {
+        $molliePaymentId = $quoteTransfer->getMolliePaymentId();
+
+        if ($molliePaymentId) {
+            $molliePaymentApiResponseTransfer = $this->mollieClient->getPaymentByTransactionId(
+                (new MollieApiRequestTransfer())->setTransactionId($molliePaymentId),
+            );
+
+            if ($molliePaymentApiResponseTransfer->getIsSuccessful()) {
+                $this->molliePaymentWriter->addMolliePaymentData(
+                    $checkoutResponseTransfer->getSaveOrderOrFail()->getIdSalesOrder(),
+                    $molliePaymentApiResponseTransfer->getMolliePaymentOrFail(),
+                );
+            }
+        }
+
+        return $checkoutResponseTransfer
+            ->setIsSuccess(true)
+            ->setIsExternalRedirect(false);
     }
 
     /**

@@ -264,6 +264,7 @@
         <property name="sessionId" type="string"/>
         <property name="redirectUrl" type="string"/>
         <property name="description" type="string"/>
+        <property name="expressCheckoutReference" type="string"/>
     </transfer>
 
     <transfer name="MolliePaymentCaptureRequest">
@@ -306,6 +307,7 @@
 
     <transfer name="Quote">
         <property name="molliePaymentId" type="string"/>
+        <property name="mollieExpressCheckoutReference" type="string"/>
     </transfer>
 
     <transfer name="Order">
@@ -459,12 +461,53 @@
         <property name="expiresAt" type="string"/>
         <property name="completedAt" type="string"/>
         <property name="links" type="MollieLinks"/>
+        <property name="payment" type="array" singular="paymentItem"/>
+        <property name="shippingAddress" type="MollieSessionAddress"/>
+        <property name="billingAddress" type="MollieSessionAddress"/>
+    </transfer>
+
+    <transfer name="MollieSessionAddress">
+        <property name="title" type="string"/>
+        <property name="givenName" type="string"/>
+        <property name="familyName" type="string"/>
+        <property name="organizationName" type="string"/>
+        <property name="streetAndNumber" type="string"/>
+        <property name="streetAdditional" type="string"/>
+        <property name="postalCode" type="string"/>
+        <property name="city" type="string"/>
+        <property name="region" type="string"/>
+        <property name="country" type="string"/>
+        <property name="email" type="string"/>
+        <property name="phone" type="string"/>
     </transfer>
 
     <transfer name="MollieExpressCheckoutSessionApiResponse">
         <property name="isSuccessful" type="bool"/>
         <property name="message" type="string"/>
         <property name="expressCheckoutSession" type="MollieExpressCheckoutSession"/>
+    </transfer>
+
+    <transfer name="MollieExpressCheckoutOrderRequest">
+        <property name="quote" type="Quote"/>
+        <property name="billingAddress" type="Address"/>
+        <property name="shippingAddress" type="Address"/>
+        <property name="expressMethod" type="string"/>
+        <property name="expressCheckoutReference" type="string"/>
+        <property name="sessionId" type="string"/>
+        <property name="transactionId" type="string"/>
+    </transfer>
+
+    <transfer name="MollieExpressCheckoutQuoteResponse">
+        <property name="isSuccessful" type="bool"/>
+        <property name="quote" type="Quote"/>
+        <property name="errors" type="string[]" singular="error"/>
+    </transfer>
+
+    <transfer name="MollieExpressCheckoutOrderResponse">
+        <property name="isSuccessful" type="bool"/>
+        <property name="orderReference" type="string"/>
+        <property name="idSalesOrder" type="int"/>
+        <property name="errors" type="string[]" singular="error"/>
     </transfer>
 
 </transfers>

@@ -5,15 +5,42 @@
     expressCheckoutCreateSessionEndpoint: _widget.expressCheckoutCreateSessionEndpoint | default,
     jsSrc: _widget.jsSrc | default,
     locale: _widget.locale | default,
+    addressForm: _widget.addressForm | default,
+    addressFormAction: _widget.addressFormAction | default,
+    hasAddresses: _widget.hasAddresses | default(false),
 } %}
 
 {% block body %}
+    {# Without saved addresses the buttons are shown but disabled: clicking them shows the message instead of paying. #}
     {% include molecule('mollie-express-checkout-component', 'Mollie') with {
         data: {
             expressCheckoutResolveEnabledMethodsEndpoint: data.expressCheckoutResolveEnabledMethodsEndpoint,
             expressCheckoutCreateSessionEndpoint: data.expressCheckoutCreateSessionEndpoint,
             jsSrc: data.jsSrc,
             locale: data.locale,
+            isDisabled: not data.hasAddresses,
+            disabledMessage: 'Please fill in the billing and shipping address below to use express checkout.',
         }
     } only %}
+
+    {% if data.addressForm %}
+        <div class="spacing-top spacing-top--big">
+            {% include molecule('form') with {
+                data: {
+                    form: data.addressForm,
+                    title: 'Express checkout addresses',
+                    options: {
+                        action: data.addressFormAction,
+                        attr: {
+                            novalidate: 'novalidate',
+                        },
+                    },
+                    submit: {
+                        enable: true,
+                        text: 'Save addresses',
+                    },
+                },
+            } only %}
+        </div>
+    {% endif %}
 {% endblock %}
