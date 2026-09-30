@@ -110,11 +110,10 @@ class PaymentApiHandler implements PaymentApiHandlerInterface
 
     /**
      * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
-     * @param string $method
      *
-     * @return \Mollie\Api\Http\Data\DataCollection<array<mixed>>|null
+     * @return \Mollie\Api\Http\Data\DataCollection<array<mixed>>
      */
-    public function createLines(QuoteTransfer $quoteTransfer, string $method): ?DataCollection
+    public function createLines(QuoteTransfer $quoteTransfer): DataCollection
     {
         $items = $quoteTransfer->getItems();
         $currencyCode = $quoteTransfer->getCurrency()->getCode();

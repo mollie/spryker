@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace Mollie\Zed\Mollie\Persistence;
 
+use Generated\Shared\Transfer\MollieExpressCheckoutPaymentUpdateRequestTransfer;
 use Generated\Shared\Transfer\MollieItemPaymentCaptureTransfer;
 use Generated\Shared\Transfer\MolliePaymentCaptureTransfer;
 use Generated\Shared\Transfer\MolliePaymentLinkTransfer;
@@ -47,6 +48,54 @@ class MollieEntityManager extends AbstractEntityManager implements MollieEntityM
             ->setCaptureBefore($updateOrderCollectionRequestTransfer->getCaptureBefore());
 
         $spyPaymentMolleEntity->save();
+    }
+
+    /**
+     * @param int $idSalesOrder
+     * @param string $expressCheckoutUuid
+     *
+     * @return void
+     */
+    public function createExpressCheckoutMolliePayment(int $idSalesOrder, string $expressCheckoutUuid): void
+    {
+        $spyPaymentMollieEntity = new SpyPaymentMollie();
+        $spyPaymentMollieEntity
+            ->setFkSalesOrder($idSalesOrder)
+            ->setExpressCheckoutUuid($expressCheckoutUuid)
+            ->setStatus(MollieConstants::STATUS_OPEN)
+            ->setSequenceType(MollieConstants::MOLLIE_SEQUENCE_TYPE_ONE_OFF);
+
+        $spyPaymentMollieEntity->save();
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MollieExpressCheckoutPaymentUpdateRequestTransfer $mollieExpressCheckoutPaymentUpdateRequestTransfer
+     *
+     * @return bool
+     */
+    public function updateExpressCheckoutMolliePayment(
+        MollieExpressCheckoutPaymentUpdateRequestTransfer $mollieExpressCheckoutPaymentUpdateRequestTransfer,
+    ): bool {
+        $expressCheckoutUuid = $mollieExpressCheckoutPaymentUpdateRequestTransfer->getExpressCheckoutUuidOrFail();
+
+        $spyPaymentMollieEntity = $this->getFactory()
+            ->createSpyPaymentMollieQuery()
+            ->findOneByExpressCheckoutUuid($expressCheckoutUuid);
+
+        if (!$spyPaymentMollieEntity) {
+            return false;
+        }
+
+        $transactionId = $mollieExpressCheckoutPaymentUpdateRequestTransfer->getTransactionIdOrFail();
+        $status = $mollieExpressCheckoutPaymentUpdateRequestTransfer->getStatusOrFail();
+
+        $spyPaymentMollieEntity
+            ->setTransactionId($transactionId)
+            ->setStatus($status);
+
+        $spyPaymentMollieEntity->save();
+
+        return true;
     }
 
     /**

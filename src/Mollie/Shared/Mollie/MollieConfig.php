@@ -127,6 +127,11 @@ class MollieConfig extends AbstractSharedConfig
     /**
      * @var string
      */
+    public const MOLLIE_PROVIDER_EXPRESS = 'MollieExpressPayment';
+
+    /**
+     * @var string
+     */
     public const MOLLIE_PAYMENT_CREDIT_CARD = 'mollieCreditCardPayment';
 
     /**
@@ -228,6 +233,11 @@ class MollieConfig extends AbstractSharedConfig
      * @var string
      */
     public const MOLLIE_PAYMENT_ALMA = 'mollieAlmaPayment';
+
+    /**
+     * @var string
+     */
+    public const MOLLIE_PAYMENT_EXPRESS = 'mollieExpressPayment';
 
     /**
      * @var string
@@ -337,6 +347,11 @@ class MollieConfig extends AbstractSharedConfig
         self::EXPRESS_METHOD_GOOGLE_PAY,
         self::EXPRESS_METHOD_PAYPAL,
     ];
+
+    /**
+     * @var string
+     */
+    public const EXPRESS_CHECKOUT_METADATA_KEY_UUID = 'expressCheckoutUuid';
 
     /**
      * @var string

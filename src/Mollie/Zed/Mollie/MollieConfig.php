@@ -201,6 +201,16 @@ class MollieConfig extends AbstractBundleConfig
     }
 
     /**
+     * @param string $paymentMethod
+     *
+     * @return bool
+     */
+    public function isMollieExpressPaymentMethod(string $paymentMethod): bool
+    {
+        return $paymentMethod === SharedConfig::MOLLIE_PAYMENT_EXPRESS;
+    }
+
+    /**
      * @return string
      */
     public function getMolliePluginPackage(): string

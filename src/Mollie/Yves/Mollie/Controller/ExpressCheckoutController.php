@@ -10,6 +10,7 @@ use Generated\Shared\Transfer\MollieExpressCheckoutConfigCollectionTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutConfigCriteriaTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutSessionApiResponseTransfer;
 use Mollie\Yves\Mollie\Plugin\Router\MollieRouteProviderPlugin;
+use Ramsey\Uuid\Uuid;
 use SprykerShop\Yves\ShopApplication\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -92,7 +93,11 @@ class ExpressCheckoutController extends AbstractController
      */
     protected function createExpressCheckoutSession(Request $request): MollieExpressCheckoutSessionApiResponseTransfer
     {
-        $quoteTransfer = $this->getFactory()->getQuoteClient()->getQuote();
+        $quoteClient = $this->getFactory()->getQuoteClient();
+        $quoteTransfer = $quoteClient->getQuote();
+
+        $uuid = Uuid::uuid4();
+        $expressCheckoutUuid = $uuid->toString();
 
         // Our own reference on the session metadata, used to match the payment Mollie creates (webhook) to this checkout.
         // probaj maknuti to
@@ -106,6 +111,7 @@ class ExpressCheckoutController extends AbstractController
             ->setExpressCheckoutReference($expressCheckoutReference)
             ->setQuote($quoteTransfer)
             ->setDescription(static::EXPRESS_CHECKOUT_SESSION_DESCRIPTION)
+            ->setExpressCheckoutUuid($expressCheckoutUuid);
             ->setRedirectUrl(
                 $request->getSchemeAndHttpHost() . MollieRouteProviderPlugin::ROUTE_PATH_MOLLIE_EXPRESS_CHECKOUT_REDIRECT,
             );

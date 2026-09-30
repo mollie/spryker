@@ -19,6 +19,7 @@ use Mollie\Client\Mollie\Handler\PaymentApiHandlerInterface;
 use Mollie\Client\Mollie\Logger\MollieLoggerInterface;
 use Mollie\Client\Mollie\MollieConfig;
 use Mollie\Service\Mollie\MollieServiceInterface;
+use Mollie\Shared\Mollie\MollieConfig as SharedConfig;
 use Spryker\Shared\Kernel\Transfer\AbstractTransfer;
 
 class CreateExpressCheckoutSessionApi extends AbstractApiCall
@@ -78,21 +79,29 @@ class CreateExpressCheckoutSessionApi extends AbstractApiCall
             value: $value,
         );
 
-        $lines = $this->apiHandler->createLines($quoteTransfer, '');
+        $lines = $this->apiHandler->createLines($quoteTransfer);
+
+        $metadata = [
+            SharedConfig::EXPRESS_CHECKOUT_METADATA_KEY_UUID => $mollieApiRequestTransfer->getExpressCheckoutUuidOrFail(),
+        ];
+
+        $webhookUrl = $this->mollieService->resolveWebhookUrl(
+            $this->mollieConfig->getMollieWebhookUrl(),
+            $this->mollieConfig->getTestEnvironmentMollieWebhookUrl(),
+            $this->mollieConfig->isMollieTestModeEnabled(),
+        );
 
         $this->request = new CreateSessionRequest(
             amount: $amount,
             description: $mollieApiRequestTransfer->getDescriptionOrFail(),
             redirectUrl: $mollieApiRequestTransfer->getRedirectUrlOrFail(),
             lines: $lines,
-            metadata: [
-                static::METADATA_KEY_EXPRESS_CHECKOUT_REFERENCE => $mollieApiRequestTransfer->getExpressCheckoutReferenceOrFail(),
-            ],
-            paymentWebhook: $this->mollieConfig->getMollieWebhookUrl(),
+            metadata: $metadata,
+            paymentWebhook: $webhookUrl,
         );
 
         // Not supported by the SDK's CreateSessionRequest yet, so it is added to the payload directly.
-        //$this->request->payload()->add(static::PAYLOAD_KEY_REQUIRED_CUSTOMER_DETAILS, static::REQUIRED_CUSTOMER_DETAILS);
+        $this->request->payload()->add(static::PAYLOAD_KEY_REQUIRED_CUSTOMER_DETAILS, static::REQUIRED_CUSTOMER_DETAILS);
 
         return $this->request;
     }

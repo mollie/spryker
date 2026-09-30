@@ -13,7 +13,7 @@ use Spryker\Zed\Kernel\Communication\AbstractPlugin;
  * @method \Mollie\Zed\Mollie\Business\MollieFacadeInterface getFacade()
  * @method \Mollie\Zed\Mollie\MollieConfig getConfig()
  */
-class MollieCheckoutPostSavePlugin extends AbstractPlugin implements CheckoutPostSaveInterface
+class MollieExpressCheckoutPostSavePlugin extends AbstractPlugin implements CheckoutPostSaveInterface
 {
     /**
      * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
@@ -23,17 +23,13 @@ class MollieCheckoutPostSavePlugin extends AbstractPlugin implements CheckoutPos
      */
     public function executeHook(QuoteTransfer $quoteTransfer, CheckoutResponseTransfer $checkoutResponseTransfer): void
     {
-        $paymentProvider = $quoteTransfer->getPayment()?->getPaymentProvider();
-        if (!$paymentProvider || !$this->getConfig()->isMollieProvider($paymentProvider)) {
-            return;
-        }
-
         $paymentTransfer = $quoteTransfer->getPaymentOrFail();
         $paymentMethod = $paymentTransfer->getPaymentMethodOrFail();
-        if ($this->getConfig()->isMollieExpressPaymentMethod($paymentMethod)) {
+
+        if (!$this->getConfig()->isMollieExpressPaymentMethod($paymentMethod)) {
             return;
         }
 
-        $this->getFacade()->createPayment($quoteTransfer, $checkoutResponseTransfer);
+        $this->getFacade()->createExpressCheckoutMolliePayment($quoteTransfer, $checkoutResponseTransfer);
     }
 }

@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Mollie\Yves\Mollie\Plugin\Webhook;
 
+use Generated\Shared\Transfer\MollieExpressCheckoutPaymentUpdateRequestTransfer;
 use Generated\Shared\Transfer\MolliePaymentTransfer;
 use Generated\Shared\Transfer\MollieWebhookResponseTransfer;
-use Generated\Shared\Transfer\OrderCollectionRequestTransfer;
 use Mollie\Shared\Mollie\MollieConfig;
 use Spryker\Yves\Kernel\AbstractPlugin;
 use Symfony\Component\HttpFoundation\Response;
@@ -15,7 +15,7 @@ use Symfony\Component\HttpFoundation\Response;
  * @method \Mollie\Yves\Mollie\MollieFactory getFactory()
  * @method \Mollie\Client\Mollie\MollieClient getClient()
  */
-class MolliePaymentWebhookHandlerPlugin extends AbstractPlugin implements MollieWebhookHandlerPluginInterface
+class MollieExpressCheckoutPaymentWebhookHandlerPlugin extends AbstractPlugin implements MollieWebhookHandlerPluginInterface
 {
     /**
      * @var string
@@ -37,7 +37,7 @@ class MolliePaymentWebhookHandlerPlugin extends AbstractPlugin implements Mollie
         $metadata = $molliePaymentTransfer->getMetadata();
         $isExpressCheckoutPayment = array_key_exists(MollieConfig::EXPRESS_CHECKOUT_METADATA_KEY_UUID, $metadata);
 
-        return !$isExpressCheckoutPayment;
+        return $isExpressCheckoutPayment;
     }
 
     /**
@@ -47,15 +47,15 @@ class MolliePaymentWebhookHandlerPlugin extends AbstractPlugin implements Mollie
      */
     public function handle(MolliePaymentTransfer $molliePaymentTransfer): MollieWebhookResponseTransfer
     {
-        $orderCollectionRequestTransfer = $this->createOrderCollectionRequestTransfer(
+        $mollieExpressCheckoutPaymentUpdateRequestTransfer = $this->createMollieExpressCheckoutPaymentUpdateRequestTransfer(
             $molliePaymentTransfer,
         );
 
-        $this->getClient()->updateOrderCollection($orderCollectionRequestTransfer);
+        $this->getClient()->updateExpressCheckoutMolliePayment($mollieExpressCheckoutPaymentUpdateRequestTransfer);
 
         return $this->createWebhookResponseTransfer(
             Response::HTTP_OK,
-            'Payment webhook processed successfully',
+            'Express checkout payment webhook processed successfully',
         );
     }
 
@@ -75,18 +75,20 @@ class MolliePaymentWebhookHandlerPlugin extends AbstractPlugin implements Mollie
     /**
      * @param \Generated\Shared\Transfer\MolliePaymentTransfer $molliePaymentTransfer
      *
-     * @return \Generated\Shared\Transfer\OrderCollectionRequestTransfer
+     * @return \Generated\Shared\Transfer\MollieExpressCheckoutPaymentUpdateRequestTransfer
      */
-    protected function createOrderCollectionRequestTransfer(
+    protected function createMollieExpressCheckoutPaymentUpdateRequestTransfer(
         MolliePaymentTransfer $molliePaymentTransfer,
-    ): OrderCollectionRequestTransfer {
-        $orderCollectionRequestTransfer = new OrderCollectionRequestTransfer();
+    ): MollieExpressCheckoutPaymentUpdateRequestTransfer {
+        $metadata = $molliePaymentTransfer->getMetadata();
+        $expressCheckoutUuid = $metadata[MollieConfig::EXPRESS_CHECKOUT_METADATA_KEY_UUID];
 
-        $orderCollectionRequestTransfer
-            ->setId($molliePaymentTransfer->getId())
-            ->setStatus($molliePaymentTransfer->getStatus())
-            ->setCaptureBefore($molliePaymentTransfer->getCaptureBefore());
+        $mollieExpressCheckoutPaymentUpdateRequestTransfer = new MollieExpressCheckoutPaymentUpdateRequestTransfer();
+        $mollieExpressCheckoutPaymentUpdateRequestTransfer
+            ->setExpressCheckoutUuid($expressCheckoutUuid)
+            ->setTransactionId($molliePaymentTransfer->getId())
+            ->setStatus($molliePaymentTransfer->getStatus());
 
-        return $orderCollectionRequestTransfer;
+        return $mollieExpressCheckoutPaymentUpdateRequestTransfer;
     }
 }

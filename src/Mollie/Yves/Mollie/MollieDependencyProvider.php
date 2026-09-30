@@ -16,6 +16,7 @@ use Mollie\Yves\Mollie\Dependency\Client\MollieToStoreClientBridge;
 use Mollie\Yves\Mollie\Dependency\Client\MollieToStoreClientInterface;
 use Mollie\Yves\Mollie\Dependency\Service\MollieToUtilEncodingServiceBridge;
 use Mollie\Yves\Mollie\Plugin\Webhook\MollieCaptureWebhookHandlerPlugin;
+use Mollie\Yves\Mollie\Plugin\Webhook\MollieExpressCheckoutPaymentWebhookHandlerPlugin;
 use Mollie\Yves\Mollie\Plugin\Webhook\MolliePaymentLinkWebhookHandlerPlugin;
 use Mollie\Yves\Mollie\Plugin\Webhook\MolliePaymentWebhookHandlerPlugin;
 use Mollie\Yves\Mollie\Plugin\Webhook\MollieRefundWebhookHandlerPlugin;
@@ -188,6 +189,7 @@ class MollieDependencyProvider extends AbstractBundleDependencyProvider
         return [
             new MollieRefundWebhookHandlerPlugin(),
             new MolliePaymentWebhookHandlerPlugin(),
+            new MollieExpressCheckoutPaymentWebhookHandlerPlugin(),
             new MollieCaptureWebhookHandlerPlugin(),
         ];
     }
