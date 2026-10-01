@@ -28,7 +28,6 @@ use Mollie\Zed\Mollie\Business\ExpressCheckout\Order\ExpressCheckoutQuotePrepare
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToCalculationFacadeInterface;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToCheckoutFacadeInterface;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToShipmentFacadeInterface;
-use Mollie\Zed\Mollie\MollieConfig;
 
 /**
  * @group MollieTest
@@ -58,7 +57,7 @@ class ExpressCheckoutOrderPlacerTest extends Unit
     /**
      * @var string
      */
-    protected const EXPRESS_CHECKOUT_REFERENCE = 'reference-123';
+    protected const EXPRESS_CHECKOUT_UUID = '4f1d9a6e-2c5b-4d3a-9e8f-1a2b3c4d5e6f';
 
     /**
      * @var \Generated\Shared\Transfer\QuoteTransfer|null
@@ -76,15 +75,16 @@ class ExpressCheckoutOrderPlacerTest extends Unit
 
         $this->assertTrue($response->getIsSuccessful());
         $this->assertSame(static::ORDER_REFERENCE, $response->getOrderReference());
+        $this->assertSame($this->placedQuoteTransfer, $response->getQuote());
 
         $quoteTransfer = $this->placedQuoteTransfer;
         $this->assertSame('Request Street 1', $quoteTransfer->getBillingAddress()->getAddress1());
         $this->assertSame('Request Street 1', $quoteTransfer->getItems()[0]->getShipment()->getShippingAddress()->getAddress1());
         $this->assertSame(static::ID_SHIPMENT_METHOD, $quoteTransfer->getItems()[0]->getShipment()->getMethod()->getIdShipmentMethod());
-        $this->assertSame(SharedMollieConfig::MOLLIE_PAYMENT_APPLE_PAY, $quoteTransfer->getPayment()->getPaymentMethod());
-        $this->assertSame(SharedMollieConfig::MOLLIE_PROVIDER_APPLE_PAY, $quoteTransfer->getPayment()->getPaymentProvider());
+        $this->assertSame(SharedMollieConfig::MOLLIE_PAYMENT_EXPRESS, $quoteTransfer->getPayment()->getPaymentMethod());
+        $this->assertSame(SharedMollieConfig::MOLLIE_PROVIDER_EXPRESS, $quoteTransfer->getPayment()->getPaymentProvider());
         $this->assertSame(static::GRAND_TOTAL, $quoteTransfer->getPayment()->getAmount());
-        $this->assertSame(static::EXPRESS_CHECKOUT_REFERENCE, $quoteTransfer->getMollieExpressCheckoutReference());
+        $this->assertSame(static::EXPRESS_CHECKOUT_UUID, $quoteTransfer->getPayment()->getMollieExpressPayment()->getExpressCheckoutUuid());
     }
 
     /**
@@ -118,9 +118,10 @@ class ExpressCheckoutOrderPlacerTest extends Unit
     /**
      * @return void
      */
-    public function testPlaceOrderFailsWithoutThrowingForUnsupportedExpressMethod(): void
+    public function testPlaceOrderFailsWithoutThrowingWhenNoAddressIsAvailable(): void
     {
-        $request = $this->createRequest(true)->setExpressMethod(SharedMollieConfig::EXPRESS_METHOD_GOOGLE_PAY);
+        $request = $this->createRequest(false);
+        $request->getQuote()->setCustomer(null);
 
         $response = $this->createPlacer($this->createSuccessfulCheckoutResponse())->placeOrder($request);
 
@@ -162,7 +163,7 @@ class ExpressCheckoutOrderPlacerTest extends Unit
             [
                 new AddressExpander(),
                 new ShipmentMethodExpander($shipmentFacadeMock),
-                new PaymentExpander(new MollieConfig()),
+                new PaymentExpander(),
             ],
             $calculationFacadeMock,
         );
@@ -189,8 +190,7 @@ class ExpressCheckoutOrderPlacerTest extends Unit
 
         $request = (new MollieExpressCheckoutOrderRequestTransfer())
             ->setQuote($quoteTransfer)
-            ->setExpressMethod(SharedMollieConfig::EXPRESS_METHOD_APPLE_PAY)
-            ->setExpressCheckoutReference(static::EXPRESS_CHECKOUT_REFERENCE);
+            ->setExpressCheckoutUuid(static::EXPRESS_CHECKOUT_UUID);
 
         if ($withAddresses) {
             $request

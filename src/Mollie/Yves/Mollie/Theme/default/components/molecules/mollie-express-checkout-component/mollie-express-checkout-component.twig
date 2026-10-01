@@ -8,6 +8,7 @@
 {% define data = {
     expressCheckoutResolveEnabledMethodsEndpoint: required,
     expressCheckoutCreateSessionEndpoint: required,
+    expressCheckoutPlaceOrderEndpoint: required,
     jsSrc: required,
     locale: required,
     isDisabled: false,
@@ -18,6 +19,8 @@
     'locale': data.locale,
     'express-checkout-resolve-enabled-methods-endpoint': data.expressCheckoutResolveEnabledMethodsEndpoint,
     'express-checkout-create-session-endpoint': data.expressCheckoutCreateSessionEndpoint,
+    'express-checkout-place-order-endpoint': data.expressCheckoutPlaceOrderEndpoint,
+    'place-order-error-message': 'Your order could not be placed. You have not been charged.',
     'mount-id': 'mollie-express-checkout',
     'is-disabled': data.isDisabled ? 'true' : 'false',
 } %}
@@ -28,8 +31,6 @@
             src: data.jsSrc
         }
     } only %}
-    {# The Mollie buttons live in a cross-origin iframe and cannot be disabled directly, so a transparent
-       overlay greys them out and catches the click while express checkout is disabled. #}
     <div class="{{ config.name }}__buttons" style="position: relative;">
         <div id="mollie-express-checkout" {% if data.isDisabled %}style="opacity: 0.5;"{% endif %}></div>
 
@@ -44,4 +45,6 @@
     {% if data.isDisabled %}
         <p class="{{ config.name }}__disabled-message is-hidden" style="color: #e30613;">{{ data.disabledMessage }}</p>
     {% endif %}
+
+    <p class="{{ config.name }}__error-message is-hidden" style="color: #e30613;"></p>
 {% endblock %}

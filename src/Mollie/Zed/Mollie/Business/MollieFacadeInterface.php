@@ -293,8 +293,8 @@ interface MollieFacadeInterface
      * - Places a Spryker order for an express checkout (Apple Pay, PayPal via the Mollie express component).
      * - Sets billing and shipping address: request addresses first, then the quote's, then the customer's first stored address.
      * - Assigns the first available shipment method and adds its expense.
-     * - Sets the Mollie payment matching `expressMethod` and marks the quote with `mollieExpressCheckoutReference`,
-     *   so no second Mollie payment is created on checkout post-save.
+     * - Sets the Mollie express payment (`mollieExpressPayment`) with the request's `expressCheckoutUuid`;
+     *   MollieExpressCheckoutPostSavePlugin stores it in spy_payment_mollie instead of creating a Mollie payment.
      * - Recalculates the quote and places the order via the Checkout facade.
      * - Returns `isSuccessful`, `orderReference` and `idSalesOrder`, or `errors` on failure (never throws).
      *

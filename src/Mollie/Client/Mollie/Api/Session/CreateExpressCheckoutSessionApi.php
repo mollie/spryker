@@ -37,11 +37,6 @@ class CreateExpressCheckoutSessionApi extends AbstractApiCall
     protected const REQUIRED_CUSTOMER_DETAILS = ['email', 'billing-address', 'shipping-address'];
 
     /**
-     * @var string
-     */
-    protected const METADATA_KEY_EXPRESS_CHECKOUT_REFERENCE = 'expressCheckoutReference';
-
-    /**
      * @param \Mollie\Api\MollieApiClient $mollieApiClient
      * @param \Mollie\Client\Mollie\MollieConfig $mollieConfig
      * @param \Mollie\Client\Mollie\Dependency\Service\MollieToUtilEncodingServiceInterface $utilEncodingService

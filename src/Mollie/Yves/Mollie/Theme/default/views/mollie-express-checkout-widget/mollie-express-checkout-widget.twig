@@ -3,6 +3,7 @@
 {% define data = {
     expressCheckoutResolveEnabledMethodsEndpoint: _widget.expressCheckoutResolveEnabledMethodsEndpoint | default,
     expressCheckoutCreateSessionEndpoint: _widget.expressCheckoutCreateSessionEndpoint | default,
+    expressCheckoutPlaceOrderEndpoint: _widget.expressCheckoutPlaceOrderEndpoint | default,
     jsSrc: _widget.jsSrc | default,
     locale: _widget.locale | default,
     addressForm: _widget.addressForm | default,
@@ -11,11 +12,11 @@
 } %}
 
 {% block body %}
-    {# Without saved addresses the buttons are shown but disabled: clicking them shows the message instead of paying. #}
     {% include molecule('mollie-express-checkout-component', 'Mollie') with {
         data: {
             expressCheckoutResolveEnabledMethodsEndpoint: data.expressCheckoutResolveEnabledMethodsEndpoint,
             expressCheckoutCreateSessionEndpoint: data.expressCheckoutCreateSessionEndpoint,
+            expressCheckoutPlaceOrderEndpoint: data.expressCheckoutPlaceOrderEndpoint,
             jsSrc: data.jsSrc,
             locale: data.locale,
             isDisabled: not data.hasAddresses,

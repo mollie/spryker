@@ -406,9 +406,7 @@ class MollieBusinessFactory extends AbstractBusinessFactory
     {
         return [
             $this->createExpressCheckoutAddressExpander(),
-            // TODO: temporarily disabled for the 1-cent live test - shipping cost would raise the amount Mollie charges.
-            // Re-enable before release: express orders need a shipment method.
-            // $this->createExpressCheckoutShipmentMethodExpander(),
+            $this->createExpressCheckoutShipmentMethodExpander(),
         ];
     }
 
@@ -446,7 +444,7 @@ class MollieBusinessFactory extends AbstractBusinessFactory
      */
     public function createExpressCheckoutPaymentExpander(): ExpressCheckoutQuoteExpanderInterface
     {
-        return new PaymentExpander($this->getConfig());
+        return new PaymentExpander();
     }
 
     /**

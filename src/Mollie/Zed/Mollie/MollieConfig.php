@@ -4,7 +4,7 @@ declare(strict_types = 1);
 
 namespace Mollie\Zed\Mollie;
 
-use Mollie\Shared\Mollie\MollieConfig as SharedMollieConfig;
+use Mollie\Shared\Mollie\MollieConfig as SharedConfig;
 use Mollie\Shared\Mollie\MollieConstants;
 use Spryker\Zed\Kernel\AbstractBundleConfig;
 
@@ -77,26 +77,6 @@ class MollieConfig extends AbstractBundleConfig
      * @var string
      */
     public const MOLLIE_GET_METHODS_API_DEFAULT_AMOUNT_VALUE = '100.00';
-
-    /**
-     * Express method => Spryker payment method key used for the order placed by express checkout.
-     *
-     * @var array<string, string>
-     */
-    protected const EXPRESS_CHECKOUT_PAYMENT_METHOD_MAPPING = [
-        SharedMollieConfig::EXPRESS_METHOD_APPLE_PAY => SharedMollieConfig::MOLLIE_PAYMENT_APPLE_PAY,
-        SharedMollieConfig::EXPRESS_METHOD_PAYPAL => SharedMollieConfig::MOLLIE_PAYMENT_PAYPAL,
-    ];
-
-    /**
-     * Express method => Spryker payment provider used for the order placed by express checkout.
-     *
-     * @var array<string, string>
-     */
-    protected const EXPRESS_CHECKOUT_PAYMENT_PROVIDER_MAPPING = [
-        SharedMollieConfig::EXPRESS_METHOD_APPLE_PAY => SharedMollieConfig::MOLLIE_PROVIDER_APPLE_PAY,
-        SharedMollieConfig::EXPRESS_METHOD_PAYPAL => SharedMollieConfig::MOLLIE_PROVIDER_PAYPAL,
-    ];
 
     /**
      * @return array<string, string>
@@ -232,25 +212,5 @@ class MollieConfig extends AbstractBundleConfig
     public function getDefaultExpressCheckoutMethodConfig(): array
     {
         return $this->getSharedConfig()->getDefaultExpressCheckoutMethodConfig();
-    }
-
-    /**
-     * @param string $expressMethod
-     *
-     * @return string|null
-     */
-    public function findExpressCheckoutPaymentMethod(string $expressMethod): ?string
-    {
-        return static::EXPRESS_CHECKOUT_PAYMENT_METHOD_MAPPING[$expressMethod] ?? null;
-    }
-
-    /**
-     * @param string $expressMethod
-     *
-     * @return string|null
-     */
-    public function findExpressCheckoutPaymentProvider(string $expressMethod): ?string
-    {
-        return static::EXPRESS_CHECKOUT_PAYMENT_PROVIDER_MAPPING[$expressMethod] ?? null;
     }
 }

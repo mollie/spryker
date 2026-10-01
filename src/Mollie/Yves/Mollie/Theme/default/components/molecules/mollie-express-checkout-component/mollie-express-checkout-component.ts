@@ -6,8 +6,6 @@ declare global {
     Mollie2: {
       Checkout(clientAccessToken: string, options?: MollieCheckoutOptions): MollieCheckoutInstance;
     };
-    // TODO: POC only - set in the browser console to choose how onSubmit ends.
-    mollieExpressPocDecision?: 'resolve' | 'reject';
   }
 }
 
@@ -48,6 +46,12 @@ interface MollieResolveEnabledMethodsResponse {
 
 interface MollieCreateSessionResponse {
   clientAccessToken: string;
+}
+
+interface MolliePlaceOrderResponse {
+  isSuccessful: boolean;
+  orderReference: string | null;
+  errors: string[];
 }
 
 export default class MollieExpressCheckoutComponent extends Component {
@@ -127,10 +131,6 @@ export default class MollieExpressCheckoutComponent extends Component {
         return { buttons };
     }
 
-    // TODO: POC only - proves that defer() pauses the payment until resolve()/reject() is called asynchronously.
-    // Decision comes from window.mollieExpressPocDecision ('resolve' charges, anything else rejects = no charge).
-    // Express checkout is disabled until the cart's address form is saved: the overlay over the Mollie buttons
-    // catches the click and shows the message instead of starting the payment.
     protected mapDisabledOverlayEvents(): void {
         const overlay = this.querySelector(`.${this.name}__disabled-overlay`);
 
@@ -146,7 +146,6 @@ export default class MollieExpressCheckoutComponent extends Component {
     }
 
     protected onSubmit(event: MollieSubmitEvent): void {
-        // Safety net: the overlay should prevent this, but never let a payment through without addresses.
         if (this.isDisabled) {
             event.reject();
             this.showDisabledMessage();
@@ -154,31 +153,40 @@ export default class MollieExpressCheckoutComponent extends Component {
             return;
         }
 
-        const startedAt = Date.now();
-        const log = (message: string) => console.log(`[mollie-express-poc] +${Date.now() - startedAt}ms ${message}`);
-        const waitMs = 10000;
-
-        log('onSubmit called by Mollie');
         event.defer();
-        log(`defer() called - payment should now be paused for ${waitMs / 1000}s`);
+        this.hideErrorMessage();
 
-        const countdown = window.setInterval(() => log('still waiting, Mollie has not created the payment yet'), 2000);
+        fetch(this.expressCheckoutPlaceOrderEndpoint, { method: 'POST', credentials: 'same-origin' })
+            .then((response) => response.json())
+            .then((placeOrderResponse: MolliePlaceOrderResponse) => {
+                if (placeOrderResponse.isSuccessful) {
+                    event.resolve();
 
-        window.setTimeout(() => {
-            window.clearInterval(countdown);
+                    return;
+                }
 
-            if (window.mollieExpressPocDecision === 'resolve') {
-                log('calling resolve() - Mollie should create and charge the payment now');
-                event.resolve();
+                event.reject();
+                this.showErrorMessage(placeOrderResponse.errors);
+            })
+            .catch(() => {
+                event.reject();
+                this.showErrorMessage([]);
+            });
+    }
 
-                return;
-            }
+    protected showErrorMessage(errors: string[]): void {
+        const errorMessage = this.querySelector(`.${this.name}__error-message`);
 
-            log('calling reject() - Mollie should abort, no payment is created');
-            event.reject();
-        }, waitMs);
+        if (!errorMessage) {
+            return;
+        }
 
-        log('onSubmit returned - JS thread is free, Mollie is waiting for our decision');
+        errorMessage.textContent = errors.length ? errors.join(' ') : this.placeOrderErrorMessage;
+        errorMessage.classList.remove('is-hidden');
+    }
+
+    protected hideErrorMessage(): void {
+        this.querySelector(`.${this.name}__error-message`)?.classList.add('is-hidden');
     }
 
     protected get scriptLoaderTag(): string {
@@ -203,5 +211,13 @@ export default class MollieExpressCheckoutComponent extends Component {
 
     protected get expressCheckoutCreateSessionEndpoint(): string {
         return this.getAttribute('express-checkout-create-session-endpoint');
+    }
+
+    protected get expressCheckoutPlaceOrderEndpoint(): string {
+        return this.getAttribute('express-checkout-place-order-endpoint');
+    }
+
+    protected get placeOrderErrorMessage(): string {
+        return this.getAttribute('place-order-error-message');
     }
 }

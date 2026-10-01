@@ -59,14 +59,8 @@ class ExpressCheckoutController extends AbstractController
             );
         }
 
-        $mollieExpressCheckoutSessionTransfer = $mollieExpressCheckoutSessionApiResponseTransfer->getExpressCheckoutSession();
-        $request->getSession()->set(
-            $this->getFactory()->getConfig()->getExpressCheckoutSessionIdSessionKey(),
-            $mollieExpressCheckoutSessionTransfer->getId(),
-        );
-
         return new JsonResponse([
-            'clientAccessToken' => $mollieExpressCheckoutSessionTransfer->getClientAccessToken(),
+            'clientAccessToken' => $mollieExpressCheckoutSessionApiResponseTransfer->getExpressCheckoutSession()->getClientAccessToken(),
         ]);
     }
 
@@ -99,19 +93,12 @@ class ExpressCheckoutController extends AbstractController
         $uuid = Uuid::uuid4();
         $expressCheckoutUuid = $uuid->toString();
 
-        // Our own reference on the session metadata, used to match the payment Mollie creates (webhook) to this checkout.
-        // probaj maknuti to
-        $expressCheckoutReference = bin2hex(random_bytes(16));
-        $request->getSession()->set(
-            $this->getFactory()->getConfig()->getExpressCheckoutReferenceSessionKey(),
-            $expressCheckoutReference,
-        );
+        $request->getSession()->set($this->getFactory()->getConfig()->getExpressCheckoutUuidSessionKey(), $expressCheckoutUuid);
 
         $mollieApiRequestTransfer = (new MollieApiRequestTransfer())
-            ->setExpressCheckoutReference($expressCheckoutReference)
             ->setQuote($quoteTransfer)
             ->setDescription(static::EXPRESS_CHECKOUT_SESSION_DESCRIPTION)
-            ->setExpressCheckoutUuid($expressCheckoutUuid);
+            ->setExpressCheckoutUuid($expressCheckoutUuid)
             ->setRedirectUrl(
                 $request->getSchemeAndHttpHost() . MollieRouteProviderPlugin::ROUTE_PATH_MOLLIE_EXPRESS_CHECKOUT_REDIRECT,
             );

@@ -4,14 +4,9 @@ declare(strict_types=1);
 
 namespace Mollie\Yves\Mollie\Controller;
 
-use Generated\Shared\Transfer\MollieApiRequestTransfer;
-use Generated\Shared\Transfer\MollieExpressCheckoutSessionApiResponseTransfer;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 
-/**
- * @method \Mollie\Client\Mollie\MollieClientInterface getClient()
- */
 class ExpressCheckoutRedirectController extends AbstractMollieController
 {
     /**
@@ -22,15 +17,22 @@ class ExpressCheckoutRedirectController extends AbstractMollieController
     protected const ROUTE_NAME_CART = 'cart';
 
     /**
+     * @uses \SprykerShop\Yves\CheckoutPage\Plugin\Router\CheckoutPageRouteProviderPlugin::ROUTE_NAME_CHECKOUT_SUCCESS
+     *
      * @var string
      */
-    protected const KEY_ID = 'id';
+    protected const ROUTE_NAME_CHECKOUT_SUCCESS = 'checkout-success';
+
+    /**
+     * @var string
+     */
+    protected const ERROR_MESSAGE_ORDER_NOT_FOUND = 'Your express checkout order could not be found. Please contact us if you have been charged.';
 
     /**
      * Mollie redirects the shopper here after the express payment.
-     *
-     * TODO: discovery only - fetches the session and its payment so their raw payloads (addresses, payment id,
-     * method) end up in the Mollie API log, then returns to the cart. Order creation and refund come next.
+     * The order was placed on Mollie's submit (ExpressCheckoutOrderController), which left the placed quote with its
+     * order reference in the session; the checkout success page shows it and clears the cart.
+     * The payment itself is linked to the order by the express checkout webhook (MollieExpressCheckoutPaymentWebhookHandlerPlugin).
      *
      * @param \Symfony\Component\HttpFoundation\Request $request
      *
@@ -38,49 +40,14 @@ class ExpressCheckoutRedirectController extends AbstractMollieController
      */
     public function expressCheckoutRedirectAction(Request $request): RedirectResponse
     {
-        $sessionId = $request->getSession()->get($this->getFactory()->getConfig()->getExpressCheckoutSessionIdSessionKey());
+        $quoteTransfer = $this->getFactory()->getQuoteClient()->getQuote();
 
-        if (!$sessionId) {
+        if (!$quoteTransfer->getOrderReference()) {
+            $this->addErrorMessage(static::ERROR_MESSAGE_ORDER_NOT_FOUND);
+
             return $this->redirectResponseInternal(static::ROUTE_NAME_CART);
         }
 
-        $mollieExpressCheckoutSessionApiResponseTransfer = $this->getClient()->getExpressCheckoutSession(
-            (new MollieApiRequestTransfer())->setSessionId($sessionId),
-        );
-
-        $paymentId = $this->findPaymentId($mollieExpressCheckoutSessionApiResponseTransfer);
-
-        if ($paymentId) {
-            $this->getClient()->getPaymentByTransactionId(
-                (new MollieApiRequestTransfer())->setTransactionId($paymentId),
-            );
-        }
-
-        return $this->redirectResponseInternal(static::ROUTE_NAME_CART);
-    }
-
-    /**
-     * @param \Generated\Shared\Transfer\MollieExpressCheckoutSessionApiResponseTransfer $mollieExpressCheckoutSessionApiResponseTransfer
-     *
-     * @return string|null
-     */
-    protected function findPaymentId(
-        MollieExpressCheckoutSessionApiResponseTransfer $mollieExpressCheckoutSessionApiResponseTransfer,
-    ): ?string {
-        $mollieExpressCheckoutSessionTransfer = $mollieExpressCheckoutSessionApiResponseTransfer->getExpressCheckoutSession();
-
-        if (!$mollieExpressCheckoutSessionApiResponseTransfer->getIsSuccessful() || !$mollieExpressCheckoutSessionTransfer) {
-            return null;
-        }
-
-        $paymentId = $mollieExpressCheckoutSessionTransfer->getPayment()[static::KEY_ID] ?? null;
-
-        if ($paymentId) {
-            return $paymentId;
-        }
-
-        $paymentHref = $mollieExpressCheckoutSessionTransfer->getLinks()?->getPayment()?->getHref();
-
-        return $paymentHref ? basename((string)parse_url($paymentHref, PHP_URL_PATH)) : null;
+        return $this->redirectResponseInternal(static::ROUTE_NAME_CHECKOUT_SUCCESS);
     }
 }

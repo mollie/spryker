@@ -23,6 +23,10 @@ class MollieExpressCheckoutWidget extends AbstractWidget
             'expressCheckoutCreateSessionEndpoint',
             MollieRouteProviderPlugin::ROUTE_PATH_MOLLIE_EXPRESS_CHECKOUT_CREATE_SESSION,
         );
+        $this->addParameter(
+            'expressCheckoutPlaceOrderEndpoint',
+            MollieRouteProviderPlugin::ROUTE_PATH_MOLLIE_EXPRESS_CHECKOUT_PLACE_ORDER,
+        );
         $this->addParameter('jsSrc', $this->getConfig()->getMollieExpressCheckoutJsSrc());
         $this->addParameter('locale', $this->getLocale());
         $this->addAddressFormParameters();

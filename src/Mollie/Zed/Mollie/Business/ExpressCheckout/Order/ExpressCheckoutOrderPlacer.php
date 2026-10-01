@@ -44,14 +44,14 @@ class ExpressCheckoutOrderPlacer implements ExpressCheckoutOrderPlacerInterface
             $checkoutResponseTransfer = $this->checkoutFacade->placeOrder($quoteTransfer);
         } catch (Throwable $throwable) {
             $this->getLogger()->error(static::ERROR_MESSAGE_PLACE_ORDER_FAILED, [
-                'expressCheckoutReference' => $mollieExpressCheckoutOrderRequestTransfer->getExpressCheckoutReference(),
+                'expressCheckoutUuid' => $mollieExpressCheckoutOrderRequestTransfer->getExpressCheckoutUuid(),
                 'exception' => $throwable,
             ]);
 
             return $this->createFailedResponse([$throwable->getMessage()]);
         }
 
-        return $this->mapCheckoutResponse($checkoutResponseTransfer);
+        return $this->mapCheckoutResponse($checkoutResponseTransfer, $quoteTransfer);
     }
 
     /**
@@ -75,11 +75,14 @@ class ExpressCheckoutOrderPlacer implements ExpressCheckoutOrderPlacerInterface
 
     /**
      * @param \Generated\Shared\Transfer\CheckoutResponseTransfer $checkoutResponseTransfer
+     * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer The placed quote (addresses, shipment, payment, totals).
      *
      * @return \Generated\Shared\Transfer\MollieExpressCheckoutOrderResponseTransfer
      */
-    protected function mapCheckoutResponse(CheckoutResponseTransfer $checkoutResponseTransfer): MollieExpressCheckoutOrderResponseTransfer
-    {
+    protected function mapCheckoutResponse(
+        CheckoutResponseTransfer $checkoutResponseTransfer,
+        QuoteTransfer $quoteTransfer,
+    ): MollieExpressCheckoutOrderResponseTransfer {
         $saveOrderTransfer = $checkoutResponseTransfer->getSaveOrder();
 
         if (!$checkoutResponseTransfer->getIsSuccess() || !$saveOrderTransfer?->getOrderReference()) {
@@ -93,6 +96,7 @@ class ExpressCheckoutOrderPlacer implements ExpressCheckoutOrderPlacerInterface
 
         return (new MollieExpressCheckoutOrderResponseTransfer())
             ->setIsSuccessful(true)
+            ->setQuote($quoteTransfer)
             ->setOrderReference($saveOrderTransfer->getOrderReference())
             ->setIdSalesOrder($saveOrderTransfer->getIdSalesOrder());
     }

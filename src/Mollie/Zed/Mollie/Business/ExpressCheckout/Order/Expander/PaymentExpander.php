@@ -6,30 +6,21 @@ namespace Mollie\Zed\Mollie\Business\ExpressCheckout\Order\Expander;
 
 use ArrayObject;
 use Generated\Shared\Transfer\MollieExpressCheckoutOrderRequestTransfer;
+use Generated\Shared\Transfer\MollieExpressPaymentTransfer;
 use Generated\Shared\Transfer\PaymentTransfer;
 use Generated\Shared\Transfer\QuoteTransfer;
-use Mollie\Zed\Mollie\Business\Exception\ExpressCheckoutOrderException;
-use Mollie\Zed\Mollie\MollieConfig;
+use Mollie\Shared\Mollie\MollieConfig as SharedMollieConfig;
 
 class PaymentExpander implements ExpressCheckoutQuoteExpanderInterface
 {
     /**
-     * @var string
-     */
-    protected const ERROR_MESSAGE_UNSUPPORTED_EXPRESS_METHOD = 'Express method "%s" has no Spryker payment method.';
-
-    /**
-     * @param \Mollie\Zed\Mollie\MollieConfig $config
-     */
-    public function __construct(protected MollieConfig $config)
-    {
-    }
-
-    /**
+     * Sets the Mollie express payment with the express checkout uuid of the Mollie session.
+     * MollieExpressCheckoutPostSavePlugin stores it in spy_payment_mollie, and the express checkout webhook
+     * later links the Mollie payment to the order by that uuid.
+     * The payment amount is set by ExpressCheckoutOrderPlacer after recalculation.
+     *
      * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
      * @param \Generated\Shared\Transfer\MollieExpressCheckoutOrderRequestTransfer $mollieExpressCheckoutOrderRequestTransfer
-     *
-     * @throws \Mollie\Zed\Mollie\Business\Exception\ExpressCheckoutOrderException
      *
      * @return \Generated\Shared\Transfer\QuoteTransfer
      */
@@ -37,25 +28,17 @@ class PaymentExpander implements ExpressCheckoutQuoteExpanderInterface
         QuoteTransfer $quoteTransfer,
         MollieExpressCheckoutOrderRequestTransfer $mollieExpressCheckoutOrderRequestTransfer,
     ): QuoteTransfer {
-        $expressMethod = $mollieExpressCheckoutOrderRequestTransfer->getExpressMethodOrFail();
-        $paymentMethod = $this->config->findExpressCheckoutPaymentMethod($expressMethod);
-        $paymentProvider = $this->config->findExpressCheckoutPaymentProvider($expressMethod);
-
-        if (!$paymentMethod || !$paymentProvider) {
-            throw new ExpressCheckoutOrderException(sprintf(static::ERROR_MESSAGE_UNSUPPORTED_EXPRESS_METHOD, $expressMethod));
-        }
-
         $paymentTransfer = (new PaymentTransfer())
-            ->setPaymentProvider($paymentProvider)
-            ->setPaymentMethod($paymentMethod)
-            ->setPaymentSelection($paymentMethod);
+            ->setPaymentProvider(SharedMollieConfig::MOLLIE_PROVIDER_EXPRESS)
+            ->setPaymentMethod(SharedMollieConfig::MOLLIE_PAYMENT_EXPRESS)
+            ->setPaymentSelection(SharedMollieConfig::MOLLIE_PAYMENT_EXPRESS)
+            ->setMollieExpressPayment(
+                (new MollieExpressPaymentTransfer())
+                    ->setExpressCheckoutUuid($mollieExpressCheckoutOrderRequestTransfer->getExpressCheckoutUuidOrFail()),
+            );
 
-        $quoteTransfer
+        return $quoteTransfer
             ->setPayment($paymentTransfer)
-            ->setPayments(new ArrayObject([$paymentTransfer]))
-            ->setMollieExpressCheckoutReference($mollieExpressCheckoutOrderRequestTransfer->getExpressCheckoutReferenceOrFail())
-            ->setMolliePaymentId($mollieExpressCheckoutOrderRequestTransfer->getTransactionId());
-
-        return $quoteTransfer;
+            ->setPayments(new ArrayObject([$paymentTransfer]));
     }
 }

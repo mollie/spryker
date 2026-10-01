@@ -18,12 +18,7 @@ class MollieConfig extends AbstractBundleConfig
     /**
      * @var string
      */
-    protected const EXPRESS_CHECKOUT_SESSION_ID_SESSION_KEY = 'mollie_express_checkout_session_id';
-
-    /**
-     * @var string
-     */
-    protected const EXPRESS_CHECKOUT_REFERENCE_SESSION_KEY = 'mollie_express_checkout_reference';
+    protected const EXPRESS_CHECKOUT_UUID_SESSION_KEY = 'mollie_express_checkout_uuid';
 
     /**
      * @var string
@@ -102,17 +97,9 @@ class MollieConfig extends AbstractBundleConfig
     /**
      * @return string
      */
-    public function getExpressCheckoutSessionIdSessionKey(): string
+    public function getExpressCheckoutUuidSessionKey(): string
     {
-        return static::EXPRESS_CHECKOUT_SESSION_ID_SESSION_KEY;
-    }
-
-    /**
-     * @return string
-     */
-    public function getExpressCheckoutReferenceSessionKey(): string
-    {
-        return static::EXPRESS_CHECKOUT_REFERENCE_SESSION_KEY;
+        return static::EXPRESS_CHECKOUT_UUID_SESSION_KEY;
     }
 
     /**
