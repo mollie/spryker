@@ -126,6 +126,14 @@ class MolliePaymentMethodsFilter implements MolliePaymentMethodsFilterInterface
                 continue;
             }
 
+            if ($this->mollieConfig->isMollieExpressPaymentMethod((string)$paymentMethodTransfer->getPaymentMethodKey())) {
+                if ($this->isExpressCheckoutQuote($quoteTransfer)) {
+                    $filteredMethods->append($paymentMethodTransfer);
+                }
+
+                continue;
+            }
+
             $mollieMethodId = $this->mollieConfig->getMolliePaymentMethod($paymentMethodTransfer->getPaymentMethodKey());
 
             if (!isset($activeMollieMethods[$mollieMethodId])) {
@@ -190,6 +198,18 @@ class MolliePaymentMethodsFilter implements MolliePaymentMethodsFilterInterface
         }
 
         return $indexedPaymentConfigMethods;
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
+     *
+     * @return bool
+     */
+    protected function isExpressCheckoutQuote(QuoteTransfer $quoteTransfer): bool
+    {
+        $paymentMethod = $quoteTransfer->getPayment()?->getPaymentMethod();
+
+        return $paymentMethod !== null && $this->mollieConfig->isMollieExpressPaymentMethod($paymentMethod);
     }
 
     /**
