@@ -34,6 +34,7 @@ interface ApplePayPaymentAuthorizationResult {
 interface ApplePaySessionInstance {
     onvalidatemerchant: (event: ApplePayValidateMerchantEvent) => void;
     onpaymentauthorized: (event: ApplePayPaymentAuthorizedEvent) => void;
+    oncancel: () => void;
     begin(): void;
     abort(): void;
     completeMerchantValidation(applePayPaymentSession: object): void;
@@ -126,6 +127,7 @@ export default class MollieApplePayDirectComponent extends Component {
             this.onValidateMerchant(applePaySession, validateMerchantEvent);
         applePaySession.onpaymentauthorized = (paymentAuthorizedEvent: ApplePayPaymentAuthorizedEvent) =>
             this.onPaymentAuthorized(applePaySessionConstructor, applePaySession, paymentAuthorizedEvent);
+        applePaySession.oncancel = () => this.enableSubmitButton();
 
         applePaySession.begin();
     }
@@ -154,6 +156,7 @@ export default class MollieApplePayDirectComponent extends Component {
             .catch((error: Error) => {
                 console.error(error);
                 applePaySession.abort();
+                this.enableSubmitButton();
                 this.showFlashMessage(this.unavailableMessage);
             });
     }
@@ -185,6 +188,12 @@ export default class MollieApplePayDirectComponent extends Component {
 
         applePaySession.completePayment({ status: applePaySessionConstructor.STATUS_SUCCESS });
         this.form.submit();
+    }
+
+    protected enableSubmitButton(): void {
+        const submitButton = <HTMLButtonElement>this.form.querySelector(this.submitButtonSelector);
+
+        submitButton.disabled = false;
     }
 
     protected showFlashMessage(message: string): void {
@@ -221,6 +230,10 @@ export default class MollieApplePayDirectComponent extends Component {
 
     protected get formSelector(): string {
         return this.getAttribute('form-selector');
+    }
+
+    protected get submitButtonSelector(): string {
+        return this.getAttribute('submit-button-selector');
     }
 
     protected get applePayDirectInputId(): string {
