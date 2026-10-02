@@ -6,6 +6,7 @@
 } %}
 
 {% define data = {
+    applePayDirectInputId: required,
     applePaySdkSrc: required,
     applePayPaymentSessionEndpoint: required,
     amount: required,
@@ -15,8 +16,7 @@
 
 {% define attributes = {
     'form-selector': '[name="paymentForm"]',
-    'selected-payment-method': '[name="paymentForm[paymentSelection]"]:checked',
-    'apple-pay-direct-input-selector': 'toggler-radio#paymentForm_paymentSelection_mollieApplePayDirectPayment input',
+    'apple-pay-direct-input-id': data.applePayDirectInputId,
     'apple-pay-payment-token-selector': '.apple-pay-payment-token',
     'apple-pay-payment-session-endpoint': data.applePayPaymentSessionEndpoint,
     'amount': data.amount,

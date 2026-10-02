@@ -7,8 +7,10 @@
 {% block body %}
     {% set applePayDirectForm = data.form.children.mollieApplePayDirectPayment %}
     {% set vars = applePayDirectForm.vars %}
+    {% set applePayDirectInput = data.form.paymentSelection[vars.name] %}
     {% include molecule('mollie-apple-pay-direct-component', 'Mollie') with {
         data: {
+            applePayDirectInputId: applePayDirectInput.vars.id,
             applePaySdkSrc: vars.applePaySdkSrc,
             applePayPaymentSessionEndpoint: vars.applePayPaymentSessionEndpoint,
             amount: vars.amount,

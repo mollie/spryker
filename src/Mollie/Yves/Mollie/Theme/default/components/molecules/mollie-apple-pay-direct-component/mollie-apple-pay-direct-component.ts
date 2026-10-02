@@ -2,7 +2,6 @@ import Component from 'ShopUi/models/component';
 import ScriptLoader from 'ShopUi/components/molecules/script-loader/script-loader';
 import { EVENT_UPDATE_DYNAMIC_MESSAGES } from 'ShopUi/components/organisms/dynamic-notification-area/dynamic-notification-area';
 
-const MOLLIE_APPLE_PAY_DIRECT_PAYMENT_METHOD_IDENTIFIER = 'mollieApplePayDirectPayment';
 const APPLE_PAY_VERSION = 3;
 const APPLE_PAY_MERCHANT_CAPABILITIES = ['supports3DS'];
 const APPLE_PAY_SUPPORTED_NETWORKS = ['amex', 'maestro', 'masterCard', 'visa', 'vPay'];
@@ -64,7 +63,7 @@ export default class MollieApplePayDirectComponent extends Component {
     protected init(): void {
         this.scriptLoader = <ScriptLoader>this.querySelector(this.scriptLoaderTag);
         this.form = <HTMLFormElement>document.querySelector(this.formSelector);
-        this.applePayDirectInput = <HTMLInputElement | null>document.querySelector(this.applePayDirectInputSelector);
+        this.applePayDirectInput = <HTMLInputElement | null>document.querySelector(`input#${this.applePayDirectInputId}`);
         this.applePayPaymentTokenInput = <HTMLInputElement>document.querySelector(this.applePayPaymentTokenSelector);
 
         this.mapEvents();
@@ -209,9 +208,11 @@ export default class MollieApplePayDirectComponent extends Component {
     }
 
     protected get isCurrentPaymentMethod(): boolean {
-        const currentPaymentMethodInput = <HTMLInputElement | null>document.querySelector(this.selectedPaymentMethod);
+        if (!this.applePayDirectInput) {
+            return false;
+        }
 
-        return currentPaymentMethodInput?.value === MOLLIE_APPLE_PAY_DIRECT_PAYMENT_METHOD_IDENTIFIER;
+        return this.applePayDirectInput.checked;
     }
 
     protected get scriptLoaderTag(): string {
@@ -222,12 +223,8 @@ export default class MollieApplePayDirectComponent extends Component {
         return this.getAttribute('form-selector');
     }
 
-    protected get selectedPaymentMethod(): string {
-        return this.getAttribute('selected-payment-method');
-    }
-
-    protected get applePayDirectInputSelector(): string {
-        return this.getAttribute('apple-pay-direct-input-selector');
+    protected get applePayDirectInputId(): string {
+        return this.getAttribute('apple-pay-direct-input-id');
     }
 
     protected get applePayPaymentTokenSelector(): string {

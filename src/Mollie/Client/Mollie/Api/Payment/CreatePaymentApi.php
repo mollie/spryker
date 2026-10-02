@@ -72,9 +72,8 @@ class CreatePaymentApi extends AbstractApiCall
         );
 
         $paymentMethod = $paymentTransfer->getPaymentMethod();
-        $method = $this->mollieConfig->getMolliePaymentMethod($paymentMethod);
-        $captureMode = $this->getCaptureModeForMethod($method);
-        $methodForCreatePaymentRequest = $this->getMethodForCreatePaymentRequest($paymentMethod, $method);
+        $captureMode = $this->getCaptureMode($paymentMethod);
+        $method = $this->getMethod($paymentMethod);
         $metadata = $this->apiHandler->createPaymentMetadata($checkoutResponseTransfer);
         $additionalParameters = $this->apiHandler->createAdditionalParameters($mollieApiRequestTransfer);
         $billingAddress = $this->apiHandler->createBillingAddress($quoteTransfer);
@@ -87,7 +86,7 @@ class CreatePaymentApi extends AbstractApiCall
             webhookUrl: $webhookUrl,
             lines: $lines,
             billingAddress: $billingAddress,
-            method: $methodForCreatePaymentRequest,
+            method: $method,
             metadata: $metadata,
             captureMode: $captureMode,
             additional: $additionalParameters,
@@ -167,27 +166,27 @@ class CreatePaymentApi extends AbstractApiCall
 
     /**
      * @param string $paymentMethod
-     * @param string $method
      *
      * @return string
      */
-    protected function getMethodForCreatePaymentRequest(string $paymentMethod, string $method): string
+    protected function getMethod(string $paymentMethod): string
     {
         $isApplePayDirectPayment = $paymentMethod === SharedConfig::MOLLIE_PAYMENT_APPLE_PAY_DIRECT;
         if ($isApplePayDirectPayment) {
             return PaymentMethod::CREDITCARD;
         }
 
-        return $method;
+        return $this->mollieConfig->getMolliePaymentMethod($paymentMethod);
     }
 
     /**
-     * @param string $method
+     * @param string $paymentMethod
      *
      * @return string
      */
-    protected function getCaptureModeForMethod(string $method): string
+    protected function getCaptureMode(string $paymentMethod): string
     {
+        $method = $this->mollieConfig->getMolliePaymentMethod($paymentMethod);
         $molliePaymentMethodsManualCapture = $this->mollieConfig->getMolliePaymentMethodsManualCapture();
         if (in_array($method, $molliePaymentMethodsManualCapture)) {
             return $this->mollieConfig->getMollieManualCaptureMode();

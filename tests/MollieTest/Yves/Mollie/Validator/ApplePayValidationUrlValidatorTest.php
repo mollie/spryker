@@ -6,7 +6,8 @@ namespace MollieTest\Yves\Mollie\Validator;
 
 use Codeception\Test\Unit;
 use Mollie\Yves\Mollie\MollieConfig;
-use Mollie\Yves\Mollie\Validator\ApplePayValidationUrlValidator;
+use Mollie\Yves\Mollie\MollieFactory;
+use Mollie\Yves\Mollie\Validator\ApplePayValidationUrlValidatorInterface;
 
 class ApplePayValidationUrlValidatorTest extends Unit
 {
@@ -26,7 +27,7 @@ class ApplePayValidationUrlValidatorTest extends Unit
     public function testIsValidReturnsTrueForHttpsUrlOnEachConfiguredApplePayGatewayHost(): void
     {
         $mollieConfig = new MollieConfig();
-        $applePayValidationUrlValidator = new ApplePayValidationUrlValidator($mollieConfig);
+        $applePayValidationUrlValidator = $this->createApplePayValidationUrlValidator();
         $allowedHosts = $mollieConfig->getApplePayValidationUrlAllowedHosts();
 
         $this->assertNotEmpty($allowedHosts);
@@ -45,7 +46,7 @@ class ApplePayValidationUrlValidatorTest extends Unit
     public function testIsValidReturnsFalseForConfiguredApplePayGatewayHostUsedInDisguisedUrl(): void
     {
         $mollieConfig = new MollieConfig();
-        $applePayValidationUrlValidator = new ApplePayValidationUrlValidator($mollieConfig);
+        $applePayValidationUrlValidator = $this->createApplePayValidationUrlValidator();
 
         foreach ($mollieConfig->getApplePayValidationUrlAllowedHosts() as $allowedHost) {
             $disguisedApplePayValidationUrls = [
@@ -72,7 +73,7 @@ class ApplePayValidationUrlValidatorTest extends Unit
      */
     public function testIsValidReturnsFalseForUrlOutsideConfiguredApplePayGatewayHosts(string $applePayValidationUrl): void
     {
-        $applePayValidationUrlValidator = new ApplePayValidationUrlValidator(new MollieConfig());
+        $applePayValidationUrlValidator = $this->createApplePayValidationUrlValidator();
 
         $isValid = $applePayValidationUrlValidator->isValid($applePayValidationUrl);
 
@@ -88,5 +89,13 @@ class ApplePayValidationUrlValidatorTest extends Unit
             'unknown host' => ['https://' . static::ATTACKER_HOST . static::APPLE_PAY_VALIDATION_URL_PATH],
             'empty string' => [''],
         ];
+    }
+
+    /**
+     * @return \Mollie\Yves\Mollie\Validator\ApplePayValidationUrlValidatorInterface
+     */
+    protected function createApplePayValidationUrlValidator(): ApplePayValidationUrlValidatorInterface
+    {
+        return (new MollieFactory())->createApplePayValidationUrlValidator();
     }
 }

@@ -13,7 +13,8 @@ use Generated\Shared\Transfer\MolliePaymentTransfer;
 use Generated\Shared\Transfer\QuoteTransfer;
 use Generated\Shared\Transfer\SaveOrderTransfer;
 use Mollie\Client\Mollie\MollieClientInterface;
-use Mollie\Zed\Mollie\Business\Handler\MolliePaymentHandler;
+use Mollie\Zed\Mollie\Business\Handler\MolliePaymentHandlerInterface;
+use Mollie\Zed\Mollie\Business\MollieBusinessFactory;
 use Mollie\Zed\Mollie\Business\Writer\MolliePaymentWriterInterface;
 use Mollie\Zed\Mollie\Dependency\MollieToStorageClientInterface;
 use Mollie\Zed\Mollie\MollieConfig;
@@ -72,9 +73,9 @@ class MolliePaymentHandlerTest extends Unit
     /**
      * @param \Generated\Shared\Transfer\MollieLinksTransfer $mollieLinksTransfer
      *
-     * @return \Mollie\Zed\Mollie\Business\Handler\MolliePaymentHandler
+     * @return \Mollie\Zed\Mollie\Business\Handler\MolliePaymentHandlerInterface
      */
-    protected function createMolliePaymentHandler(MollieLinksTransfer $mollieLinksTransfer): MolliePaymentHandler
+    protected function createMolliePaymentHandler(MollieLinksTransfer $mollieLinksTransfer): MolliePaymentHandlerInterface
     {
         $molliePaymentTransfer = (new MolliePaymentTransfer())
             ->setId(static::PAYMENT_ID)
@@ -91,12 +92,18 @@ class MolliePaymentHandlerTest extends Unit
         $mollieConfigMock->method('getMollieRedirectUrl')
             ->willReturn(static::MOLLIE_REDIRECT_URL);
 
-        return new MolliePaymentHandler(
-            $mollieClientMock,
-            $this->createMock(MollieToStorageClientInterface::class),
-            $this->createMock(MolliePaymentWriterInterface::class),
-            $mollieConfigMock,
-        );
+        $mollieBusinessFactoryMock = $this->getMockBuilder(MollieBusinessFactory::class)
+            ->onlyMethods(['getMollieClient', 'getStorageClient', 'createMolliePaymentWriter'])
+            ->getMock();
+        $mollieBusinessFactoryMock->method('getMollieClient')
+            ->willReturn($mollieClientMock);
+        $mollieBusinessFactoryMock->method('getStorageClient')
+            ->willReturn($this->createMock(MollieToStorageClientInterface::class));
+        $mollieBusinessFactoryMock->method('createMolliePaymentWriter')
+            ->willReturn($this->createMock(MolliePaymentWriterInterface::class));
+        $mollieBusinessFactoryMock->setConfig($mollieConfigMock);
+
+        return $mollieBusinessFactoryMock->createMolliePaymentHandler();
     }
 
     /**
