@@ -1,0 +1,37 @@
+{% extends model('component') %}
+
+{% define config = {
+    name: 'mollie-apple-pay-direct-component',
+    tag: 'mollie-apple-pay-direct-component',
+} %}
+
+{% define data = {
+    applePaySdkSrc: required,
+    applePayPaymentSessionEndpoint: required,
+    amount: required,
+    currencyCode: required,
+    countryCode: required,
+} %}
+
+{% define attributes = {
+    'form-selector': '[name="paymentForm"]',
+    'selected-payment-method': '[name="paymentForm[paymentSelection]"]:checked',
+    'apple-pay-direct-input-selector': 'toggler-radio#paymentForm_paymentSelection_mollieApplePayDirectPayment input',
+    'apple-pay-payment-token-selector': '.apple-pay-payment-token',
+    'apple-pay-payment-session-endpoint': data.applePayPaymentSessionEndpoint,
+    'amount': data.amount,
+    'currency-code': data.currencyCode,
+    'country-code': data.countryCode,
+    'total-label': 'checkout.payment.provider.mollieApplePayDirect.totalLabel' | trans,
+    'unavailable-message': 'mollie.checkout.payment.apple.pay.direct.unavailable' | trans,
+} %}
+
+{% block body %}
+    {% include molecule('script-loader') with {
+        attributes: {
+            src: data.applePaySdkSrc,
+            crossorigin: 'anonymous',
+        }
+    } only %}
+    <div class="spacing-top--big">{{ 'checkout.payment.provider.mollieApplePayDirect.descriptionText' | trans }}</div>
+{% endblock %}

@@ -93,6 +93,16 @@ interface MollieConstants
     /**
      * @var string
      */
+    public const MOLLIE_APPLE_PAY_SDK_JS_SRC = 'MOLLIE:MOLLIE_APPLE_PAY_SDK_JS_SRC';
+
+    /**
+     * @var string
+     */
+    public const MOLLIE_APPLE_PAY_VALIDATION_URL_ALLOWED_HOSTS = 'MOLLIE:MOLLIE_APPLE_PAY_VALIDATION_URL_ALLOWED_HOSTS';
+
+    /**
+     * @var string
+     */
     public const MOLLIE_GET_METHODS_API_DEFAULT_AMOUNT_VALUE = 'MOLLIE_GET_METHODS_API_DEFAULT_AMOUNT_VALUE';
 
     // Payment statuses from Mollie

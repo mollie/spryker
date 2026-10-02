@@ -72,6 +72,12 @@ class PaymentApiHandler implements PaymentApiHandlerInterface
                 $additionalData[MollieConfig::REQUEST_PARAMETER_CREATE_PAYMENT_APPLE_PAY_PAYMENT_TOKEN] = $paymentTransfer->getMollieApplePayPayment()->getApplePayPaymentToken() ?? '';
 
                 break;
+            case SharedConfig::MOLLIE_PAYMENT_APPLE_PAY_DIRECT:
+                $mollieApplePayDirectPaymentTransfer = $paymentTransfer->getMollieApplePayDirectPaymentOrFail();
+                $applePayPaymentToken = $mollieApplePayDirectPaymentTransfer->getApplePayPaymentTokenOrFail();
+                $additionalData[MollieConfig::REQUEST_PARAMETER_CREATE_PAYMENT_APPLE_PAY_PAYMENT_TOKEN] = $applePayPaymentToken;
+
+                break;
             case SharedConfig::MOLLIE_PAYMENT_IDEAL_IN3:
                 $additionalData[MollieConfig::REQUEST_PARAMETER_CREATE_PAYMENT_IDEAL_IN3_CONSUMER_DATE_OF_BIRTH] = $mollieApiRequestTransfer->getQuote()->getCustomer()?->getDateOfBirth();
 

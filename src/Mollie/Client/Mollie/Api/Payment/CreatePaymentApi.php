@@ -13,12 +13,14 @@ use Mollie\Api\Http\Data\Money;
 use Mollie\Api\Http\Request;
 use Mollie\Api\Http\Requests\CreatePaymentRequest;
 use Mollie\Api\MollieApiClient;
+use Mollie\Api\Types\PaymentMethod;
 use Mollie\Client\Mollie\Api\AbstractApiCall;
 use Mollie\Client\Mollie\Dependency\Service\MollieToUtilEncodingServiceInterface;
 use Mollie\Client\Mollie\Handler\PaymentApiHandlerInterface;
 use Mollie\Client\Mollie\Logger\MollieLoggerInterface;
 use Mollie\Client\Mollie\MollieConfig;
 use Mollie\Service\Mollie\MollieServiceInterface;
+use Mollie\Shared\Mollie\MollieConfig as SharedConfig;
 use Spryker\Shared\Kernel\Transfer\AbstractTransfer;
 use Spryker\Shared\Log\LoggerTrait;
 
@@ -69,7 +71,10 @@ class CreatePaymentApi extends AbstractApiCall
             $this->mollieConfig->isMollieTestModeEnabled(),
         );
 
-        $method = $this->mollieConfig->getMolliePaymentMethod($paymentTransfer->getPaymentMethod());
+        $paymentMethod = $paymentTransfer->getPaymentMethod();
+        $method = $this->mollieConfig->getMolliePaymentMethod($paymentMethod);
+        $captureMode = $this->getCaptureModeForMethod($method);
+        $methodForCreatePaymentRequest = $this->getMethodForCreatePaymentRequest($paymentMethod, $method);
         $metadata = $this->apiHandler->createPaymentMetadata($checkoutResponseTransfer);
         $additionalParameters = $this->apiHandler->createAdditionalParameters($mollieApiRequestTransfer);
         $billingAddress = $this->apiHandler->createBillingAddress($quoteTransfer);
@@ -82,9 +87,9 @@ class CreatePaymentApi extends AbstractApiCall
             webhookUrl: $webhookUrl,
             lines: $lines,
             billingAddress: $billingAddress,
-            method: $method,
+            method: $methodForCreatePaymentRequest,
             metadata: $metadata,
-            captureMode: $this->getCaptureModeForMethod($method),
+            captureMode: $captureMode,
             additional: $additionalParameters,
         );
 
@@ -152,8 +157,28 @@ class CreatePaymentApi extends AbstractApiCall
 
         $payload = $createPaymentRequest->payload();
         $requestBody = $payload->all();
+        $maskedRequestBody = $this->maskPayload(
+            [MollieConfig::REQUEST_PARAMETER_CREATE_PAYMENT_APPLE_PAY_PAYMENT_TOKEN],
+            $requestBody,
+        );
 
-        return $requestBody;
+        return $maskedRequestBody;
+    }
+
+    /**
+     * @param string $paymentMethod
+     * @param string $method
+     *
+     * @return string
+     */
+    protected function getMethodForCreatePaymentRequest(string $paymentMethod, string $method): string
+    {
+        $isApplePayDirectPayment = $paymentMethod === SharedConfig::MOLLIE_PAYMENT_APPLE_PAY_DIRECT;
+        if ($isApplePayDirectPayment) {
+            return PaymentMethod::CREDITCARD;
+        }
+
+        return $method;
     }
 
     /**

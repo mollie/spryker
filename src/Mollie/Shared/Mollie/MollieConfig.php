@@ -77,6 +77,11 @@ class MollieConfig extends AbstractSharedConfig
     /**
      * @var string
      */
+    public const MOLLIE_PROVIDER_APPLE_PAY_DIRECT = 'MollieApplePayDirectPayment';
+
+    /**
+     * @var string
+     */
     public const MOLLIE_PROVIDER_PRZELEWY24 = 'MolliePrzelewy24Payment';
 
     /**
@@ -193,6 +198,11 @@ class MollieConfig extends AbstractSharedConfig
      * @var string
      */
     public const MOLLIE_PAYMENT_APPLE_PAY = 'mollieApplePayPayment';
+
+    /**
+     * @var string
+     */
+    public const MOLLIE_PAYMENT_APPLE_PAY_DIRECT = 'mollieApplePayDirectPayment';
 
     /**
      * @var string

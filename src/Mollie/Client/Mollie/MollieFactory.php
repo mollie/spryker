@@ -21,6 +21,7 @@ use Mollie\Client\Mollie\Api\Refund\CreateRefundApi;
 use Mollie\Client\Mollie\Api\Refund\GetRefundByRefundIdApi;
 use Mollie\Client\Mollie\Api\Session\CreateExpressCheckoutSessionApi;
 use Mollie\Client\Mollie\Api\Session\GetExpressCheckoutSessionApi;
+use Mollie\Client\Mollie\Api\Wallet\CreateApplePayPaymentSessionApi;
 use Mollie\Client\Mollie\Deleter\Payment\PaymentMethodsCacheDeleter;
 use Mollie\Client\Mollie\Deleter\Payment\PaymentMethodsCacheDeleterInterface;
 use Mollie\Client\Mollie\Dependency\Client\MollieToStorageClientInterface;
@@ -345,6 +346,19 @@ class MollieFactory extends AbstractFactory
     public function createGetExpressCheckoutSessionApi(): ApiCallInterface
     {
         return new GetExpressCheckoutSessionApi(
+            $this->createMollieApiClient(),
+            $this->getConfig(),
+            $this->getUtilEncodingService(),
+            $this->createMollieLogger(),
+        );
+    }
+
+    /**
+     * @return \Mollie\Client\Mollie\Api\ApiCallInterface
+     */
+    public function createApplePayPaymentSessionApi(): ApiCallInterface
+    {
+        return new CreateApplePayPaymentSessionApi(
             $this->createMollieApiClient(),
             $this->getConfig(),
             $this->getUtilEncodingService(),
