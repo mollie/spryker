@@ -130,8 +130,7 @@ class ExpressCheckoutOrderPlacer implements ExpressCheckoutOrderPlacerInterface
         return (new MollieExpressCheckoutOrderResponseTransfer())
             ->setIsSuccessful(true)
             ->setQuote($quoteTransfer)
-            ->setOrderReference($saveOrderTransfer->getOrderReference())
-            ->setIdSalesOrder($saveOrderTransfer->getIdSalesOrder());
+            ->setOrderReference($saveOrderTransfer->getOrderReference());
     }
 
     /**

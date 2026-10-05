@@ -32,11 +32,6 @@ class ExpressCheckoutPaymentRefunder implements ExpressCheckoutPaymentRefunderIn
     protected const REFUND_DESCRIPTION = 'Express checkout order could not be created';
 
     /**
-     * @var string
-     */
-    protected const MESSAGE_PAYMENT_NOT_KNOWN = 'The express checkout payment is not known yet.';
-
-    /**
      * @param \Mollie\Client\Mollie\MollieClientInterface $mollieClient
      * @param \Mollie\Zed\Mollie\Dependency\MollieToStorageClientInterface $storageClient
      * @param \Mollie\Zed\Mollie\MollieConfig $config
@@ -63,8 +58,7 @@ class ExpressCheckoutPaymentRefunder implements ExpressCheckoutPaymentRefunderIn
         if (!$transactionId) {
             return (new MollieExpressCheckoutRefundResponseTransfer())
                 ->setIsSuccessful(false)
-                ->setIsPaymentKnown(false)
-                ->setMessage(static::MESSAGE_PAYMENT_NOT_KNOWN);
+                ->setIsPaymentKnown(false);
         }
 
         $paidAmountTransfer = $this->mollieClient
@@ -122,7 +116,6 @@ class ExpressCheckoutPaymentRefunder implements ExpressCheckoutPaymentRefunderIn
 
         return (new MollieExpressCheckoutRefundResponseTransfer())
             ->setIsSuccessful(false)
-            ->setIsPaymentKnown(true)
-            ->setMessage($message);
+            ->setIsPaymentKnown(true);
     }
 }

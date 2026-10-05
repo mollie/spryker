@@ -503,7 +503,6 @@
         <property name="isSuccessful" type="bool"/>
         <property name="quote" type="Quote"/>
         <property name="orderReference" type="string"/>
-        <property name="idSalesOrder" type="int"/>
         <property name="errors" type="string[]" singular="error"/>
     </transfer>
 
@@ -527,7 +526,6 @@
     <transfer name="MollieExpressCheckoutRefundResponse">
         <property name="isSuccessful" type="bool"/>
         <property name="isPaymentKnown" type="bool"/>
-        <property name="message" type="string"/>
     </transfer>
 
 </transfers>

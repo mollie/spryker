@@ -95,7 +95,6 @@ class ExpressCheckoutPaymentRefunderTest extends Unit
 
         $this->assertFalse($response->getIsSuccessful());
         $this->assertTrue($response->getIsPaymentKnown());
-        $this->assertSame('Refund rejected', $response->getMessage());
     }
 
     /**
