@@ -15,7 +15,7 @@ class ShipmentMethodExpander implements ExpressCheckoutQuoteExpanderInterface
     /**
      * @var string
      */
-    protected const ERROR_MESSAGE_NO_SHIPMENT_METHOD = 'No shipment method is available for the express checkout order.';
+    protected const ERROR_MESSAGE_SHIPMENT_METHOD_NOT_AVAILABLE = 'The chosen shipping method "%s" is not available for this order.';
 
     /**
      * @param \Mollie\Zed\Mollie\Dependency\Facade\MollieToShipmentFacadeInterface $shipmentFacade
@@ -25,6 +25,11 @@ class ShipmentMethodExpander implements ExpressCheckoutQuoteExpanderInterface
     }
 
     /**
+     * Assigns the shipment method the shopper chose in the express sheet (request `shipmentMethodKey`) to the item
+     * shipments and adds its expense. The method is taken from the methods available for the quote, so it is valid
+     * for the shipping address and carries the store/currency price.
+     * Requires the item shipments to have a shipping address (see AddressExpander).
+     *
      * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
      * @param \Generated\Shared\Transfer\MollieExpressCheckoutOrderRequestTransfer $mollieExpressCheckoutOrderRequestTransfer
      *
@@ -36,10 +41,11 @@ class ShipmentMethodExpander implements ExpressCheckoutQuoteExpanderInterface
         QuoteTransfer $quoteTransfer,
         MollieExpressCheckoutOrderRequestTransfer $mollieExpressCheckoutOrderRequestTransfer,
     ): QuoteTransfer {
-        $shipmentMethodTransfer = $this->findFirstAvailableShipmentMethod($quoteTransfer);
+        $shipmentMethodKey = $mollieExpressCheckoutOrderRequestTransfer->getShipmentMethodKeyOrFail();
+        $shipmentMethodTransfer = $this->findAvailableShipmentMethodByKey($quoteTransfer, $shipmentMethodKey);
 
         if (!$shipmentMethodTransfer) {
-            throw new ExpressCheckoutOrderException(static::ERROR_MESSAGE_NO_SHIPMENT_METHOD);
+            throw new ExpressCheckoutOrderException(sprintf(static::ERROR_MESSAGE_SHIPMENT_METHOD_NOT_AVAILABLE, $shipmentMethodKey));
         }
 
         foreach ($quoteTransfer->getItems() as $itemTransfer) {
@@ -56,16 +62,19 @@ class ShipmentMethodExpander implements ExpressCheckoutQuoteExpanderInterface
 
     /**
      * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
+     * @param string $shipmentMethodKey
      *
      * @return \Generated\Shared\Transfer\ShipmentMethodTransfer|null
      */
-    protected function findFirstAvailableShipmentMethod(QuoteTransfer $quoteTransfer): ?ShipmentMethodTransfer
+    protected function findAvailableShipmentMethodByKey(QuoteTransfer $quoteTransfer, string $shipmentMethodKey): ?ShipmentMethodTransfer
     {
         $shipmentMethodsCollectionTransfer = $this->shipmentFacade->getAvailableMethodsByShipment($quoteTransfer);
 
         foreach ($shipmentMethodsCollectionTransfer->getShipmentMethods() as $shipmentMethodsTransfer) {
             foreach ($shipmentMethodsTransfer->getMethods() as $shipmentMethodTransfer) {
-                return $shipmentMethodTransfer;
+                if ($shipmentMethodTransfer->getShipmentMethodKey() === $shipmentMethodKey) {
+                    return $shipmentMethodTransfer;
+                }
             }
         }
 

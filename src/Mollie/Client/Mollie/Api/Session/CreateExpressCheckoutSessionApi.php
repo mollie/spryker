@@ -44,7 +44,7 @@ class CreateExpressCheckoutSessionApi extends AbstractApiCall
     /**
      * @var string
      */
-    protected const PAYLOAD_KEY_SHIPPING_CALLBACK_URL = 'callbackUrl';
+    protected const PAYLOAD_KEY_SHIPPING_OPTIONS = 'options';
 
     /**
      * @param \Mollie\Api\MollieApiClient $mollieApiClient
@@ -108,13 +108,7 @@ class CreateExpressCheckoutSessionApi extends AbstractApiCall
         // Not supported by the SDK's CreateSessionRequest yet, so it is added to the payload directly.
         $this->request->payload()->add(static::PAYLOAD_KEY_REQUIRED_CUSTOMER_DETAILS, static::REQUIRED_CUSTOMER_DETAILS);
 
-        // Dynamic shipping options: Mollie asks this URL for the shipping options whenever the shopper picks
-        // an address in the express sheet, and adds the chosen option to the amount. Not supported by the SDK yet.
-        if ($mollieApiRequestTransfer->getShippingCallbackUrl()) {
-            $this->request->payload()->add(static::PAYLOAD_KEY_SHIPPING, [
-                static::PAYLOAD_KEY_SHIPPING_CALLBACK_URL => $mollieApiRequestTransfer->getShippingCallbackUrl(),
-            ]);
-        }
+        $this->addShipping($this->request, $mollieApiRequestTransfer);
 
         return $this->request;
     }
@@ -160,5 +154,35 @@ class CreateExpressCheckoutSessionApi extends AbstractApiCall
         }
 
         return $createSessionRequest->payload()->all();
+    }
+
+    /**
+     * Shipping options for the express sheet, declared on the session; Mollie adds the chosen one as a `shipping_fee`
+     * line. Not supported by the SDK yet.
+     *
+     * @param \Mollie\Api\Http\Requests\CreateSessionRequest $createSessionRequest
+     * @param \Generated\Shared\Transfer\MollieApiRequestTransfer $mollieApiRequestTransfer
+     *
+     * @return void
+     */
+    protected function addShipping(CreateSessionRequest $createSessionRequest, MollieApiRequestTransfer $mollieApiRequestTransfer): void
+    {
+        if ($mollieApiRequestTransfer->getShippingOptions()->count() === 0) {
+            return;
+        }
+
+        $options = [];
+        foreach ($mollieApiRequestTransfer->getShippingOptions() as $shippingOptionTransfer) {
+            $options[] = [
+                'reference' => $shippingOptionTransfer->getReference(),
+                'description' => $shippingOptionTransfer->getDescription(),
+                'amount' => [
+                    'currency' => $shippingOptionTransfer->getAmountOrFail()->getCurrency(),
+                    'value' => $shippingOptionTransfer->getAmountOrFail()->getValue(),
+                ],
+            ];
+        }
+
+        $createSessionRequest->payload()->add(static::PAYLOAD_KEY_SHIPPING, [static::PAYLOAD_KEY_SHIPPING_OPTIONS => $options]);
     }
 }

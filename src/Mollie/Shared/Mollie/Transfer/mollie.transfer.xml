@@ -280,7 +280,7 @@
         <property name="redirectUrl" type="string"/>
         <property name="description" type="string"/>
         <property name="expressCheckoutUuid" type="string"/>
-        <property name="shippingCallbackUrl" type="string"/>
+        <property name="shippingOptions" type="MollieExpressCheckoutShippingOption[]" singular="shippingOption"/>
     </transfer>
 
     <transfer name="MolliePaymentCaptureRequest">
@@ -481,6 +481,7 @@
         <property name="links" type="MollieLinks"/>
         <property name="billingAddress" type="array" singular="billingAddressField"/>
         <property name="shippingAddress" type="array" singular="shippingAddressField"/>
+        <property name="shippingFeeReference" type="string"/>
     </transfer>
 
     <transfer name="MollieExpressCheckoutSessionApiResponse">
@@ -494,6 +495,8 @@
         <property name="billingAddress" type="Address"/>
         <property name="shippingAddress" type="Address"/>
         <property name="expressCheckoutUuid" type="string"/>
+        <property name="shipmentMethodKey" type="string"/>
+        <property name="expectedGrandTotal" type="int"/>
     </transfer>
 
     <transfer name="MollieExpressCheckoutOrderResponse">

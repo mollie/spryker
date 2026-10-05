@@ -40,6 +40,8 @@ use Mollie\Yves\Mollie\Handler\Payment\MolliePaymentSwishHandler;
 use Mollie\Yves\Mollie\Handler\Payment\MolliePaymentTrustlyHandler;
 use Mollie\Yves\Mollie\Handler\Payment\MolliePaymentTwintHandler;
 use Mollie\Yves\Mollie\Handler\Payment\MolliePaymentVippsHandler;
+use Mollie\Yves\Mollie\Mapper\ExpressCheckout\ExpressCheckoutOrderRequestMapper;
+use Mollie\Yves\Mollie\Mapper\ExpressCheckout\ExpressCheckoutOrderRequestMapperInterface;
 use Mollie\Yves\Mollie\Mapper\MollieMapper;
 use Mollie\Yves\Mollie\Mapper\MollieMapperInterface;
 use Mollie\Yves\Mollie\PaymentPage\Cache\MollieCachedOptionsExpander;
@@ -963,5 +965,13 @@ class MollieFactory extends AbstractFactory
     public function getMollieService(): MollieServiceInterface
     {
         return $this->getProvidedDependency(MollieDependencyProvider::SERVICE_MOLLIE);
+    }
+
+    /**
+     * @return \Mollie\Yves\Mollie\Mapper\ExpressCheckout\ExpressCheckoutOrderRequestMapperInterface
+     */
+    public function createExpressCheckoutOrderRequestMapper(): ExpressCheckoutOrderRequestMapperInterface
+    {
+        return new ExpressCheckoutOrderRequestMapper();
     }
 }

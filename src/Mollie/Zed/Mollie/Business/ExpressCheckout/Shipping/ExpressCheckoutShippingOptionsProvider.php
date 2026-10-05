@@ -8,6 +8,7 @@ use Generated\Shared\Transfer\MollieExpressCheckoutShippingOptionsRequestTransfe
 use Generated\Shared\Transfer\MollieExpressCheckoutShippingOptionsResponseTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutShippingOptionTransfer;
 use Generated\Shared\Transfer\QuoteTransfer;
+use Generated\Shared\Transfer\ShipmentMethodTransfer;
 use Generated\Shared\Transfer\ShipmentTransfer;
 use Mollie\Service\Mollie\MollieServiceInterface;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToShipmentFacadeInterface;
@@ -94,6 +95,7 @@ class ExpressCheckoutShippingOptionsProvider implements ExpressCheckoutShippingO
     ): void {
         $currencyCode = $quoteTransfer->getCurrencyOrFail()->getCodeOrFail();
         $shipmentMethodsCollectionTransfer = $this->shipmentFacade->getAvailableMethodsByShipment($quoteTransfer);
+        $usedDescriptions = [];
 
         foreach ($shipmentMethodsCollectionTransfer->getShipmentMethods() as $shipmentMethodsTransfer) {
             foreach ($shipmentMethodsTransfer->getMethods() as $shipmentMethodTransfer) {
@@ -101,10 +103,13 @@ class ExpressCheckoutShippingOptionsProvider implements ExpressCheckoutShippingO
                     continue;
                 }
 
+                $description = $this->createUniqueDescription($shipmentMethodTransfer, $usedDescriptions);
+                $usedDescriptions[] = $description;
+
                 $responseTransfer->addOption(
                     (new MollieExpressCheckoutShippingOptionTransfer())
                         ->setReference($shipmentMethodTransfer->getShipmentMethodKey())
-                        ->setDescription($shipmentMethodTransfer->getName())
+                        ->setDescription($description)
                         ->setAmount($this->mollieService->convertIntegerToMollieAmount(
                             $shipmentMethodTransfer->getStoreCurrencyPrice(),
                             $currencyCode,
@@ -114,5 +119,26 @@ class ExpressCheckoutShippingOptionsProvider implements ExpressCheckoutShippingO
 
             return;
         }
+    }
+
+    /**
+     * Mollie matches the option chosen in the express sheet against the declared options; two options with the same
+     * description (e.g. "Standard" of two carriers) make the payment fail. So the carrier is prefixed and duplicates
+     * get the shipment method key appended.
+     *
+     * @param \Generated\Shared\Transfer\ShipmentMethodTransfer $shipmentMethodTransfer
+     * @param array<string> $usedDescriptions
+     *
+     * @return string
+     */
+    protected function createUniqueDescription(ShipmentMethodTransfer $shipmentMethodTransfer, array $usedDescriptions): string
+    {
+        $description = trim(sprintf('%s %s', $shipmentMethodTransfer->getCarrierName(), $shipmentMethodTransfer->getName()));
+
+        if (!in_array($description, $usedDescriptions, true)) {
+            return $description;
+        }
+
+        return sprintf('%s (%s)', $description, $shipmentMethodTransfer->getShipmentMethodKey());
     }
 }

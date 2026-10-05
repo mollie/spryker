@@ -5,10 +5,13 @@ declare(strict_types=1);
 
 namespace Mollie\Yves\Mollie\Controller;
 
+use Generated\Shared\Transfer\AddressTransfer;
 use Generated\Shared\Transfer\MollieApiRequestTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutConfigCollectionTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutConfigCriteriaTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutSessionApiResponseTransfer;
+use Generated\Shared\Transfer\MollieExpressCheckoutShippingOptionsRequestTransfer;
+use Generated\Shared\Transfer\QuoteTransfer;
 use Mollie\Yves\Mollie\Plugin\Router\MollieRouteProviderPlugin;
 use Ramsey\Uuid\Uuid;
 use SprykerShop\Yves\ShopApplication\Controller\AbstractController;
@@ -104,18 +107,26 @@ class ExpressCheckoutController extends AbstractController
             ->setExpressCheckoutUuid($expressCheckoutUuid)
             ->setRedirectUrl(
                 $request->getSchemeAndHttpHost() . MollieRouteProviderPlugin::ROUTE_PATH_MOLLIE_EXPRESS_CHECKOUT_REDIRECT,
-            )
-            ->setShippingCallbackUrl(
-                $request->getSchemeAndHttpHost() . MollieRouteProviderPlugin::ROUTE_PATH_MOLLIE_EXPRESS_CHECKOUT_SHIPPING_OPTIONS,
             );
+
+        $mollieExpressCheckoutShippingOptionsResponseTransfer = $this->getClient()->getExpressCheckoutShippingOptions(
+            (new MollieExpressCheckoutShippingOptionsRequestTransfer())
+                ->setQuote(clone $quoteTransfer)
+                ->setShippingAddress($this->createShippingOptionsAddress($quoteTransfer)),
+        );
+
+        if (!$mollieExpressCheckoutShippingOptionsResponseTransfer->getIsSuccessful()) {
+            return (new MollieExpressCheckoutSessionApiResponseTransfer())
+                ->setIsSuccessful(false)
+                ->setMessage($mollieExpressCheckoutShippingOptionsResponseTransfer->getError());
+        }
+
+        $mollieApiRequestTransfer->setShippingOptions($mollieExpressCheckoutShippingOptionsResponseTransfer->getOptions());
 
         return $this->getClient()->createExpressCheckoutSession($mollieApiRequestTransfer);
     }
 
     /**
-     * Keeps the Mollie session id for the redirect, and a short-lived cart copy for Mollie's shipping callback,
-     * which is called server-to-server and therefore has no access to the shopper's session.
-     *
      * @param \Symfony\Component\HttpFoundation\Request $request
      * @param string $mollieSessionId
      *
@@ -126,11 +137,23 @@ class ExpressCheckoutController extends AbstractController
         $config = $this->getFactory()->getConfig();
 
         $request->getSession()->set($config->getExpressCheckoutSessionIdSessionKey(), $mollieSessionId);
+    }
 
-        $this->getFactory()->getStorageClient()->set(
-            $config->getExpressCheckoutQuoteStorageKey($mollieSessionId),
-            (string)json_encode($this->getFactory()->getQuoteClient()->getQuote()->toArray(true, true)),
-            $config->getExpressCheckoutQuoteStorageTtl(),
-        );
+    /**
+     * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
+     *
+     * @return \Generated\Shared\Transfer\AddressTransfer
+     */
+    protected function createShippingOptionsAddress(QuoteTransfer $quoteTransfer): AddressTransfer
+    {
+        $customerShippingAddresses = $quoteTransfer->getCustomer()?->getShippingAddress();
+
+        if ($customerShippingAddresses && $customerShippingAddresses->count() > 0) {
+            return clone $customerShippingAddresses->offsetGet(0);
+        }
+
+        $storeCountries = $quoteTransfer->getStore()?->getCountries() ?? [];
+
+        return (new AddressTransfer())->setIso2Code($storeCountries[0] ?? null);
     }
 }

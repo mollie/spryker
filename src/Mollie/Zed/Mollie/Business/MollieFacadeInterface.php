@@ -311,8 +311,8 @@ interface MollieFacadeInterface
 
     /**
      * Specification:
-     * - Answers Mollie's express checkout shipping callback: shipment methods available for the quote and the
-     *   (partial) shipping address the shopper picked in the express sheet, as Mollie shipping options.
+     * - Returns the shipment methods available for the quote and the given shipping address as Mollie shipping
+     *   options, declared on the express checkout session so the shopper can pick one in the express sheet.
      * - Returns `isSuccessful` and `options` (reference = shipment method key, description, amount), or `error`. Never throws.
      *
      * @api

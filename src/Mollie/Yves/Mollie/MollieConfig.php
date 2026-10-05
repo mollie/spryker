@@ -28,18 +28,6 @@ class MollieConfig extends AbstractBundleConfig
     /**
      * @var string
      */
-    protected const EXPRESS_CHECKOUT_QUOTE_STORAGE_KEY_PREFIX = 'mollie:express-checkout:quote:';
-
-    /**
-     * Cart copy for Mollie's shipping callback; only needed while the shopper is in the express sheet.
-     *
-     * @var int
-     */
-    protected const EXPRESS_CHECKOUT_QUOTE_STORAGE_TTL = 3600;
-
-    /**
-     * @var string
-     */
     protected const ERROR_MESSAGE_ORDER_STATUS_PAYMENT_ERROR = 'Payment did not get processed (status: %s). Please try again.';
 
     /**
@@ -125,24 +113,6 @@ class MollieConfig extends AbstractBundleConfig
     public function getExpressCheckoutSessionIdSessionKey(): string
     {
         return static::EXPRESS_CHECKOUT_SESSION_ID_SESSION_KEY;
-    }
-
-    /**
-     * @param string $mollieSessionId
-     *
-     * @return string
-     */
-    public function getExpressCheckoutQuoteStorageKey(string $mollieSessionId): string
-    {
-        return static::EXPRESS_CHECKOUT_QUOTE_STORAGE_KEY_PREFIX . $mollieSessionId;
-    }
-
-    /**
-     * @return int
-     */
-    public function getExpressCheckoutQuoteStorageTtl(): int
-    {
-        return static::EXPRESS_CHECKOUT_QUOTE_STORAGE_TTL;
     }
 
     /**

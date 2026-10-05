@@ -11,7 +11,7 @@ interface ExpressCheckoutShippingOptionsProviderInterface
 {
     /**
      * Specification:
-     * - Puts the (partial) shipping address from Mollie's shipping callback on every item shipment of the quote.
+     * - Puts the given shipping address (the customer's default one, or only the store country) on every item shipment of the quote.
      * - Returns the shipment methods available for that address as Mollie shipping options
      *   (reference = shipment method key, description = method name, amount = method price in the quote currency).
      * - Returns an unsuccessful response with an error when no method is available. Never throws.

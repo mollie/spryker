@@ -349,7 +349,7 @@ interface MollieClientInterface
 
     /**
      * Specification:
-     * - Gets the express checkout shipping options for Mollie's shipping callback via Zed
+     * - Gets the express checkout shipping options (Spryker shipment methods) for the Mollie session via Zed
      *   (see MollieFacade::getExpressCheckoutShippingOptions()).
      *
      * @api

@@ -57,6 +57,16 @@ class ExpressCheckoutOrderPlacerTest extends Unit
     /**
      * @var string
      */
+    protected const SHIPMENT_METHOD_KEY = 'spryker_dummy_shipment-express';
+
+    /**
+     * @var string
+     */
+    protected const OTHER_SHIPMENT_METHOD_KEY = 'spryker_dummy_shipment-standard';
+
+    /**
+     * @var string
+     */
     protected const EXPRESS_CHECKOUT_UUID = '4f1d9a6e-2c5b-4d3a-9e8f-1a2b3c4d5e6f';
 
     /**
@@ -131,6 +141,45 @@ class ExpressCheckoutOrderPlacerTest extends Unit
     }
 
     /**
+     * @return void
+     */
+    public function testPlaceOrderFailsWhenChosenShipmentMethodIsNotAvailable(): void
+    {
+        $request = $this->createRequest(true)->setShipmentMethodKey('unknown_method');
+
+        $response = $this->createPlacer($this->createSuccessfulCheckoutResponse())->placeOrder($request);
+
+        $this->assertFalse($response->getIsSuccessful());
+        $this->assertNull($this->placedQuoteTransfer);
+        $this->assertStringContainsString('unknown_method', $response->getErrors()[0]);
+    }
+
+    /**
+     * @return void
+     */
+    public function testPlaceOrderFailsWithoutPlacingWhenOrderTotalDiffersFromPaidAmount(): void
+    {
+        $request = $this->createRequest(true)->setExpectedGrandTotal(static::GRAND_TOTAL + 1);
+
+        $response = $this->createPlacer($this->createSuccessfulCheckoutResponse())->placeOrder($request);
+
+        $this->assertFalse($response->getIsSuccessful());
+        $this->assertNull($this->placedQuoteTransfer);
+    }
+
+    /**
+     * @return void
+     */
+    public function testPlaceOrderSucceedsWhenOrderTotalMatchesPaidAmount(): void
+    {
+        $request = $this->createRequest(true)->setExpectedGrandTotal(static::GRAND_TOTAL);
+
+        $response = $this->createPlacer($this->createSuccessfulCheckoutResponse())->placeOrder($request);
+
+        $this->assertTrue($response->getIsSuccessful());
+    }
+
+    /**
      * @param \Generated\Shared\Transfer\CheckoutResponseTransfer $checkoutResponseTransfer
      *
      * @return \Mollie\Zed\Mollie\Business\ExpressCheckout\Order\ExpressCheckoutOrderPlacer
@@ -140,7 +189,9 @@ class ExpressCheckoutOrderPlacerTest extends Unit
         $shipmentFacadeMock = $this->createMock(MollieToShipmentFacadeInterface::class);
         $shipmentFacadeMock->method('getAvailableMethodsByShipment')->willReturn(
             (new ShipmentMethodsCollectionTransfer())->addShipmentMethods(
-                (new ShipmentMethodsTransfer())->addMethod((new ShipmentMethodTransfer())->setIdShipmentMethod(static::ID_SHIPMENT_METHOD)),
+                (new ShipmentMethodsTransfer())
+                    ->addMethod((new ShipmentMethodTransfer())->setIdShipmentMethod(1)->setShipmentMethodKey(static::OTHER_SHIPMENT_METHOD_KEY))
+                    ->addMethod((new ShipmentMethodTransfer())->setIdShipmentMethod(static::ID_SHIPMENT_METHOD)->setShipmentMethodKey(static::SHIPMENT_METHOD_KEY)),
             ),
         );
         $shipmentFacadeMock->method('expandQuoteWithShipmentGroups')->willReturnArgument(0);
@@ -190,7 +241,8 @@ class ExpressCheckoutOrderPlacerTest extends Unit
 
         $request = (new MollieExpressCheckoutOrderRequestTransfer())
             ->setQuote($quoteTransfer)
-            ->setExpressCheckoutUuid(static::EXPRESS_CHECKOUT_UUID);
+            ->setExpressCheckoutUuid(static::EXPRESS_CHECKOUT_UUID)
+            ->setShipmentMethodKey(static::SHIPMENT_METHOD_KEY);
 
         if ($withAddresses) {
             $request

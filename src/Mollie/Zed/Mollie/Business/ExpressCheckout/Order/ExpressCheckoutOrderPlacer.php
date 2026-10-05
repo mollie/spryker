@@ -8,6 +8,7 @@ use Generated\Shared\Transfer\CheckoutResponseTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutOrderRequestTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutOrderResponseTransfer;
 use Generated\Shared\Transfer\QuoteTransfer;
+use Mollie\Zed\Mollie\Business\Exception\ExpressCheckoutOrderException;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToCheckoutFacadeInterface;
 use Spryker\Shared\Log\LoggerTrait;
 use Throwable;
@@ -20,6 +21,11 @@ class ExpressCheckoutOrderPlacer implements ExpressCheckoutOrderPlacerInterface
      * @var string
      */
     protected const ERROR_MESSAGE_PLACE_ORDER_FAILED = 'Express checkout order could not be placed.';
+
+    /**
+     * @var string
+     */
+    protected const ERROR_MESSAGE_GRAND_TOTAL_MISMATCH = 'Order total %d does not match the paid amount %d.';
 
     /**
      * @param \Mollie\Zed\Mollie\Business\ExpressCheckout\Order\ExpressCheckoutQuotePreparerInterface $quotePreparer
@@ -64,6 +70,8 @@ class ExpressCheckoutOrderPlacer implements ExpressCheckoutOrderPlacerInterface
         $quoteTransfer = $this->quotePreparer->prepareQuote($mollieExpressCheckoutOrderRequestTransfer);
 
         $grandTotal = $quoteTransfer->getTotalsOrFail()->getGrandTotal();
+        $this->assertGrandTotalMatchesPaidAmount($grandTotal, $mollieExpressCheckoutOrderRequestTransfer);
+
         $quoteTransfer->getPaymentOrFail()->setAmount($grandTotal);
 
         foreach ($quoteTransfer->getPayments() as $paymentTransfer) {
@@ -71,6 +79,31 @@ class ExpressCheckoutOrderPlacer implements ExpressCheckoutOrderPlacerInterface
         }
 
         return $quoteTransfer;
+    }
+
+    /**
+     * @param int $grandTotal
+     * @param \Generated\Shared\Transfer\MollieExpressCheckoutOrderRequestTransfer $mollieExpressCheckoutOrderRequestTransfer
+     *
+     * @throws \Mollie\Zed\Mollie\Business\Exception\ExpressCheckoutOrderException
+     *
+     * @return void
+     */
+    protected function assertGrandTotalMatchesPaidAmount(
+        int $grandTotal,
+        MollieExpressCheckoutOrderRequestTransfer $mollieExpressCheckoutOrderRequestTransfer,
+    ): void {
+        $expectedGrandTotal = $mollieExpressCheckoutOrderRequestTransfer->getExpectedGrandTotal();
+
+        if ($expectedGrandTotal === null || $expectedGrandTotal === $grandTotal) {
+            return;
+        }
+
+        throw new ExpressCheckoutOrderException(sprintf(
+            static::ERROR_MESSAGE_GRAND_TOTAL_MISMATCH,
+            $grandTotal,
+            $expectedGrandTotal,
+        ));
     }
 
     /**

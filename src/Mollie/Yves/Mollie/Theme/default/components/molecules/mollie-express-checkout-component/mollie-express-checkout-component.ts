@@ -124,11 +124,8 @@ export default class MollieExpressCheckoutComponent extends Component {
         return { buttons };
     }
 
-    // TODO: temporary until the order is created in the redirect controller (Step 2): the shopper can open the
-    // sheet, pick an address and see the shipping options, but the payment is cancelled, so nothing is charged.
-    // Step 2 replaces this with event.resolve().
     protected onSubmit(event: MollieSubmitEvent): void {
-        event.reject();
+        event.resolve();
     }
 
     protected get scriptLoaderTag(): string {
