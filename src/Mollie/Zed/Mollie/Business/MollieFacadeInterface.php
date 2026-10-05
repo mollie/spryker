@@ -10,6 +10,7 @@ use Generated\Shared\Transfer\MollieExpirationInformationTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutConfigCollectionTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutConfigCriteriaTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutOrderRequestTransfer;
+use Generated\Shared\Transfer\MollieExpressCheckoutRefundResponseTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutOrderResponseTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutShippingOptionsRequestTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutShippingOptionsResponseTransfer;
@@ -324,4 +325,20 @@ interface MollieFacadeInterface
     public function getExpressCheckoutShippingOptions(
         MollieExpressCheckoutShippingOptionsRequestTransfer $mollieExpressCheckoutShippingOptionsRequestTransfer,
     ): MollieExpressCheckoutShippingOptionsResponseTransfer;
+
+    /**
+     * Specification:
+     * - Refunds the full amount of an express checkout payment for which no order could be created after payment.
+     * - Finds the payment by `expressCheckoutUuid` (transaction id remembered from the express payment webhook).
+     * - Returns `isPaymentKnown = false` if the webhook has not arrived yet; idempotent per uuid.
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\MollieExpressCheckoutPaymentUpdateRequestTransfer $mollieExpressCheckoutPaymentUpdateRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieExpressCheckoutRefundResponseTransfer
+     */
+    public function refundExpressCheckoutPayment(
+        MollieExpressCheckoutPaymentUpdateRequestTransfer $mollieExpressCheckoutPaymentUpdateRequestTransfer,
+    ): MollieExpressCheckoutRefundResponseTransfer;
 }

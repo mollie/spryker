@@ -524,4 +524,10 @@
         <property name="amount" type="MollieAmount"/>
     </transfer>
 
+    <transfer name="MollieExpressCheckoutRefundResponse">
+        <property name="isSuccessful" type="bool"/>
+        <property name="isPaymentKnown" type="bool"/>
+        <property name="message" type="string"/>
+    </transfer>
+
 </transfers>

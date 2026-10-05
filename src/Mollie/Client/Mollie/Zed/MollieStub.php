@@ -8,6 +8,7 @@ namespace Mollie\Client\Mollie\Zed;
 use Generated\Shared\Transfer\MollieExpressCheckoutConfigCollectionTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutConfigCriteriaTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutOrderRequestTransfer;
+use Generated\Shared\Transfer\MollieExpressCheckoutRefundResponseTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutOrderResponseTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutShippingOptionsRequestTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutShippingOptionsResponseTransfer;
@@ -159,5 +160,20 @@ class MollieStub implements MollieStubInterface
             ->call('/mollie/gateway/get-express-checkout-shipping-options', $mollieExpressCheckoutShippingOptionsRequestTransfer);
 
         return $mollieExpressCheckoutShippingOptionsResponseTransfer;
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MollieExpressCheckoutPaymentUpdateRequestTransfer $mollieExpressCheckoutPaymentUpdateRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieExpressCheckoutRefundResponseTransfer
+     */
+    public function refundExpressCheckoutPayment(
+        MollieExpressCheckoutPaymentUpdateRequestTransfer $mollieExpressCheckoutPaymentUpdateRequestTransfer,
+    ): MollieExpressCheckoutRefundResponseTransfer {
+        /** @var \Generated\Shared\Transfer\MollieExpressCheckoutRefundResponseTransfer $mollieExpressCheckoutRefundResponseTransfer */
+        $mollieExpressCheckoutRefundResponseTransfer = $this->zedStub
+            ->call('/mollie/gateway/refund-express-checkout-payment', $mollieExpressCheckoutPaymentUpdateRequestTransfer);
+
+        return $mollieExpressCheckoutRefundResponseTransfer;
     }
 }

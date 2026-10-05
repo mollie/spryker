@@ -10,6 +10,7 @@ use Generated\Shared\Transfer\MollieExpirationInformationTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutConfigCollectionTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutConfigCriteriaTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutOrderRequestTransfer;
+use Generated\Shared\Transfer\MollieExpressCheckoutRefundResponseTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutOrderResponseTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutShippingOptionsRequestTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutShippingOptionsResponseTransfer;
@@ -428,5 +429,22 @@ class MollieFacade extends AbstractFacade implements MollieFacadeInterface
         return $this->getFactory()
             ->createExpressCheckoutShippingOptionsProvider()
             ->getShippingOptions($mollieExpressCheckoutShippingOptionsRequestTransfer);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\MollieExpressCheckoutPaymentUpdateRequestTransfer $mollieExpressCheckoutPaymentUpdateRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieExpressCheckoutRefundResponseTransfer
+     */
+    public function refundExpressCheckoutPayment(
+        MollieExpressCheckoutPaymentUpdateRequestTransfer $mollieExpressCheckoutPaymentUpdateRequestTransfer,
+    ): MollieExpressCheckoutRefundResponseTransfer {
+        return $this->getFactory()
+            ->createExpressCheckoutPaymentRefunder()
+            ->refund($mollieExpressCheckoutPaymentUpdateRequestTransfer);
     }
 }

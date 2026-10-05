@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Mollie\Yves\Mollie\Controller;
 
 use Generated\Shared\Transfer\MollieApiRequestTransfer;
+use Generated\Shared\Transfer\MollieExpressCheckoutPaymentUpdateRequestTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutSessionTransfer;
 use Spryker\Shared\Log\LoggerTrait;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -49,14 +50,24 @@ class ExpressCheckoutRedirectController extends AbstractMollieController
     /**
      * @var string
      */
-    protected const ERROR_MESSAGE_ORDER_FAILED = 'Your order could not be created. Your payment will be refunded.';
+    protected const ERROR_MESSAGE_ORDER_FAILED_REFUNDED = 'Your order could not be created. Your payment has been refunded.';
 
     /**
-     * Mollie redirects the shopper here after the express payment, i.e. after the shopper has been charged.
-     * Creates the Spryker order from the completed Mollie session (full billing/shipping address and the shipping
-     * method chosen in the sheet) and the shopper's cart, then shows the checkout success page (which clears the cart).
-     * The payment is linked to the order by the express checkout webhook (MollieExpressCheckoutPaymentWebhookHandlerPlugin).
-     *
+     * @var string
+     */
+    protected const ERROR_MESSAGE_ORDER_FAILED_NOT_REFUNDED = 'Your order could not be created. Please contact us, your payment will be refunded.';
+
+    /**
+     * @var int
+     */
+    protected const REFUND_ATTEMPTS = 5;
+
+    /**
+     * @var int
+     */
+    protected const REFUND_RETRY_DELAY_SECONDS = 2;
+
+    /**
      * @param \Symfony\Component\HttpFoundation\Request $request
      *
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
@@ -95,18 +106,20 @@ class ExpressCheckoutRedirectController extends AbstractMollieController
         $mollieExpressCheckoutOrderResponseTransfer = $this->getClient()->placeExpressCheckoutOrder($mollieExpressCheckoutOrderRequestTransfer);
 
         if (!$mollieExpressCheckoutOrderResponseTransfer->getIsSuccessful()) {
-            // TODO (Step 3): refund the payment (tr_ id from the express webhook).
             $this->getLogger()->critical('Express checkout order could not be created after payment.', [
                 'mollieSessionId' => $mollieSessionId,
                 'expressCheckoutUuid' => $expressCheckoutUuid,
                 'errors' => $mollieExpressCheckoutOrderResponseTransfer->getErrors(),
             ]);
-            $this->addErrorMessage(static::ERROR_MESSAGE_ORDER_FAILED);
+
+            $this->addErrorMessage($this->refundPayment($expressCheckoutUuid)
+                ? static::ERROR_MESSAGE_ORDER_FAILED_REFUNDED
+                : static::ERROR_MESSAGE_ORDER_FAILED_NOT_REFUNDED);
+            $this->clearExpressCheckoutSession($request);
 
             return $this->redirectResponseInternal(static::ROUTE_NAME_CART);
         }
 
-        // The checkout success step needs a confirmed, placed quote with the order reference.
         $quoteClient->setQuote(
             $mollieExpressCheckoutOrderResponseTransfer->getQuoteOrFail()
                 ->setOrderReference($mollieExpressCheckoutOrderResponseTransfer->getOrderReferenceOrFail())
@@ -151,5 +164,35 @@ class ExpressCheckoutRedirectController extends AbstractMollieController
 
         $request->getSession()->remove($config->getExpressCheckoutSessionIdSessionKey());
         $request->getSession()->remove($config->getExpressCheckoutUuidSessionKey());
+    }
+
+    /**
+     * @param string $expressCheckoutUuid
+     *
+     * @return bool
+     */
+    protected function refundPayment(string $expressCheckoutUuid): bool
+    {
+        $mollieExpressCheckoutPaymentUpdateRequestTransfer = (new MollieExpressCheckoutPaymentUpdateRequestTransfer())
+            ->setExpressCheckoutUuid($expressCheckoutUuid);
+
+        for ($attempt = 1; $attempt <= static::REFUND_ATTEMPTS; $attempt++) {
+            $mollieExpressCheckoutRefundResponseTransfer = $this->getClient()
+                ->refundExpressCheckoutPayment($mollieExpressCheckoutPaymentUpdateRequestTransfer);
+
+            if ($mollieExpressCheckoutRefundResponseTransfer->getIsPaymentKnown()) {
+                return (bool)$mollieExpressCheckoutRefundResponseTransfer->getIsSuccessful();
+            }
+
+            if ($attempt < static::REFUND_ATTEMPTS) {
+                sleep(static::REFUND_RETRY_DELAY_SECONDS);
+            }
+        }
+
+        $this->getLogger()->critical('Express checkout payment could not be refunded: payment webhook did not arrive.', [
+            'expressCheckoutUuid' => $expressCheckoutUuid,
+        ]);
+
+        return false;
     }
 }

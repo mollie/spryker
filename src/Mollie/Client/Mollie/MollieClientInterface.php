@@ -11,6 +11,7 @@ use Generated\Shared\Transfer\MollieCreateCaptureApiResponseTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutConfigCollectionTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutConfigCriteriaTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutOrderRequestTransfer;
+use Generated\Shared\Transfer\MollieExpressCheckoutRefundResponseTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutOrderResponseTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutShippingOptionsRequestTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutShippingOptionsResponseTransfer;
@@ -361,4 +362,19 @@ interface MollieClientInterface
     public function getExpressCheckoutShippingOptions(
         MollieExpressCheckoutShippingOptionsRequestTransfer $mollieExpressCheckoutShippingOptionsRequestTransfer,
     ): MollieExpressCheckoutShippingOptionsResponseTransfer;
+
+    /**
+     * Specification:
+     * - Refunds an express checkout payment for which no order could be created, via Zed
+     *   (see MollieFacade::refundExpressCheckoutPayment()).
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\MollieExpressCheckoutPaymentUpdateRequestTransfer $mollieExpressCheckoutPaymentUpdateRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieExpressCheckoutRefundResponseTransfer
+     */
+    public function refundExpressCheckoutPayment(
+        MollieExpressCheckoutPaymentUpdateRequestTransfer $mollieExpressCheckoutPaymentUpdateRequestTransfer,
+    ): MollieExpressCheckoutRefundResponseTransfer;
 }

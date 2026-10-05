@@ -8,6 +8,7 @@ use Generated\Shared\Transfer\MollieExpressCheckoutConfigCriteriaTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutPaymentUpdateRequestTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutPaymentUpdateResponseTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutOrderRequestTransfer;
+use Generated\Shared\Transfer\MollieExpressCheckoutRefundResponseTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutOrderResponseTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutShippingOptionsRequestTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutShippingOptionsResponseTransfer;
@@ -94,4 +95,13 @@ interface MollieStubInterface
     public function getExpressCheckoutShippingOptions(
         MollieExpressCheckoutShippingOptionsRequestTransfer $mollieExpressCheckoutShippingOptionsRequestTransfer,
     ): MollieExpressCheckoutShippingOptionsResponseTransfer;
+
+    /**
+     * @param \Generated\Shared\Transfer\MollieExpressCheckoutPaymentUpdateRequestTransfer $mollieExpressCheckoutPaymentUpdateRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieExpressCheckoutRefundResponseTransfer
+     */
+    public function refundExpressCheckoutPayment(
+        MollieExpressCheckoutPaymentUpdateRequestTransfer $mollieExpressCheckoutPaymentUpdateRequestTransfer,
+    ): MollieExpressCheckoutRefundResponseTransfer;
 }

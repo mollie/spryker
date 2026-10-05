@@ -20,6 +20,8 @@ use Mollie\Zed\Mollie\Business\ExpressCheckout\Order\ExpressCheckoutOrderPlacer;
 use Mollie\Zed\Mollie\Business\ExpressCheckout\Order\ExpressCheckoutOrderPlacerInterface;
 use Mollie\Zed\Mollie\Business\ExpressCheckout\Order\ExpressCheckoutQuotePreparer;
 use Mollie\Zed\Mollie\Business\ExpressCheckout\Order\ExpressCheckoutQuotePreparerInterface;
+use Mollie\Zed\Mollie\Business\ExpressCheckout\Refund\ExpressCheckoutPaymentRefunder;
+use Mollie\Zed\Mollie\Business\ExpressCheckout\Refund\ExpressCheckoutPaymentRefunderInterface;
 use Mollie\Zed\Mollie\Business\ExpressCheckout\Shipping\ExpressCheckoutShippingOptionsProvider;
 use Mollie\Zed\Mollie\Business\ExpressCheckout\Shipping\ExpressCheckoutShippingOptionsProviderInterface;
 use Mollie\Zed\Mollie\Business\Filter\MolliePaymentMethodsFilter;
@@ -366,6 +368,8 @@ class MollieBusinessFactory extends AbstractBusinessFactory
     {
         return new ExpressCheckoutMolliePaymentHandler(
             $this->getEntityManager(),
+            $this->getStorageClient(),
+            $this->getConfig(),
         );
     }
 
@@ -451,6 +455,18 @@ class MollieBusinessFactory extends AbstractBusinessFactory
         return new ExpressCheckoutShippingOptionsProvider(
             $this->getShipmentFacade(),
             $this->getMollieService(),
+        );
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Business\ExpressCheckout\Refund\ExpressCheckoutPaymentRefunderInterface
+     */
+    public function createExpressCheckoutPaymentRefunder(): ExpressCheckoutPaymentRefunderInterface
+    {
+        return new ExpressCheckoutPaymentRefunder(
+            $this->getMollieClient(),
+            $this->getStorageClient(),
+            $this->getConfig(),
         );
     }
 }
