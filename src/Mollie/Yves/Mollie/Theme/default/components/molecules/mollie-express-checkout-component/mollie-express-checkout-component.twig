@@ -8,21 +8,15 @@
 {% define data = {
     expressCheckoutResolveEnabledMethodsEndpoint: required,
     expressCheckoutCreateSessionEndpoint: required,
-    expressCheckoutPlaceOrderEndpoint: required,
     jsSrc: required,
     locale: required,
-    isDisabled: false,
-    disabledMessage: '',
 } %}
 
 {% define attributes = {
     'locale': data.locale,
     'express-checkout-resolve-enabled-methods-endpoint': data.expressCheckoutResolveEnabledMethodsEndpoint,
     'express-checkout-create-session-endpoint': data.expressCheckoutCreateSessionEndpoint,
-    'express-checkout-place-order-endpoint': data.expressCheckoutPlaceOrderEndpoint,
-    'place-order-error-message': 'Your order could not be placed. You have not been charged.',
     'mount-id': 'mollie-express-checkout',
-    'is-disabled': data.isDisabled ? 'true' : 'false',
 } %}
 
 {% block body %}
@@ -31,20 +25,5 @@
             src: data.jsSrc
         }
     } only %}
-    <div class="{{ config.name }}__buttons" style="position: relative;">
-        <div id="mollie-express-checkout" {% if data.isDisabled %}style="opacity: 0.5;"{% endif %}></div>
-
-        {% if data.isDisabled %}
-            <button type="button"
-                    class="{{ config.name }}__disabled-overlay"
-                    aria-label="{{ data.disabledMessage }}"
-                    style="position: absolute; inset: 0; width: 100%; background: transparent; border: 0; cursor: not-allowed;"></button>
-        {% endif %}
-    </div>
-
-    {% if data.isDisabled %}
-        <p class="{{ config.name }}__disabled-message is-hidden" style="color: #e30613;">{{ data.disabledMessage }}</p>
-    {% endif %}
-
-    <p class="{{ config.name }}__error-message is-hidden" style="color: #e30613;"></p>
+    <div id="mollie-express-checkout"></div>
 {% endblock %}

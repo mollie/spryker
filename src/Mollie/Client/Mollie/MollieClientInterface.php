@@ -12,7 +12,8 @@ use Generated\Shared\Transfer\MollieExpressCheckoutConfigCollectionTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutConfigCriteriaTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutOrderRequestTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutOrderResponseTransfer;
-use Generated\Shared\Transfer\MollieExpressCheckoutQuoteResponseTransfer;
+use Generated\Shared\Transfer\MollieExpressCheckoutShippingOptionsRequestTransfer;
+use Generated\Shared\Transfer\MollieExpressCheckoutShippingOptionsResponseTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutPaymentUpdateRequestTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutPaymentUpdateResponseTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutSessionApiResponseTransfer;
@@ -348,17 +349,16 @@ interface MollieClientInterface
 
     /**
      * Specification:
-     * - Saves the express checkout addresses on the given quote via Zed (see MollieFacade::saveExpressCheckoutAddresses()).
-     * - Returns the updated quote (addresses, first shipment method, recalculated totals), or `errors` on failure.
-     * - Does not persist the quote; the caller stores the returned quote.
+     * - Gets the express checkout shipping options for Mollie's shipping callback via Zed
+     *   (see MollieFacade::getExpressCheckoutShippingOptions()).
      *
      * @api
      *
-     * @param \Generated\Shared\Transfer\MollieExpressCheckoutOrderRequestTransfer $mollieExpressCheckoutOrderRequestTransfer
+     * @param \Generated\Shared\Transfer\MollieExpressCheckoutShippingOptionsRequestTransfer $mollieExpressCheckoutShippingOptionsRequestTransfer
      *
-     * @return \Generated\Shared\Transfer\MollieExpressCheckoutQuoteResponseTransfer
+     * @return \Generated\Shared\Transfer\MollieExpressCheckoutShippingOptionsResponseTransfer
      */
-    public function saveExpressCheckoutAddresses(
-        MollieExpressCheckoutOrderRequestTransfer $mollieExpressCheckoutOrderRequestTransfer,
-    ): MollieExpressCheckoutQuoteResponseTransfer;
+    public function getExpressCheckoutShippingOptions(
+        MollieExpressCheckoutShippingOptionsRequestTransfer $mollieExpressCheckoutShippingOptionsRequestTransfer,
+    ): MollieExpressCheckoutShippingOptionsResponseTransfer;
 }

@@ -280,6 +280,7 @@
         <property name="redirectUrl" type="string"/>
         <property name="description" type="string"/>
         <property name="expressCheckoutUuid" type="string"/>
+        <property name="shippingCallbackUrl" type="string"/>
     </transfer>
 
     <transfer name="MolliePaymentCaptureRequest">
@@ -495,18 +496,29 @@
         <property name="expressCheckoutUuid" type="string"/>
     </transfer>
 
-    <transfer name="MollieExpressCheckoutQuoteResponse">
-        <property name="isSuccessful" type="bool"/>
-        <property name="quote" type="Quote"/>
-        <property name="errors" type="string[]" singular="error"/>
-    </transfer>
-
     <transfer name="MollieExpressCheckoutOrderResponse">
         <property name="isSuccessful" type="bool"/>
         <property name="quote" type="Quote"/>
         <property name="orderReference" type="string"/>
         <property name="idSalesOrder" type="int"/>
         <property name="errors" type="string[]" singular="error"/>
+    </transfer>
+
+    <transfer name="MollieExpressCheckoutShippingOptionsRequest">
+        <property name="quote" type="Quote"/>
+        <property name="shippingAddress" type="Address"/>
+    </transfer>
+
+    <transfer name="MollieExpressCheckoutShippingOptionsResponse">
+        <property name="isSuccessful" type="bool"/>
+        <property name="options" type="MollieExpressCheckoutShippingOption[]" singular="option"/>
+        <property name="error" type="string"/>
+    </transfer>
+
+    <transfer name="MollieExpressCheckoutShippingOption">
+        <property name="reference" type="string"/>
+        <property name="description" type="string"/>
+        <property name="amount" type="MollieAmount"/>
     </transfer>
 
 </transfers>

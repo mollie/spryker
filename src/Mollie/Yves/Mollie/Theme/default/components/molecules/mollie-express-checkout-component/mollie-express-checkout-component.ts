@@ -48,12 +48,6 @@ interface MollieCreateSessionResponse {
   clientAccessToken: string;
 }
 
-interface MolliePlaceOrderResponse {
-  isSuccessful: boolean;
-  orderReference: string | null;
-  errors: string[];
-}
-
 export default class MollieExpressCheckoutComponent extends Component {
     protected scriptLoader: ScriptLoader;
     protected checkout: MollieCheckoutInstance;
@@ -64,7 +58,6 @@ export default class MollieExpressCheckoutComponent extends Component {
     protected init(): void {
         this.scriptLoader = <ScriptLoader>this.querySelector(this.scriptLoaderTag);
         this.mapEvents();
-        this.mapDisabledOverlayEvents();
     }
 
     protected mapEvents(): void {
@@ -131,70 +124,15 @@ export default class MollieExpressCheckoutComponent extends Component {
         return { buttons };
     }
 
-    protected mapDisabledOverlayEvents(): void {
-        const overlay = this.querySelector(`.${this.name}__disabled-overlay`);
-
-        if (!overlay) {
-            return;
-        }
-
-        overlay.addEventListener('click', () => this.showDisabledMessage());
-    }
-
-    protected showDisabledMessage(): void {
-        this.querySelector(`.${this.name}__disabled-message`)?.classList.remove('is-hidden');
-    }
-
+    // TODO: temporary until the order is created in the redirect controller (Step 2): the shopper can open the
+    // sheet, pick an address and see the shipping options, but the payment is cancelled, so nothing is charged.
+    // Step 2 replaces this with event.resolve().
     protected onSubmit(event: MollieSubmitEvent): void {
-        if (this.isDisabled) {
-            event.reject();
-            this.showDisabledMessage();
-
-            return;
-        }
-
-        event.defer();
-        this.hideErrorMessage();
-
-        fetch(this.expressCheckoutPlaceOrderEndpoint, { method: 'POST', credentials: 'same-origin' })
-            .then((response) => response.json())
-            .then((placeOrderResponse: MolliePlaceOrderResponse) => {
-                if (placeOrderResponse.isSuccessful) {
-                    event.resolve();
-
-                    return;
-                }
-
-                event.reject();
-                this.showErrorMessage(placeOrderResponse.errors);
-            })
-            .catch(() => {
-                event.reject();
-                this.showErrorMessage([]);
-            });
-    }
-
-    protected showErrorMessage(errors: string[]): void {
-        const errorMessage = this.querySelector(`.${this.name}__error-message`);
-
-        if (!errorMessage) {
-            return;
-        }
-
-        errorMessage.textContent = errors.length ? errors.join(' ') : this.placeOrderErrorMessage;
-        errorMessage.classList.remove('is-hidden');
-    }
-
-    protected hideErrorMessage(): void {
-        this.querySelector(`.${this.name}__error-message`)?.classList.add('is-hidden');
+        event.reject();
     }
 
     protected get scriptLoaderTag(): string {
         return 'script-loader';
-    }
-
-    protected get isDisabled(): boolean {
-        return this.getAttribute('is-disabled') === 'true';
     }
 
     protected get mountSelector(): string {
@@ -211,13 +149,5 @@ export default class MollieExpressCheckoutComponent extends Component {
 
     protected get expressCheckoutCreateSessionEndpoint(): string {
         return this.getAttribute('express-checkout-create-session-endpoint');
-    }
-
-    protected get expressCheckoutPlaceOrderEndpoint(): string {
-        return this.getAttribute('express-checkout-place-order-endpoint');
-    }
-
-    protected get placeOrderErrorMessage(): string {
-        return this.getAttribute('place-order-error-message');
     }
 }

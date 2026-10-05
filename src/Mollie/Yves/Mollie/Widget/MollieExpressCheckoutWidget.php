@@ -23,25 +23,8 @@ class MollieExpressCheckoutWidget extends AbstractWidget
             'expressCheckoutCreateSessionEndpoint',
             MollieRouteProviderPlugin::ROUTE_PATH_MOLLIE_EXPRESS_CHECKOUT_CREATE_SESSION,
         );
-        $this->addParameter(
-            'expressCheckoutPlaceOrderEndpoint',
-            MollieRouteProviderPlugin::ROUTE_PATH_MOLLIE_EXPRESS_CHECKOUT_PLACE_ORDER,
-        );
         $this->addParameter('jsSrc', $this->getConfig()->getMollieExpressCheckoutJsSrc());
         $this->addParameter('locale', $this->getLocale());
-        $this->addAddressFormParameters();
-    }
-
-    /**
-     * @return void
-     */
-    protected function addAddressFormParameters(): void
-    {
-        $quoteTransfer = $this->getFactory()->getQuoteClient()->getQuote();
-
-        $this->addParameter('addressForm', $this->getFactory()->getExpressCheckoutAddressForm($quoteTransfer)->createView());
-        $this->addParameter('addressFormAction', MollieRouteProviderPlugin::ROUTE_PATH_MOLLIE_EXPRESS_CHECKOUT_SAVE_ADDRESSES);
-        $this->addParameter('hasAddresses', $this->getFactory()->createExpressCheckoutAddressChecker()->hasAddresses($quoteTransfer));
     }
 
     /**

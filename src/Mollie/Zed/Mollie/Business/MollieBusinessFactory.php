@@ -18,10 +18,10 @@ use Mollie\Zed\Mollie\Business\ExpressCheckout\Order\Expander\PaymentExpander;
 use Mollie\Zed\Mollie\Business\ExpressCheckout\Order\Expander\ShipmentMethodExpander;
 use Mollie\Zed\Mollie\Business\ExpressCheckout\Order\ExpressCheckoutOrderPlacer;
 use Mollie\Zed\Mollie\Business\ExpressCheckout\Order\ExpressCheckoutOrderPlacerInterface;
-use Mollie\Zed\Mollie\Business\ExpressCheckout\Order\ExpressCheckoutQuoteAddressWriter;
-use Mollie\Zed\Mollie\Business\ExpressCheckout\Order\ExpressCheckoutQuoteAddressWriterInterface;
 use Mollie\Zed\Mollie\Business\ExpressCheckout\Order\ExpressCheckoutQuotePreparer;
 use Mollie\Zed\Mollie\Business\ExpressCheckout\Order\ExpressCheckoutQuotePreparerInterface;
+use Mollie\Zed\Mollie\Business\ExpressCheckout\Shipping\ExpressCheckoutShippingOptionsProvider;
+use Mollie\Zed\Mollie\Business\ExpressCheckout\Shipping\ExpressCheckoutShippingOptionsProviderInterface;
 use Mollie\Zed\Mollie\Business\Filter\MolliePaymentMethodsFilter;
 use Mollie\Zed\Mollie\Business\Filter\MolliePaymentMethodsFilterInterface;
 use Mollie\Zed\Mollie\Business\Filter\MollieRefundFilter;
@@ -381,46 +381,18 @@ class MollieBusinessFactory extends AbstractBusinessFactory
     }
 
     /**
-     * @return \Mollie\Zed\Mollie\Business\ExpressCheckout\Order\ExpressCheckoutQuoteAddressWriterInterface
-     */
-    public function createExpressCheckoutQuoteAddressWriter(): ExpressCheckoutQuoteAddressWriterInterface
-    {
-        return new ExpressCheckoutQuoteAddressWriter($this->createExpressCheckoutAddressQuotePreparer());
-    }
-
-    /**
-     * @return \Mollie\Zed\Mollie\Business\ExpressCheckout\Order\ExpressCheckoutQuotePreparerInterface
-     */
-    public function createExpressCheckoutAddressQuotePreparer(): ExpressCheckoutQuotePreparerInterface
-    {
-        return new ExpressCheckoutQuotePreparer($this->getExpressCheckoutAddressQuoteExpanders(), $this->getCalculationFacade());
-    }
-
-    /**
-     * Used when the shopper saves the address form: addresses + shipment, so the cart total includes shipping.
+     * Prepares the quote for the express checkout order.
      * Order matters: the shipment method needs the shipping address, so AddressExpander runs first.
-     *
-     * @return array<\Mollie\Zed\Mollie\Business\ExpressCheckout\Order\Expander\ExpressCheckoutQuoteExpanderInterface>
-     */
-    public function getExpressCheckoutAddressQuoteExpanders(): array
-    {
-        return [
-            $this->createExpressCheckoutAddressExpander(),
-            $this->createExpressCheckoutShipmentMethodExpander(),
-        ];
-    }
-
-    /**
-     * Used when the order is placed: the address expanders plus the Mollie payment.
      *
      * @return array<\Mollie\Zed\Mollie\Business\ExpressCheckout\Order\Expander\ExpressCheckoutQuoteExpanderInterface>
      */
     public function getExpressCheckoutOrderQuoteExpanders(): array
     {
-        return array_merge(
-            $this->getExpressCheckoutAddressQuoteExpanders(),
-            [$this->createExpressCheckoutPaymentExpander()],
-        );
+        return [
+            $this->createExpressCheckoutAddressExpander(),
+            $this->createExpressCheckoutShipmentMethodExpander(),
+            $this->createExpressCheckoutPaymentExpander(),
+        ];
     }
 
     /**
@@ -469,5 +441,16 @@ class MollieBusinessFactory extends AbstractBusinessFactory
     public function getShipmentFacade(): MollieToShipmentFacadeInterface
     {
         return $this->getProvidedDependency(MollieDependencyProvider::FACADE_SHIPMENT);
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Business\ExpressCheckout\Shipping\ExpressCheckoutShippingOptionsProviderInterface
+     */
+    public function createExpressCheckoutShippingOptionsProvider(): ExpressCheckoutShippingOptionsProviderInterface
+    {
+        return new ExpressCheckoutShippingOptionsProvider(
+            $this->getShipmentFacade(),
+            $this->getMollieService(),
+        );
     }
 }

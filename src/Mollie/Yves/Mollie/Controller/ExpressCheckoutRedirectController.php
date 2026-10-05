@@ -30,8 +30,9 @@ class ExpressCheckoutRedirectController extends AbstractMollieController
 
     /**
      * Mollie redirects the shopper here after the express payment.
-     * The order was placed on Mollie's submit (ExpressCheckoutOrderController), which left the placed quote with its
-     * order reference in the session; the checkout success page shows it and clears the cart.
+     * TODO (Step 2): create the order here from the completed Mollie session (full address + chosen shipping method).
+     * Until then a quote with an order reference only exists if one was placed earlier; the checkout success page
+     * shows it and clears the cart.
      * The payment itself is linked to the order by the express checkout webhook (MollieExpressCheckoutPaymentWebhookHandlerPlugin).
      *
      * @param \Symfony\Component\HttpFoundation\Request $request

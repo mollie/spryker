@@ -11,7 +11,8 @@ use Generated\Shared\Transfer\MollieExpressCheckoutConfigCollectionTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutConfigCriteriaTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutOrderRequestTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutOrderResponseTransfer;
-use Generated\Shared\Transfer\MollieExpressCheckoutQuoteResponseTransfer;
+use Generated\Shared\Transfer\MollieExpressCheckoutShippingOptionsRequestTransfer;
+use Generated\Shared\Transfer\MollieExpressCheckoutShippingOptionsResponseTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutPaymentUpdateRequestTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutPaymentUpdateResponseTransfer;
 use Generated\Shared\Transfer\MolliePaymentCaptureRequestTransfer;
@@ -310,17 +311,17 @@ interface MollieFacadeInterface
 
     /**
      * Specification:
-     * - Saves the express checkout addresses from the request on the request quote (billing, shipping, item shipments).
-     * - Assigns the first available shipment method and recalculates, so the grand total includes shipping.
-     * - Returns `isSuccessful` and the updated `quote`, or `errors` on failure (never throws).
+     * - Answers Mollie's express checkout shipping callback: shipment methods available for the quote and the
+     *   (partial) shipping address the shopper picked in the express sheet, as Mollie shipping options.
+     * - Returns `isSuccessful` and `options` (reference = shipment method key, description, amount), or `error`. Never throws.
      *
      * @api
      *
-     * @param \Generated\Shared\Transfer\MollieExpressCheckoutOrderRequestTransfer $mollieExpressCheckoutOrderRequestTransfer
+     * @param \Generated\Shared\Transfer\MollieExpressCheckoutShippingOptionsRequestTransfer $mollieExpressCheckoutShippingOptionsRequestTransfer
      *
-     * @return \Generated\Shared\Transfer\MollieExpressCheckoutQuoteResponseTransfer
+     * @return \Generated\Shared\Transfer\MollieExpressCheckoutShippingOptionsResponseTransfer
      */
-    public function saveExpressCheckoutAddresses(
-        MollieExpressCheckoutOrderRequestTransfer $mollieExpressCheckoutOrderRequestTransfer,
-    ): MollieExpressCheckoutQuoteResponseTransfer;
+    public function getExpressCheckoutShippingOptions(
+        MollieExpressCheckoutShippingOptionsRequestTransfer $mollieExpressCheckoutShippingOptionsRequestTransfer,
+    ): MollieExpressCheckoutShippingOptionsResponseTransfer;
 }

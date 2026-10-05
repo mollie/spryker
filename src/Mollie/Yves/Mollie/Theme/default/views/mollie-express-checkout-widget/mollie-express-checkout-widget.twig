@@ -3,12 +3,8 @@
 {% define data = {
     expressCheckoutResolveEnabledMethodsEndpoint: _widget.expressCheckoutResolveEnabledMethodsEndpoint | default,
     expressCheckoutCreateSessionEndpoint: _widget.expressCheckoutCreateSessionEndpoint | default,
-    expressCheckoutPlaceOrderEndpoint: _widget.expressCheckoutPlaceOrderEndpoint | default,
     jsSrc: _widget.jsSrc | default,
     locale: _widget.locale | default,
-    addressForm: _widget.addressForm | default,
-    addressFormAction: _widget.addressFormAction | default,
-    hasAddresses: _widget.hasAddresses | default(false),
 } %}
 
 {% block body %}
@@ -16,32 +12,8 @@
         data: {
             expressCheckoutResolveEnabledMethodsEndpoint: data.expressCheckoutResolveEnabledMethodsEndpoint,
             expressCheckoutCreateSessionEndpoint: data.expressCheckoutCreateSessionEndpoint,
-            expressCheckoutPlaceOrderEndpoint: data.expressCheckoutPlaceOrderEndpoint,
             jsSrc: data.jsSrc,
             locale: data.locale,
-            isDisabled: not data.hasAddresses,
-            disabledMessage: 'Please fill in the billing and shipping address below to use express checkout.',
         }
     } only %}
-
-    {% if data.addressForm %}
-        <div class="spacing-top spacing-top--big">
-            {% include molecule('form') with {
-                data: {
-                    form: data.addressForm,
-                    title: 'Express checkout addresses',
-                    options: {
-                        action: data.addressFormAction,
-                        attr: {
-                            novalidate: 'novalidate',
-                        },
-                    },
-                    submit: {
-                        enable: true,
-                        text: 'Save addresses',
-                    },
-                },
-            } only %}
-        </div>
-    {% endif %}
 {% endblock %}

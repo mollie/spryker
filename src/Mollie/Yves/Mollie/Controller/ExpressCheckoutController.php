@@ -59,8 +59,11 @@ class ExpressCheckoutController extends AbstractController
             );
         }
 
+        $mollieExpressCheckoutSessionTransfer = $mollieExpressCheckoutSessionApiResponseTransfer->getExpressCheckoutSession();
+        $this->storeExpressCheckoutSession($request, $mollieExpressCheckoutSessionTransfer->getId());
+
         return new JsonResponse([
-            'clientAccessToken' => $mollieExpressCheckoutSessionApiResponseTransfer->getExpressCheckoutSession()->getClientAccessToken(),
+            'clientAccessToken' => $mollieExpressCheckoutSessionTransfer->getClientAccessToken(),
         ]);
     }
 
@@ -101,8 +104,33 @@ class ExpressCheckoutController extends AbstractController
             ->setExpressCheckoutUuid($expressCheckoutUuid)
             ->setRedirectUrl(
                 $request->getSchemeAndHttpHost() . MollieRouteProviderPlugin::ROUTE_PATH_MOLLIE_EXPRESS_CHECKOUT_REDIRECT,
+            )
+            ->setShippingCallbackUrl(
+                $request->getSchemeAndHttpHost() . MollieRouteProviderPlugin::ROUTE_PATH_MOLLIE_EXPRESS_CHECKOUT_SHIPPING_OPTIONS,
             );
 
         return $this->getClient()->createExpressCheckoutSession($mollieApiRequestTransfer);
+    }
+
+    /**
+     * Keeps the Mollie session id for the redirect, and a short-lived cart copy for Mollie's shipping callback,
+     * which is called server-to-server and therefore has no access to the shopper's session.
+     *
+     * @param \Symfony\Component\HttpFoundation\Request $request
+     * @param string $mollieSessionId
+     *
+     * @return void
+     */
+    protected function storeExpressCheckoutSession(Request $request, string $mollieSessionId): void
+    {
+        $config = $this->getFactory()->getConfig();
+
+        $request->getSession()->set($config->getExpressCheckoutSessionIdSessionKey(), $mollieSessionId);
+
+        $this->getFactory()->getStorageClient()->set(
+            $config->getExpressCheckoutQuoteStorageKey($mollieSessionId),
+            (string)json_encode($this->getFactory()->getQuoteClient()->getQuote()->toArray(true, true)),
+            $config->getExpressCheckoutQuoteStorageTtl(),
+        );
     }
 }

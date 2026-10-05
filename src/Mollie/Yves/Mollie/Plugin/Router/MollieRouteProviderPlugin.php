@@ -44,12 +44,7 @@ class MollieRouteProviderPlugin extends AbstractRouteProviderPlugin
     /**
      * @var string
      */
-    public const ROUTE_MOLLIE_EXPRESS_CHECKOUT_SAVE_ADDRESSES = 'mollie/express-checkout/save-addresses';
-
-    /**
-     * @var string
-     */
-    public const ROUTE_MOLLIE_EXPRESS_CHECKOUT_PLACE_ORDER = 'mollie/express-checkout/place-order';
+    public const ROUTE_MOLLIE_EXPRESS_CHECKOUT_SHIPPING_OPTIONS = 'mollie/express-checkout/shipping-options';
 
     /**
      * @var string
@@ -70,12 +65,7 @@ class MollieRouteProviderPlugin extends AbstractRouteProviderPlugin
     /**
      * @var string
      */
-    public const ROUTE_PATH_MOLLIE_EXPRESS_CHECKOUT_SAVE_ADDRESSES = '/mollie/express-checkout/save-addresses';
-
-    /**
-     * @var string
-     */
-    public const ROUTE_PATH_MOLLIE_EXPRESS_CHECKOUT_PLACE_ORDER = '/mollie/express-checkout/place-order';
+    public const ROUTE_PATH_MOLLIE_EXPRESS_CHECKOUT_SHIPPING_OPTIONS = '/mollie/express-checkout/shipping-options';
 
     /**
      * @param \Spryker\Yves\Router\Route\RouteCollection $routeCollection
@@ -90,8 +80,7 @@ class MollieRouteProviderPlugin extends AbstractRouteProviderPlugin
         $routeCollection = $this->addExpressCheckoutResolveEnabledMethodsRoute($routeCollection);
         $routeCollection = $this->addExpressCheckoutCreateSessionRoute($routeCollection);
         $routeCollection = $this->addExpressCheckoutRedirectRoute($routeCollection);
-        $routeCollection = $this->addExpressCheckoutSaveAddressesRoute($routeCollection);
-        $routeCollection = $this->addExpressCheckoutPlaceOrderRoute($routeCollection);
+        $routeCollection = $this->addExpressCheckoutShippingOptionsRoute($routeCollection);
 
         return $routeCollection;
     }
@@ -200,35 +189,16 @@ class MollieRouteProviderPlugin extends AbstractRouteProviderPlugin
      *
      * @return \Spryker\Yves\Router\Route\RouteCollection
      */
-    protected function addExpressCheckoutSaveAddressesRoute(RouteCollection $routeCollection): RouteCollection
+    protected function addExpressCheckoutShippingOptionsRoute(RouteCollection $routeCollection): RouteCollection
     {
         $route = $this->buildRoute(
-            static::ROUTE_PATH_MOLLIE_EXPRESS_CHECKOUT_SAVE_ADDRESSES,
+            static::ROUTE_PATH_MOLLIE_EXPRESS_CHECKOUT_SHIPPING_OPTIONS,
             'Mollie',
-            'ExpressCheckoutAddress',
-            'saveAddressesAction',
+            'ExpressCheckoutShipping',
+            'shippingOptionsAction',
         );
         $route = $route->setMethods(['POST']);
-        $routeCollection->add(static::ROUTE_MOLLIE_EXPRESS_CHECKOUT_SAVE_ADDRESSES, $route);
-
-        return $routeCollection;
-    }
-
-    /**
-     * @param \Spryker\Yves\Router\Route\RouteCollection $routeCollection
-     *
-     * @return \Spryker\Yves\Router\Route\RouteCollection
-     */
-    protected function addExpressCheckoutPlaceOrderRoute(RouteCollection $routeCollection): RouteCollection
-    {
-        $route = $this->buildRoute(
-            static::ROUTE_PATH_MOLLIE_EXPRESS_CHECKOUT_PLACE_ORDER,
-            'Mollie',
-            'ExpressCheckoutOrder',
-            'placeOrderAction',
-        );
-        $route = $route->setMethods(['POST']);
-        $routeCollection->add(static::ROUTE_MOLLIE_EXPRESS_CHECKOUT_PLACE_ORDER, $route);
+        $routeCollection->add(static::ROUTE_MOLLIE_EXPRESS_CHECKOUT_SHIPPING_OPTIONS, $route);
 
         return $routeCollection;
     }

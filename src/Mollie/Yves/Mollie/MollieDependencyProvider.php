@@ -12,8 +12,6 @@ use Mollie\Yves\Mollie\Dependency\Client\MollieToQuoteClientBridge;
 use Mollie\Yves\Mollie\Dependency\Client\MollieToQuoteClientInterface;
 use Mollie\Yves\Mollie\Dependency\Client\MollieToStorageClientBridge;
 use Mollie\Yves\Mollie\Dependency\Client\MollieToStorageClientInterface;
-use Mollie\Yves\Mollie\Dependency\Client\MollieToStoreClientBridge;
-use Mollie\Yves\Mollie\Dependency\Client\MollieToStoreClientInterface;
 use Mollie\Yves\Mollie\Dependency\Service\MollieToUtilEncodingServiceBridge;
 use Mollie\Yves\Mollie\Plugin\Webhook\MollieCaptureWebhookHandlerPlugin;
 use Mollie\Yves\Mollie\Plugin\Webhook\MollieExpressCheckoutPaymentWebhookHandlerPlugin;
@@ -44,11 +42,6 @@ class MollieDependencyProvider extends AbstractBundleDependencyProvider
      * @var string
      */
     public const CLIENT_QUOTE = 'CLIENT_QUOTE';
-
-    /**
-     * @var string
-     */
-    public const CLIENT_STORE = 'CLIENT_STORE';
 
     /**
      * @var string
@@ -86,7 +79,6 @@ class MollieDependencyProvider extends AbstractBundleDependencyProvider
         $container = $this->addMollieNextGenWebhookHandlerPlugins($container);
         $container = $this->addLocaleClient($container);
         $container = $this->addMollieService($container);
-        $container = $this->addStoreClient($container);
 
         return $container;
     }
@@ -229,22 +221,6 @@ class MollieDependencyProvider extends AbstractBundleDependencyProvider
     {
         $container->set(static::SERVICE_MOLLIE, function (Container $container): MollieServiceInterface {
             return $container->getLocator()->mollie()->service();
-        });
-
-        return $container;
-    }
-
-    /**
-     * @param \Spryker\Yves\Kernel\Container $container
-     *
-     * @return \Spryker\Yves\Kernel\Container
-     */
-    protected function addStoreClient(Container $container): Container
-    {
-        $container->set(static::CLIENT_STORE, function (Container $container): MollieToStoreClientInterface {
-            return new MollieToStoreClientBridge(
-                $container->getLocator()->store()->client(),
-            );
         });
 
         return $container;

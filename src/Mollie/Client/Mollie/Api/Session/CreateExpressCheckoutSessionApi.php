@@ -37,6 +37,16 @@ class CreateExpressCheckoutSessionApi extends AbstractApiCall
     protected const REQUIRED_CUSTOMER_DETAILS = ['email', 'billing-address', 'shipping-address'];
 
     /**
+     * @var string
+     */
+    protected const PAYLOAD_KEY_SHIPPING = 'shipping';
+
+    /**
+     * @var string
+     */
+    protected const PAYLOAD_KEY_SHIPPING_CALLBACK_URL = 'callbackUrl';
+
+    /**
      * @param \Mollie\Api\MollieApiClient $mollieApiClient
      * @param \Mollie\Client\Mollie\MollieConfig $mollieConfig
      * @param \Mollie\Client\Mollie\Dependency\Service\MollieToUtilEncodingServiceInterface $utilEncodingService
@@ -97,6 +107,14 @@ class CreateExpressCheckoutSessionApi extends AbstractApiCall
 
         // Not supported by the SDK's CreateSessionRequest yet, so it is added to the payload directly.
         $this->request->payload()->add(static::PAYLOAD_KEY_REQUIRED_CUSTOMER_DETAILS, static::REQUIRED_CUSTOMER_DETAILS);
+
+        // Dynamic shipping options: Mollie asks this URL for the shipping options whenever the shopper picks
+        // an address in the express sheet, and adds the chosen option to the amount. Not supported by the SDK yet.
+        if ($mollieApiRequestTransfer->getShippingCallbackUrl()) {
+            $this->request->payload()->add(static::PAYLOAD_KEY_SHIPPING, [
+                static::PAYLOAD_KEY_SHIPPING_CALLBACK_URL => $mollieApiRequestTransfer->getShippingCallbackUrl(),
+            ]);
+        }
 
         return $this->request;
     }
