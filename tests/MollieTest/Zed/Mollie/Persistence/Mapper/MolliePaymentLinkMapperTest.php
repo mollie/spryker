@@ -5,10 +5,7 @@ declare(strict_types = 1);
 namespace MollieTest\Zed\Mollie\Persistence\Mapper;
 
 use Codeception\Test\Unit;
-use Generated\Shared\Transfer\MollieAmountTransfer;
 use Generated\Shared\Transfer\MolliePaymentLinkTransfer;
-use Mollie\Zed\Mollie\Dependency\Facade\MollieToMoneyFacadeInterface;
-use Mollie\Zed\Mollie\Dependency\Service\MollieToUtilEncodingServiceInterface;
 use Mollie\Zed\Mollie\Persistence\MolliePersistenceFactory;
 use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MolliePaymentLinkMapperInterface;
 use Orm\Zed\Mollie\Persistence\SpyMolliePaymentLink;
@@ -23,10 +20,10 @@ class MolliePaymentLinkMapperTest extends Unit
     /**
      * @return void
      */
-    public function testMapMolliePaymentLinkTransferToEntityStoresAmountAndCurrency(): void
+    public function testMapMolliePaymentLinkTransferToEntityCopiesAmountInCentsAndCurrency(): void
     {
         $molliePaymentLinkTransfer = $this->createMolliePaymentLinkTransfer()
-            ->setAmount($this->createMollieAmountTransfer('25.50'));
+            ->setAmountInCents(2550);
 
         $spyMolliePaymentLinkEntity = $this->createMolliePaymentLinkMapper()
             ->mapMolliePaymentLinkTransferToEntity($molliePaymentLinkTransfer, new SpyMolliePaymentLink());
@@ -39,10 +36,10 @@ class MolliePaymentLinkMapperTest extends Unit
     /**
      * @return void
      */
-    public function testMapMolliePaymentLinkTransferToEntityStoresMinimumAmountAndTakesItsCurrency(): void
+    public function testMapMolliePaymentLinkTransferToEntityCopiesMinimumAmountInCents(): void
     {
         $molliePaymentLinkTransfer = $this->createMolliePaymentLinkTransfer()
-            ->setMinimumAmount($this->createMollieAmountTransfer('10.00'));
+            ->setMinimumAmountInCents(1000);
 
         $spyMolliePaymentLinkEntity = $this->createMolliePaymentLinkMapper()
             ->mapMolliePaymentLinkTransferToEntity($molliePaymentLinkTransfer, new SpyMolliePaymentLink());
@@ -53,31 +50,34 @@ class MolliePaymentLinkMapperTest extends Unit
     }
 
     /**
+     * @return void
+     */
+    public function testMapMolliePaymentLinkTransferToEntityCopiesAllowedMethodsJson(): void
+    {
+        $molliePaymentLinkTransfer = $this->createMolliePaymentLinkTransfer()
+            ->setAmountInCents(2550)
+            ->setAllowedMethodsJson('["ideal","creditcard"]');
+
+        $spyMolliePaymentLinkEntity = $this->createMolliePaymentLinkMapper()
+            ->mapMolliePaymentLinkTransferToEntity($molliePaymentLinkTransfer, new SpyMolliePaymentLink());
+
+        $this->assertSame('["ideal","creditcard"]', $spyMolliePaymentLinkEntity->getPaymentMethods());
+    }
+
+    /**
      * @return \Generated\Shared\Transfer\MolliePaymentLinkTransfer
      */
     protected function createMolliePaymentLinkTransfer(): MolliePaymentLinkTransfer
     {
-        $molliePaymentLinkTransfer = (new MolliePaymentLinkTransfer())
+        $molliePaymentLinkTransfer = new MolliePaymentLinkTransfer();
+        $molliePaymentLinkTransfer
             ->setId('pl_4Y0eZitmBnQ6IDoMqZQKh')
             ->setDescription('Deposit')
             ->setStatus('open')
-            ->setExpiresAt('2026-12-31 00:00:00');
+            ->setExpiresAt('2026-12-31 00:00:00')
+            ->setCurrencyCode(static::CURRENCY_CODE);
 
         return $molliePaymentLinkTransfer;
-    }
-
-    /**
-     * @param string $value
-     *
-     * @return \Generated\Shared\Transfer\MollieAmountTransfer
-     */
-    protected function createMollieAmountTransfer(string $value): MollieAmountTransfer
-    {
-        $mollieAmountTransfer = (new MollieAmountTransfer())
-            ->setCurrency(static::CURRENCY_CODE)
-            ->setValue($value);
-
-        return $mollieAmountTransfer;
     }
 
     /**
@@ -95,21 +95,7 @@ class MolliePaymentLinkMapperTest extends Unit
      */
     protected function createMolliePersistenceFactory(): MolliePersistenceFactory
     {
-        $moneyFacadeMock = $this->createMock(MollieToMoneyFacadeInterface::class);
-        $moneyFacadeMock->method('convertDecimalToInteger')
-            ->willReturnCallback(function (float $value): int {
-                return (int)round($value * 100);
-            });
-
-        $utilEncodingServiceMock = $this->createMock(MollieToUtilEncodingServiceInterface::class);
-
-        $molliePersistenceFactory = $this->getMockBuilder(MolliePersistenceFactory::class)
-            ->onlyMethods(['getMoneyFacade', 'getUtilEncodingService'])
-            ->getMock();
-        $molliePersistenceFactory->method('getMoneyFacade')
-            ->willReturn($moneyFacadeMock);
-        $molliePersistenceFactory->method('getUtilEncodingService')
-            ->willReturn($utilEncodingServiceMock);
+        $molliePersistenceFactory = new MolliePersistenceFactory();
 
         return $molliePersistenceFactory;
     }

@@ -126,7 +126,6 @@ class MollieEntityManager extends AbstractEntityManager implements MollieEntityM
     public function addMolliePaymentData(int $idSalesOrder, MolliePaymentTransfer $molliePaymentTransfer): void
     {
         $spyPaymentMollieEntity = new SpyPaymentMollie();
-        $metadata = $this->getFactory()->getUtilEncodingService()->encodeJson($molliePaymentTransfer->getMetadata());
         $spyPaymentMollieEntity
             ->setFkSalesOrder($idSalesOrder)
             ->setTransactionId($molliePaymentTransfer->getId())
@@ -134,7 +133,7 @@ class MollieEntityManager extends AbstractEntityManager implements MollieEntityM
             ->setIsCancelable($molliePaymentTransfer->getIsCancelable())
             ->setDescription($molliePaymentTransfer->getDescription())
             ->setSequenceType($molliePaymentTransfer->getSequenceType())
-            ->setMetadata($metadata)
+            ->setMetadata($molliePaymentTransfer->getMetadataJson())
             ->setExpiresAt($molliePaymentTransfer->getExpiresAt())
             ->setCreatedAt($molliePaymentTransfer->getCreatedAt());
 

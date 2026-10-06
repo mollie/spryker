@@ -7,6 +7,7 @@ use Generated\Shared\Transfer\MollieRefundCollectionTransfer;
 use Generated\Shared\Transfer\MollieRefundSaveTransfer;
 use Generated\Shared\Transfer\MollieRefundTransfer;
 use Mollie\Zed\Mollie\Business\Filter\MollieRefundFilterInterface;
+use Mollie\Zed\Mollie\Dependency\Service\MollieToUtilEncodingServiceInterface;
 
 class MollieRefundMapper implements MollieRefundMapperInterface
 {
@@ -17,9 +18,11 @@ class MollieRefundMapper implements MollieRefundMapperInterface
 
     /**
      * @param \Mollie\Zed\Mollie\Business\Filter\MollieRefundFilterInterface $mollieRefundFilter
+     * @param \Mollie\Zed\Mollie\Dependency\Service\MollieToUtilEncodingServiceInterface $utilEncodingService
      */
     public function __construct(
         protected MollieRefundFilterInterface $mollieRefundFilter,
+        protected MollieToUtilEncodingServiceInterface $utilEncodingService,
     ) {
     }
 
@@ -33,12 +36,15 @@ class MollieRefundMapper implements MollieRefundMapperInterface
         MolliePaymentTransfer $molliePaymentTransfer,
         MollieRefundTransfer $mollieRefundTransfer,
     ): MollieRefundSaveTransfer {
+        $metadata = $mollieRefundTransfer->getMetadata();
+        $encodedMetadata = $this->utilEncodingService->encodeJson($metadata);
+
         return (new MollieRefundSaveTransfer())
             ->setDescription($mollieRefundTransfer->getDescription())
             ->setCurrency($mollieRefundTransfer->getAmount()->getCurrency())
             ->setValue($mollieRefundTransfer->getAmount()->getValue())
             ->setStatus($mollieRefundTransfer->getStatus())
-            ->setMetadata($mollieRefundTransfer->getMetadata())
+            ->setMetadata($encodedMetadata)
             ->setTransactionId($molliePaymentTransfer->getId())
             ->setRefundId($mollieRefundTransfer->getId())
             ->setCreatedAt($mollieRefundTransfer->getCreatedAt());

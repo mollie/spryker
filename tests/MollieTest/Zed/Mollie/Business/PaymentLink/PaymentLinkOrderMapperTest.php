@@ -12,7 +12,6 @@ use Generated\Shared\Transfer\ItemTransfer;
 use Generated\Shared\Transfer\MollieAmountTransfer;
 use Generated\Shared\Transfer\OrderTransfer;
 use Generated\Shared\Transfer\TotalsTransfer;
-use Mollie\Service\Mollie\MollieService;
 use Mollie\Shared\Mollie\MollieConstants;
 use Mollie\Zed\Mollie\Business\Mapper\PaymentLink\PaymentLinkOrderMapperInterface;
 use Mollie\Zed\Mollie\Business\MollieBusinessFactory;
@@ -148,11 +147,7 @@ class PaymentLinkOrderMapperTest extends Unit
      */
     protected function createMollieBusinessFactory(): MollieBusinessFactory
     {
-        $mollieBusinessFactory = $this->getMockBuilder(MollieBusinessFactory::class)
-            ->onlyMethods(['getMollieService'])
-            ->getMock();
-        $mollieBusinessFactory->method('getMollieService')
-            ->willReturn(new MollieService());
+        $mollieBusinessFactory = new MollieBusinessFactory();
 
         return $mollieBusinessFactory;
     }

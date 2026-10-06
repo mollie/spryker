@@ -7,6 +7,7 @@ namespace Mollie\Zed\Mollie\Communication\Mapper\PaymentLink;
 use Generated\Shared\Transfer\MollieAmountTransfer;
 use Generated\Shared\Transfer\MolliePaymentLinkTransfer;
 use Mollie\Service\Mollie\MollieServiceInterface;
+use Mollie\Zed\Mollie\Dependency\Facade\MollieToMoneyFacadeInterface;
 use Mollie\Zed\Mollie\MollieConfig;
 
 class MolliePaymentLinkMapper implements MolliePaymentLinkMapperInterface
@@ -39,10 +40,12 @@ class MolliePaymentLinkMapper implements MolliePaymentLinkMapperInterface
     /**
      * @param \Mollie\Service\Mollie\MollieServiceInterface $mollieService
      * @param \Mollie\Zed\Mollie\MollieConfig $config
+     * @param \Mollie\Zed\Mollie\Dependency\Facade\MollieToMoneyFacadeInterface $moneyFacade
      */
     public function __construct(
         protected MollieServiceInterface $mollieService,
         protected MollieConfig $config,
+        protected MollieToMoneyFacadeInterface $moneyFacade,
     ) {
     }
 
@@ -86,11 +89,8 @@ class MolliePaymentLinkMapper implements MolliePaymentLinkMapperInterface
             return null;
         }
 
-        $value = number_format($amount, 2, '.', '');
-        $mollieAmountTransfer = new MollieAmountTransfer();
-        $mollieAmountTransfer
-            ->setValue($value)
-            ->setCurrency($currency);
+        $amountInCents = $this->moneyFacade->convertDecimalToInteger($amount);
+        $mollieAmountTransfer = $this->mollieService->convertIntegerToMollieAmount($amountInCents, $currency);
 
         return $mollieAmountTransfer;
     }

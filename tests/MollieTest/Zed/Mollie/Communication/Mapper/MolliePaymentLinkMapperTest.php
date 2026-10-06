@@ -5,10 +5,9 @@ declare(strict_types = 1);
 namespace MollieTest\Zed\Mollie\Communication\Mapper;
 
 use Codeception\Test\Unit;
-use Mollie\Service\Mollie\MollieServiceInterface;
+use DateTime;
 use Mollie\Zed\Mollie\Communication\Mapper\PaymentLink\MolliePaymentLinkMapperInterface;
 use Mollie\Zed\Mollie\Communication\MollieCommunicationFactory;
-use Mollie\Zed\Mollie\MollieConfig;
 
 class MolliePaymentLinkMapperTest extends Unit
 {
@@ -70,7 +69,7 @@ class MolliePaymentLinkMapperTest extends Unit
             'amount' => $amount,
             'minimumAmount' => $minimumAmount,
             'description' => 'Deposit',
-            'expiryDate' => null,
+            'expiryDate' => new DateTime('2026-12-31 00:00:00'),
             'redirectUrl' => null,
             'isReusable' => false,
             'paymentMethods' => [],
@@ -94,16 +93,7 @@ class MolliePaymentLinkMapperTest extends Unit
      */
     protected function createMollieCommunicationFactory(): MollieCommunicationFactory
     {
-        $mollieServiceMock = $this->createMock(MollieServiceInterface::class);
-        $mollieServiceMock->method('getPaymentLinkDefaultExpirationDateTime')
-            ->willReturn('2026-12-31T00:00:00+00:00');
-
-        $mollieCommunicationFactory = $this->getMockBuilder(MollieCommunicationFactory::class)
-            ->onlyMethods(['getMollieService'])
-            ->getMock();
-        $mollieCommunicationFactory->method('getMollieService')
-            ->willReturn($mollieServiceMock);
-        $mollieCommunicationFactory->setConfig($this->createMock(MollieConfig::class));
+        $mollieCommunicationFactory = new MollieCommunicationFactory();
 
         return $mollieCommunicationFactory;
     }
