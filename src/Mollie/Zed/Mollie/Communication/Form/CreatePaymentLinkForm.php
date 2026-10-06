@@ -73,11 +73,6 @@ class CreatePaymentLinkForm extends AbstractType
     public const FIELD_PAYMENT_METHODS = 'paymentMethods';
 
     /**
-     * @var array<int, string>
-     */
-    protected const REDIRECT_URL_ALLOWED_PROTOCOLS = ['http', 'https'];
-
-    /**
      * @var string
      */
     public const OPTION_CURRENCY_CODES = 'currency_codes';
@@ -274,7 +269,6 @@ class CreatePaymentLinkForm extends AbstractType
             'required' => false,
             'constraints' => [
                 new Url([
-                    'protocols' => static::REDIRECT_URL_ALLOWED_PROTOCOLS,
                     'message' => 'Redirect URL must be a valid http or https URL',
                 ]),
             ],
