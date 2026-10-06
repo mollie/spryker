@@ -113,7 +113,6 @@
         <property name="captureBefore" type="string"/>
         <property name="embedded" type="array"/>
         <property name="links" type="MollieLinks"/>
-        <property name="metadataJson" type="string"/>
     </transfer>
 
     <transfer name="MollieCreateCaptureApiResponse">
@@ -364,10 +363,6 @@
         <property name="lines" type="MollieLines[]" singular="line"/>
         <property name="billingAddress" type="MollieAddress"/>
         <property name="minimumAmount" type="MollieAmount"/>
-        <property name="amountInCents" type="int"/>
-        <property name="minimumAmountInCents" type="int"/>
-        <property name="currencyCode" type="string"/>
-        <property name="allowedMethodsJson" type="string"/>
     </transfer>
 
     <transfer name="MollieAddress">
@@ -408,8 +403,8 @@
         <property name="image" type="string" />
         <property name="isLogoVisible" type="bool" />
         <property name="status" type="string" />
-        <property name="minimumAmountInCents" type="int" />
-        <property name="maximumAmountInCents" type="int" />
+        <property name="integerMinimumAmount" type="int" />
+        <property name="integerMaximumAmount" type="int" />
     </transfer>
 
     <transfer name="MolliePaymentMethodConfigCriteria">

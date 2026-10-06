@@ -89,8 +89,8 @@ class MolliePaymentLinkMapper implements MolliePaymentLinkMapperInterface
             return null;
         }
 
-        $amountInCents = $this->moneyFacade->convertDecimalToInteger($amount);
-        $mollieAmountTransfer = $this->mollieService->convertIntegerToMollieAmount($amountInCents, $currency);
+        $integerAmount = $this->moneyFacade->convertDecimalToInteger($amount);
+        $mollieAmountTransfer = $this->mollieService->convertIntegerToMollieAmount($integerAmount, $currency);
 
         return $mollieAmountTransfer;
     }

@@ -48,14 +48,14 @@ class PaymentLinkOrderMapperTest extends Unit
 
         $mollieLinesTransfers = $this->createPaymentLinkOrderMapper()->mapOrderItemsAndExpensesToMollieLines($orderTransfer);
 
-        $sumOfLineTotalsInCents = 0;
+        $sumOfIntegerLineTotals = 0;
         foreach ($mollieLinesTransfers as $mollieLinesTransfer) {
-            $sumOfLineTotalsInCents += $this->convertMollieAmountToCents($mollieLinesTransfer->getTotalAmount());
+            $sumOfIntegerLineTotals += $this->convertMollieAmountToInteger($mollieLinesTransfer->getTotalAmount());
         }
 
         $totalsTransfer = $orderTransfer->getTotals();
         $this->assertCount(4, $mollieLinesTransfers);
-        $this->assertSame($totalsTransfer->getGrandTotal(), $sumOfLineTotalsInCents);
+        $this->assertSame($totalsTransfer->getGrandTotal(), $sumOfIntegerLineTotals);
     }
 
     /**
@@ -237,11 +237,11 @@ class PaymentLinkOrderMapperTest extends Unit
      *
      * @return int
      */
-    protected function convertMollieAmountToCents(MollieAmountTransfer $mollieAmountTransfer): int
+    protected function convertMollieAmountToInteger(MollieAmountTransfer $mollieAmountTransfer): int
     {
         $decimalValue = (float)$mollieAmountTransfer->getValue();
-        $centsValue = (int)round($decimalValue * 100);
+        $integerValue = (int)round($decimalValue * 100);
 
-        return $centsValue;
+        return $integerValue;
     }
 }

@@ -50,36 +50,26 @@ class MolliePaymentLinkHandler implements MolliePaymentLinkHandlerInterface
         if ($molliePaymentLinkApiResponseTransfer->getIsSuccessful()) {
             $createdMolliePaymentLinkTransfer = $molliePaymentLinkApiResponseTransfer->getMolliePaymentLink();
             $createdMolliePaymentLinkTransfer->setFkSalesOrder($molliePaymentLinkTransfer->getFkSalesOrder());
-            $createdMolliePaymentLinkTransfer = $this->addStorageValuesToMolliePaymentLink($createdMolliePaymentLinkTransfer);
-            $this->mollieEntityManager->writePaymentLink($createdMolliePaymentLinkTransfer);
+
+            $mollieAmountTransfer = $createdMolliePaymentLinkTransfer->getAmount();
+            $mollieMinimumAmountTransfer = $createdMolliePaymentLinkTransfer->getMinimumAmount();
+            $allowedMethods = $createdMolliePaymentLinkTransfer->getAllowedMethods();
+
+            $integerAmount = $this->convertMollieAmountToInteger($mollieAmountTransfer);
+            $integerMinimumAmount = $this->convertMollieAmountToInteger($mollieMinimumAmountTransfer);
+            $currencyCode = $this->getCurrencyCodeFromPaymentLinkAmounts($mollieAmountTransfer, $mollieMinimumAmountTransfer);
+            $paymentMethods = $this->encodeAllowedMethods($allowedMethods);
+
+            $this->mollieEntityManager->writePaymentLink(
+                $createdMolliePaymentLinkTransfer,
+                $integerAmount,
+                $integerMinimumAmount,
+                $currencyCode,
+                $paymentMethods,
+            );
         }
 
         return $molliePaymentLinkApiResponseTransfer;
-    }
-
-    /**
-     * @param \Generated\Shared\Transfer\MolliePaymentLinkTransfer $molliePaymentLinkTransfer
-     *
-     * @return \Generated\Shared\Transfer\MolliePaymentLinkTransfer
-     */
-    protected function addStorageValuesToMolliePaymentLink(MolliePaymentLinkTransfer $molliePaymentLinkTransfer): MolliePaymentLinkTransfer
-    {
-        $mollieAmountTransfer = $molliePaymentLinkTransfer->getAmount();
-        $mollieMinimumAmountTransfer = $molliePaymentLinkTransfer->getMinimumAmount();
-        $allowedMethods = $molliePaymentLinkTransfer->getAllowedMethods();
-
-        $amountInCents = $this->convertMollieAmountToCents($mollieAmountTransfer);
-        $minimumAmountInCents = $this->convertMollieAmountToCents($mollieMinimumAmountTransfer);
-        $currencyCode = $this->getCurrencyCodeFromPaymentLinkAmounts($mollieAmountTransfer, $mollieMinimumAmountTransfer);
-        $allowedMethodsJson = $this->encodeAllowedMethodsToJson($allowedMethods);
-
-        $molliePaymentLinkTransfer
-            ->setAmountInCents($amountInCents)
-            ->setMinimumAmountInCents($minimumAmountInCents)
-            ->setCurrencyCode($currencyCode)
-            ->setAllowedMethodsJson($allowedMethodsJson);
-
-        return $molliePaymentLinkTransfer;
     }
 
     /**
@@ -87,16 +77,16 @@ class MolliePaymentLinkHandler implements MolliePaymentLinkHandlerInterface
      *
      * @return int|null
      */
-    protected function convertMollieAmountToCents(?MollieAmountTransfer $mollieAmountTransfer): ?int
+    protected function convertMollieAmountToInteger(?MollieAmountTransfer $mollieAmountTransfer): ?int
     {
         if ($mollieAmountTransfer === null) {
             return null;
         }
 
         $decimalAmount = (float)$mollieAmountTransfer->getValue();
-        $amountInCents = $this->moneyFacade->convertDecimalToInteger($decimalAmount);
+        $integerAmount = $this->moneyFacade->convertDecimalToInteger($decimalAmount);
 
-        return $amountInCents;
+        return $integerAmount;
     }
 
     /**
@@ -125,15 +115,15 @@ class MolliePaymentLinkHandler implements MolliePaymentLinkHandlerInterface
      *
      * @return string|null
      */
-    protected function encodeAllowedMethodsToJson(array $allowedMethods): ?string
+    protected function encodeAllowedMethods(array $allowedMethods): ?string
     {
         if ($allowedMethods === []) {
             return null;
         }
 
-        $allowedMethodsJson = $this->utilEncodingService->encodeJson($allowedMethods);
+        $paymentMethods = $this->utilEncodingService->encodeJson($allowedMethods);
 
-        return $allowedMethodsJson;
+        return $paymentMethods;
     }
 
     /**

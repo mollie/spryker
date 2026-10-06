@@ -12,12 +12,20 @@ interface MolliePaymentLinkMapperInterface
     /**
      * @param \Generated\Shared\Transfer\MolliePaymentLinkTransfer $molliePaymentLinkTransfer
      * @param \Orm\Zed\Mollie\Persistence\SpyMolliePaymentLink $spyMolliePaymentLinkEntity
+     * @param int|null $amount
+     * @param int|null $minimumAmount
+     * @param string|null $currencyCode
+     * @param string|null $paymentMethods
      *
      * @return \Orm\Zed\Mollie\Persistence\SpyMolliePaymentLink
      */
     public function mapMolliePaymentLinkTransferToEntity(
         MolliePaymentLinkTransfer $molliePaymentLinkTransfer,
         SpyMolliePaymentLink $spyMolliePaymentLinkEntity,
+        ?int $amount,
+        ?int $minimumAmount,
+        ?string $currencyCode,
+        ?string $paymentMethods,
     ): SpyMolliePaymentLink;
 
     /**

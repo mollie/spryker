@@ -28,10 +28,9 @@ class MolliePaymentWriter implements MolliePaymentWriterInterface
      */
     public function addMolliePaymentData(int $idSalesOrder, MolliePaymentTransfer $molliePaymentTransfer): void
     {
-        $metadata = $molliePaymentTransfer->getMetadata();
-        $metadataJson = $this->utilEncodingService->encodeJson($metadata);
-        $molliePaymentTransfer->setMetadataJson($metadataJson);
+        $paymentMetadata = $molliePaymentTransfer->getMetadata();
+        $metadata = $this->utilEncodingService->encodeJson($paymentMetadata);
 
-        $this->entityManager->addMolliePaymentData($idSalesOrder, $molliePaymentTransfer);
+        $this->entityManager->addMolliePaymentData($idSalesOrder, $molliePaymentTransfer, $metadata);
     }
 }

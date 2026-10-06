@@ -65,11 +65,11 @@ class MolliePaymentMethodConfigReader implements MolliePaymentMethodConfigReader
         MolliePaymentMethodConfigTransfer $molliePaymentMethodConfigTransfer,
     ): MolliePaymentMethodConfigTransfer {
         $currencyCode = $molliePaymentMethodConfigTransfer->getCurrencyCode();
-        $minimumAmountInCents = $molliePaymentMethodConfigTransfer->getMinimumAmountInCents();
-        $maximumAmountInCents = $molliePaymentMethodConfigTransfer->getMaximumAmountInCents();
+        $integerMinimumAmount = $molliePaymentMethodConfigTransfer->getIntegerMinimumAmount();
+        $integerMaximumAmount = $molliePaymentMethodConfigTransfer->getIntegerMaximumAmount();
 
-        $minimumMollieAmountTransfer = $this->mollieService->convertIntegerToMollieAmount($minimumAmountInCents, $currencyCode);
-        $maximumMollieAmountTransfer = $this->mollieService->convertIntegerToMollieAmount($maximumAmountInCents, $currencyCode);
+        $minimumMollieAmountTransfer = $this->mollieService->convertIntegerToMollieAmount($integerMinimumAmount, $currencyCode);
+        $maximumMollieAmountTransfer = $this->mollieService->convertIntegerToMollieAmount($integerMaximumAmount, $currencyCode);
 
         $molliePaymentMethodConfigTransfer
             ->setMinimumAmount($minimumMollieAmountTransfer)

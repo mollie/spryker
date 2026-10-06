@@ -48,8 +48,8 @@ class MolliePaymentMethodConfigMapper implements MolliePaymentMethodConfigMapper
         $paymentMethodConfigTransfer->fromArray($spyMolliePaymentMethodConfig->toArray(), true)
             ->setMaximumAmount(null)
             ->setMinimumAmount(null)
-            ->setMaximumAmountInCents($spyMolliePaymentMethodConfig->getMaximumAmount())
-            ->setMinimumAmountInCents($spyMolliePaymentMethodConfig->getMinimumAmount())
+            ->setIntegerMaximumAmount($spyMolliePaymentMethodConfig->getMaximumAmount())
+            ->setIntegerMinimumAmount($spyMolliePaymentMethodConfig->getMinimumAmount())
             ->setStatus($this->mapIsActiveToStatus($spyMolliePaymentMethodConfig->getIsActive()));
 
         return $paymentMethodConfigTransfer;
@@ -66,8 +66,8 @@ class MolliePaymentMethodConfigMapper implements MolliePaymentMethodConfigMapper
         SpyMolliePaymentMethodConfig $entity,
     ): SpyMolliePaymentMethodConfig {
         return $entity->fromArray($configTransfer->toArray())
-            ->setMaximumAmount($configTransfer->getMaximumAmountInCents())
-            ->setMinimumAmount($configTransfer->getMinimumAmountInCents());
+            ->setMaximumAmount($configTransfer->getIntegerMaximumAmount())
+            ->setMinimumAmount($configTransfer->getIntegerMinimumAmount());
     }
 
     /**

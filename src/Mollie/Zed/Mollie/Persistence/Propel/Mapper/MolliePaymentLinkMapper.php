@@ -12,12 +12,20 @@ class MolliePaymentLinkMapper implements MolliePaymentLinkMapperInterface
     /**
      * @param \Generated\Shared\Transfer\MolliePaymentLinkTransfer $molliePaymentLinkTransfer
      * @param \Orm\Zed\Mollie\Persistence\SpyMolliePaymentLink $spyMolliePaymentLinkEntity
+     * @param int|null $amount
+     * @param int|null $minimumAmount
+     * @param string|null $currencyCode
+     * @param string|null $paymentMethods
      *
      * @return \Orm\Zed\Mollie\Persistence\SpyMolliePaymentLink
      */
     public function mapMolliePaymentLinkTransferToEntity(
         MolliePaymentLinkTransfer $molliePaymentLinkTransfer,
         SpyMolliePaymentLink $spyMolliePaymentLinkEntity,
+        ?int $amount,
+        ?int $minimumAmount,
+        ?string $currencyCode,
+        ?string $paymentMethods,
     ): SpyMolliePaymentLink {
         $spyMolliePaymentLinkEntity
             ->setId($molliePaymentLinkTransfer->getId())
@@ -25,16 +33,16 @@ class MolliePaymentLinkMapper implements MolliePaymentLinkMapperInterface
             ->setDescription($molliePaymentLinkTransfer->getDescription())
             ->setType($molliePaymentLinkTransfer->getType())
             ->setSequenceType($molliePaymentLinkTransfer->getSequenceType())
-            ->setCurrency($molliePaymentLinkTransfer->getCurrencyCode())
-            ->setAmount($molliePaymentLinkTransfer->getAmountInCents())
-            ->setMinimumAmount($molliePaymentLinkTransfer->getMinimumAmountInCents())
+            ->setCurrency($currencyCode)
+            ->setAmount($amount)
+            ->setMinimumAmount($minimumAmount)
             ->setStatus($molliePaymentLinkTransfer->getStatus())
             ->setExpiryDate($molliePaymentLinkTransfer->getExpiresAt())
             ->setRedirectUrl($molliePaymentLinkTransfer->getRedirectUrl())
             ->setIsReusable($molliePaymentLinkTransfer->getReusable())
             ->setMode($molliePaymentLinkTransfer->getMode())
             ->setProfileid($molliePaymentLinkTransfer->getProfileId())
-            ->setPaymentMethods($molliePaymentLinkTransfer->getAllowedMethodsJson());
+            ->setPaymentMethods($paymentMethods);
 
         if ($molliePaymentLinkTransfer->getLinks()?->getPaymentLink()?->getHref()) {
             $spyMolliePaymentLinkEntity->setPaymentLinkUrl($molliePaymentLinkTransfer->getLinks()->getPaymentLink()->getHref());

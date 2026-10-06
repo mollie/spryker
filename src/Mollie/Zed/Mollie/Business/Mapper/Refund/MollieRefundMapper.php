@@ -36,15 +36,15 @@ class MollieRefundMapper implements MollieRefundMapperInterface
         MolliePaymentTransfer $molliePaymentTransfer,
         MollieRefundTransfer $mollieRefundTransfer,
     ): MollieRefundSaveTransfer {
-        $metadata = $mollieRefundTransfer->getMetadata();
-        $encodedMetadata = $this->utilEncodingService->encodeJson($metadata);
+        $refundMetadata = $mollieRefundTransfer->getMetadata();
+        $metadata = $this->utilEncodingService->encodeJson($refundMetadata);
 
         return (new MollieRefundSaveTransfer())
             ->setDescription($mollieRefundTransfer->getDescription())
             ->setCurrency($mollieRefundTransfer->getAmount()->getCurrency())
             ->setValue($mollieRefundTransfer->getAmount()->getValue())
             ->setStatus($mollieRefundTransfer->getStatus())
-            ->setMetadata($encodedMetadata)
+            ->setMetadata($metadata)
             ->setTransactionId($molliePaymentTransfer->getId())
             ->setRefundId($mollieRefundTransfer->getId())
             ->setCreatedAt($mollieRefundTransfer->getCreatedAt());

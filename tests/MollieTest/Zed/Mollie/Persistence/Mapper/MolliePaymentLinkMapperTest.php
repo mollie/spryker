@@ -20,13 +20,16 @@ class MolliePaymentLinkMapperTest extends Unit
     /**
      * @return void
      */
-    public function testMapMolliePaymentLinkTransferToEntityCopiesAmountInCentsAndCurrency(): void
+    public function testMapMolliePaymentLinkTransferToEntityStoresAmountAndCurrency(): void
     {
-        $molliePaymentLinkTransfer = $this->createMolliePaymentLinkTransfer()
-            ->setAmountInCents(2550);
-
-        $spyMolliePaymentLinkEntity = $this->createMolliePaymentLinkMapper()
-            ->mapMolliePaymentLinkTransferToEntity($molliePaymentLinkTransfer, new SpyMolliePaymentLink());
+        $spyMolliePaymentLinkEntity = $this->createMolliePaymentLinkMapper()->mapMolliePaymentLinkTransferToEntity(
+            $this->createMolliePaymentLinkTransfer(),
+            new SpyMolliePaymentLink(),
+            2550,
+            null,
+            static::CURRENCY_CODE,
+            null,
+        );
 
         $this->assertSame(2550, $spyMolliePaymentLinkEntity->getAmount());
         $this->assertNull($spyMolliePaymentLinkEntity->getMinimumAmount());
@@ -36,13 +39,16 @@ class MolliePaymentLinkMapperTest extends Unit
     /**
      * @return void
      */
-    public function testMapMolliePaymentLinkTransferToEntityCopiesMinimumAmountInCents(): void
+    public function testMapMolliePaymentLinkTransferToEntityStoresMinimumAmount(): void
     {
-        $molliePaymentLinkTransfer = $this->createMolliePaymentLinkTransfer()
-            ->setMinimumAmountInCents(1000);
-
-        $spyMolliePaymentLinkEntity = $this->createMolliePaymentLinkMapper()
-            ->mapMolliePaymentLinkTransferToEntity($molliePaymentLinkTransfer, new SpyMolliePaymentLink());
+        $spyMolliePaymentLinkEntity = $this->createMolliePaymentLinkMapper()->mapMolliePaymentLinkTransferToEntity(
+            $this->createMolliePaymentLinkTransfer(),
+            new SpyMolliePaymentLink(),
+            null,
+            1000,
+            static::CURRENCY_CODE,
+            null,
+        );
 
         $this->assertNull($spyMolliePaymentLinkEntity->getAmount());
         $this->assertSame(1000, $spyMolliePaymentLinkEntity->getMinimumAmount());
@@ -52,14 +58,16 @@ class MolliePaymentLinkMapperTest extends Unit
     /**
      * @return void
      */
-    public function testMapMolliePaymentLinkTransferToEntityCopiesAllowedMethodsJson(): void
+    public function testMapMolliePaymentLinkTransferToEntityStoresPaymentMethods(): void
     {
-        $molliePaymentLinkTransfer = $this->createMolliePaymentLinkTransfer()
-            ->setAmountInCents(2550)
-            ->setAllowedMethodsJson('["ideal","creditcard"]');
-
-        $spyMolliePaymentLinkEntity = $this->createMolliePaymentLinkMapper()
-            ->mapMolliePaymentLinkTransferToEntity($molliePaymentLinkTransfer, new SpyMolliePaymentLink());
+        $spyMolliePaymentLinkEntity = $this->createMolliePaymentLinkMapper()->mapMolliePaymentLinkTransferToEntity(
+            $this->createMolliePaymentLinkTransfer(),
+            new SpyMolliePaymentLink(),
+            2550,
+            null,
+            static::CURRENCY_CODE,
+            '["ideal","creditcard"]',
+        );
 
         $this->assertSame('["ideal","creditcard"]', $spyMolliePaymentLinkEntity->getPaymentMethods());
     }
@@ -74,8 +82,7 @@ class MolliePaymentLinkMapperTest extends Unit
             ->setId('pl_4Y0eZitmBnQ6IDoMqZQKh')
             ->setDescription('Deposit')
             ->setStatus('open')
-            ->setExpiresAt('2026-12-31 00:00:00')
-            ->setCurrencyCode(static::CURRENCY_CODE);
+            ->setExpiresAt('2026-12-31 00:00:00');
 
         return $molliePaymentLinkTransfer;
     }

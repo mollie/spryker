@@ -31,12 +31,12 @@ class MolliePaymentMethodConfigWriter implements MolliePaymentMethodConfigWriter
         $minimumMollieAmountTransfer = $molliePaymentMethodConfigTransfer->getMinimumAmount();
         $maximumMollieAmountTransfer = $molliePaymentMethodConfigTransfer->getMaximumAmount();
 
-        $minimumAmountInCents = $this->convertMollieAmountToCents($minimumMollieAmountTransfer);
-        $maximumAmountInCents = $this->convertMollieAmountToCents($maximumMollieAmountTransfer);
+        $integerMinimumAmount = $this->convertMollieAmountToInteger($minimumMollieAmountTransfer);
+        $integerMaximumAmount = $this->convertMollieAmountToInteger($maximumMollieAmountTransfer);
 
         $molliePaymentMethodConfigTransfer
-            ->setMinimumAmountInCents($minimumAmountInCents)
-            ->setMaximumAmountInCents($maximumAmountInCents);
+            ->setIntegerMinimumAmount($integerMinimumAmount)
+            ->setIntegerMaximumAmount($integerMaximumAmount);
 
         $savedMolliePaymentMethodConfigTransfer = $this->mollieEntityManager->writeMolliePaymentMethodConfig($molliePaymentMethodConfigTransfer);
 
@@ -48,11 +48,11 @@ class MolliePaymentMethodConfigWriter implements MolliePaymentMethodConfigWriter
      *
      * @return int
      */
-    protected function convertMollieAmountToCents(MollieAmountTransfer $mollieAmountTransfer): int
+    protected function convertMollieAmountToInteger(MollieAmountTransfer $mollieAmountTransfer): int
     {
         $decimalAmount = (float)$mollieAmountTransfer->getValue();
-        $amountInCents = $this->moneyFacade->convertDecimalToInteger($decimalAmount);
+        $integerAmount = $this->moneyFacade->convertDecimalToInteger($decimalAmount);
 
-        return $amountInCents;
+        return $integerAmount;
     }
 }
