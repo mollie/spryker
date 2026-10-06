@@ -24,6 +24,11 @@ class MolliePaymentLinkMapper implements MolliePaymentLinkMapperInterface
     /**
      * @var string
      */
+    protected const PAYMENT_LINK_FORM_MINIMUM_AMOUNT = 'minimumAmount';
+
+    /**
+     * @var string
+     */
     protected const PAYMENT_LINK_FORM_PAYMENT_METHODS = 'paymentMethods';
 
     /**
@@ -51,11 +56,9 @@ class MolliePaymentLinkMapper implements MolliePaymentLinkMapperInterface
         $paymentLinkTransfer = new MolliePaymentLinkTransfer();
         $paymentLinkTransfer->fromArray($formData, true);
 
-        $value = number_format($formData[static::PAYMENT_LINK_FORM_AMOUNT], 2);
-        $mollieAmount = new MollieAmountTransfer();
-        $mollieAmount
-            ->setValue($value)
-            ->setCurrency($formData[static::PAYMENT_LINK_FORM_CURRENCY]);
+        $currency = $formData[static::PAYMENT_LINK_FORM_CURRENCY];
+        $mollieAmount = $this->createMollieAmountTransfer($formData[static::PAYMENT_LINK_FORM_AMOUNT] ?? null, $currency);
+        $mollieMinimumAmount = $this->createMollieAmountTransfer($formData[static::PAYMENT_LINK_FORM_MINIMUM_AMOUNT] ?? null, $currency);
 
         $expiryDate = $formData[static::PAYMENT_LINK_FORM_EXPIRY_DATE];
         $expiryDateTime = $expiryDate
@@ -65,8 +68,30 @@ class MolliePaymentLinkMapper implements MolliePaymentLinkMapperInterface
         $paymentLinkTransfer
             ->setExpiresAt($expiryDateTime)
             ->setAmount($mollieAmount)
+            ->setMinimumAmount($mollieMinimumAmount)
             ->setAllowedMethods($formData[static::PAYMENT_LINK_FORM_PAYMENT_METHODS] ?? []);
 
         return $paymentLinkTransfer;
+    }
+
+    /**
+     * @param float|null $amount
+     * @param string $currency
+     *
+     * @return \Generated\Shared\Transfer\MollieAmountTransfer|null
+     */
+    protected function createMollieAmountTransfer(?float $amount, string $currency): ?MollieAmountTransfer
+    {
+        if ($amount === null) {
+            return null;
+        }
+
+        $value = number_format($amount, 2, '.', '');
+        $mollieAmountTransfer = new MollieAmountTransfer();
+        $mollieAmountTransfer
+            ->setValue($value)
+            ->setCurrency($currency);
+
+        return $mollieAmountTransfer;
     }
 }

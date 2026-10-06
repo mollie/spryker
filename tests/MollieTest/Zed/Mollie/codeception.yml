@@ -41,3 +41,15 @@ suites:
         - \SprykerTest\Shared\Testify\Helper\LocatorHelper:
             projectNamespaces: ['Mollie']
         - \SprykerTest\Shared\Testify\Helper\DependencyHelper
+  Persistence:
+    path: Persistence
+    actor: MollieZedTester
+    modules:
+      enabled:
+        - Asserts
+        - \SprykerTest\Shared\Testify\Helper\Environment
+        - \SprykerTest\Shared\Testify\Helper\ConfigHelper
+        - \SprykerTest\Shared\Config\Helper\ConfigInit
+        - \SprykerTest\Shared\Testify\Helper\LocatorHelper:
+            projectNamespaces: ['Mollie']
+        - \SprykerTest\Shared\Testify\Helper\DependencyHelper

@@ -360,6 +360,23 @@
         <property name="status" type="string"/>
         <property name="updatedAt" type="string"/>
         <property name="fkSalesOrder" type="int"/>
+        <property name="lines" type="MollieLines[]" singular="line"/>
+        <property name="billingAddress" type="MollieAddress"/>
+        <property name="minimumAmount" type="MollieAmount"/>
+    </transfer>
+
+    <transfer name="MollieAddress">
+        <property name="title" type="string"/>
+        <property name="givenName" type="string"/>
+        <property name="familyName" type="string"/>
+        <property name="organizationName" type="string"/>
+        <property name="streetAndNumber" type="string"/>
+        <property name="streetAdditional" type="string"/>
+        <property name="postalCode" type="string"/>
+        <property name="email" type="string"/>
+        <property name="phone" type="string"/>
+        <property name="city" type="string"/>
+        <property name="country" type="string"/>
     </transfer>
 
     <transfer name="MolliePaymentLinkApiResponse">

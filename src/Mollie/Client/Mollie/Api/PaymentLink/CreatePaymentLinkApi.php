@@ -4,12 +4,16 @@ declare(strict_types=1);
 
 namespace Mollie\Client\Mollie\Api\PaymentLink;
 
+use ArrayObject;
+use Generated\Shared\Transfer\MollieAddressTransfer;
 use Generated\Shared\Transfer\MollieAmountTransfer;
 use Generated\Shared\Transfer\MollieApiRequestTransfer;
 use Generated\Shared\Transfer\MollieApiResponseTransfer;
 use Generated\Shared\Transfer\MollieLinksTransfer;
 use Generated\Shared\Transfer\MolliePaymentLinkApiResponseTransfer;
 use Generated\Shared\Transfer\MolliePaymentLinkTransfer;
+use Mollie\Api\Http\Data\Address;
+use Mollie\Api\Http\Data\DataCollection;
 use Mollie\Api\Http\Data\Money;
 use Mollie\Api\Http\Request;
 use Mollie\Api\Http\Requests\CreatePaymentLinkRequest;
@@ -52,20 +56,75 @@ class CreatePaymentLinkApi extends AbstractApiCall
         $description = $paymentLinkTransfer->getDescription();
         $redirectUrl = $paymentLinkTransfer->getRedirectUrl();
         $amount = $this->convertMollieAmountTransferToMoney($paymentLinkTransfer->getAmount());
+        $minimumAmount = $this->convertMollieAmountTransferToMoney($paymentLinkTransfer->getMinimumAmount());
         $reusable = $paymentLinkTransfer->getReusable();
         $allowedMethods = $paymentLinkTransfer->getAllowedMethods();
         $expiresAt = $paymentLinkTransfer->getExpiresAt();
+        $lines = $this->convertMollieLinesTransfersToDataCollection($paymentLinkTransfer->getLines());
+        $billingAddress = $this->convertMollieAddressTransferToAddress($paymentLinkTransfer->getBillingAddress());
 
         $this->request = new CreatePaymentLinkRequest(
             description: $description,
             amount: $amount,
+            minimumAmount: $minimumAmount,
             redirectUrl: $redirectUrl,
             reusable: $reusable,
             expiresAt: $expiresAt,
             allowedMethods: $allowedMethods,
+            lines: $lines,
+            billingAddress: $billingAddress,
         );
 
         return $this->request;
+    }
+
+    /**
+     * @param \ArrayObject<int, \Generated\Shared\Transfer\MollieLinesTransfer> $mollieLinesTransfers
+     *
+     * @return \Mollie\Api\Http\Data\DataCollection<array<mixed>>|null
+     */
+    protected function convertMollieLinesTransfersToDataCollection(ArrayObject $mollieLinesTransfers): ?DataCollection
+    {
+        if ($mollieLinesTransfers->count() === 0) {
+            return null;
+        }
+
+        $lines = [];
+        foreach ($mollieLinesTransfers as $mollieLinesTransfer) {
+            $lines[] = $mollieLinesTransfer->toArray(true, true);
+        }
+
+        $linesCollection = new DataCollection($lines);
+
+        return $linesCollection;
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MollieAddressTransfer|null $mollieAddressTransfer
+     *
+     * @return \Mollie\Api\Http\Data\Address|null
+     */
+    protected function convertMollieAddressTransferToAddress(?MollieAddressTransfer $mollieAddressTransfer): ?Address
+    {
+        if ($mollieAddressTransfer === null) {
+            return null;
+        }
+
+        $address = new Address(
+            title: $mollieAddressTransfer->getTitle(),
+            givenName: $mollieAddressTransfer->getGivenName(),
+            familyName: $mollieAddressTransfer->getFamilyName(),
+            organizationName: $mollieAddressTransfer->getOrganizationName(),
+            streetAndNumber: $mollieAddressTransfer->getStreetAndNumber(),
+            streetAdditional: $mollieAddressTransfer->getStreetAdditional(),
+            postalCode: $mollieAddressTransfer->getPostalCode(),
+            email: $mollieAddressTransfer->getEmail(),
+            phone: $mollieAddressTransfer->getPhone(),
+            city: $mollieAddressTransfer->getCity(),
+            country: $mollieAddressTransfer->getCountry(),
+        );
+
+        return $address;
     }
 
     /**
@@ -102,12 +161,16 @@ class CreatePaymentLinkApi extends AbstractApiCall
     }
 
     /**
-     * @param \Generated\Shared\Transfer\MollieAmountTransfer $mollieAmountTransfer
+     * @param \Generated\Shared\Transfer\MollieAmountTransfer|null $mollieAmountTransfer
      *
-     * @return \Mollie\Api\Http\Data\Money
+     * @return \Mollie\Api\Http\Data\Money|null
      */
-    protected function convertMollieAmountTransferToMoney(MollieAmountTransfer $mollieAmountTransfer): Money
+    protected function convertMollieAmountTransferToMoney(?MollieAmountTransfer $mollieAmountTransfer): ?Money
     {
+        if ($mollieAmountTransfer === null) {
+            return null;
+        }
+
         $money = new Money($mollieAmountTransfer->getCurrency(), $mollieAmountTransfer->getValue());
 
         return $money;

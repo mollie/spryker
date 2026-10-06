@@ -87,6 +87,14 @@ class MollieConfig extends AbstractBundleConfig
     }
 
     /**
+     * @return array<int, string>
+     */
+    public function getBNPLPaymentMethods(): array
+    {
+        return $this->get(MollieConstants::MOLLIE)[MollieConstants::MOLLIE_BNPL_PAYMENT_METHODS] ?? [];
+    }
+
+    /**
      * @param string $paymentMethodKey
      *
      * @return string|null

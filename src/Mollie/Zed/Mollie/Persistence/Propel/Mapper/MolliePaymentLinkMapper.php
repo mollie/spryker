@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace Mollie\Zed\Mollie\Persistence\Propel\Mapper;
 
+use Generated\Shared\Transfer\MollieAmountTransfer;
 use Generated\Shared\Transfer\MolliePaymentLinkTransfer;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToMoneyFacadeInterface;
 use Mollie\Zed\Mollie\Dependency\Service\MollieToUtilEncodingServiceInterface;
@@ -31,8 +32,11 @@ class MolliePaymentLinkMapper implements MolliePaymentLinkMapperInterface
         MolliePaymentLinkTransfer $molliePaymentLinkTransfer,
         SpyMolliePaymentLink $spyMolliePaymentLinkEntity,
     ): SpyMolliePaymentLink {
-        $value = (float)$molliePaymentLinkTransfer->getAmount()->getValue();
-        $amount = $this->moneyFacade->convertDecimalToInteger($value);
+        $mollieAmountTransfer = $molliePaymentLinkTransfer->getAmount();
+        $mollieMinimumAmountTransfer = $molliePaymentLinkTransfer->getMinimumAmount();
+        $amount = $this->convertMollieAmountTransferToInteger($mollieAmountTransfer);
+        $minimumAmount = $this->convertMollieAmountTransferToInteger($mollieMinimumAmountTransfer);
+        $currency = $mollieAmountTransfer ? $mollieAmountTransfer->getCurrency() : $mollieMinimumAmountTransfer->getCurrency();
 
         $spyMolliePaymentLinkEntity
             ->setId($molliePaymentLinkTransfer->getId())
@@ -40,8 +44,9 @@ class MolliePaymentLinkMapper implements MolliePaymentLinkMapperInterface
             ->setDescription($molliePaymentLinkTransfer->getDescription())
             ->setType($molliePaymentLinkTransfer->getType())
             ->setSequenceType($molliePaymentLinkTransfer->getSequenceType())
-            ->setCurrency($molliePaymentLinkTransfer->getAmount()->getCurrency())
+            ->setCurrency($currency)
             ->setAmount($amount)
+            ->setMinimumAmount($minimumAmount)
             ->setStatus($molliePaymentLinkTransfer->getStatus())
             ->setExpiryDate($molliePaymentLinkTransfer->getExpiresAt())
             ->setRedirectUrl($molliePaymentLinkTransfer->getRedirectUrl())
@@ -59,6 +64,23 @@ class MolliePaymentLinkMapper implements MolliePaymentLinkMapperInterface
         }
 
         return $spyMolliePaymentLinkEntity;
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MollieAmountTransfer|null $mollieAmountTransfer
+     *
+     * @return int|null
+     */
+    protected function convertMollieAmountTransferToInteger(?MollieAmountTransfer $mollieAmountTransfer): ?int
+    {
+        if ($mollieAmountTransfer === null) {
+            return null;
+        }
+
+        $value = (float)$mollieAmountTransfer->getValue();
+        $amount = $this->moneyFacade->convertDecimalToInteger($value);
+
+        return $amount;
     }
 
     /**
