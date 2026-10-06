@@ -182,7 +182,7 @@
         <property name="currency" type="string"/>
         <property name="value" type="string"/>
         <property name="status" type="string"/>
-        <property name="metadata" type="string"/>
+        <property name="metadata" type="array" singular="metadata"/>
         <property name="transactionId" type="string"/>
         <property name="refundId" type="string"/>
         <property name="createdAt" type="string"/>
@@ -403,8 +403,6 @@
         <property name="image" type="string" />
         <property name="isLogoVisible" type="bool" />
         <property name="status" type="string" />
-        <property name="integerMinimumAmount" type="int" />
-        <property name="integerMaximumAmount" type="int" />
     </transfer>
 
     <transfer name="MolliePaymentMethodConfigCriteria">

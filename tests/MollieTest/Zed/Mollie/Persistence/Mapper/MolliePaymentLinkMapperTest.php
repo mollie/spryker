@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace MollieTest\Zed\Mollie\Persistence\Mapper;
 
 use Codeception\Test\Unit;
+use Generated\Shared\Transfer\MollieAmountTransfer;
 use Generated\Shared\Transfer\MolliePaymentLinkTransfer;
 use Mollie\Zed\Mollie\Persistence\MolliePersistenceFactory;
 use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MolliePaymentLinkMapperInterface;
@@ -22,14 +23,11 @@ class MolliePaymentLinkMapperTest extends Unit
      */
     public function testMapMolliePaymentLinkTransferToEntityStoresAmountAndCurrency(): void
     {
-        $spyMolliePaymentLinkEntity = $this->createMolliePaymentLinkMapper()->mapMolliePaymentLinkTransferToEntity(
-            $this->createMolliePaymentLinkTransfer(),
-            new SpyMolliePaymentLink(),
-            2550,
-            null,
-            static::CURRENCY_CODE,
-            null,
-        );
+        $molliePaymentLinkTransfer = $this->createMolliePaymentLinkTransfer()
+            ->setAmount($this->createMollieAmountTransfer('25.50'));
+
+        $spyMolliePaymentLinkEntity = $this->createMolliePaymentLinkMapper()
+            ->mapMolliePaymentLinkTransferToEntity($molliePaymentLinkTransfer, new SpyMolliePaymentLink());
 
         $this->assertSame(2550, $spyMolliePaymentLinkEntity->getAmount());
         $this->assertNull($spyMolliePaymentLinkEntity->getMinimumAmount());
@@ -39,16 +37,13 @@ class MolliePaymentLinkMapperTest extends Unit
     /**
      * @return void
      */
-    public function testMapMolliePaymentLinkTransferToEntityStoresMinimumAmount(): void
+    public function testMapMolliePaymentLinkTransferToEntityStoresMinimumAmountAndTakesItsCurrency(): void
     {
-        $spyMolliePaymentLinkEntity = $this->createMolliePaymentLinkMapper()->mapMolliePaymentLinkTransferToEntity(
-            $this->createMolliePaymentLinkTransfer(),
-            new SpyMolliePaymentLink(),
-            null,
-            1000,
-            static::CURRENCY_CODE,
-            null,
-        );
+        $molliePaymentLinkTransfer = $this->createMolliePaymentLinkTransfer()
+            ->setMinimumAmount($this->createMollieAmountTransfer('10.00'));
+
+        $spyMolliePaymentLinkEntity = $this->createMolliePaymentLinkMapper()
+            ->mapMolliePaymentLinkTransferToEntity($molliePaymentLinkTransfer, new SpyMolliePaymentLink());
 
         $this->assertNull($spyMolliePaymentLinkEntity->getAmount());
         $this->assertSame(1000, $spyMolliePaymentLinkEntity->getMinimumAmount());
@@ -56,35 +51,31 @@ class MolliePaymentLinkMapperTest extends Unit
     }
 
     /**
-     * @return void
-     */
-    public function testMapMolliePaymentLinkTransferToEntityStoresPaymentMethods(): void
-    {
-        $spyMolliePaymentLinkEntity = $this->createMolliePaymentLinkMapper()->mapMolliePaymentLinkTransferToEntity(
-            $this->createMolliePaymentLinkTransfer(),
-            new SpyMolliePaymentLink(),
-            2550,
-            null,
-            static::CURRENCY_CODE,
-            '["ideal","creditcard"]',
-        );
-
-        $this->assertSame('["ideal","creditcard"]', $spyMolliePaymentLinkEntity->getPaymentMethods());
-    }
-
-    /**
      * @return \Generated\Shared\Transfer\MolliePaymentLinkTransfer
      */
     protected function createMolliePaymentLinkTransfer(): MolliePaymentLinkTransfer
     {
-        $molliePaymentLinkTransfer = new MolliePaymentLinkTransfer();
-        $molliePaymentLinkTransfer
+        $molliePaymentLinkTransfer = (new MolliePaymentLinkTransfer())
             ->setId('pl_4Y0eZitmBnQ6IDoMqZQKh')
             ->setDescription('Deposit')
             ->setStatus('open')
             ->setExpiresAt('2026-12-31 00:00:00');
 
         return $molliePaymentLinkTransfer;
+    }
+
+    /**
+     * @param string $value
+     *
+     * @return \Generated\Shared\Transfer\MollieAmountTransfer
+     */
+    protected function createMollieAmountTransfer(string $value): MollieAmountTransfer
+    {
+        $mollieAmountTransfer = (new MollieAmountTransfer())
+            ->setCurrency(static::CURRENCY_CODE)
+            ->setValue($value);
+
+        return $mollieAmountTransfer;
     }
 
     /**

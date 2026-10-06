@@ -10,7 +10,6 @@ use Generated\Shared\Transfer\MollieRefundResponseTransfer;
 use Generated\Shared\Transfer\MollieRefundTransfer;
 use Generated\Shared\Transfer\OrderTransfer;
 use Mollie\Client\Mollie\MollieClientInterface;
-use Mollie\Service\Mollie\MollieServiceInterface;
 use Mollie\Zed\Mollie\Business\Calculator\OrderItem\OrderItemGrossAmountCalculatorInterface;
 use Mollie\Zed\Mollie\Business\Mapper\Refund\MollieRefundMapperInterface;
 use Mollie\Zed\Mollie\Persistence\MollieEntityManagerInterface;
@@ -29,7 +28,6 @@ class RefundProcessor implements RefundProcessorInterface
      * @param \Mollie\Client\Mollie\MollieClientInterface $mollieClient
      * @param \Mollie\Zed\Mollie\Persistence\MollieEntityManagerInterface $entityManager
      * @param \Mollie\Zed\Mollie\Business\Mapper\Refund\MollieRefundMapperInterface $refundMapper
-     * @param \Mollie\Service\Mollie\MollieServiceInterface $mollieService
      */
     public function __construct(
         protected OrderItemGrossAmountCalculatorInterface $grossAmountCalculator,
@@ -37,7 +35,6 @@ class RefundProcessor implements RefundProcessorInterface
         protected MollieClientInterface $mollieClient,
         protected MollieEntityManagerInterface $entityManager,
         protected MollieRefundMapperInterface $refundMapper,
-        protected MollieServiceInterface $mollieService,
     ) {
     }
 
@@ -77,12 +74,7 @@ class RefundProcessor implements RefundProcessorInterface
 
         $this->getTransactionHandler()->handleTransaction(function () use ($mollieRefundSaveTransfer, $orderTransfer): void {
             foreach ($orderTransfer->getItems() as $itemTransfer) {
-                $refundableAmount = $itemTransfer->getRefundableAmount();
-                $refundableAmountValue = $this->convertRefundableAmountToMollieValue($refundableAmount);
-
-                $mollieRefundSaveTransfer
-                    ->setItem($itemTransfer)
-                    ->setValue($refundableAmountValue);
+                $mollieRefundSaveTransfer->setItem($itemTransfer);
 
                 $this->entityManager->createRefund($mollieRefundSaveTransfer);
             }
@@ -106,18 +98,5 @@ class RefundProcessor implements RefundProcessorInterface
         $mollieRefundResponseTransfer->setIsSuccess(true);
 
         return $mollieRefundResponseTransfer;
-    }
-
-    /**
-     * @param int $refundableAmount
-     *
-     * @return string
-     */
-    protected function convertRefundableAmountToMollieValue(int $refundableAmount): string
-    {
-        $mollieAmountTransfer = $this->mollieService->convertIntegerToMollieAmount($refundableAmount);
-        $refundableAmountValue = $mollieAmountTransfer->getValue();
-
-        return $refundableAmountValue;
     }
 }

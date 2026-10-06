@@ -4,6 +4,9 @@ declare(strict_types = 1);
 
 namespace Mollie\Zed\Mollie\Persistence;
 
+use Mollie\Service\Mollie\MollieServiceInterface;
+use Mollie\Zed\Mollie\Dependency\Service\MollieToUtilEncodingServiceInterface;
+use Mollie\Zed\Mollie\MollieDependencyProvider;
 use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MollieExpressCheckoutConfigMapper;
 use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MollieExpressCheckoutConfigMapperInterface;
 use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MollieOrderMapper;
@@ -50,7 +53,10 @@ class MolliePersistenceFactory extends AbstractPersistenceFactory
      */
     public function createMolliePaymentLinkMapper(): MolliePaymentLinkMapperInterface
     {
-        return new MolliePaymentLinkMapper();
+        return new MolliePaymentLinkMapper(
+            $this->getMollieService(),
+            $this->getUtilEncodingService(),
+        );
     }
 
     /**
@@ -58,7 +64,10 @@ class MolliePersistenceFactory extends AbstractPersistenceFactory
      */
     public function createMollieRefundMapper(): MollieRefundMapperInterface
     {
-        return new MollieRefundMapper();
+        return new MollieRefundMapper(
+            $this->getUtilEncodingService(),
+            $this->getMollieService(),
+        );
     }
 
     /**
@@ -67,6 +76,7 @@ class MolliePersistenceFactory extends AbstractPersistenceFactory
     public function createMolliePaymentMethodConfigMapper(): MolliePaymentMethodConfigMapperInterface
     {
         return new MolliePaymentMethodConfigMapper(
+            $this->getMollieService(),
             $this->getConfig(),
         );
     }
@@ -125,5 +135,21 @@ class MolliePersistenceFactory extends AbstractPersistenceFactory
     public function createSpyMollieExpressCheckoutConfigQuery(): SpyMollieExpressCheckoutConfigQuery
     {
         return SpyMollieExpressCheckoutConfigQuery::create();
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Dependency\Service\MollieToUtilEncodingServiceInterface
+     */
+    public function getUtilEncodingService(): MollieToUtilEncodingServiceInterface
+    {
+        return $this->getProvidedDependency(MollieDependencyProvider::SERVICE_UTIL_ENCODING);
+    }
+
+    /**
+     * @return \Mollie\Service\Mollie\MollieServiceInterface
+     */
+    public function getMollieService(): MollieServiceInterface
+    {
+        return $this->getProvidedDependency(MollieDependencyProvider::SERVICE_MOLLIE);
     }
 }

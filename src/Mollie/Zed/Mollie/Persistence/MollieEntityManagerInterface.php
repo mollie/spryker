@@ -26,11 +26,10 @@ interface MollieEntityManagerInterface
     /**
      * @param int $idSalesOrder
      * @param \Generated\Shared\Transfer\MolliePaymentTransfer $molliePaymentTransfer
-     * @param string $metadata
      *
      * @return void
      */
-    public function addMolliePaymentData(int $idSalesOrder, MolliePaymentTransfer $molliePaymentTransfer, string $metadata): void;
+    public function addMolliePaymentData(int $idSalesOrder, MolliePaymentTransfer $molliePaymentTransfer): void;
 
     /**
      * @param int $idSalesOrder
@@ -86,20 +85,10 @@ interface MollieEntityManagerInterface
 
     /**
      * @param \Generated\Shared\Transfer\MolliePaymentLinkTransfer $molliePaymentLinkTransfer
-     * @param int|null $amount
-     * @param int|null $minimumAmount
-     * @param string|null $currencyCode
-     * @param string|null $paymentMethods
      *
      * @return void
      */
-    public function writePaymentLink(
-        MolliePaymentLinkTransfer $molliePaymentLinkTransfer,
-        ?int $amount,
-        ?int $minimumAmount,
-        ?string $currencyCode,
-        ?string $paymentMethods,
-    ): void;
+    public function writePaymentLink(MolliePaymentLinkTransfer $molliePaymentLinkTransfer): void;
 
     /**
      * @param \Generated\Shared\Transfer\MolliePaymentLinkTransfer $molliePaymentLinkTransfer

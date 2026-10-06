@@ -47,15 +47,10 @@ use Mollie\Zed\Mollie\Business\Processor\PaymentLink\PaymentLinkProcessor;
 use Mollie\Zed\Mollie\Business\Processor\PaymentLink\PaymentLinkProcessorInterface;
 use Mollie\Zed\Mollie\Business\Processor\Refund\RefundProcessor;
 use Mollie\Zed\Mollie\Business\Processor\Refund\RefundProcessorInterface;
-use Mollie\Zed\Mollie\Business\Reader\MolliePaymentMethodConfigReader;
-use Mollie\Zed\Mollie\Business\Reader\MolliePaymentMethodConfigReaderInterface;
-use Mollie\Zed\Mollie\Business\Writer\MolliePaymentMethodConfigWriter;
-use Mollie\Zed\Mollie\Business\Writer\MolliePaymentMethodConfigWriterInterface;
 use Mollie\Zed\Mollie\Business\Writer\MolliePaymentWriter;
 use Mollie\Zed\Mollie\Business\Writer\MolliePaymentWriterInterface;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToLocaleFacadeInterface;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToMailFacadeInterface;
-use Mollie\Zed\Mollie\Dependency\Facade\MollieToMoneyFacadeInterface;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToOmsInterface;
 use Mollie\Zed\Mollie\Dependency\MollieToStorageClientInterface;
 use Mollie\Zed\Mollie\Dependency\Service\MollieToUtilEncodingServiceInterface;
@@ -99,7 +94,6 @@ class MollieBusinessFactory extends AbstractBusinessFactory
             $this->getMollieClient(),
             $this->getEntityManager(),
             $this->createMollieRefundMapper(),
-            $this->getMollieService(),
         );
     }
 
@@ -130,7 +124,6 @@ class MollieBusinessFactory extends AbstractBusinessFactory
     {
         return new MollieRefundMapper(
             $this->createMollieRefundFilter(),
-            $this->getUtilEncodingService(),
         );
     }
 
@@ -243,36 +236,11 @@ class MollieBusinessFactory extends AbstractBusinessFactory
     }
 
     /**
-     * @return \Mollie\Zed\Mollie\Business\Reader\MolliePaymentMethodConfigReaderInterface
-     */
-    public function createMolliePaymentMethodConfigReader(): MolliePaymentMethodConfigReaderInterface
-    {
-        return new MolliePaymentMethodConfigReader(
-            $this->getRepository(),
-            $this->getMollieService(),
-        );
-    }
-
-    /**
-     * @return \Mollie\Zed\Mollie\Business\Writer\MolliePaymentMethodConfigWriterInterface
-     */
-    public function createMolliePaymentMethodConfigWriter(): MolliePaymentMethodConfigWriterInterface
-    {
-        return new MolliePaymentMethodConfigWriter(
-            $this->getEntityManager(),
-            $this->getMoneyFacade(),
-        );
-    }
-
-    /**
      * @return \Mollie\Zed\Mollie\Business\Writer\MolliePaymentWriterInterface
      */
     public function createMolliePaymentWriter(): MolliePaymentWriterInterface
     {
-        return new MolliePaymentWriter(
-            $this->getEntityManager(),
-            $this->getUtilEncodingService(),
-        );
+        return new MolliePaymentWriter($this->getEntityManager());
     }
 
     /**
@@ -284,7 +252,7 @@ class MollieBusinessFactory extends AbstractBusinessFactory
             $this->getMollieClient(),
             $this->getMollieService(),
             $this->getLocaleFacade(),
-            $this->createMolliePaymentMethodConfigReader(),
+            $this->getRepository(),
             $this->getConfig(),
         );
     }
@@ -336,14 +304,6 @@ class MollieBusinessFactory extends AbstractBusinessFactory
     }
 
     /**
-     * @return \Mollie\Zed\Mollie\Dependency\Facade\MollieToMoneyFacadeInterface
-     */
-    public function getMoneyFacade(): MollieToMoneyFacadeInterface
-    {
-        return $this->getProvidedDependency(MollieDependencyProvider::FACADE_MONEY);
-    }
-
-    /**
      * @return \Mollie\Zed\Mollie\Business\Handler\MolliePaymentLinkHandler
      */
     public function createMolliePaymentLinkHandler(): MolliePaymentLinkHandlerInterface
@@ -352,8 +312,6 @@ class MollieBusinessFactory extends AbstractBusinessFactory
             $this->getMollieClient(),
             $this->getEntityManager(),
             $this->getRepository(),
-            $this->getMoneyFacade(),
-            $this->getUtilEncodingService(),
         );
     }
 

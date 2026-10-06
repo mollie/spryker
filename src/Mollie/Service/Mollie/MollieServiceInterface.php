@@ -19,6 +19,17 @@ interface MollieServiceInterface
       */
     public function convertIntegerToDecimal(int $value): float;
 
+     /**
+      * Calls DecimalToIntegerConverter class from shared layer
+      *
+      * @api
+      *
+      * @param float $value
+      *
+      * @return int
+      */
+    public function convertDecimalToInteger(float $value): int;
+
     /**
      * Converts Spryker integer amount into Mollie amount format
      *

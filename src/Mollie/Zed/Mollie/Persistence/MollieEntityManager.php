@@ -120,13 +120,13 @@ class MollieEntityManager extends AbstractEntityManager implements MollieEntityM
     /**
      * @param int $idSalesOrder
      * @param \Generated\Shared\Transfer\MolliePaymentTransfer $molliePaymentTransfer
-     * @param string $metadata
      *
      * @return void
      */
-    public function addMolliePaymentData(int $idSalesOrder, MolliePaymentTransfer $molliePaymentTransfer, string $metadata): void
+    public function addMolliePaymentData(int $idSalesOrder, MolliePaymentTransfer $molliePaymentTransfer): void
     {
         $spyPaymentMollieEntity = new SpyPaymentMollie();
+        $metadata = $this->getFactory()->getUtilEncodingService()->encodeJson($molliePaymentTransfer->getMetadata());
         $spyPaymentMollieEntity
             ->setFkSalesOrder($idSalesOrder)
             ->setTransactionId($molliePaymentTransfer->getId())
@@ -214,32 +214,16 @@ class MollieEntityManager extends AbstractEntityManager implements MollieEntityM
 
     /**
      * @param \Generated\Shared\Transfer\MolliePaymentLinkTransfer $molliePaymentLinkTransfer
-     * @param int|null $amount
-     * @param int|null $minimumAmount
-     * @param string|null $currencyCode
-     * @param string|null $paymentMethods
      *
      * @return void
      */
-    public function writePaymentLink(
-        MolliePaymentLinkTransfer $molliePaymentLinkTransfer,
-        ?int $amount,
-        ?int $minimumAmount,
-        ?string $currencyCode,
-        ?string $paymentMethods,
-    ): void {
+    public function writePaymentLink(MolliePaymentLinkTransfer $molliePaymentLinkTransfer): void
+    {
         $spyMolliePaymentLink = new SpyMolliePaymentLink();
 
         $spyMolliePaymentLink = $this->getFactory()
             ->createMolliePaymentLinkMapper()
-            ->mapMolliePaymentLinkTransferToEntity(
-                $molliePaymentLinkTransfer,
-                $spyMolliePaymentLink,
-                $amount,
-                $minimumAmount,
-                $currencyCode,
-                $paymentMethods,
-            );
+            ->mapMolliePaymentLinkTransferToEntity($molliePaymentLinkTransfer, $spyMolliePaymentLink);
 
         $spyMolliePaymentLink->save();
     }

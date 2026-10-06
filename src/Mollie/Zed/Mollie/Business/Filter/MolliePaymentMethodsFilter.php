@@ -14,9 +14,9 @@ use Generated\Shared\Transfer\QuoteTransfer;
 use Mollie\Client\Mollie\MollieClientInterface;
 use Mollie\Service\Mollie\MollieServiceInterface;
 use Mollie\Shared\Mollie\MollieConstants;
-use Mollie\Zed\Mollie\Business\Reader\MolliePaymentMethodConfigReaderInterface;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToLocaleFacadeInterface;
 use Mollie\Zed\Mollie\MollieConfig;
+use Mollie\Zed\Mollie\Persistence\MollieRepositoryInterface;
 use Spryker\Shared\Log\LoggerTrait;
 
 class MolliePaymentMethodsFilter implements MolliePaymentMethodsFilterInterface
@@ -27,14 +27,14 @@ class MolliePaymentMethodsFilter implements MolliePaymentMethodsFilterInterface
      * @param \Mollie\Client\Mollie\MollieClientInterface $mollieClient
      * @param \Mollie\Service\Mollie\MollieServiceInterface $mollieService
      * @param \Mollie\Zed\Mollie\Dependency\Facade\MollieToLocaleFacadeInterface $localeFacade
-     * @param \Mollie\Zed\Mollie\Business\Reader\MolliePaymentMethodConfigReaderInterface $molliePaymentMethodConfigReader
+     * @param \Mollie\Zed\Mollie\Persistence\MollieRepositoryInterface $mollieRepository
      * @param \Mollie\Zed\Mollie\MollieConfig $mollieConfig
      */
     public function __construct(
         protected MollieClientInterface $mollieClient,
         protected MollieServiceInterface $mollieService,
         protected MollieToLocaleFacadeInterface $localeFacade,
-        protected MolliePaymentMethodConfigReaderInterface $molliePaymentMethodConfigReader,
+        protected MollieRepositoryInterface $mollieRepository,
         protected MollieConfig $mollieConfig,
     ) {
     }
@@ -180,7 +180,7 @@ class MolliePaymentMethodsFilter implements MolliePaymentMethodsFilterInterface
         $molliePaymentMethodConfigCriteriaTransfer = new MolliePaymentMethodConfigCriteriaTransfer();
         $molliePaymentMethodConfigCriteriaTransfer->setCurrencyCode($quoteTransfer->getCurrency()?->getCode());
 
-        $molliePaymentMethodConfigCollectionTransfer = $this->molliePaymentMethodConfigReader
+        $molliePaymentMethodConfigCollectionTransfer = $this->mollieRepository
             ->getPaymentMethodConfigCollection($molliePaymentMethodConfigCriteriaTransfer);
 
         $indexedPaymentConfigMethods = [];

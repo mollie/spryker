@@ -116,7 +116,6 @@ class MollieDependencyProvider extends AbstractBundleDependencyProvider
         $container = $this->addLocaleFacade($container);
         $container = $this->addMailFacade($container);
         $container = $this->addUtilEncodingService($container);
-        $container = $this->addMoneyFacade($container);
 
         return $container;
     }
@@ -150,6 +149,8 @@ class MollieDependencyProvider extends AbstractBundleDependencyProvider
     public function providePersistenceLayerDependencies(Container $container): Container
     {
         $container = parent::providePersistenceLayerDependencies($container);
+        $container = $this->addUtilEncodingService($container);
+        $container = $this->addMollieService($container);
 
         return $container;
     }
