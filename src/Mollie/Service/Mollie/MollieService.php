@@ -27,20 +27,6 @@ class MollieService extends AbstractService implements MollieServiceInterface
     }
 
     /**
-     * Calls DecimalToIntegerConverter class from shared layer
-     *
-     * @api
-     *
-     * @param float $value
-     *
-     * @return int
-     */
-    public function convertDecimalToInteger(float $value): int
-    {
-        return $this->getFactory()->createDecimalToIntegerConverter()->convert($value);
-    }
-
-    /**
      * Converts Spryker integer amount into Mollie amount format
      *
      * @api

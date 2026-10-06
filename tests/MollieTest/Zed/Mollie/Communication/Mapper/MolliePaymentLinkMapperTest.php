@@ -25,9 +25,9 @@ class MolliePaymentLinkMapperTest extends Unit
 
         $paymentLinkTransfer = $this->createMolliePaymentLinkMapper()->mapPaymentLinkFormDataToMolliePaymentLinkTransfer($formData);
 
-        $this->assertSame('25.50', $paymentLinkTransfer->getAmount()->getValue());
-        $this->assertSame(static::CURRENCY_CODE, $paymentLinkTransfer->getAmount()->getCurrency());
+        $this->assertSame(2550, $paymentLinkTransfer->getAmount());
         $this->assertNull($paymentLinkTransfer->getMinimumAmount());
+        $this->assertSame(static::CURRENCY_CODE, $paymentLinkTransfer->getCurrency());
     }
 
     /**
@@ -39,21 +39,21 @@ class MolliePaymentLinkMapperTest extends Unit
 
         $paymentLinkTransfer = $this->createMolliePaymentLinkMapper()->mapPaymentLinkFormDataToMolliePaymentLinkTransfer($formData);
 
-        $this->assertSame('10.00', $paymentLinkTransfer->getMinimumAmount()->getValue());
-        $this->assertSame(static::CURRENCY_CODE, $paymentLinkTransfer->getMinimumAmount()->getCurrency());
+        $this->assertSame(1000, $paymentLinkTransfer->getMinimumAmount());
         $this->assertNull($paymentLinkTransfer->getAmount());
+        $this->assertSame(static::CURRENCY_CODE, $paymentLinkTransfer->getCurrency());
     }
 
     /**
      * @return void
      */
-    public function testMapPaymentLinkFormDataFormatsAmountWithoutThousandsSeparator(): void
+    public function testMapPaymentLinkFormDataConvertsAmountAboveOneThousandToInteger(): void
     {
         $formData = $this->createFormData(1234.5, null);
 
         $paymentLinkTransfer = $this->createMolliePaymentLinkMapper()->mapPaymentLinkFormDataToMolliePaymentLinkTransfer($formData);
 
-        $this->assertSame('1234.50', $paymentLinkTransfer->getAmount()->getValue());
+        $this->assertSame(123450, $paymentLinkTransfer->getAmount());
     }
 
     /**

@@ -54,7 +54,6 @@ class MolliePersistenceFactory extends AbstractPersistenceFactory
     public function createMolliePaymentLinkMapper(): MolliePaymentLinkMapperInterface
     {
         return new MolliePaymentLinkMapper(
-            $this->getMollieService(),
             $this->getUtilEncodingService(),
         );
     }

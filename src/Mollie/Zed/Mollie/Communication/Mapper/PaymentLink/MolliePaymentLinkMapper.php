@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Mollie\Zed\Mollie\Communication\Mapper\PaymentLink;
 
-use Generated\Shared\Transfer\MollieAmountTransfer;
 use Generated\Shared\Transfer\MolliePaymentLinkTransfer;
 use Mollie\Service\Mollie\MollieServiceInterface;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToMoneyFacadeInterface;
@@ -60,8 +59,8 @@ class MolliePaymentLinkMapper implements MolliePaymentLinkMapperInterface
         $paymentLinkTransfer->fromArray($formData, true);
 
         $currency = $formData[static::PAYMENT_LINK_FORM_CURRENCY];
-        $mollieAmount = $this->createMollieAmountTransfer($formData[static::PAYMENT_LINK_FORM_AMOUNT] ?? null, $currency);
-        $mollieMinimumAmount = $this->createMollieAmountTransfer($formData[static::PAYMENT_LINK_FORM_MINIMUM_AMOUNT] ?? null, $currency);
+        $amount = $this->convertDecimalAmountToInteger($formData[static::PAYMENT_LINK_FORM_AMOUNT] ?? null);
+        $minimumAmount = $this->convertDecimalAmountToInteger($formData[static::PAYMENT_LINK_FORM_MINIMUM_AMOUNT] ?? null);
 
         $expiryDate = $formData[static::PAYMENT_LINK_FORM_EXPIRY_DATE];
         $expiryDateTime = $expiryDate
@@ -70,28 +69,27 @@ class MolliePaymentLinkMapper implements MolliePaymentLinkMapperInterface
 
         $paymentLinkTransfer
             ->setExpiresAt($expiryDateTime)
-            ->setAmount($mollieAmount)
-            ->setMinimumAmount($mollieMinimumAmount)
+            ->setAmount($amount)
+            ->setMinimumAmount($minimumAmount)
+            ->setCurrency($currency)
             ->setAllowedMethods($formData[static::PAYMENT_LINK_FORM_PAYMENT_METHODS] ?? []);
 
         return $paymentLinkTransfer;
     }
 
     /**
-     * @param float|null $amount
-     * @param string $currency
+     * @param float|null $decimalAmount
      *
-     * @return \Generated\Shared\Transfer\MollieAmountTransfer|null
+     * @return int|null
      */
-    protected function createMollieAmountTransfer(?float $amount, string $currency): ?MollieAmountTransfer
+    protected function convertDecimalAmountToInteger(?float $decimalAmount): ?int
     {
-        if ($amount === null) {
+        if ($decimalAmount === null) {
             return null;
         }
 
-        $integerAmount = $this->moneyFacade->convertDecimalToInteger($amount);
-        $mollieAmountTransfer = $this->mollieService->convertIntegerToMollieAmount($integerAmount, $currency);
+        $amount = $this->moneyFacade->convertDecimalToInteger($decimalAmount);
 
-        return $mollieAmountTransfer;
+        return $amount;
     }
 }

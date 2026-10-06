@@ -6,7 +6,6 @@ namespace Mollie\Client\Mollie\Api\PaymentLink;
 
 use ArrayObject;
 use Generated\Shared\Transfer\MollieAddressTransfer;
-use Generated\Shared\Transfer\MollieAmountTransfer;
 use Generated\Shared\Transfer\MollieApiRequestTransfer;
 use Generated\Shared\Transfer\MollieApiResponseTransfer;
 use Generated\Shared\Transfer\MollieLinksTransfer;
@@ -55,8 +54,9 @@ class CreatePaymentLinkApi extends AbstractApiCall
 
         $description = $paymentLinkTransfer->getDescription();
         $redirectUrl = $paymentLinkTransfer->getRedirectUrl();
-        $amount = $this->convertMollieAmountTransferToMoney($paymentLinkTransfer->getAmount());
-        $minimumAmount = $this->convertMollieAmountTransferToMoney($paymentLinkTransfer->getMinimumAmount());
+        $currency = $paymentLinkTransfer->getCurrency();
+        $amount = $this->convertIntegerAmountToMoney($paymentLinkTransfer->getAmount(), $currency);
+        $minimumAmount = $this->convertIntegerAmountToMoney($paymentLinkTransfer->getMinimumAmount(), $currency);
         $reusable = $paymentLinkTransfer->getReusable();
         $allowedMethods = $paymentLinkTransfer->getAllowedMethods();
         $expiresAt = $paymentLinkTransfer->getExpiresAt();
@@ -142,8 +142,11 @@ class CreatePaymentLinkApi extends AbstractApiCall
             return $molliePaymentLinksApiResponseTransfer;
         }
 
+        $paymentLinkPayload = $mollieApiResponseTransfer->getPayload();
+        $paymentLinkPayloadWithoutAmounts = $this->removeAmountsFromPaymentLinkPayload($paymentLinkPayload);
+
         $molliePaymentLinkTransfer = new MolliePaymentLinkTransfer();
-        $molliePaymentLinkTransfer->fromArray($mollieApiResponseTransfer->getPayload(), true);
+        $molliePaymentLinkTransfer->fromArray($paymentLinkPayloadWithoutAmounts, true);
 
         $links = $mollieApiResponseTransfer->getPayload()[MollieConfig::RESPONSE_PARAMETER_CREATE_PAYMENT_LINKS] ?? [];
         $mollieLinksTransfer = new MollieLinksTransfer();
@@ -161,18 +164,33 @@ class CreatePaymentLinkApi extends AbstractApiCall
     }
 
     /**
-     * @param \Generated\Shared\Transfer\MollieAmountTransfer|null $mollieAmountTransfer
+     * @param int|null $amount
+     * @param string $currency
      *
      * @return \Mollie\Api\Http\Data\Money|null
      */
-    protected function convertMollieAmountTransferToMoney(?MollieAmountTransfer $mollieAmountTransfer): ?Money
+    protected function convertIntegerAmountToMoney(?int $amount, string $currency): ?Money
     {
-        if ($mollieAmountTransfer === null) {
+        if ($amount === null) {
             return null;
         }
 
+        $mollieAmountTransfer = $this->mollieService->convertIntegerToMollieAmount($amount, $currency);
         $money = new Money($mollieAmountTransfer->getCurrency(), $mollieAmountTransfer->getValue());
 
         return $money;
+    }
+
+    /**
+     * @param array<string, mixed> $paymentLinkPayload
+     *
+     * @return array<string, mixed>
+     */
+    protected function removeAmountsFromPaymentLinkPayload(array $paymentLinkPayload): array
+    {
+        unset($paymentLinkPayload[MollieConfig::RESPONSE_PARAMETER_PAYMENT_LINK_AMOUNT]);
+        unset($paymentLinkPayload[MollieConfig::RESPONSE_PARAMETER_PAYMENT_LINK_MINIMUM_AMOUNT]);
+
+        return $paymentLinkPayload;
     }
 }

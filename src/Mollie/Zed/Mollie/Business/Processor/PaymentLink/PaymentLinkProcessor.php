@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Mollie\Zed\Mollie\Business\Processor\PaymentLink;
 
-use Generated\Shared\Transfer\MollieAmountTransfer;
 use Generated\Shared\Transfer\MolliePaymentLinkTransfer;
 use Generated\Shared\Transfer\OrderTransfer;
 use Mollie\Service\Mollie\MollieServiceInterface;
@@ -39,7 +38,10 @@ class PaymentLinkProcessor implements PaymentLinkProcessorInterface
     {
         $molliePaymentLinkTransfer = new MolliePaymentLinkTransfer();
 
-        $amountTransfer = $this->getMollieAmount($orderTransfer);
+        $totalsTransfer = $orderTransfer->getTotals();
+        $grandTotal = $totalsTransfer->getGrandTotal();
+        $currencyTransfer = $orderTransfer->getCurrency();
+        $currencyCode = $currencyTransfer->getCode();
         $expirationDateTime = $this->mollieService->getPaymentLinkDefaultExpirationDateTime();
         $mollieLinesTransfers = $this->paymentLinkOrderMapper->mapOrderItemsAndExpensesToMollieLines($orderTransfer);
         $mollieBillingAddressTransfer = $this->paymentLinkOrderMapper->mapOrderBillingAddressToMollieAddress($orderTransfer);
@@ -47,27 +49,12 @@ class PaymentLinkProcessor implements PaymentLinkProcessorInterface
         $molliePaymentLinkTransfer
             ->setFkSalesOrder($orderTransfer->getIdSalesOrder())
             ->setDescription(sprintf(static::MOLLIE_PAYMENT_LINK_DESCRIPTION, $orderTransfer->getOrderReference()))
-            ->setAmount($amountTransfer)
+            ->setAmount($grandTotal)
+            ->setCurrency($currencyCode)
             ->setExpiresAt($expirationDateTime)
             ->setLines($mollieLinesTransfers)
             ->setBillingAddress($mollieBillingAddressTransfer);
 
         return $molliePaymentLinkTransfer;
-    }
-
-    /**
-     * @param \Generated\Shared\Transfer\OrderTransfer $orderTransfer
-     *
-     * @return \Generated\Shared\Transfer\MollieAmountTransfer
-     */
-    protected function getMollieAmount(OrderTransfer $orderTransfer): MollieAmountTransfer
-    {
-        $totalsTransfer = $orderTransfer->getTotals();
-        $grandTotal = $totalsTransfer->getGrandTotal();
-        $currency = $orderTransfer->getCurrency()->getCode();
-
-        $amountTransfer = $this->mollieService->convertIntegerToMollieAmount($grandTotal, $currency);
-
-        return $amountTransfer;
     }
 }

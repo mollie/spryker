@@ -11,8 +11,6 @@ use Mollie\Service\Mollie\PaymentLink\PaymentLinkHandlerInterface;
 use Mollie\Service\Mollie\Url\UrlResolver;
 use Mollie\Service\Mollie\Url\UrlResolverInterface;
 use Spryker\Service\Kernel\AbstractServiceFactory;
-use Spryker\Shared\Money\Converter\DecimalToIntegerConverter;
-use Spryker\Shared\Money\Converter\DecimalToIntegerConverterInterface;
 use Spryker\Shared\Money\Converter\IntegerToDecimalConverter;
 use Spryker\Shared\Money\Converter\IntegerToDecimalConverterInterface;
 
@@ -29,14 +27,6 @@ class MollieServiceFactory extends AbstractServiceFactory
         return new MollieAmountConverter(
             $this->createIntegerToDecimalConverter(),
         );
-    }
-
-    /**
-     * @return \Spryker\Shared\Money\Converter\DecimalToIntegerConverterInterface
-     */
-    public function createDecimalToIntegerConverter(): DecimalToIntegerConverterInterface
-    {
-        return new DecimalToIntegerConverter();
     }
 
     /**

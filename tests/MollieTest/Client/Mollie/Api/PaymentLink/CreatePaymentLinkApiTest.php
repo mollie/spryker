@@ -23,14 +23,11 @@ class CreatePaymentLinkApiTest extends AbstractClientTest
       */
     public function testCreatePaymentLinkApi(): void
     {
-        $amountTransfer = (new MollieAmountTransfer())
-            ->setCurrency('EUR')
-            ->setValue('10.00');
-
         $paymentLinkTransfer = (new MolliePaymentLinkTransfer())
             ->setDescription('Test payment link')
             ->setRedirectUrl('https://example.com/redirect')
-            ->setAmount($amountTransfer)
+            ->setAmount(1000)
+            ->setCurrency('EUR')
             ->setReusable(false)
             ->setExpiresAt('2026-12-31');
 
@@ -71,6 +68,7 @@ class CreatePaymentLinkApiTest extends AbstractClientTest
             return true;
         });
 
+        $sentAmount = $requestBody['amount'];
         $sentLine = $requestBody['lines'][0];
         $sentBillingAddress = $requestBody['billingAddress'];
 
@@ -78,6 +76,8 @@ class CreatePaymentLinkApiTest extends AbstractClientTest
         $expectedTotalAmount = ['value' => '214.20', 'currency' => 'EUR'];
         $expectedVatAmount = ['value' => '34.20', 'currency' => 'EUR'];
 
+        $this->assertSame('EUR', $sentAmount['currency']);
+        $this->assertSame('214.20', $sentAmount['value']);
         $this->assertSame('Office chair', $sentLine['description']);
         $this->assertSame(2, $sentLine['quantity']);
         $this->assertSame($expectedUnitPrice, $sentLine['unitPrice']);
@@ -119,13 +119,10 @@ class CreatePaymentLinkApiTest extends AbstractClientTest
      */
     protected function createPaymentLinkTransfer(): MolliePaymentLinkTransfer
     {
-        $amountTransfer = (new MollieAmountTransfer())
-            ->setCurrency('EUR')
-            ->setValue('214.20');
-
         $paymentLinkTransfer = (new MolliePaymentLinkTransfer())
             ->setDescription('Payment link - Order DE--1')
-            ->setAmount($amountTransfer)
+            ->setAmount(21420)
+            ->setCurrency('EUR')
             ->setExpiresAt('2026-12-31');
 
         return $paymentLinkTransfer;

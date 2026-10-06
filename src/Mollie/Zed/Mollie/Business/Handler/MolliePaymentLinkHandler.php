@@ -41,8 +41,14 @@ class MolliePaymentLinkHandler implements MolliePaymentLinkHandlerInterface
         $molliePaymentLinkApiResponseTransfer = $this->mollieClient->createPaymentLink($mollieApiRequestTransfer);
 
         if ($molliePaymentLinkApiResponseTransfer->getIsSuccessful()) {
-            $molliePaymentLinkApiResponseTransfer->getMolliePaymentLink()->setFkSalesOrder($molliePaymentLinkTransfer->getFkSalesOrder());
-            $this->mollieEntityManager->writePaymentLink($molliePaymentLinkApiResponseTransfer->getMolliePaymentLink());
+            $createdMolliePaymentLinkTransfer = $molliePaymentLinkApiResponseTransfer->getMolliePaymentLink();
+            $createdMolliePaymentLinkTransfer
+                ->setFkSalesOrder($molliePaymentLinkTransfer->getFkSalesOrder())
+                ->setAmount($molliePaymentLinkTransfer->getAmount())
+                ->setMinimumAmount($molliePaymentLinkTransfer->getMinimumAmount())
+                ->setCurrency($molliePaymentLinkTransfer->getCurrency());
+
+            $this->mollieEntityManager->writePaymentLink($createdMolliePaymentLinkTransfer);
         }
 
         return $molliePaymentLinkApiResponseTransfer;

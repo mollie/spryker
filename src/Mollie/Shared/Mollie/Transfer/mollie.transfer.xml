@@ -346,7 +346,8 @@
         <property name="archived" type="bool"/>
         <property name="reusable" type="bool"/>
         <property name="profileId" type="string"/>
-        <property name="amount" type="MollieAmount"/>
+        <property name="amount" type="int"/>
+        <property name="currency" type="string"/>
         <property name="webhookUrl" type="string"/>
         <property name="redirectUrl" type="string"/>
         <property name="createdAt" type="string"/>
@@ -362,7 +363,7 @@
         <property name="fkSalesOrder" type="int"/>
         <property name="lines" type="MollieLines[]" singular="line"/>
         <property name="billingAddress" type="MollieAddress"/>
-        <property name="minimumAmount" type="MollieAmount"/>
+        <property name="minimumAmount" type="int"/>
     </transfer>
 
     <transfer name="MollieAddress">

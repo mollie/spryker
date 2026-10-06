@@ -53,8 +53,10 @@ class GetPaymentLinksApi extends AbstractApiCall
         }
 
         foreach ($paymentLinks as $paymentLink) {
+            $paymentLinkWithoutAmounts = $this->removeAmountsFromPaymentLinkPayload($paymentLink);
+
             $paymentLinkTransfer = new MolliePaymentLinkTransfer();
-            $paymentLinkTransfer->fromArray($paymentLink, true);
+            $paymentLinkTransfer->fromArray($paymentLinkWithoutAmounts, true);
 
             $links = $paymentLink[MollieConfig::RESPONSE_PARAMETER_CREATE_PAYMENT_LINKS] ?? [];
             $mollieLinksTransfer = new MollieLinksTransfer();
@@ -68,5 +70,18 @@ class GetPaymentLinksApi extends AbstractApiCall
         $molliePaymentLinksApiResponseTransfer->setMolliePaymentLinks($molliePaymentLinkCollectionTransfer);
 
         return $molliePaymentLinksApiResponseTransfer;
+    }
+
+    /**
+     * @param array<string, mixed> $paymentLinkPayload
+     *
+     * @return array<string, mixed>
+     */
+    protected function removeAmountsFromPaymentLinkPayload(array $paymentLinkPayload): array
+    {
+        unset($paymentLinkPayload[MollieConfig::RESPONSE_PARAMETER_PAYMENT_LINK_AMOUNT]);
+        unset($paymentLinkPayload[MollieConfig::RESPONSE_PARAMETER_PAYMENT_LINK_MINIMUM_AMOUNT]);
+
+        return $paymentLinkPayload;
     }
 }
