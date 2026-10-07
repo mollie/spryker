@@ -70,6 +70,25 @@ class PaymentLinkOrderMapperTest extends Unit
     }
 
     /**
+     * @return void
+     */
+    public function testMapItemLineWithUnevenTotalAddsRoundingDiscount(): void
+    {
+        $orderTransfer = $this->createOrderTransfer();
+        $orderTransfer->getItems()->offsetGet(0)
+            ->setQuantity(3)
+            ->setSumPriceToPayAggregation(47198);
+
+        $mollieLinesTransfers = $this->createPaymentLinkOrderMapper()->mapOrderItemsAndExpensesToMollieLines($orderTransfer);
+        $itemMollieLinesTransfer = $mollieLinesTransfers->offsetGet(0);
+
+        $this->assertSame(3, $itemMollieLinesTransfer->getQuantity());
+        $this->assertSame('157.33', $itemMollieLinesTransfer->getUnitPrice()->getValue());
+        $this->assertSame('0.01', $itemMollieLinesTransfer->getDiscountAmount()->getValue());
+        $this->assertSame('471.98', $itemMollieLinesTransfer->getTotalAmount()->getValue());
+    }
+
+    /**
      * @return \Mollie\Zed\Mollie\Business\Mapper\PaymentLink\PaymentLinkOrderMapperInterface
      */
     protected function createPaymentLinkOrderMapper(): PaymentLinkOrderMapperInterface

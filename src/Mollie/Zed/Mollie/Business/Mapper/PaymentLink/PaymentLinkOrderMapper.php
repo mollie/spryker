@@ -84,17 +84,14 @@ class PaymentLinkOrderMapper implements PaymentLinkOrderMapperInterface
      */
     protected function mapItemToMollieLine(ItemTransfer $itemTransfer, string $currencyCode): MollieLinesTransfer
     {
-        $unitPrice = $this->mollieService->convertIntegerToMollieAmount($itemTransfer->getUnitPriceToPayAggregation(), $currencyCode);
-        $totalAmount = $this->mollieService->convertIntegerToMollieAmount($itemTransfer->getSumPriceToPayAggregation(), $currencyCode);
-
         $mollieLinesTransfer = new MollieLinesTransfer();
         $mollieLinesTransfer
             ->setType(MollieConstants::PRODUCT_TYPE_PHYSICAL)
             ->setDescription($itemTransfer->getName())
             ->setSku($itemTransfer->getSku())
-            ->setQuantity($itemTransfer->getQuantity())
-            ->setUnitPrice($unitPrice)
-            ->setTotalAmount($totalAmount);
+            ->setQuantity($itemTransfer->getQuantity());
+
+        $mollieLinesTransfer = $this->addAmountsToMollieLine($mollieLinesTransfer, $itemTransfer->getSumPriceToPayAggregation(), $currencyCode);
 
         return $mollieLinesTransfer;
     }
@@ -107,19 +104,56 @@ class PaymentLinkOrderMapper implements PaymentLinkOrderMapperInterface
      */
     protected function mapExpenseToMollieLine(ExpenseTransfer $expenseTransfer, string $currencyCode): MollieLinesTransfer
     {
-        $unitPrice = $this->mollieService->convertIntegerToMollieAmount($expenseTransfer->getUnitPriceToPayAggregation(), $currencyCode);
-        $totalAmount = $this->mollieService->convertIntegerToMollieAmount($expenseTransfer->getSumPriceToPayAggregation(), $currencyCode);
         $lineType = $this->getMollieLineTypeForExpense($expenseTransfer);
 
         $mollieLinesTransfer = new MollieLinesTransfer();
         $mollieLinesTransfer
             ->setType($lineType)
             ->setDescription($expenseTransfer->getName())
-            ->setQuantity($expenseTransfer->getQuantity())
-            ->setUnitPrice($unitPrice)
-            ->setTotalAmount($totalAmount);
+            ->setQuantity($expenseTransfer->getQuantity());
+
+        $mollieLinesTransfer = $this->addAmountsToMollieLine($mollieLinesTransfer, $expenseTransfer->getSumPriceToPayAggregation(), $currencyCode);
 
         return $mollieLinesTransfer;
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MollieLinesTransfer $mollieLinesTransfer
+     * @param int $sumPriceToPay
+     * @param string $currencyCode
+     *
+     * @return \Generated\Shared\Transfer\MollieLinesTransfer
+     */
+    protected function addAmountsToMollieLine(MollieLinesTransfer $mollieLinesTransfer, int $sumPriceToPay, string $currencyCode): MollieLinesTransfer
+    {
+        $unitPrice = $this->calculateUnitPriceRoundedUp($sumPriceToPay, $mollieLinesTransfer->getQuantity());
+        $roundingDiscountAmount = $unitPrice * $mollieLinesTransfer->getQuantity() - $sumPriceToPay;
+        $mollieUnitPrice = $this->mollieService->convertIntegerToMollieAmount($unitPrice, $currencyCode);
+        $mollieTotalAmount = $this->mollieService->convertIntegerToMollieAmount($sumPriceToPay, $currencyCode);
+
+        $mollieLinesTransfer
+            ->setUnitPrice($mollieUnitPrice)
+            ->setTotalAmount($mollieTotalAmount);
+
+        if ($roundingDiscountAmount > 0) {
+            $mollieRoundingDiscountAmount = $this->mollieService->convertIntegerToMollieAmount($roundingDiscountAmount, $currencyCode);
+            $mollieLinesTransfer->setDiscountAmount($mollieRoundingDiscountAmount);
+        }
+
+        return $mollieLinesTransfer;
+    }
+
+    /**
+     * @param int $sumPriceToPay
+     * @param int $quantity
+     *
+     * @return int
+     */
+    protected function calculateUnitPriceRoundedUp(int $sumPriceToPay, int $quantity): int
+    {
+        $unitPriceRoundedUp = (int)ceil($sumPriceToPay / $quantity);
+
+        return $unitPriceRoundedUp;
     }
 
     /**
