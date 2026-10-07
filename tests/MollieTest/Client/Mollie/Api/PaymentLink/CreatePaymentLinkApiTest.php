@@ -72,9 +72,9 @@ class CreatePaymentLinkApiTest extends AbstractClientTest
         $sentLine = $requestBody['lines'][0];
         $sentBillingAddress = $requestBody['billingAddress'];
 
-        $expectedUnitPrice = ['value' => '107.10', 'currency' => 'EUR'];
-        $expectedTotalAmount = ['value' => '214.20', 'currency' => 'EUR'];
-        $expectedVatAmount = ['value' => '34.20', 'currency' => 'EUR'];
+        $expectedUnitPrice = ['currency' => 'EUR', 'value' => '107.10'];
+        $expectedTotalAmount = ['currency' => 'EUR', 'value' => '214.20'];
+        $expectedVatAmount = ['currency' => 'EUR', 'value' => '34.20'];
 
         $this->assertSame('EUR', $sentAmount['currency']);
         $this->assertSame('214.20', $sentAmount['value']);
@@ -84,6 +84,7 @@ class CreatePaymentLinkApiTest extends AbstractClientTest
         $this->assertSame($expectedTotalAmount, $sentLine['totalAmount']);
         $this->assertSame('19.00', $sentLine['vatRate']);
         $this->assertSame($expectedVatAmount, $sentLine['vatAmount']);
+        $this->assertNotContains(null, $sentLine);
         $this->assertSame('John', $sentBillingAddress['givenName']);
         $this->assertSame('Doe', $sentBillingAddress['familyName']);
         $this->assertSame('buyer@example.com', $sentBillingAddress['email']);

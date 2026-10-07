@@ -83,6 +83,23 @@ class PaymentLinkOrderMapperTest extends Unit
     /**
      * @return void
      */
+    public function testMapOrderItemsAndExpensesToMollieLinesFormatsDecimalStringTaxRateFromPersistedOrder(): void
+    {
+        $orderTransfer = $this->createOrderTransfer();
+        $orderTransfer->getItems()->offsetGet(0)->setTaxRate('19.00');
+        $orderTransfer->getExpenses()->offsetGet(0)->setTaxRate('19.00');
+
+        $mollieLinesTransfers = $this->createPaymentLinkOrderMapper()->mapOrderItemsAndExpensesToMollieLines($orderTransfer);
+        $itemMollieLinesTransfer = $mollieLinesTransfers->offsetGet(0);
+        $shipmentMollieLinesTransfer = $mollieLinesTransfers->offsetGet(2);
+
+        $this->assertSame('19.00', $itemMollieLinesTransfer->getVatRate());
+        $this->assertSame('19.00', $shipmentMollieLinesTransfer->getVatRate());
+    }
+
+    /**
+     * @return void
+     */
     public function testMapOrderItemsAndExpensesToMollieLinesMapsShipmentExpenseToShippingFeeAndOtherExpenseToSurcharge(): void
     {
         $orderTransfer = $this->createOrderTransfer();

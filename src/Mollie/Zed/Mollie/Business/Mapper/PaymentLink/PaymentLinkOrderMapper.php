@@ -90,7 +90,7 @@ class PaymentLinkOrderMapper implements PaymentLinkOrderMapperInterface
         $unitPrice = $this->mollieService->convertIntegerToMollieAmount($itemTransfer->getUnitPriceToPayAggregation(), $currencyCode);
         $totalAmount = $this->mollieService->convertIntegerToMollieAmount($itemTransfer->getSumPriceToPayAggregation(), $currencyCode);
         $vatAmount = $this->mollieService->convertIntegerToMollieAmount($itemTransfer->getSumTaxAmountFullAggregation(), $currencyCode);
-        $vatRate = $this->formatVatRate($itemTransfer->getTaxRate());
+        $vatRate = $this->formatVatRate((float)$itemTransfer->getTaxRate());
 
         $mollieLinesTransfer = new MollieLinesTransfer();
         $mollieLinesTransfer
@@ -117,7 +117,7 @@ class PaymentLinkOrderMapper implements PaymentLinkOrderMapperInterface
         $unitPrice = $this->mollieService->convertIntegerToMollieAmount($expenseTransfer->getUnitPriceToPayAggregation(), $currencyCode);
         $totalAmount = $this->mollieService->convertIntegerToMollieAmount($expenseTransfer->getSumPriceToPayAggregation(), $currencyCode);
         $vatAmount = $this->mollieService->convertIntegerToMollieAmount($expenseTransfer->getSumTaxAmount(), $currencyCode);
-        $vatRate = $this->formatVatRate($expenseTransfer->getTaxRate());
+        $vatRate = $this->formatVatRate((float)$expenseTransfer->getTaxRate());
         $lineType = $this->getMollieLineTypeForExpense($expenseTransfer);
 
         $mollieLinesTransfer = new MollieLinesTransfer();

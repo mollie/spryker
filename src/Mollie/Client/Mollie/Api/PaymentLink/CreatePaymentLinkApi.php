@@ -6,14 +6,17 @@ namespace Mollie\Client\Mollie\Api\PaymentLink;
 
 use ArrayObject;
 use Generated\Shared\Transfer\MollieAddressTransfer;
+use Generated\Shared\Transfer\MollieAmountTransfer;
 use Generated\Shared\Transfer\MollieApiRequestTransfer;
 use Generated\Shared\Transfer\MollieApiResponseTransfer;
+use Generated\Shared\Transfer\MollieLinesTransfer;
 use Generated\Shared\Transfer\MollieLinksTransfer;
 use Generated\Shared\Transfer\MolliePaymentLinkApiResponseTransfer;
 use Generated\Shared\Transfer\MolliePaymentLinkTransfer;
 use Mollie\Api\Http\Data\Address;
 use Mollie\Api\Http\Data\DataCollection;
 use Mollie\Api\Http\Data\Money;
+use Mollie\Api\Http\Data\OrderLine;
 use Mollie\Api\Http\Request;
 use Mollie\Api\Http\Requests\CreatePaymentLinkRequest;
 use Mollie\Api\MollieApiClient;
@@ -81,7 +84,7 @@ class CreatePaymentLinkApi extends AbstractApiCall
     /**
      * @param \ArrayObject<int, \Generated\Shared\Transfer\MollieLinesTransfer> $mollieLinesTransfers
      *
-     * @return \Mollie\Api\Http\Data\DataCollection<array<mixed>>|null
+     * @return \Mollie\Api\Http\Data\DataCollection<\Mollie\Api\Http\Data\OrderLine>|null
      */
     protected function convertMollieLinesTransfersToDataCollection(ArrayObject $mollieLinesTransfers): ?DataCollection
     {
@@ -89,14 +92,55 @@ class CreatePaymentLinkApi extends AbstractApiCall
             return null;
         }
 
-        $lines = [];
+        $orderLines = [];
         foreach ($mollieLinesTransfers as $mollieLinesTransfer) {
-            $lines[] = $mollieLinesTransfer->toArray(true, true);
+            $orderLines[] = $this->convertMollieLinesTransferToOrderLine($mollieLinesTransfer);
         }
 
-        $linesCollection = new DataCollection($lines);
+        $linesCollection = new DataCollection($orderLines);
 
         return $linesCollection;
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MollieLinesTransfer $mollieLinesTransfer
+     *
+     * @return \Mollie\Api\Http\Data\OrderLine
+     */
+    protected function convertMollieLinesTransferToOrderLine(MollieLinesTransfer $mollieLinesTransfer): OrderLine
+    {
+        $unitPrice = $this->convertMollieAmountTransferToMoney($mollieLinesTransfer->getUnitPrice());
+        $totalAmount = $this->convertMollieAmountTransferToMoney($mollieLinesTransfer->getTotalAmount());
+        $vatAmount = $this->convertMollieAmountTransferToMoney($mollieLinesTransfer->getVatAmount());
+
+        $orderLine = new OrderLine(
+            description: $mollieLinesTransfer->getDescription(),
+            quantity: $mollieLinesTransfer->getQuantity(),
+            unitPrice: $unitPrice,
+            totalAmount: $totalAmount,
+            type: $mollieLinesTransfer->getType(),
+            vatRate: $mollieLinesTransfer->getVatRate(),
+            vatAmount: $vatAmount,
+            sku: $mollieLinesTransfer->getSku(),
+        );
+
+        return $orderLine;
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MollieAmountTransfer|null $mollieAmountTransfer
+     *
+     * @return \Mollie\Api\Http\Data\Money|null
+     */
+    protected function convertMollieAmountTransferToMoney(?MollieAmountTransfer $mollieAmountTransfer): ?Money
+    {
+        if ($mollieAmountTransfer === null) {
+            return null;
+        }
+
+        $money = new Money($mollieAmountTransfer->getCurrency(), $mollieAmountTransfer->getValue());
+
+        return $money;
     }
 
     /**
