@@ -9,7 +9,6 @@ use Generated\Shared\DataBuilder\OrderBuilder;
 use Generated\Shared\Transfer\CurrencyTransfer;
 use Generated\Shared\Transfer\ExpenseTransfer;
 use Generated\Shared\Transfer\ItemTransfer;
-use Generated\Shared\Transfer\MollieAmountTransfer;
 use Generated\Shared\Transfer\OrderTransfer;
 use Generated\Shared\Transfer\TotalsTransfer;
 use Mollie\Shared\Mollie\MollieConstants;
@@ -25,17 +24,25 @@ class PaymentLinkOrderMapperTest extends Unit
     protected const CURRENCY_CODE = 'EUR';
 
     /**
+     * @var \MollieTest\Zed\Mollie\MollieZedTester
+     */
+    protected $tester;
+
+    /**
      * @return void
      */
-    public function testMapOrderItemsAndExpensesToMollieLinesSumsUpToGrandTotal(): void
+    public function testMapLinesSumUpToGrandTotal(): void
     {
         $orderTransfer = $this->createOrderTransfer();
 
         $mollieLinesTransfers = $this->createPaymentLinkOrderMapper()->mapOrderItemsAndExpensesToMollieLines($orderTransfer);
 
+        $moneyFacade = $this->tester->getLocator()->money()->facade();
+
         $sumOfIntegerLineTotals = 0;
         foreach ($mollieLinesTransfers as $mollieLinesTransfer) {
-            $sumOfIntegerLineTotals += $this->convertMollieAmountToInteger($mollieLinesTransfer->getTotalAmount());
+            $integerLineTotal = $moneyFacade->convertDecimalToInteger((float)$mollieLinesTransfer->getTotalAmount()->getValue());
+            $sumOfIntegerLineTotals += $integerLineTotal;
         }
 
         $this->assertCount(2, $mollieLinesTransfers);
@@ -45,7 +52,7 @@ class PaymentLinkOrderMapperTest extends Unit
     /**
      * @return void
      */
-    public function testMapOrderItemsAndExpensesToMollieLinesMapsItemFromPriceToPayFields(): void
+    public function testMapItemLineFromPriceToPayAmounts(): void
     {
         $orderTransfer = $this->createOrderTransfer();
 
@@ -67,7 +74,7 @@ class PaymentLinkOrderMapperTest extends Unit
     /**
      * @return void
      */
-    public function testMapOrderItemsAndExpensesToMollieLinesFormatsDecimalStringTaxRateFromPersistedOrder(): void
+    public function testMapVatRateFromStringTaxRate(): void
     {
         $orderTransfer = $this->createOrderTransfer();
         $orderTransfer->getItems()->offsetGet(0)->setTaxRate('19.00');
@@ -132,18 +139,5 @@ class PaymentLinkOrderMapperTest extends Unit
             ->build();
 
         return $orderTransfer;
-    }
-
-    /**
-     * @param \Generated\Shared\Transfer\MollieAmountTransfer $mollieAmountTransfer
-     *
-     * @return int
-     */
-    protected function convertMollieAmountToInteger(MollieAmountTransfer $mollieAmountTransfer): int
-    {
-        $decimalValue = (float)$mollieAmountTransfer->getValue();
-        $integerValue = (int)round($decimalValue * 100);
-
-        return $integerValue;
     }
 }
