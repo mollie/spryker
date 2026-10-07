@@ -65,25 +65,8 @@ class PaymentLinkOrderMapperTest extends Unit
         $this->assertSame(2, $itemMollieLinesTransfer->getQuantity());
         $this->assertSame('107.10', $itemMollieLinesTransfer->getUnitPrice()->getValue());
         $this->assertSame('214.20', $itemMollieLinesTransfer->getTotalAmount()->getValue());
-        $this->assertSame('19.00', $itemMollieLinesTransfer->getVatRate());
-        $this->assertSame('34.20', $itemMollieLinesTransfer->getVatAmount()->getValue());
         $this->assertSame(static::CURRENCY_CODE, $itemMollieLinesTransfer->getTotalAmount()->getCurrency());
         $this->assertNull($itemMollieLinesTransfer->getDiscountAmount());
-    }
-
-    /**
-     * @return void
-     */
-    public function testMapVatRateFromStringTaxRate(): void
-    {
-        $orderTransfer = $this->createOrderTransfer();
-        $orderTransfer->getItems()->offsetGet(0)->setTaxRate('19.00');
-        $orderTransfer->getExpenses()->offsetGet(0)->setTaxRate('19.00');
-
-        $mollieLinesTransfers = $this->createPaymentLinkOrderMapper()->mapOrderItemsAndExpensesToMollieLines($orderTransfer);
-
-        $this->assertSame('19.00', $mollieLinesTransfers->offsetGet(0)->getVatRate());
-        $this->assertSame('19.00', $mollieLinesTransfers->offsetGet(1)->getVatRate());
     }
 
     /**
@@ -118,8 +101,6 @@ class PaymentLinkOrderMapperTest extends Unit
                 ItemTransfer::QUANTITY => 2,
                 ItemTransfer::UNIT_PRICE_TO_PAY_AGGREGATION => 10710,
                 ItemTransfer::SUM_PRICE_TO_PAY_AGGREGATION => 21420,
-                ItemTransfer::SUM_TAX_AMOUNT_FULL_AGGREGATION => 3420,
-                ItemTransfer::TAX_RATE => 19.0,
             ])
             ->withExpense([
                 ExpenseTransfer::TYPE => ShipmentConfig::SHIPMENT_EXPENSE_TYPE,
@@ -127,8 +108,6 @@ class PaymentLinkOrderMapperTest extends Unit
                 ExpenseTransfer::QUANTITY => 1,
                 ExpenseTransfer::UNIT_PRICE_TO_PAY_AGGREGATION => 595,
                 ExpenseTransfer::SUM_PRICE_TO_PAY_AGGREGATION => 595,
-                ExpenseTransfer::SUM_TAX_AMOUNT => 95,
-                ExpenseTransfer::TAX_RATE => 19.0,
             ])
             ->withTotals([
                 TotalsTransfer::GRAND_TOTAL => 22015,

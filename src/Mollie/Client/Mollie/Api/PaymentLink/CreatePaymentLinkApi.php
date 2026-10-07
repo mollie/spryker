@@ -111,7 +111,6 @@ class CreatePaymentLinkApi extends AbstractApiCall
     {
         $unitPrice = $this->convertMollieAmountTransferToMoney($mollieLinesTransfer->getUnitPrice());
         $totalAmount = $this->convertMollieAmountTransferToMoney($mollieLinesTransfer->getTotalAmount());
-        $vatAmount = $this->convertMollieAmountTransferToMoney($mollieLinesTransfer->getVatAmount());
 
         $orderLine = new OrderLine(
             description: $mollieLinesTransfer->getDescription(),
@@ -119,8 +118,6 @@ class CreatePaymentLinkApi extends AbstractApiCall
             unitPrice: $unitPrice,
             totalAmount: $totalAmount,
             type: $mollieLinesTransfer->getType(),
-            vatRate: $mollieLinesTransfer->getVatRate(),
-            vatAmount: $vatAmount,
             sku: $mollieLinesTransfer->getSku(),
         );
 

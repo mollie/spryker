@@ -71,7 +71,6 @@ class CreatePaymentLinkApiTest extends AbstractClientTest
 
             $expectedUnitPrice = ['currency' => 'EUR', 'value' => '107.10'];
             $expectedTotalAmount = ['currency' => 'EUR', 'value' => '214.20'];
-            $expectedVatAmount = ['currency' => 'EUR', 'value' => '34.20'];
 
             $this->assertSame('EUR', $sentAmount['currency']);
             $this->assertSame('214.20', $sentAmount['value']);
@@ -79,8 +78,6 @@ class CreatePaymentLinkApiTest extends AbstractClientTest
             $this->assertSame(2, $sentLine['quantity']);
             $this->assertSame($expectedUnitPrice, $sentLine['unitPrice']);
             $this->assertSame($expectedTotalAmount, $sentLine['totalAmount']);
-            $this->assertSame('19.00', $sentLine['vatRate']);
-            $this->assertSame($expectedVatAmount, $sentLine['vatAmount']);
             $this->assertNotContains(null, $sentLine);
             $this->assertSame('John', $sentBillingAddress['givenName']);
             $this->assertSame('Doe', $sentBillingAddress['familyName']);
@@ -118,19 +115,13 @@ class CreatePaymentLinkApiTest extends AbstractClientTest
             ->setCurrency('EUR')
             ->setValue('214.20');
 
-        $vatAmountTransfer = (new MollieAmountTransfer())
-            ->setCurrency('EUR')
-            ->setValue('34.20');
-
         $mollieLinesTransfer = (new MollieLinesTransfer())
             ->setType('physical')
             ->setDescription('Office chair')
             ->setSku('chair-001')
             ->setQuantity(2)
             ->setUnitPrice($unitPriceTransfer)
-            ->setTotalAmount($totalAmountTransfer)
-            ->setVatRate('19.00')
-            ->setVatAmount($vatAmountTransfer);
+            ->setTotalAmount($totalAmountTransfer);
 
         return $mollieLinesTransfer;
     }

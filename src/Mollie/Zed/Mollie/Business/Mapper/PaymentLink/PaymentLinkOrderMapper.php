@@ -86,8 +86,6 @@ class PaymentLinkOrderMapper implements PaymentLinkOrderMapperInterface
     {
         $unitPrice = $this->mollieService->convertIntegerToMollieAmount($itemTransfer->getUnitPriceToPayAggregation(), $currencyCode);
         $totalAmount = $this->mollieService->convertIntegerToMollieAmount($itemTransfer->getSumPriceToPayAggregation(), $currencyCode);
-        $vatAmount = $this->mollieService->convertIntegerToMollieAmount($itemTransfer->getSumTaxAmountFullAggregation(), $currencyCode);
-        $vatRate = $this->formatVatRate((float)$itemTransfer->getTaxRate());
 
         $mollieLinesTransfer = new MollieLinesTransfer();
         $mollieLinesTransfer
@@ -96,9 +94,7 @@ class PaymentLinkOrderMapper implements PaymentLinkOrderMapperInterface
             ->setSku($itemTransfer->getSku())
             ->setQuantity($itemTransfer->getQuantity())
             ->setUnitPrice($unitPrice)
-            ->setTotalAmount($totalAmount)
-            ->setVatRate($vatRate)
-            ->setVatAmount($vatAmount);
+            ->setTotalAmount($totalAmount);
 
         return $mollieLinesTransfer;
     }
@@ -113,8 +109,6 @@ class PaymentLinkOrderMapper implements PaymentLinkOrderMapperInterface
     {
         $unitPrice = $this->mollieService->convertIntegerToMollieAmount($expenseTransfer->getUnitPriceToPayAggregation(), $currencyCode);
         $totalAmount = $this->mollieService->convertIntegerToMollieAmount($expenseTransfer->getSumPriceToPayAggregation(), $currencyCode);
-        $vatAmount = $this->mollieService->convertIntegerToMollieAmount($expenseTransfer->getSumTaxAmount(), $currencyCode);
-        $vatRate = $this->formatVatRate((float)$expenseTransfer->getTaxRate());
         $lineType = $this->getMollieLineTypeForExpense($expenseTransfer);
 
         $mollieLinesTransfer = new MollieLinesTransfer();
@@ -123,9 +117,7 @@ class PaymentLinkOrderMapper implements PaymentLinkOrderMapperInterface
             ->setDescription($expenseTransfer->getName())
             ->setQuantity($expenseTransfer->getQuantity())
             ->setUnitPrice($unitPrice)
-            ->setTotalAmount($totalAmount)
-            ->setVatRate($vatRate)
-            ->setVatAmount($vatAmount);
+            ->setTotalAmount($totalAmount);
 
         return $mollieLinesTransfer;
     }
@@ -163,17 +155,5 @@ class PaymentLinkOrderMapper implements PaymentLinkOrderMapperInterface
         $orderEmail = $orderTransfer->getEmail();
 
         return $orderEmail;
-    }
-
-    /**
-     * @param float $taxRate
-     *
-     * @return string
-     */
-    protected function formatVatRate(float $taxRate): string
-    {
-        $vatRate = number_format($taxRate, 2, '.', '');
-
-        return $vatRate;
     }
 }
