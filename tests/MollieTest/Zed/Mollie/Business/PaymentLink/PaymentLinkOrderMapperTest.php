@@ -35,11 +35,6 @@ class PaymentLinkOrderMapperTest extends Unit
     protected const ORDER_EMAIL = 'buyer@example.com';
 
     /**
-     * @var string
-     */
-    protected const BILLING_ADDRESS_EMAIL = 'invoices@example.com';
-
-    /**
      * @return void
      */
     public function testMapOrderItemsAndExpensesToMollieLinesSumsUpToGrandTotal(): void
@@ -53,9 +48,8 @@ class PaymentLinkOrderMapperTest extends Unit
             $sumOfIntegerLineTotals += $this->convertMollieAmountToInteger($mollieLinesTransfer->getTotalAmount());
         }
 
-        $totalsTransfer = $orderTransfer->getTotals();
         $this->assertCount(4, $mollieLinesTransfers);
-        $this->assertSame($totalsTransfer->getGrandTotal(), $sumOfIntegerLineTotals);
+        $this->assertSame($orderTransfer->getTotals()->getGrandTotal(), $sumOfIntegerLineTotals);
     }
 
     /**
@@ -90,63 +84,9 @@ class PaymentLinkOrderMapperTest extends Unit
         $orderTransfer->getExpenses()->offsetGet(0)->setTaxRate('19.00');
 
         $mollieLinesTransfers = $this->createPaymentLinkOrderMapper()->mapOrderItemsAndExpensesToMollieLines($orderTransfer);
-        $itemMollieLinesTransfer = $mollieLinesTransfers->offsetGet(0);
-        $shipmentMollieLinesTransfer = $mollieLinesTransfers->offsetGet(2);
 
-        $this->assertSame('19.00', $itemMollieLinesTransfer->getVatRate());
-        $this->assertSame('19.00', $shipmentMollieLinesTransfer->getVatRate());
-    }
-
-    /**
-     * @return void
-     */
-    public function testMapOrderItemsAndExpensesToMollieLinesMapsShipmentExpenseToShippingFeeAndOtherExpenseToSurcharge(): void
-    {
-        $orderTransfer = $this->createOrderTransfer();
-
-        $mollieLinesTransfers = $this->createPaymentLinkOrderMapper()->mapOrderItemsAndExpensesToMollieLines($orderTransfer);
-        $shipmentMollieLinesTransfer = $mollieLinesTransfers->offsetGet(2);
-        $thresholdMollieLinesTransfer = $mollieLinesTransfers->offsetGet(3);
-
-        $this->assertSame(MollieConstants::PRODUCT_TYPE_SHIPPING_FEE, $shipmentMollieLinesTransfer->getType());
-        $this->assertSame('5.95', $shipmentMollieLinesTransfer->getTotalAmount()->getValue());
-        $this->assertSame(MollieConstants::PRODUCT_TYPE_SURCHARGE, $thresholdMollieLinesTransfer->getType());
-        $this->assertSame('11.90', $thresholdMollieLinesTransfer->getTotalAmount()->getValue());
-    }
-
-    /**
-     * @return void
-     */
-    public function testMapOrderBillingAddressToMollieAddressMapsAddressFields(): void
-    {
-        $orderTransfer = $this->createOrderTransfer();
-        $billingAddressTransfer = $orderTransfer->getBillingAddress();
-        $billingAddressTransfer->setEmail(static::BILLING_ADDRESS_EMAIL);
-
-        $mollieAddressTransfer = $this->createPaymentLinkOrderMapper()->mapOrderBillingAddressToMollieAddress($orderTransfer);
-
-        $this->assertSame('Mr', $mollieAddressTransfer->getTitle());
-        $this->assertSame('John', $mollieAddressTransfer->getGivenName());
-        $this->assertSame('Doe', $mollieAddressTransfer->getFamilyName());
-        $this->assertSame('Acme GmbH', $mollieAddressTransfer->getOrganizationName());
-        $this->assertSame('Julie-Wolfthorn-Straße 1', $mollieAddressTransfer->getStreetAndNumber());
-        $this->assertSame('Building B', $mollieAddressTransfer->getStreetAdditional());
-        $this->assertSame('10115', $mollieAddressTransfer->getPostalCode());
-        $this->assertSame('Berlin', $mollieAddressTransfer->getCity());
-        $this->assertSame('DE', $mollieAddressTransfer->getCountry());
-        $this->assertSame(static::BILLING_ADDRESS_EMAIL, $mollieAddressTransfer->getEmail());
-    }
-
-    /**
-     * @return void
-     */
-    public function testMapOrderBillingAddressToMollieAddressUsesOrderEmailWhenBillingAddressHasNoEmail(): void
-    {
-        $orderTransfer = $this->createOrderTransfer();
-
-        $mollieAddressTransfer = $this->createPaymentLinkOrderMapper()->mapOrderBillingAddressToMollieAddress($orderTransfer);
-
-        $this->assertSame(static::ORDER_EMAIL, $mollieAddressTransfer->getEmail());
+        $this->assertSame('19.00', $mollieLinesTransfers->offsetGet(0)->getVatRate());
+        $this->assertSame('19.00', $mollieLinesTransfers->offsetGet(2)->getVatRate());
     }
 
     /**

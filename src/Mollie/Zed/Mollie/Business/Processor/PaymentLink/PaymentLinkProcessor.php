@@ -38,19 +38,16 @@ class PaymentLinkProcessor implements PaymentLinkProcessorInterface
     {
         $molliePaymentLinkTransfer = new MolliePaymentLinkTransfer();
 
-        $totalsTransfer = $orderTransfer->getTotals();
-        $grandTotal = $totalsTransfer->getGrandTotal();
-        $currencyTransfer = $orderTransfer->getCurrency();
-        $currencyCode = $currencyTransfer->getCode();
+        $description = sprintf(static::MOLLIE_PAYMENT_LINK_DESCRIPTION, $orderTransfer->getOrderReference());
         $expirationDateTime = $this->mollieService->getPaymentLinkDefaultExpirationDateTime();
         $mollieLinesTransfers = $this->paymentLinkOrderMapper->mapOrderItemsAndExpensesToMollieLines($orderTransfer);
         $mollieBillingAddressTransfer = $this->paymentLinkOrderMapper->mapOrderBillingAddressToMollieAddress($orderTransfer);
 
         $molliePaymentLinkTransfer
             ->setFkSalesOrder($orderTransfer->getIdSalesOrder())
-            ->setDescription(sprintf(static::MOLLIE_PAYMENT_LINK_DESCRIPTION, $orderTransfer->getOrderReference()))
-            ->setAmount($grandTotal)
-            ->setCurrency($currencyCode)
+            ->setDescription($description)
+            ->setAmount($orderTransfer->getTotals()->getGrandTotal())
+            ->setCurrency($orderTransfer->getCurrency()->getCode())
             ->setExpiresAt($expirationDateTime)
             ->setLines($mollieLinesTransfers)
             ->setBillingAddress($mollieBillingAddressTransfer);

@@ -45,16 +45,6 @@ class MollieConfig extends AbstractBundleConfig
     /**
      * @var string
      */
-    public const RESPONSE_PARAMETER_PAYMENT_LINK_AMOUNT = 'amount';
-
-    /**
-     * @var string
-     */
-    public const RESPONSE_PARAMETER_PAYMENT_LINK_MINIMUM_AMOUNT = 'minimumAmount';
-
-    /**
-     * @var string
-     */
     public const RESPONSE_PARAMETER_PAYMENT_LINKS = 'payment_links';
 
     /**

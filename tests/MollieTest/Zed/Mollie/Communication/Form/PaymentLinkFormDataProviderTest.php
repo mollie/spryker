@@ -30,14 +30,13 @@ class PaymentLinkFormDataProviderTest extends Unit
         $bnplPaymentMethods = ['billie', 'in3', 'klarna', 'riverty', 'voucher', 'alma'];
 
         $options = $this->createPaymentLinkFormDataProvider($paymentMethodMapping, $bnplPaymentMethods)->getOptions();
-        $availablePaymentMethods = $options[CreatePaymentLinkForm::OPTION_AVAILABLE_PAYMENT_METHODS];
 
         $this->assertSame(
             [
                 'mollieCreditCardPayment' => 'creditcard',
                 'mollieIdealPayment' => 'ideal',
             ],
-            $availablePaymentMethods,
+            $options[CreatePaymentLinkForm::OPTION_AVAILABLE_PAYMENT_METHODS],
         );
     }
 

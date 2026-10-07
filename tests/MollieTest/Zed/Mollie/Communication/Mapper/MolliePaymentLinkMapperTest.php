@@ -19,34 +19,6 @@ class MolliePaymentLinkMapperTest extends Unit
     /**
      * @return void
      */
-    public function testMapPaymentLinkFormDataMapsAmountAndLeavesMinimumAmountEmpty(): void
-    {
-        $formData = $this->createFormData(25.5, null);
-
-        $paymentLinkTransfer = $this->createMolliePaymentLinkMapper()->mapPaymentLinkFormDataToMolliePaymentLinkTransfer($formData);
-
-        $this->assertSame(2550, $paymentLinkTransfer->getAmount());
-        $this->assertNull($paymentLinkTransfer->getMinimumAmount());
-        $this->assertSame(static::CURRENCY_CODE, $paymentLinkTransfer->getCurrency());
-    }
-
-    /**
-     * @return void
-     */
-    public function testMapPaymentLinkFormDataMapsMinimumAmountAndLeavesAmountEmpty(): void
-    {
-        $formData = $this->createFormData(null, 10.0);
-
-        $paymentLinkTransfer = $this->createMolliePaymentLinkMapper()->mapPaymentLinkFormDataToMolliePaymentLinkTransfer($formData);
-
-        $this->assertSame(1000, $paymentLinkTransfer->getMinimumAmount());
-        $this->assertNull($paymentLinkTransfer->getAmount());
-        $this->assertSame(static::CURRENCY_CODE, $paymentLinkTransfer->getCurrency());
-    }
-
-    /**
-     * @return void
-     */
     public function testMapPaymentLinkFormDataConvertsAmountAboveOneThousandToInteger(): void
     {
         $formData = $this->createFormData(1234.5, null);

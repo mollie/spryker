@@ -58,7 +58,6 @@ class MolliePaymentLinkMapper implements MolliePaymentLinkMapperInterface
         $paymentLinkTransfer = new MolliePaymentLinkTransfer();
         $paymentLinkTransfer->fromArray($formData, true);
 
-        $currency = $formData[static::PAYMENT_LINK_FORM_CURRENCY];
         $amount = $this->convertDecimalAmountToInteger($formData[static::PAYMENT_LINK_FORM_AMOUNT] ?? null);
         $minimumAmount = $this->convertDecimalAmountToInteger($formData[static::PAYMENT_LINK_FORM_MINIMUM_AMOUNT] ?? null);
 
@@ -71,7 +70,7 @@ class MolliePaymentLinkMapper implements MolliePaymentLinkMapperInterface
             ->setExpiresAt($expiryDateTime)
             ->setAmount($amount)
             ->setMinimumAmount($minimumAmount)
-            ->setCurrency($currency)
+            ->setCurrency($formData[static::PAYMENT_LINK_FORM_CURRENCY])
             ->setAllowedMethods($formData[static::PAYMENT_LINK_FORM_PAYMENT_METHODS] ?? []);
 
         return $paymentLinkTransfer;

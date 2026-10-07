@@ -32,18 +32,15 @@ class PaymentLinkOrderMapper implements PaymentLinkOrderMapperInterface
      */
     public function mapOrderItemsAndExpensesToMollieLines(OrderTransfer $orderTransfer): ArrayObject
     {
-        $currencyTransfer = $orderTransfer->getCurrency();
-        $currencyCode = $currencyTransfer->getCode();
-
         $mollieLinesTransfers = new ArrayObject();
 
         foreach ($orderTransfer->getItems() as $itemTransfer) {
-            $itemMollieLinesTransfer = $this->mapItemToMollieLine($itemTransfer, $currencyCode);
+            $itemMollieLinesTransfer = $this->mapItemToMollieLine($itemTransfer, $orderTransfer->getCurrency()->getCode());
             $mollieLinesTransfers->append($itemMollieLinesTransfer);
         }
 
         foreach ($orderTransfer->getExpenses() as $expenseTransfer) {
-            $expenseMollieLinesTransfer = $this->mapExpenseToMollieLine($expenseTransfer, $currencyCode);
+            $expenseMollieLinesTransfer = $this->mapExpenseToMollieLine($expenseTransfer, $orderTransfer->getCurrency()->getCode());
             $mollieLinesTransfers->append($expenseMollieLinesTransfer);
         }
 

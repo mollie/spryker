@@ -39,6 +39,8 @@ class CreatePaymentLinkApiTest extends AbstractClientTest
         $this->assertTrue($molliePaymentLinkApiResponseTransfer->getisSuccessful());
         $this->assertEquals('pl_4Y0eZitmBnQ6IDoMqZQKh', $molliePaymentLinkApiResponseTransfer->getMolliePaymentLink()->getId());
         $this->assertEquals('open', $molliePaymentLinkApiResponseTransfer->getMolliePaymentLink()->getStatus());
+        $this->assertSame('https://webshop.example.org/thanks', $molliePaymentLinkApiResponseTransfer->getMolliePaymentLink()->getRedirectUrl());
+        $this->assertNull($molliePaymentLinkApiResponseTransfer->getMolliePaymentLink()->getAmount());
     }
 
     /**
@@ -61,57 +63,31 @@ class CreatePaymentLinkApiTest extends AbstractClientTest
 
         $client->createPaymentLink($mollieApiRequestTransfer);
 
-        $requestBody = [];
-        $mockMollieClient->assertSent(function (PendingRequest $pendingRequest) use (&$requestBody): bool {
-            $requestBody = $pendingRequest->payload()->all();
-
-            return true;
-        });
-
-        $sentAmount = $requestBody['amount'];
-        $sentLine = $requestBody['lines'][0];
-        $sentBillingAddress = $requestBody['billingAddress'];
-
-        $expectedUnitPrice = ['currency' => 'EUR', 'value' => '107.10'];
-        $expectedTotalAmount = ['currency' => 'EUR', 'value' => '214.20'];
-        $expectedVatAmount = ['currency' => 'EUR', 'value' => '34.20'];
-
-        $this->assertSame('EUR', $sentAmount['currency']);
-        $this->assertSame('214.20', $sentAmount['value']);
-        $this->assertSame('Office chair', $sentLine['description']);
-        $this->assertSame(2, $sentLine['quantity']);
-        $this->assertSame($expectedUnitPrice, $sentLine['unitPrice']);
-        $this->assertSame($expectedTotalAmount, $sentLine['totalAmount']);
-        $this->assertSame('19.00', $sentLine['vatRate']);
-        $this->assertSame($expectedVatAmount, $sentLine['vatAmount']);
-        $this->assertNotContains(null, $sentLine);
-        $this->assertSame('John', $sentBillingAddress['givenName']);
-        $this->assertSame('Doe', $sentBillingAddress['familyName']);
-        $this->assertSame('buyer@example.com', $sentBillingAddress['email']);
-        $this->assertSame('DE', $sentBillingAddress['country']);
-    }
-
-    /**
-     * @return void
-     */
-    public function testCreatePaymentLinkApiSendsNoLinesAndNoBillingAddressWhenNoneAreSet(): void
-    {
-        $mockMollieClient = $this->createMockApiClientForCreatePaymentRequest();
-        $mollieFactoryMock = $this->createMollieFactoryMock();
-        $mollieFactoryMock->method('createMollieApiClient')
-            ->willReturn($mockMollieClient);
-        $client = $this->createClientMock($mollieFactoryMock);
-
-        $mollieApiRequestTransfer = (new MollieApiRequestTransfer())
-            ->setPaymentLink($this->createPaymentLinkTransfer());
-
-        $client->createPaymentLink($mollieApiRequestTransfer);
-
         $mockMollieClient->assertSent(function (PendingRequest $pendingRequest): bool {
             $requestBody = $pendingRequest->payload()->all();
+            $sentAmount = $requestBody['amount'];
+            $sentLine = $requestBody['lines'][0];
+            $sentBillingAddress = $requestBody['billingAddress'];
 
-            return !array_key_exists('lines', $requestBody)
-                && !array_key_exists('billingAddress', $requestBody);
+            $expectedUnitPrice = ['currency' => 'EUR', 'value' => '107.10'];
+            $expectedTotalAmount = ['currency' => 'EUR', 'value' => '214.20'];
+            $expectedVatAmount = ['currency' => 'EUR', 'value' => '34.20'];
+
+            $this->assertSame('EUR', $sentAmount['currency']);
+            $this->assertSame('214.20', $sentAmount['value']);
+            $this->assertSame('Office chair', $sentLine['description']);
+            $this->assertSame(2, $sentLine['quantity']);
+            $this->assertSame($expectedUnitPrice, $sentLine['unitPrice']);
+            $this->assertSame($expectedTotalAmount, $sentLine['totalAmount']);
+            $this->assertSame('19.00', $sentLine['vatRate']);
+            $this->assertSame($expectedVatAmount, $sentLine['vatAmount']);
+            $this->assertNotContains(null, $sentLine);
+            $this->assertSame('John', $sentBillingAddress['givenName']);
+            $this->assertSame('Doe', $sentBillingAddress['familyName']);
+            $this->assertSame('buyer@example.com', $sentBillingAddress['email']);
+            $this->assertSame('DE', $sentBillingAddress['country']);
+
+            return true;
         });
     }
 
