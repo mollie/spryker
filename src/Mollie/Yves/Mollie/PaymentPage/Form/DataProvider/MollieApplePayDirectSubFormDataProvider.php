@@ -7,7 +7,6 @@ namespace Mollie\Yves\Mollie\PaymentPage\Form\DataProvider;
 use Generated\Shared\Transfer\QuoteTransfer;
 use Mollie\Service\Mollie\MollieServiceInterface;
 use Mollie\Shared\Mollie\MollieConfig;
-use Mollie\Yves\Mollie\Dependency\Client\MollieToStoreClientInterface;
 use Mollie\Yves\Mollie\PaymentPage\Cache\MollieCachedOptionsExpander;
 use Mollie\Yves\Mollie\PaymentPage\Form\MollieApplePayDirectSubForm;
 use Spryker\Shared\Kernel\Transfer\AbstractTransfer;
@@ -18,12 +17,10 @@ class MollieApplePayDirectSubFormDataProvider implements StepEngineFormDataProvi
     /**
      * @param \Mollie\Yves\Mollie\PaymentPage\Cache\MollieCachedOptionsExpander $optionsExpander
      * @param \Mollie\Service\Mollie\MollieServiceInterface $mollieService
-     * @param \Mollie\Yves\Mollie\Dependency\Client\MollieToStoreClientInterface $storeClient
      */
     public function __construct(
         protected MollieCachedOptionsExpander $optionsExpander,
         protected MollieServiceInterface $mollieService,
-        protected MollieToStoreClientInterface $storeClient,
     ) {
     }
 
@@ -67,13 +64,9 @@ class MollieApplePayDirectSubFormDataProvider implements StepEngineFormDataProvi
         $mollieAmountTransfer = $this->mollieService->convertIntegerToMollieAmount($grandTotal, $currencyCode);
         $amount = $mollieAmountTransfer->getValueOrFail();
 
-        $storeTransfer = $this->storeClient->getCurrentStore();
-        $countryCode = $storeTransfer->getNameOrFail();
-
         return [
             MollieApplePayDirectSubForm::OPTION_APPLE_PAY_AMOUNT => $amount,
             MollieApplePayDirectSubForm::OPTION_APPLE_PAY_CURRENCY_CODE => $currencyCode,
-            MollieApplePayDirectSubForm::OPTION_APPLE_PAY_COUNTRY_CODE => $countryCode,
         ];
     }
 }

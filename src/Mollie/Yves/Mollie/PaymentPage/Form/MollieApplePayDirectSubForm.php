@@ -32,11 +32,6 @@ class MollieApplePayDirectSubForm extends AbstractMollieSubForm
     /**
      * @var string
      */
-    public const OPTION_APPLE_PAY_COUNTRY_CODE = 'applePayCountryCode';
-
-    /**
-     * @var string
-     */
     protected const PAYMENT_METHOD = 'applePayDirect';
 
     /**
@@ -96,7 +91,7 @@ class MollieApplePayDirectSubForm extends AbstractMollieSubForm
         $view->vars['applePayPaymentSessionEndpoint'] = MollieRouteProviderPlugin::ROUTE_PATH_MOLLIE_APPLE_PAY_CREATE_PAYMENT_SESSION;
         $view->vars['amount'] = $selectOptions[static::OPTION_APPLE_PAY_AMOUNT];
         $view->vars['currencyCode'] = $selectOptions[static::OPTION_APPLE_PAY_CURRENCY_CODE];
-        $view->vars['countryCode'] = $selectOptions[static::OPTION_APPLE_PAY_COUNTRY_CODE];
+        $view->vars['countryCode'] = $this->getConfig()->getApplePayMerchantCountryCode();
     }
 
     /**

@@ -172,6 +172,7 @@ $config[MollieConstants::MOLLIE] = [
         'apple-pay-gateway-cert.apple.com',
         'cn-apple-pay-gateway-cert.apple.com',
     ],
+    MollieConstants::MOLLIE_APPLE_PAY_MERCHANT_COUNTRY_CODE => 'DE',
     MollieConstants::MOLLIE_TEST_ENVIRONMENT_WEBHOOK_URL => sprintf(
         'http://%s:%s@%s%s',
         getenv('SPRYKER_YVES_AUTH_USERNAME') ?? null,

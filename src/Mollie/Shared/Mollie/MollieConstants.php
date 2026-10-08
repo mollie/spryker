@@ -103,6 +103,11 @@ interface MollieConstants
     /**
      * @var string
      */
+    public const MOLLIE_APPLE_PAY_MERCHANT_COUNTRY_CODE = 'MOLLIE:MOLLIE_APPLE_PAY_MERCHANT_COUNTRY_CODE';
+
+    /**
+     * @var string
+     */
     public const MOLLIE_GET_METHODS_API_DEFAULT_AMOUNT_VALUE = 'MOLLIE_GET_METHODS_API_DEFAULT_AMOUNT_VALUE';
 
     // Payment statuses from Mollie

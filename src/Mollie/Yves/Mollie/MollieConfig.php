@@ -128,4 +128,12 @@ class MollieConfig extends AbstractBundleConfig
     {
         return $this->get(MollieConstants::MOLLIE)[MollieConstants::MOLLIE_APPLE_PAY_VALIDATION_URL_ALLOWED_HOSTS];
     }
+
+    /**
+     * @return string
+     */
+    public function getApplePayMerchantCountryCode(): string
+    {
+        return $this->get(MollieConstants::MOLLIE)[MollieConstants::MOLLIE_APPLE_PAY_MERCHANT_COUNTRY_CODE];
+    }
 }

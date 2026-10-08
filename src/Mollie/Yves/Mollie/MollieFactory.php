@@ -9,7 +9,6 @@ use Mollie\Service\Mollie\MollieServiceInterface;
 use Mollie\Yves\Mollie\Dependency\Client\MollieToLocaleClientInterface;
 use Mollie\Yves\Mollie\Dependency\Client\MollieToQuoteClientInterface;
 use Mollie\Yves\Mollie\Dependency\Client\MollieToStorageClientInterface;
-use Mollie\Yves\Mollie\Dependency\Client\MollieToStoreClientInterface;
 use Mollie\Yves\Mollie\Dependency\Service\MollieToUtilEncodingServiceInterface;
 use Mollie\Yves\Mollie\Handler\Payment\MolliePaymentAlmaHandler;
 use Mollie\Yves\Mollie\Handler\Payment\MolliePaymentApplePayDirectHandler;
@@ -583,7 +582,6 @@ class MollieFactory extends AbstractFactory
         return new MollieApplePayDirectSubFormDataProvider(
             $this->createMollieCachedOptionsExpander(),
             $this->getMollieService(),
-            $this->getStoreClient(),
         );
     }
 
@@ -1001,14 +999,6 @@ class MollieFactory extends AbstractFactory
     public function getLocaleClient(): MollieToLocaleClientInterface
     {
         return $this->getProvidedDependency(MollieDependencyProvider::CLIENT_LOCALE);
-    }
-
-    /**
-     * @return \Mollie\Yves\Mollie\Dependency\Client\MollieToStoreClientInterface
-     */
-    public function getStoreClient(): MollieToStoreClientInterface
-    {
-        return $this->getProvidedDependency(MollieDependencyProvider::CLIENT_STORE);
     }
 
     /**
