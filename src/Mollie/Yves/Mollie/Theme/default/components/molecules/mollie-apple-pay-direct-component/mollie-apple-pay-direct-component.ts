@@ -4,7 +4,7 @@ import { EVENT_UPDATE_DYNAMIC_MESSAGES } from 'ShopUi/components/organisms/dynam
 
 const APPLE_PAY_VERSION = 3;
 const APPLE_PAY_MERCHANT_CAPABILITIES = ['supports3DS'];
-const APPLE_PAY_SUPPORTED_NETWORKS = ['amex', 'maestro', 'masterCard', 'visa', 'vPay'];
+const APPLE_PAY_SUPPORTED_NETWORKS = ['amex', 'maestro', 'masterCard', 'visa', 'vPay', 'cartesBancaires'];
 
 interface ApplePayPaymentRequest {
     countryCode: string;

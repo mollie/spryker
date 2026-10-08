@@ -115,6 +115,8 @@ use Spryker\Yves\StepEngine\Dependency\Form\SubFormInterface;
 
 /**
  * @method \Mollie\Yves\Mollie\MollieConfig getConfig()
+ *
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
 class MollieFactory extends AbstractFactory
 {
