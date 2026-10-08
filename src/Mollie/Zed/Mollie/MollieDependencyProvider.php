@@ -136,6 +136,7 @@ class MollieDependencyProvider extends AbstractBundleDependencyProvider
         $container = $this->addMollieService($container);
         $container = $this->addStoreFacade($container);
         $container = $this->addTranslatorFacade($container);
+        $container = $this->addMoneyFacade($container);
 
         return $container;
     }
@@ -150,7 +151,6 @@ class MollieDependencyProvider extends AbstractBundleDependencyProvider
         $container = parent::providePersistenceLayerDependencies($container);
         $container = $this->addUtilEncodingService($container);
         $container = $this->addMollieService($container);
-        $container = $this->addMoneyFacade($container);
 
         return $container;
     }

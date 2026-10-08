@@ -5,7 +5,6 @@ declare(strict_types = 1);
 namespace Mollie\Zed\Mollie\Persistence;
 
 use Mollie\Service\Mollie\MollieServiceInterface;
-use Mollie\Zed\Mollie\Dependency\Facade\MollieToMoneyFacadeInterface;
 use Mollie\Zed\Mollie\Dependency\Service\MollieToUtilEncodingServiceInterface;
 use Mollie\Zed\Mollie\MollieDependencyProvider;
 use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MollieExpressCheckoutConfigMapper;
@@ -55,7 +54,6 @@ class MolliePersistenceFactory extends AbstractPersistenceFactory
     public function createMolliePaymentLinkMapper(): MolliePaymentLinkMapperInterface
     {
         return new MolliePaymentLinkMapper(
-            $this->getMoneyFacade(),
             $this->getUtilEncodingService(),
         );
     }
@@ -152,13 +150,5 @@ class MolliePersistenceFactory extends AbstractPersistenceFactory
     public function getMollieService(): MollieServiceInterface
     {
         return $this->getProvidedDependency(MollieDependencyProvider::SERVICE_MOLLIE);
-    }
-
-    /**
-     * @return \Mollie\Zed\Mollie\Dependency\Facade\MollieToMoneyFacadeInterface
-     */
-    public function getMoneyFacade(): MollieToMoneyFacadeInterface
-    {
-        return $this->getProvidedDependency(MollieDependencyProvider::FACADE_MONEY);
     }
 }

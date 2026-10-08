@@ -30,6 +30,7 @@ use Mollie\Zed\Mollie\Communication\Table\TableDataProvider\MolliePaymentLinkDat
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToCurrencyFacadeInterface;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToLocaleFacadeInterface;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToMailFacadeInterface;
+use Mollie\Zed\Mollie\Dependency\Facade\MollieToMoneyFacadeInterface;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToSalesFacadeInterface;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToStoreFacadeInterface;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToTranslatorFacadeInterface;
@@ -145,6 +146,7 @@ class MollieCommunicationFactory extends AbstractCommunicationFactory
         return new MolliePaymentLinkMapper(
             $this->getMollieService(),
             $this->getConfig(),
+            $this->getMoneyFacade(),
         );
     }
 
@@ -271,6 +273,14 @@ class MollieCommunicationFactory extends AbstractCommunicationFactory
     public function getStoreFacade(): MollieToStoreFacadeInterface
     {
         return $this->getProvidedDependency(MollieDependencyProvider::FACADE_STORE);
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Dependency\Facade\MollieToMoneyFacadeInterface
+     */
+    public function getMoneyFacade(): MollieToMoneyFacadeInterface
+    {
+        return $this->getProvidedDependency(MollieDependencyProvider::FACADE_MONEY);
     }
 
     /**
