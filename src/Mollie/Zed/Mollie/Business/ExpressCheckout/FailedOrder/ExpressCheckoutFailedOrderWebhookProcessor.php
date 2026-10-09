@@ -20,6 +20,31 @@ class ExpressCheckoutFailedOrderWebhookProcessor implements ExpressCheckoutFaile
     use LoggerTrait;
 
     /**
+     * @var string
+     */
+    protected const STATUS_REFUNDED = 'refunded';
+
+    /**
+     * @var string
+     */
+    protected const STATUS_REFUND_FAILED = 'refund_failed';
+
+    /**
+     * @var string
+     */
+    protected const MOLLIE_REFUND_STATUS_REFUNDED = 'refunded';
+
+    /**
+     * @var string
+     */
+    protected const MOLLIE_REFUND_STATUS_FAILED = 'failed';
+
+    /**
+     * @var string
+     */
+    protected const EMBEDDED_REFUNDS = 'refunds';
+
+    /**
      * @param \Mollie\Zed\Mollie\Persistence\MollieRepositoryInterface $repository
      * @param \Mollie\Zed\Mollie\Persistence\MollieEntityManagerInterface $entityManager
      * @param \Mollie\Zed\Mollie\Business\ExpressCheckout\Refund\ExpressCheckoutPaymentRefunderInterface $paymentRefunder
@@ -50,7 +75,6 @@ class ExpressCheckoutFailedOrderWebhookProcessor implements ExpressCheckoutFaile
             return $this->createNotHandledResponse();
         }
 
-        // The order exists after all (e.g. a post-save step failed): never refund a payment that belongs to an order.
         if ($this->repository->hasMolliePaymentByExpressCheckoutUuid($expressCheckoutUuid)) {
             $this->getLogger()->critical('Express checkout payment has a failed order record and an order; it is not refunded.', [
                 'expressCheckoutUuid' => $expressCheckoutUuid,
@@ -60,12 +84,16 @@ class ExpressCheckoutFailedOrderWebhookProcessor implements ExpressCheckoutFaile
             return $this->createNotHandledResponse();
         }
 
+        $mollieExpressCheckoutFailedOrderTransfer = $this->mapPaymentToFailedOrder($molliePaymentTransfer, $mollieExpressCheckoutFailedOrderTransfer);
         $mollieExpressCheckoutFailedOrderTransfer = $this->entityManager->updateExpressCheckoutFailedOrder(
-            $this->mapPaymentToFailedOrder($molliePaymentTransfer, $mollieExpressCheckoutFailedOrderTransfer),
+            $this->mapRefundStatusToFailedOrder($molliePaymentTransfer, $mollieExpressCheckoutFailedOrderTransfer),
         );
 
         if ($mollieExpressCheckoutFailedOrderTransfer->getRefundId()) {
-            return $this->createHandledResponse(Response::HTTP_OK, 'Express checkout payment is already refunded');
+            return $this->createHandledResponse(
+                Response::HTTP_OK,
+                sprintf('Express checkout payment is already refunded (status: %s)', $mollieExpressCheckoutFailedOrderTransfer->getStatus()),
+            );
         }
 
         if ($mollieExpressCheckoutFailedOrderTransfer->getStatus() !== MollieConstants::STATUS_PAID) {
@@ -119,6 +147,56 @@ class ExpressCheckoutFailedOrderWebhookProcessor implements ExpressCheckoutFaile
             ->setStatus($molliePaymentTransfer->getStatusOrFail())
             ->setAmount($this->convertToMinorUnits((string)$mollieAmountTransfer->getValue()))
             ->setCurrency($mollieAmountTransfer->getCurrency());
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MolliePaymentTransfer $molliePaymentTransfer
+     * @param \Generated\Shared\Transfer\MollieExpressCheckoutFailedOrderTransfer $mollieExpressCheckoutFailedOrderTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieExpressCheckoutFailedOrderTransfer
+     */
+    protected function mapRefundStatusToFailedOrder(
+        MolliePaymentTransfer $molliePaymentTransfer,
+        MollieExpressCheckoutFailedOrderTransfer $mollieExpressCheckoutFailedOrderTransfer,
+    ): MollieExpressCheckoutFailedOrderTransfer {
+        $refundStatus = $this->findRefundStatus($molliePaymentTransfer, (string)$mollieExpressCheckoutFailedOrderTransfer->getRefundId());
+
+        if ($refundStatus === static::MOLLIE_REFUND_STATUS_REFUNDED) {
+            return $mollieExpressCheckoutFailedOrderTransfer->setStatus(static::STATUS_REFUNDED);
+        }
+
+        if ($refundStatus === static::MOLLIE_REFUND_STATUS_FAILED) {
+            $this->getLogger()->critical('Express checkout payment refund failed, refund it manually.', [
+                'expressCheckoutUuid' => $mollieExpressCheckoutFailedOrderTransfer->getExpressCheckoutUuid(),
+                'transactionId' => $mollieExpressCheckoutFailedOrderTransfer->getTransactionId(),
+                'refundId' => $mollieExpressCheckoutFailedOrderTransfer->getRefundId(),
+            ]);
+
+            return $mollieExpressCheckoutFailedOrderTransfer->setStatus(static::STATUS_REFUND_FAILED);
+        }
+
+        return $mollieExpressCheckoutFailedOrderTransfer;
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MolliePaymentTransfer $molliePaymentTransfer
+     * @param string $refundId
+     *
+     * @return string|null
+     */
+    protected function findRefundStatus(MolliePaymentTransfer $molliePaymentTransfer, string $refundId): ?string
+    {
+        if (!$refundId) {
+            return null;
+        }
+
+        foreach ($molliePaymentTransfer->getEmbedded()[static::EMBEDDED_REFUNDS] ?? [] as $mollieRefund) {
+            if (($mollieRefund['id'] ?? null) === $refundId) {
+                return $mollieRefund['status'] ?? null;
+            }
+        }
+
+        return null;
     }
 
     /**

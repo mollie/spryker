@@ -106,6 +106,47 @@ class ExpressCheckoutFailedOrderWebhookProcessorTest extends Unit
     /**
      * @return void
      */
+    public function testIssuedRefundSetsStatusRefunded(): void
+    {
+        $refunderMock = $this->createMock(ExpressCheckoutPaymentRefunderInterface::class);
+        $refunderMock->expects($this->never())->method('refund');
+
+        $response = $this->createProcessor($this->createFailedOrder()->setRefundId('re_x'), false, $refunderMock)
+            ->process($this->createPayment('paid')->setEmbedded(['refunds' => [['id' => 're_x', 'status' => 'refunded']]]));
+
+        $this->assertSame(200, $response->getStatusCode());
+        $this->assertSame('refunded', end($this->savedFailedOrders)->getStatus());
+    }
+
+    /**
+     * @return void
+     */
+    public function testFailedRefundSetsStatusRefundFailed(): void
+    {
+        $response = $this->createProcessor(
+            $this->createFailedOrder()->setRefundId('re_x'),
+            false,
+            $this->createMock(ExpressCheckoutPaymentRefunderInterface::class),
+        )->process($this->createPayment('paid')->setEmbedded(['refunds' => [['id' => 're_x', 'status' => 'failed']]]));
+
+        $this->assertSame(200, $response->getStatusCode());
+        $this->assertSame('refund_failed', end($this->savedFailedOrders)->getStatus());
+    }
+
+    /**
+     * @return void
+     */
+    public function testPendingRefundKeepsPaymentStatus(): void
+    {
+        $this->createProcessor($this->createFailedOrder()->setRefundId('re_x'), false, $this->createMock(ExpressCheckoutPaymentRefunderInterface::class))
+            ->process($this->createPayment('paid')->setEmbedded(['refunds' => [['id' => 're_x', 'status' => 'pending']]]));
+
+        $this->assertSame('paid', end($this->savedFailedOrders)->getStatus());
+    }
+
+    /**
+     * @return void
+     */
     public function testNotPaidPaymentIsUpdatedButNotRefunded(): void
     {
         $refunderMock = $this->createMock(ExpressCheckoutPaymentRefunderInterface::class);

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Mollie\Yves\Mollie\Controller;
 
 use Generated\Shared\Transfer\MollieApiRequestTransfer;
-use Generated\Shared\Transfer\MollieExpressCheckoutPaymentUpdateRequestTransfer;
+use Generated\Shared\Transfer\MollieExpressCheckoutFailedOrderTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutSessionTransfer;
 use Spryker\Shared\Log\LoggerTrait;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -50,22 +50,7 @@ class ExpressCheckoutRedirectController extends AbstractMollieController
     /**
      * @var string
      */
-    protected const ERROR_MESSAGE_ORDER_FAILED_REFUNDED = 'Your order could not be created. Your payment has been refunded.';
-
-    /**
-     * @var string
-     */
-    protected const ERROR_MESSAGE_ORDER_FAILED_NOT_REFUNDED = 'Your order could not be created. Please contact us, your payment will be refunded.';
-
-    /**
-     * @var int
-     */
-    protected const REFUND_ATTEMPTS = 5;
-
-    /**
-     * @var int
-     */
-    protected const REFUND_RETRY_DELAY_SECONDS = 2;
+    protected const ERROR_MESSAGE_ORDER_FAILED = 'Your order could not be created. Your payment will be refunded automatically.';
 
     /**
      * @param \Symfony\Component\HttpFoundation\Request $request
@@ -112,9 +97,13 @@ class ExpressCheckoutRedirectController extends AbstractMollieController
                 'errors' => $mollieExpressCheckoutOrderResponseTransfer->getErrors(),
             ]);
 
-            $this->addErrorMessage($this->refundPayment($expressCheckoutUuid)
-                ? static::ERROR_MESSAGE_ORDER_FAILED_REFUNDED
-                : static::ERROR_MESSAGE_ORDER_FAILED_NOT_REFUNDED);
+            $this->getClient()->createExpressCheckoutFailedOrder(
+                (new MollieExpressCheckoutFailedOrderTransfer())
+                    ->setExpressCheckoutUuid($expressCheckoutUuid)
+                    ->setMollieSessionId($mollieSessionId),
+            );
+
+            $this->addErrorMessage(static::ERROR_MESSAGE_ORDER_FAILED);
             $this->clearExpressCheckoutSession($request);
 
             return $this->redirectResponseInternal(static::ROUTE_NAME_CART);
@@ -164,35 +153,5 @@ class ExpressCheckoutRedirectController extends AbstractMollieController
 
         $request->getSession()->remove($config->getExpressCheckoutSessionIdSessionKey());
         $request->getSession()->remove($config->getExpressCheckoutUuidSessionKey());
-    }
-
-    /**
-     * @param string $expressCheckoutUuid
-     *
-     * @return bool
-     */
-    protected function refundPayment(string $expressCheckoutUuid): bool
-    {
-        $mollieExpressCheckoutPaymentUpdateRequestTransfer = (new MollieExpressCheckoutPaymentUpdateRequestTransfer())
-            ->setExpressCheckoutUuid($expressCheckoutUuid);
-
-        for ($attempt = 1; $attempt <= static::REFUND_ATTEMPTS; $attempt++) {
-            $mollieExpressCheckoutRefundResponseTransfer = $this->getClient()
-                ->refundExpressCheckoutPayment($mollieExpressCheckoutPaymentUpdateRequestTransfer);
-
-            if ($mollieExpressCheckoutRefundResponseTransfer->getIsPaymentKnown()) {
-                return (bool)$mollieExpressCheckoutRefundResponseTransfer->getIsSuccessful();
-            }
-
-            if ($attempt < static::REFUND_ATTEMPTS) {
-                sleep(static::REFUND_RETRY_DELAY_SECONDS);
-            }
-        }
-
-        $this->getLogger()->critical('Express checkout payment could not be refunded: payment webhook did not arrive.', [
-            'expressCheckoutUuid' => $expressCheckoutUuid,
-        ]);
-
-        return false;
     }
 }
