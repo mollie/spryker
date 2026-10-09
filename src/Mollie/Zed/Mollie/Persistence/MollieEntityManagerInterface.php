@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Mollie\Zed\Mollie\Persistence;
 
+use Generated\Shared\Transfer\MollieExpressCheckoutFailedOrderTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutPaymentUpdateRequestTransfer;
 use Generated\Shared\Transfer\MollieItemPaymentCaptureTransfer;
 use Generated\Shared\Transfer\MolliePaymentCaptureTransfer;
@@ -47,6 +48,24 @@ interface MollieEntityManagerInterface
     public function updateExpressCheckoutMolliePayment(
         MollieExpressCheckoutPaymentUpdateRequestTransfer $mollieExpressCheckoutPaymentUpdateRequestTransfer,
     ): bool;
+
+    /**
+     * @param \Generated\Shared\Transfer\MollieExpressCheckoutFailedOrderTransfer $mollieExpressCheckoutFailedOrderTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieExpressCheckoutFailedOrderTransfer
+     */
+    public function createExpressCheckoutFailedOrder(
+        MollieExpressCheckoutFailedOrderTransfer $mollieExpressCheckoutFailedOrderTransfer,
+    ): MollieExpressCheckoutFailedOrderTransfer;
+
+    /**
+     * @param \Generated\Shared\Transfer\MollieExpressCheckoutFailedOrderTransfer $mollieExpressCheckoutFailedOrderTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieExpressCheckoutFailedOrderTransfer
+     */
+    public function updateExpressCheckoutFailedOrder(
+        MollieExpressCheckoutFailedOrderTransfer $mollieExpressCheckoutFailedOrderTransfer,
+    ): MollieExpressCheckoutFailedOrderTransfer;
 
     /**
      * @param \Generated\Shared\Transfer\MollieRefundCollectionTransfer $mollieRefundCollectionTransfer

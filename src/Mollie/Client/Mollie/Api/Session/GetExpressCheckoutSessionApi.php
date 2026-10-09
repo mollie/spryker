@@ -13,6 +13,7 @@ use Mollie\Api\Http\Request;
 use Mollie\Api\Http\Requests\GetSessionRequest;
 use Mollie\Client\Mollie\Api\AbstractApiCall;
 use Mollie\Client\Mollie\MollieConfig;
+use Mollie\Shared\Mollie\MollieConstants;
 use Spryker\Shared\Kernel\Transfer\AbstractTransfer;
 
 class GetExpressCheckoutSessionApi extends AbstractApiCall
@@ -53,9 +54,28 @@ class GetExpressCheckoutSessionApi extends AbstractApiCall
         $mollieLinksTransfer = new MollieLinksTransfer();
         $mollieLinksTransfer->fromArray($links, true);
         $mollieExpressCheckoutSessionTransfer->setLinks($mollieLinksTransfer);
+        $mollieExpressCheckoutSessionTransfer->setShippingFeeReference(
+            $this->findShippingFeeReference($mollieApiResponseTransfer->getPayload()),
+        );
 
         $mollieExpressCheckoutSessionApiResponseTransfer->setExpressCheckoutSession($mollieExpressCheckoutSessionTransfer);
 
         return $mollieExpressCheckoutSessionApiResponseTransfer;
+    }
+
+    /**
+     * @param array<string, mixed> $payload
+     *
+     * @return string|null
+     */
+    protected function findShippingFeeReference(array $payload): ?string
+    {
+        foreach ($payload['lines'] ?? [] as $line) {
+            if (($line['type'] ?? null) === MollieConstants::PRODUCT_TYPE_SHIPPING_FEE) {
+                return $line['reference'] ?? null;
+            }
+        }
+
+        return null;
     }
 }

@@ -7,14 +7,20 @@ namespace Mollie\Client\Mollie\Zed;
 
 use Generated\Shared\Transfer\MollieExpressCheckoutConfigCollectionTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutConfigCriteriaTransfer;
+use Generated\Shared\Transfer\MollieExpressCheckoutFailedOrderTransfer;
+use Generated\Shared\Transfer\MollieExpressCheckoutOrderRequestTransfer;
+use Generated\Shared\Transfer\MollieExpressCheckoutOrderResponseTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutPaymentUpdateRequestTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutPaymentUpdateResponseTransfer;
+use Generated\Shared\Transfer\MollieExpressCheckoutShippingOptionsRequestTransfer;
+use Generated\Shared\Transfer\MollieExpressCheckoutShippingOptionsResponseTransfer;
 use Generated\Shared\Transfer\MolliePaymentCaptureResponseTransfer;
 use Generated\Shared\Transfer\MolliePaymentLinkTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodConfigCollectionTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodConfigCriteriaTransfer;
 use Generated\Shared\Transfer\MolliePaymentTransfer;
 use Generated\Shared\Transfer\MollieRefundResponseTransfer;
+use Generated\Shared\Transfer\MollieWebhookResponseTransfer;
 use Generated\Shared\Transfer\OrderCollectionRequestTransfer;
 use Generated\Shared\Transfer\OrderCollectionResponseTransfer;
 use Spryker\Client\ZedRequest\ZedRequestClientInterface;
@@ -125,5 +131,64 @@ class MollieStub implements MollieStubInterface
             ->call('/mollie/gateway/get-express-checkout-config-collection', $mollieExpressCheckoutConfigCriteriaTransfer);
 
         return $mollieExpressCheckoutConfigCollectionTransfer;
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MollieExpressCheckoutOrderRequestTransfer $mollieExpressCheckoutOrderRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieExpressCheckoutOrderResponseTransfer
+     */
+    public function placeExpressCheckoutOrder(
+        MollieExpressCheckoutOrderRequestTransfer $mollieExpressCheckoutOrderRequestTransfer,
+    ): MollieExpressCheckoutOrderResponseTransfer {
+        /** @var \Generated\Shared\Transfer\MollieExpressCheckoutOrderResponseTransfer $mollieExpressCheckoutOrderResponseTransfer */
+        $mollieExpressCheckoutOrderResponseTransfer = $this->zedStub
+            ->call('/mollie/gateway/place-express-checkout-order', $mollieExpressCheckoutOrderRequestTransfer);
+
+        return $mollieExpressCheckoutOrderResponseTransfer;
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MollieExpressCheckoutShippingOptionsRequestTransfer $mollieExpressCheckoutShippingOptionsRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieExpressCheckoutShippingOptionsResponseTransfer
+     */
+    public function getExpressCheckoutShippingOptions(
+        MollieExpressCheckoutShippingOptionsRequestTransfer $mollieExpressCheckoutShippingOptionsRequestTransfer,
+    ): MollieExpressCheckoutShippingOptionsResponseTransfer {
+        /** @var \Generated\Shared\Transfer\MollieExpressCheckoutShippingOptionsResponseTransfer $mollieExpressCheckoutShippingOptionsResponseTransfer */
+        $mollieExpressCheckoutShippingOptionsResponseTransfer = $this->zedStub
+            ->call('/mollie/gateway/get-express-checkout-shipping-options', $mollieExpressCheckoutShippingOptionsRequestTransfer);
+
+        return $mollieExpressCheckoutShippingOptionsResponseTransfer;
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MollieExpressCheckoutFailedOrderTransfer $mollieExpressCheckoutFailedOrderTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieExpressCheckoutFailedOrderTransfer
+     */
+    public function createExpressCheckoutFailedOrder(
+        MollieExpressCheckoutFailedOrderTransfer $mollieExpressCheckoutFailedOrderTransfer,
+    ): MollieExpressCheckoutFailedOrderTransfer {
+        /** @var \Generated\Shared\Transfer\MollieExpressCheckoutFailedOrderTransfer $mollieExpressCheckoutFailedOrderTransfer */
+        $mollieExpressCheckoutFailedOrderTransfer = $this->zedStub
+            ->call('/mollie/gateway/create-express-checkout-failed-order', $mollieExpressCheckoutFailedOrderTransfer);
+
+        return $mollieExpressCheckoutFailedOrderTransfer;
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MolliePaymentTransfer $molliePaymentTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieWebhookResponseTransfer
+     */
+    public function processExpressCheckoutFailedOrderPayment(MolliePaymentTransfer $molliePaymentTransfer): MollieWebhookResponseTransfer
+    {
+        /** @var \Generated\Shared\Transfer\MollieWebhookResponseTransfer $mollieWebhookResponseTransfer */
+        $mollieWebhookResponseTransfer = $this->zedStub
+            ->call('/mollie/gateway/process-express-checkout-failed-order-payment', $molliePaymentTransfer);
+
+        return $mollieWebhookResponseTransfer;
     }
 }

@@ -6,6 +6,7 @@ declare(strict_types=1);
 namespace Mollie\Zed\Mollie\Persistence;
 
 use Generated\Shared\Transfer\MollieExpressCheckoutConfigCriteriaTransfer;
+use Generated\Shared\Transfer\MollieExpressCheckoutFailedOrderTransfer;
 use Generated\Shared\Transfer\MollieItemPaymentCaptureTransfer;
 use Generated\Shared\Transfer\MolliePaymentLinkTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodConfigCollectionTransfer;
@@ -164,5 +165,39 @@ class MollieRepository extends AbstractRepository implements MollieRepositoryInt
         return $this->getFactory()
             ->createMollieExpressCheckoutConfigMapper()
             ->mapEntitiesToMethodConfig($entities);
+    }
+
+    /**
+     * @param string $expressCheckoutUuid
+     *
+     * @return \Generated\Shared\Transfer\MollieExpressCheckoutFailedOrderTransfer|null
+     */
+    public function findExpressCheckoutFailedOrderByExpressCheckoutUuid(string $expressCheckoutUuid): ?MollieExpressCheckoutFailedOrderTransfer
+    {
+        $spyMollieExpressCheckoutFailedOrderEntity = $this->getFactory()
+            ->createSpyMollieExpressCheckoutFailedOrderQuery()
+            ->filterByExpressCheckoutUuid($expressCheckoutUuid)
+            ->findOne();
+
+        if (!$spyMollieExpressCheckoutFailedOrderEntity) {
+            return null;
+        }
+
+        return $this->getFactory()
+            ->createMollieExpressCheckoutFailedOrderMapper()
+            ->mapEntityToTransfer($spyMollieExpressCheckoutFailedOrderEntity, new MollieExpressCheckoutFailedOrderTransfer());
+    }
+
+    /**
+     * @param string $expressCheckoutUuid
+     *
+     * @return bool
+     */
+    public function hasMolliePaymentByExpressCheckoutUuid(string $expressCheckoutUuid): bool
+    {
+        return $this->getFactory()
+            ->createSpyPaymentMollieQuery()
+            ->filterByExpressCheckoutUuid($expressCheckoutUuid)
+            ->exists();
     }
 }
