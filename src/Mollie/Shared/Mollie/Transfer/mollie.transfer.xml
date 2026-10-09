@@ -28,6 +28,10 @@
         <property name="applePayPaymentToken" type="string"/>
     </transfer>
 
+    <transfer name="MollieApplePayDirectPayment">
+        <property name="applePayPaymentToken" type="string"/>
+    </transfer>
+
     <transfer name="MollieBilliePayment">
         <property name="registrationNumber" type="string"/>
         <property name="vatNumber" type="string"/>
@@ -52,6 +56,7 @@
         <property name="mollieKbcPayment" type="array"/>
         <property name="molliePayByBankPayment" type="array"/>
         <property name="mollieApplePayPayment" type="MollieApplePayPayment"/>
+        <property name="mollieApplePayDirectPayment" type="MollieApplePayDirectPayment"/>
         <property name="molliePrzelewy24Payment" type="array"/>
         <property name="mollieMultibancoPayment" type="array"/>
         <property name="mollieBancomatPayPayment" type="array"/>
@@ -279,6 +284,8 @@
         <property name="sessionId" type="string"/>
         <property name="redirectUrl" type="string"/>
         <property name="description" type="string"/>
+        <property name="applePayDomain" type="string"/>
+        <property name="applePayValidationUrl" type="string"/>
         <property name="expressCheckoutUuid" type="string"/>
     </transfer>
 
@@ -501,6 +508,12 @@
         <property name="isSuccessful" type="bool"/>
         <property name="message" type="string"/>
         <property name="expressCheckoutSession" type="MollieExpressCheckoutSession"/>
+    </transfer>
+
+    <transfer name="MollieApplePayPaymentSessionApiResponse">
+        <property name="isSuccessful" type="bool"/>
+        <property name="message" type="string"/>
+        <property name="applePayPaymentSession" type="array" singular="applePayPaymentSessionField"/>
     </transfer>
 
 </transfers>

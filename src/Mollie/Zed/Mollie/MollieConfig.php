@@ -16,37 +16,7 @@ class MollieConfig extends AbstractBundleConfig
     /**
      * @var string
      */
-    public const PAID = 'paid';
-
-    /**
-     * @var string
-     */
     public const AUTHORIZED = 'authorized';
-
-    /**
-     * @var string
-     */
-    public const EXPIRED = 'expired';
-
-    /**
-     * @var string
-     */
-    public const FAILED = 'failed';
-
-    /**
-     * @var string
-     */
-    public const CANCELED = 'canceled';
-
-    /**
-     * @var string
-     */
-    public const PROCESSING = 'processing';
-
-    /**
-     * @var string
-     */
-    public const REFUNDED = 'refunded';
 
     /**
      * @var string
