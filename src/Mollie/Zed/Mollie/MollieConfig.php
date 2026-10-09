@@ -79,16 +79,6 @@ class MollieConfig extends AbstractBundleConfig
     public const MOLLIE_GET_METHODS_API_DEFAULT_AMOUNT_VALUE = '100.00';
 
     /**
-     * @var string
-     */
-    protected const EXPRESS_CHECKOUT_PENDING_PAYMENT_STORAGE_KEY_PREFIX = 'mollie:express-checkout:payment:';
-
-    /**
-     * @var int
-     */
-    protected const EXPRESS_CHECKOUT_PENDING_PAYMENT_STORAGE_TTL = 86400;
-
-    /**
      * @return array<string, string>
      */
     public function getMollieOmsToPaymentMethodMapping(): array
@@ -222,23 +212,5 @@ class MollieConfig extends AbstractBundleConfig
     public function getDefaultExpressCheckoutMethodConfig(): array
     {
         return $this->getSharedConfig()->getDefaultExpressCheckoutMethodConfig();
-    }
-
-    /**
-     * @param string $expressCheckoutUuid
-     *
-     * @return string
-     */
-    public function getExpressCheckoutPendingPaymentStorageKey(string $expressCheckoutUuid): string
-    {
-        return static::EXPRESS_CHECKOUT_PENDING_PAYMENT_STORAGE_KEY_PREFIX . $expressCheckoutUuid;
-    }
-
-    /**
-     * @return int
-     */
-    public function getExpressCheckoutPendingPaymentStorageTtl(): int
-    {
-        return static::EXPRESS_CHECKOUT_PENDING_PAYMENT_STORAGE_TTL;
     }
 }

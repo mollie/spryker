@@ -12,6 +12,10 @@ use Mollie\Zed\Mollie\Business\ExpressCheckout\ExpressCheckoutConfigReader;
 use Mollie\Zed\Mollie\Business\ExpressCheckout\ExpressCheckoutConfigReaderInterface;
 use Mollie\Zed\Mollie\Business\ExpressCheckout\ExpressCheckoutConfigWriter;
 use Mollie\Zed\Mollie\Business\ExpressCheckout\ExpressCheckoutConfigWriterInterface;
+use Mollie\Zed\Mollie\Business\ExpressCheckout\FailedOrder\ExpressCheckoutFailedOrderWebhookProcessor;
+use Mollie\Zed\Mollie\Business\ExpressCheckout\FailedOrder\ExpressCheckoutFailedOrderWebhookProcessorInterface;
+use Mollie\Zed\Mollie\Business\ExpressCheckout\FailedOrder\ExpressCheckoutFailedOrderWriter;
+use Mollie\Zed\Mollie\Business\ExpressCheckout\FailedOrder\ExpressCheckoutFailedOrderWriterInterface;
 use Mollie\Zed\Mollie\Business\ExpressCheckout\Order\Expander\AddressExpander;
 use Mollie\Zed\Mollie\Business\ExpressCheckout\Order\Expander\ExpressCheckoutQuoteExpanderInterface;
 use Mollie\Zed\Mollie\Business\ExpressCheckout\Order\Expander\PaymentExpander;
@@ -368,8 +372,6 @@ class MollieBusinessFactory extends AbstractBusinessFactory
     {
         return new ExpressCheckoutMolliePaymentHandler(
             $this->getEntityManager(),
-            $this->getStorageClient(),
-            $this->getConfig(),
         );
     }
 
@@ -470,8 +472,28 @@ class MollieBusinessFactory extends AbstractBusinessFactory
     {
         return new ExpressCheckoutPaymentRefunder(
             $this->getMollieClient(),
-            $this->getStorageClient(),
-            $this->getConfig(),
+        );
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Business\ExpressCheckout\FailedOrder\ExpressCheckoutFailedOrderWriterInterface
+     */
+    public function createExpressCheckoutFailedOrderWriter(): ExpressCheckoutFailedOrderWriterInterface
+    {
+        return new ExpressCheckoutFailedOrderWriter(
+            $this->getEntityManager(),
+        );
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Business\ExpressCheckout\FailedOrder\ExpressCheckoutFailedOrderWebhookProcessorInterface
+     */
+    public function createExpressCheckoutFailedOrderWebhookProcessor(): ExpressCheckoutFailedOrderWebhookProcessorInterface
+    {
+        return new ExpressCheckoutFailedOrderWebhookProcessor(
+            $this->getRepository(),
+            $this->getEntityManager(),
+            $this->createExpressCheckoutPaymentRefunder(),
         );
     }
 }

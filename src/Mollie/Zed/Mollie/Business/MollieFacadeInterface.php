@@ -9,11 +9,11 @@ use Generated\Shared\Transfer\CheckoutResponseTransfer;
 use Generated\Shared\Transfer\MollieExpirationInformationTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutConfigCollectionTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutConfigCriteriaTransfer;
+use Generated\Shared\Transfer\MollieExpressCheckoutFailedOrderTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutOrderRequestTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutOrderResponseTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutPaymentUpdateRequestTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutPaymentUpdateResponseTransfer;
-use Generated\Shared\Transfer\MollieExpressCheckoutRefundResponseTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutShippingOptionsRequestTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutShippingOptionsResponseTransfer;
 use Generated\Shared\Transfer\MolliePaymentCaptureRequestTransfer;
@@ -26,6 +26,7 @@ use Generated\Shared\Transfer\MolliePaymentMethodConfigTransfer;
 use Generated\Shared\Transfer\MolliePaymentTransfer;
 use Generated\Shared\Transfer\MollieRefundApiResponseTransfer;
 use Generated\Shared\Transfer\MollieRefundResponseTransfer;
+use Generated\Shared\Transfer\MollieWebhookResponseTransfer;
 use Generated\Shared\Transfer\OrderCollectionRequestTransfer;
 use Generated\Shared\Transfer\OrderCollectionResponseTransfer;
 use Generated\Shared\Transfer\OrderTransfer;
@@ -328,17 +329,32 @@ interface MollieFacadeInterface
 
     /**
      * Specification:
-     * - Refunds the full amount of an express checkout payment for which no order could be created after payment.
-     * - Finds the payment by `expressCheckoutUuid` (transaction id remembered from the express payment webhook).
-     * - Returns `isPaymentKnown = false` if the webhook has not arrived yet; idempotent per uuid.
+     * - Saves an express checkout order that could not be created after the shopper paid.
+     * - Stores the express checkout uuid and Mollie session id with status `order_failed`;
+     *   the payment webhook refunds the payment later (see processExpressCheckoutFailedOrderPayment()).
      *
      * @api
      *
-     * @param \Generated\Shared\Transfer\MollieExpressCheckoutPaymentUpdateRequestTransfer $mollieExpressCheckoutPaymentUpdateRequestTransfer
+     * @param \Generated\Shared\Transfer\MollieExpressCheckoutFailedOrderTransfer $mollieExpressCheckoutFailedOrderTransfer
      *
-     * @return \Generated\Shared\Transfer\MollieExpressCheckoutRefundResponseTransfer
+     * @return \Generated\Shared\Transfer\MollieExpressCheckoutFailedOrderTransfer
      */
-    public function refundExpressCheckoutPayment(
-        MollieExpressCheckoutPaymentUpdateRequestTransfer $mollieExpressCheckoutPaymentUpdateRequestTransfer,
-    ): MollieExpressCheckoutRefundResponseTransfer;
+    public function createExpressCheckoutFailedOrder(
+        MollieExpressCheckoutFailedOrderTransfer $mollieExpressCheckoutFailedOrderTransfer,
+    ): MollieExpressCheckoutFailedOrderTransfer;
+
+    /**
+     * Specification:
+     * - Handles the payment webhook of an express checkout payment whose order could not be created.
+     * - `isHandled` is false when no failed order record exists for the payment's express checkout uuid.
+     * - Otherwise updates the record with the payment and fully refunds a paid payment once;
+     *   returns the status code and message for Mollie (non-2xx on refund failure, so Mollie retries).
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\MolliePaymentTransfer $molliePaymentTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieWebhookResponseTransfer
+     */
+    public function processExpressCheckoutFailedOrderPayment(MolliePaymentTransfer $molliePaymentTransfer): MollieWebhookResponseTransfer;
 }

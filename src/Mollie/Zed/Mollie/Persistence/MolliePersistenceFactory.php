@@ -10,6 +10,8 @@ use Mollie\Zed\Mollie\Dependency\Service\MollieToUtilEncodingServiceInterface;
 use Mollie\Zed\Mollie\MollieDependencyProvider;
 use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MollieExpressCheckoutConfigMapper;
 use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MollieExpressCheckoutConfigMapperInterface;
+use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MollieExpressCheckoutFailedOrderMapper;
+use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MollieExpressCheckoutFailedOrderMapperInterface;
 use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MollieOrderMapper;
 use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MollieOrderMapperInterface;
 use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MolliePaymentCaptureMapper;
@@ -21,6 +23,7 @@ use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MolliePaymentMethodConfigMapperI
 use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MollieRefundMapper;
 use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MollieRefundMapperInterface;
 use Orm\Zed\Mollie\Persistence\SpyMollieExpressCheckoutConfigQuery;
+use Orm\Zed\Mollie\Persistence\SpyMollieExpressCheckoutFailedOrderQuery;
 use Orm\Zed\Mollie\Persistence\SpyMollieOrderItemPaymentCaptureQuery;
 use Orm\Zed\Mollie\Persistence\SpyMolliePaymentLinkQuery;
 use Orm\Zed\Mollie\Persistence\SpyMolliePaymentMethodConfigQuery;
@@ -136,6 +139,22 @@ class MolliePersistenceFactory extends AbstractPersistenceFactory
     public function createSpyMollieExpressCheckoutConfigQuery(): SpyMollieExpressCheckoutConfigQuery
     {
         return SpyMollieExpressCheckoutConfigQuery::create();
+    }
+
+    /**
+     * @return \Orm\Zed\Mollie\Persistence\SpyMollieExpressCheckoutFailedOrderQuery
+     */
+    public function createSpyMollieExpressCheckoutFailedOrderQuery(): SpyMollieExpressCheckoutFailedOrderQuery
+    {
+        return SpyMollieExpressCheckoutFailedOrderQuery::create();
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Persistence\Propel\Mapper\MollieExpressCheckoutFailedOrderMapperInterface
+     */
+    public function createMollieExpressCheckoutFailedOrderMapper(): MollieExpressCheckoutFailedOrderMapperInterface
+    {
+        return new MollieExpressCheckoutFailedOrderMapper();
     }
 
     /**

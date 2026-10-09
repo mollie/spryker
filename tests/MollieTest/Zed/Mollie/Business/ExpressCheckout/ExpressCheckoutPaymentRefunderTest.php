@@ -6,16 +6,11 @@ declare(strict_types=1);
 namespace MollieTest\Zed\Mollie\Business\ExpressCheckout;
 
 use Codeception\Test\Unit;
-use Generated\Shared\Transfer\MollieAmountTransfer;
 use Generated\Shared\Transfer\MollieApiRequestTransfer;
-use Generated\Shared\Transfer\MollieExpressCheckoutPaymentUpdateRequestTransfer;
-use Generated\Shared\Transfer\MolliePaymentApiResponseTransfer;
-use Generated\Shared\Transfer\MolliePaymentTransfer;
+use Generated\Shared\Transfer\MollieExpressCheckoutFailedOrderTransfer;
 use Generated\Shared\Transfer\MollieRefundApiResponseTransfer;
 use Mollie\Client\Mollie\MollieClientInterface;
 use Mollie\Zed\Mollie\Business\ExpressCheckout\Refund\ExpressCheckoutPaymentRefunder;
-use Mollie\Zed\Mollie\Dependency\MollieToStorageClientInterface;
-use Mollie\Zed\Mollie\MollieConfig;
 
 /**
  * @group MollieTest
@@ -35,30 +30,11 @@ class ExpressCheckoutPaymentRefunderTest extends Unit
     /**
      * @return void
      */
-    public function testRefundReportsUnknownPaymentWhenWebhookHasNotArrived(): void
-    {
-        $mollieClientMock = $this->createMock(MollieClientInterface::class);
-        $mollieClientMock->expects($this->never())->method('createRefund');
-
-        $response = $this->createRefunder($mollieClientMock, null)->refund($this->createRequest());
-
-        $this->assertFalse($response->getIsSuccessful());
-        $this->assertFalse($response->getIsPaymentKnown());
-    }
-
-    /**
-     * @return void
-     */
     public function testRefundRefundsFullPaidAmountIdempotently(): void
     {
         $refundRequest = null;
         $mollieClientMock = $this->createMock(MollieClientInterface::class);
-        $mollieClientMock->method('getPaymentByTransactionId')->willReturn(
-            (new MolliePaymentApiResponseTransfer())->setIsSuccessful(true)->setMolliePayment(
-                (new MolliePaymentTransfer())->setAmount((new MollieAmountTransfer())->setCurrency('EUR')->setValue('0.02')),
-            ),
-        );
-        $mollieClientMock->method('createRefund')->willReturnCallback(
+        $mollieClientMock->expects($this->once())->method('createRefund')->willReturnCallback(
             function (MollieApiRequestTransfer $mollieApiRequestTransfer) use (&$refundRequest) {
                 $refundRequest = $mollieApiRequestTransfer;
 
@@ -66,56 +42,18 @@ class ExpressCheckoutPaymentRefunderTest extends Unit
             },
         );
 
-        $response = $this->createRefunder($mollieClientMock, ['transactionId' => 'tr_riJSrDBms8mKZ5QCrxiXJ', 'status' => 'paid'])
-            ->refund($this->createRequest());
+        $response = (new ExpressCheckoutPaymentRefunder($mollieClientMock))->refund(
+            (new MollieExpressCheckoutFailedOrderTransfer())
+                ->setExpressCheckoutUuid(static::UUID)
+                ->setTransactionId('tr_QKZEBWM24ifxZzhqkGjXJ')
+                ->setAmount(2)
+                ->setCurrency('EUR'),
+        );
 
         $this->assertTrue($response->getIsSuccessful());
         $this->assertSame(static::UUID, $refundRequest->getIdempotencyKey());
-        $this->assertSame('tr_riJSrDBms8mKZ5QCrxiXJ', $refundRequest->getRefund()->getTransactionId());
+        $this->assertSame('tr_QKZEBWM24ifxZzhqkGjXJ', $refundRequest->getRefund()->getTransactionId());
         $this->assertSame('2', $refundRequest->getRefund()->getAmount()->getValue());
         $this->assertSame('EUR', $refundRequest->getRefund()->getAmount()->getCurrency());
-    }
-
-    /**
-     * @return void
-     */
-    public function testRefundFailsWhenMollieRejectsTheRefund(): void
-    {
-        $mollieClientMock = $this->createMock(MollieClientInterface::class);
-        $mollieClientMock->method('getPaymentByTransactionId')->willReturn(
-            (new MolliePaymentApiResponseTransfer())->setMolliePayment(
-                (new MolliePaymentTransfer())->setAmount((new MollieAmountTransfer())->setCurrency('EUR')->setValue('0.02')),
-            ),
-        );
-        $mollieClientMock->method('createRefund')->willReturn(
-            (new MollieRefundApiResponseTransfer())->setIsSuccessful(false)->setMessage('Refund rejected'),
-        );
-
-        $response = $this->createRefunder($mollieClientMock, ['transactionId' => 'tr_x', 'status' => 'paid'])->refund($this->createRequest());
-
-        $this->assertFalse($response->getIsSuccessful());
-        $this->assertTrue($response->getIsPaymentKnown());
-    }
-
-    /**
-     * @param \Mollie\Client\Mollie\MollieClientInterface $mollieClient
-     * @param array<string, string>|null $pendingPayment
-     *
-     * @return \Mollie\Zed\Mollie\Business\ExpressCheckout\Refund\ExpressCheckoutPaymentRefunder
-     */
-    protected function createRefunder(MollieClientInterface $mollieClient, ?array $pendingPayment): ExpressCheckoutPaymentRefunder
-    {
-        $storageClientMock = $this->createMock(MollieToStorageClientInterface::class);
-        $storageClientMock->method('get')->willReturn($pendingPayment);
-
-        return new ExpressCheckoutPaymentRefunder($mollieClient, $storageClientMock, new MollieConfig());
-    }
-
-    /**
-     * @return \Generated\Shared\Transfer\MollieExpressCheckoutPaymentUpdateRequestTransfer
-     */
-    protected function createRequest(): MollieExpressCheckoutPaymentUpdateRequestTransfer
-    {
-        return (new MollieExpressCheckoutPaymentUpdateRequestTransfer())->setExpressCheckoutUuid(static::UUID);
     }
 }

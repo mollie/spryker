@@ -51,7 +51,15 @@ class MollieExpressCheckoutPaymentWebhookHandlerPlugin extends AbstractPlugin im
             $molliePaymentTransfer,
         );
 
-        $this->getClient()->updateExpressCheckoutMolliePayment($mollieExpressCheckoutPaymentUpdateRequestTransfer);
+        $mollieExpressCheckoutPaymentUpdateResponseTransfer = $this->getClient()
+            ->updateExpressCheckoutMolliePayment($mollieExpressCheckoutPaymentUpdateRequestTransfer);
+
+        if (!$mollieExpressCheckoutPaymentUpdateResponseTransfer->getIsSuccessful()) {
+            return $this->createWebhookResponseTransfer(
+                Response::HTTP_NOT_FOUND,
+                'Express checkout payment not found',
+            );
+        }
 
         return $this->createWebhookResponseTransfer(
             Response::HTTP_OK,

@@ -339,6 +339,7 @@
     <transfer name="MollieWebhookResponse">
         <property name="statusCode" type="int"/>
         <property name="message" type="string"/>
+        <property name="isHandled" type="bool"/>
     </transfer>
 
     <transfer name="MolliePaymentLink">
@@ -523,9 +524,15 @@
         <property name="amount" type="MollieAmount"/>
     </transfer>
 
-    <transfer name="MollieExpressCheckoutRefundResponse">
-        <property name="isSuccessful" type="bool"/>
-        <property name="isPaymentKnown" type="bool"/>
+    <transfer name="MollieExpressCheckoutFailedOrder">
+        <property name="idMollieExpressCheckoutFailedOrder" type="int"/>
+        <property name="expressCheckoutUuid" type="string"/>
+        <property name="mollieSessionId" type="string"/>
+        <property name="transactionId" type="string"/>
+        <property name="status" type="string"/>
+        <property name="amount" type="int"/>
+        <property name="currency" type="string"/>
+        <property name="refundId" type="string"/>
     </transfer>
 
 </transfers>

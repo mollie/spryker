@@ -9,11 +9,11 @@ use Generated\Shared\Transfer\CheckoutResponseTransfer;
 use Generated\Shared\Transfer\MollieExpirationInformationTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutConfigCollectionTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutConfigCriteriaTransfer;
+use Generated\Shared\Transfer\MollieExpressCheckoutFailedOrderTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutOrderRequestTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutOrderResponseTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutPaymentUpdateRequestTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutPaymentUpdateResponseTransfer;
-use Generated\Shared\Transfer\MollieExpressCheckoutRefundResponseTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutShippingOptionsRequestTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutShippingOptionsResponseTransfer;
 use Generated\Shared\Transfer\MolliePaymentCaptureRequestTransfer;
@@ -26,6 +26,7 @@ use Generated\Shared\Transfer\MolliePaymentMethodConfigTransfer;
 use Generated\Shared\Transfer\MolliePaymentTransfer;
 use Generated\Shared\Transfer\MollieRefundApiResponseTransfer;
 use Generated\Shared\Transfer\MollieRefundResponseTransfer;
+use Generated\Shared\Transfer\MollieWebhookResponseTransfer;
 use Generated\Shared\Transfer\OrderCollectionRequestTransfer;
 use Generated\Shared\Transfer\OrderCollectionResponseTransfer;
 use Generated\Shared\Transfer\OrderTransfer;
@@ -436,15 +437,31 @@ class MollieFacade extends AbstractFacade implements MollieFacadeInterface
      *
      * @api
      *
-     * @param \Generated\Shared\Transfer\MollieExpressCheckoutPaymentUpdateRequestTransfer $mollieExpressCheckoutPaymentUpdateRequestTransfer
+     * @param \Generated\Shared\Transfer\MollieExpressCheckoutFailedOrderTransfer $mollieExpressCheckoutFailedOrderTransfer
      *
-     * @return \Generated\Shared\Transfer\MollieExpressCheckoutRefundResponseTransfer
+     * @return \Generated\Shared\Transfer\MollieExpressCheckoutFailedOrderTransfer
      */
-    public function refundExpressCheckoutPayment(
-        MollieExpressCheckoutPaymentUpdateRequestTransfer $mollieExpressCheckoutPaymentUpdateRequestTransfer,
-    ): MollieExpressCheckoutRefundResponseTransfer {
+    public function createExpressCheckoutFailedOrder(
+        MollieExpressCheckoutFailedOrderTransfer $mollieExpressCheckoutFailedOrderTransfer,
+    ): MollieExpressCheckoutFailedOrderTransfer {
         return $this->getFactory()
-            ->createExpressCheckoutPaymentRefunder()
-            ->refund($mollieExpressCheckoutPaymentUpdateRequestTransfer);
+            ->createExpressCheckoutFailedOrderWriter()
+            ->create($mollieExpressCheckoutFailedOrderTransfer);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\MolliePaymentTransfer $molliePaymentTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieWebhookResponseTransfer
+     */
+    public function processExpressCheckoutFailedOrderPayment(MolliePaymentTransfer $molliePaymentTransfer): MollieWebhookResponseTransfer
+    {
+        return $this->getFactory()
+            ->createExpressCheckoutFailedOrderWebhookProcessor()
+            ->process($molliePaymentTransfer);
     }
 }

@@ -142,4 +142,23 @@
         <behavior name="timestampable"/>
     </table>
 
+    <table name="spy_mollie_express_checkout_failed_order" phpName="SpyMollieExpressCheckoutFailedOrder">
+        <column name="id_mollie_express_checkout_failed_order" type="INTEGER" primaryKey="true" autoIncrement="true"/>
+        <column name="express_checkout_uuid" type="VARCHAR" size="36" required="true"/>
+        <column name="mollie_session_id" type="VARCHAR" size="255" required="true"/>
+        <column name="transaction_id" type="VARCHAR" size="255" required="false"/>
+        <column name="status" type="VARCHAR" size="64" required="true"/>
+        <column name="amount" type="INTEGER" required="false"/>
+        <column name="currency" type="VARCHAR" size="3" required="false"/>
+        <column name="refund_id" type="VARCHAR" size="255" required="false"/>
+
+        <unique name="spy_mollie_express_checkout_failed_order-unique-express_checkout_uuid">
+            <unique-column name="express_checkout_uuid"/>
+        </unique>
+
+        <id-method-parameter value="spy_mollie_express_checkout_failed_order_pk_seq"/>
+
+        <behavior name="timestampable"/>
+    </table>
+
 </database>

@@ -10,11 +10,11 @@ use Generated\Shared\Transfer\MollieApiResponseTransfer;
 use Generated\Shared\Transfer\MollieCreateCaptureApiResponseTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutConfigCollectionTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutConfigCriteriaTransfer;
+use Generated\Shared\Transfer\MollieExpressCheckoutFailedOrderTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutOrderRequestTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutOrderResponseTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutPaymentUpdateRequestTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutPaymentUpdateResponseTransfer;
-use Generated\Shared\Transfer\MollieExpressCheckoutRefundResponseTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutSessionApiResponseTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutShippingOptionsRequestTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutShippingOptionsResponseTransfer;
@@ -31,6 +31,7 @@ use Generated\Shared\Transfer\MolliePaymentMethodsApiResponseTransfer;
 use Generated\Shared\Transfer\MolliePaymentTransfer;
 use Generated\Shared\Transfer\MollieRefundApiResponseTransfer;
 use Generated\Shared\Transfer\MollieRefundResponseTransfer;
+use Generated\Shared\Transfer\MollieWebhookResponseTransfer;
 use Generated\Shared\Transfer\OrderCollectionRequestTransfer;
 use Generated\Shared\Transfer\OrderCollectionResponseTransfer;
 
@@ -365,16 +366,29 @@ interface MollieClientInterface
 
     /**
      * Specification:
-     * - Refunds an express checkout payment for which no order could be created, via Zed
-     *   (see MollieFacade::refundExpressCheckoutPayment()).
+     * - Saves an express checkout order that could not be created after payment, via Zed
+     *   (see MollieFacade::createExpressCheckoutFailedOrder()).
      *
      * @api
      *
-     * @param \Generated\Shared\Transfer\MollieExpressCheckoutPaymentUpdateRequestTransfer $mollieExpressCheckoutPaymentUpdateRequestTransfer
+     * @param \Generated\Shared\Transfer\MollieExpressCheckoutFailedOrderTransfer $mollieExpressCheckoutFailedOrderTransfer
      *
-     * @return \Generated\Shared\Transfer\MollieExpressCheckoutRefundResponseTransfer
+     * @return \Generated\Shared\Transfer\MollieExpressCheckoutFailedOrderTransfer
      */
-    public function refundExpressCheckoutPayment(
-        MollieExpressCheckoutPaymentUpdateRequestTransfer $mollieExpressCheckoutPaymentUpdateRequestTransfer,
-    ): MollieExpressCheckoutRefundResponseTransfer;
+    public function createExpressCheckoutFailedOrder(
+        MollieExpressCheckoutFailedOrderTransfer $mollieExpressCheckoutFailedOrderTransfer,
+    ): MollieExpressCheckoutFailedOrderTransfer;
+
+    /**
+     * Specification:
+     * - Handles the payment webhook of an express checkout payment whose order could not be created, via Zed
+     *   (see MollieFacade::processExpressCheckoutFailedOrderPayment()).
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\MolliePaymentTransfer $molliePaymentTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieWebhookResponseTransfer
+     */
+    public function processExpressCheckoutFailedOrderPayment(MolliePaymentTransfer $molliePaymentTransfer): MollieWebhookResponseTransfer;
 }

@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace Mollie\Zed\Mollie\Persistence;
 
+use Generated\Shared\Transfer\MollieExpressCheckoutFailedOrderTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutPaymentUpdateRequestTransfer;
 use Generated\Shared\Transfer\MollieItemPaymentCaptureTransfer;
 use Generated\Shared\Transfer\MolliePaymentCaptureTransfer;
@@ -14,6 +15,7 @@ use Generated\Shared\Transfer\MollieRefundCollectionTransfer;
 use Generated\Shared\Transfer\MollieRefundSaveTransfer;
 use Generated\Shared\Transfer\OrderCollectionRequestTransfer;
 use Mollie\Shared\Mollie\MollieConstants;
+use Orm\Zed\Mollie\Persistence\SpyMollieExpressCheckoutFailedOrder;
 use Orm\Zed\Mollie\Persistence\SpyMollieOrderItemPaymentCapture;
 use Orm\Zed\Mollie\Persistence\SpyMolliePaymentLink;
 use Orm\Zed\Mollie\Persistence\SpyPaymentMollie;
@@ -96,6 +98,58 @@ class MollieEntityManager extends AbstractEntityManager implements MollieEntityM
         $spyPaymentMollieEntity->save();
 
         return true;
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MollieExpressCheckoutFailedOrderTransfer $mollieExpressCheckoutFailedOrderTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieExpressCheckoutFailedOrderTransfer
+     */
+    public function createExpressCheckoutFailedOrder(
+        MollieExpressCheckoutFailedOrderTransfer $mollieExpressCheckoutFailedOrderTransfer,
+    ): MollieExpressCheckoutFailedOrderTransfer {
+        return $this->saveExpressCheckoutFailedOrder($mollieExpressCheckoutFailedOrderTransfer, new SpyMollieExpressCheckoutFailedOrder());
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MollieExpressCheckoutFailedOrderTransfer $mollieExpressCheckoutFailedOrderTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieExpressCheckoutFailedOrderTransfer
+     */
+    public function updateExpressCheckoutFailedOrder(
+        MollieExpressCheckoutFailedOrderTransfer $mollieExpressCheckoutFailedOrderTransfer,
+    ): MollieExpressCheckoutFailedOrderTransfer {
+        $spyMollieExpressCheckoutFailedOrderEntity = $this->getFactory()
+            ->createSpyMollieExpressCheckoutFailedOrderQuery()
+            ->filterByIdMollieExpressCheckoutFailedOrder($mollieExpressCheckoutFailedOrderTransfer->getIdMollieExpressCheckoutFailedOrderOrFail())
+            ->findOne();
+
+        if (!$spyMollieExpressCheckoutFailedOrderEntity) {
+            return $mollieExpressCheckoutFailedOrderTransfer;
+        }
+
+        return $this->saveExpressCheckoutFailedOrder($mollieExpressCheckoutFailedOrderTransfer, $spyMollieExpressCheckoutFailedOrderEntity);
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MollieExpressCheckoutFailedOrderTransfer $mollieExpressCheckoutFailedOrderTransfer
+     * @param \Orm\Zed\Mollie\Persistence\SpyMollieExpressCheckoutFailedOrder $spyMollieExpressCheckoutFailedOrderEntity
+     *
+     * @return \Generated\Shared\Transfer\MollieExpressCheckoutFailedOrderTransfer
+     */
+    protected function saveExpressCheckoutFailedOrder(
+        MollieExpressCheckoutFailedOrderTransfer $mollieExpressCheckoutFailedOrderTransfer,
+        SpyMollieExpressCheckoutFailedOrder $spyMollieExpressCheckoutFailedOrderEntity,
+    ): MollieExpressCheckoutFailedOrderTransfer {
+        $mapper = $this->getFactory()->createMollieExpressCheckoutFailedOrderMapper();
+
+        $spyMollieExpressCheckoutFailedOrderEntity = $mapper->mapTransferToEntity(
+            $mollieExpressCheckoutFailedOrderTransfer,
+            $spyMollieExpressCheckoutFailedOrderEntity,
+        );
+        $spyMollieExpressCheckoutFailedOrderEntity->save();
+
+        return $mapper->mapEntityToTransfer($spyMollieExpressCheckoutFailedOrderEntity, $mollieExpressCheckoutFailedOrderTransfer);
     }
 
     /**
