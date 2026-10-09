@@ -21,6 +21,7 @@ use Mollie\Client\Mollie\Api\Refund\CreateRefundApi;
 use Mollie\Client\Mollie\Api\Refund\GetRefundByRefundIdApi;
 use Mollie\Client\Mollie\Api\Session\CreateExpressCheckoutSessionApi;
 use Mollie\Client\Mollie\Api\Session\GetExpressCheckoutSessionApi;
+use Mollie\Client\Mollie\Api\Wallet\CreateApplePayPaymentSessionApi;
 use Mollie\Client\Mollie\Deleter\Payment\PaymentMethodsCacheDeleter;
 use Mollie\Client\Mollie\Deleter\Payment\PaymentMethodsCacheDeleterInterface;
 use Mollie\Client\Mollie\Dependency\Client\MollieToStorageClientInterface;
@@ -31,6 +32,8 @@ use Mollie\Client\Mollie\Handler\PaymentApiHandler;
 use Mollie\Client\Mollie\Handler\PaymentApiHandlerInterface;
 use Mollie\Client\Mollie\Logger\MollieLogger;
 use Mollie\Client\Mollie\Logger\MollieLoggerInterface;
+use Mollie\Client\Mollie\Mapper\PaymentLinkMapper;
+use Mollie\Client\Mollie\Mapper\PaymentLinkMapperInterface;
 use Mollie\Client\Mollie\Mapper\PaymentMethodMapper;
 use Mollie\Client\Mollie\Mapper\PaymentMethodMapperInterface;
 use Mollie\Client\Mollie\Provider\Payment\PaymentMethodsProvider;
@@ -308,6 +311,7 @@ class MollieFactory extends AbstractFactory
             $this->getUtilEncodingService(),
             $this->createMollieLogger(),
             $this->getMollieService(),
+            $this->createPaymentLinkMapper(),
         );
     }
 
@@ -321,7 +325,16 @@ class MollieFactory extends AbstractFactory
             $this->getConfig(),
             $this->getUtilEncodingService(),
             $this->createMollieLogger(),
+            $this->createPaymentLinkMapper(),
         );
+    }
+
+    /**
+     * @return \Mollie\Client\Mollie\Mapper\PaymentLinkMapperInterface
+     */
+    public function createPaymentLinkMapper(): PaymentLinkMapperInterface
+    {
+        return new PaymentLinkMapper();
     }
 
     /**
@@ -345,6 +358,19 @@ class MollieFactory extends AbstractFactory
     public function createGetExpressCheckoutSessionApi(): ApiCallInterface
     {
         return new GetExpressCheckoutSessionApi(
+            $this->createMollieApiClient(),
+            $this->getConfig(),
+            $this->getUtilEncodingService(),
+            $this->createMollieLogger(),
+        );
+    }
+
+    /**
+     * @return \Mollie\Client\Mollie\Api\ApiCallInterface
+     */
+    public function createApplePayPaymentSessionApi(): ApiCallInterface
+    {
+        return new CreateApplePayPaymentSessionApi(
             $this->createMollieApiClient(),
             $this->getConfig(),
             $this->getUtilEncodingService(),

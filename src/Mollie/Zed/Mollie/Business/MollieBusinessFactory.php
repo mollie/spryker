@@ -46,6 +46,8 @@ use Mollie\Zed\Mollie\Business\Mapper\Capture\CaptureMapper;
 use Mollie\Zed\Mollie\Business\Mapper\Capture\CaptureMapperInterface;
 use Mollie\Zed\Mollie\Business\Mapper\Order\OrderMapper;
 use Mollie\Zed\Mollie\Business\Mapper\Order\OrderMapperInterface;
+use Mollie\Zed\Mollie\Business\Mapper\PaymentLink\PaymentLinkOrderMapper;
+use Mollie\Zed\Mollie\Business\Mapper\PaymentLink\PaymentLinkOrderMapperInterface;
 use Mollie\Zed\Mollie\Business\Mapper\Refund\MollieRefundMapper;
 use Mollie\Zed\Mollie\Business\Mapper\Refund\MollieRefundMapperInterface;
 use Mollie\Zed\Mollie\Business\Order\OrderUpdater;
@@ -340,6 +342,17 @@ class MollieBusinessFactory extends AbstractBusinessFactory
         return new PaymentLinkProcessor(
             $this->getMollieService(),
             $this->getConfig(),
+            $this->createPaymentLinkOrderMapper(),
+        );
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Business\Mapper\PaymentLink\PaymentLinkOrderMapperInterface
+     */
+    public function createPaymentLinkOrderMapper(): PaymentLinkOrderMapperInterface
+    {
+        return new PaymentLinkOrderMapper(
+            $this->getMollieService(),
         );
     }
 

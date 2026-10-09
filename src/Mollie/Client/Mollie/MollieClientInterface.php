@@ -7,6 +7,7 @@ namespace Mollie\Client\Mollie;
 
 use Generated\Shared\Transfer\MollieApiRequestTransfer;
 use Generated\Shared\Transfer\MollieApiResponseTransfer;
+use Generated\Shared\Transfer\MollieApplePayPaymentSessionApiResponseTransfer;
 use Generated\Shared\Transfer\MollieCreateCaptureApiResponseTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutConfigCollectionTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutConfigCriteriaTransfer;
@@ -333,6 +334,18 @@ interface MollieClientInterface
      * @return \Generated\Shared\Transfer\MollieExpressCheckoutSessionApiResponseTransfer
      */
     public function getExpressCheckoutSession(MollieApiRequestTransfer $mollieApiRequestTransfer): MollieExpressCheckoutSessionApiResponseTransfer;
+
+    /**
+     * Specification:
+     * - Requests an Apple Pay payment session from Mollie for Apple Pay merchant validation
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\MollieApiRequestTransfer $mollieApiRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieApplePayPaymentSessionApiResponseTransfer
+     */
+    public function createApplePayPaymentSession(MollieApiRequestTransfer $mollieApiRequestTransfer): MollieApplePayPaymentSessionApiResponseTransfer;
 
     /**
      * Specification:

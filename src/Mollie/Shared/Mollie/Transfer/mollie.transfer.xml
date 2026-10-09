@@ -28,6 +28,10 @@
         <property name="applePayPaymentToken" type="string"/>
     </transfer>
 
+    <transfer name="MollieApplePayDirectPayment">
+        <property name="applePayPaymentToken" type="string"/>
+    </transfer>
+
     <transfer name="MollieBilliePayment">
         <property name="registrationNumber" type="string"/>
         <property name="vatNumber" type="string"/>
@@ -52,6 +56,7 @@
         <property name="mollieKbcPayment" type="array"/>
         <property name="molliePayByBankPayment" type="array"/>
         <property name="mollieApplePayPayment" type="MollieApplePayPayment"/>
+        <property name="mollieApplePayDirectPayment" type="MollieApplePayDirectPayment"/>
         <property name="molliePrzelewy24Payment" type="array"/>
         <property name="mollieMultibancoPayment" type="array"/>
         <property name="mollieBancomatPayPayment" type="array"/>
@@ -279,6 +284,8 @@
         <property name="sessionId" type="string"/>
         <property name="redirectUrl" type="string"/>
         <property name="description" type="string"/>
+        <property name="applePayDomain" type="string"/>
+        <property name="applePayValidationUrl" type="string"/>
         <property name="expressCheckoutUuid" type="string"/>
         <property name="shippingOptions" type="MollieExpressCheckoutShippingOption[]" singular="shippingOption"/>
     </transfer>
@@ -351,7 +358,8 @@
         <property name="archived" type="bool"/>
         <property name="reusable" type="bool"/>
         <property name="profileId" type="string"/>
-        <property name="amount" type="MollieAmount"/>
+        <property name="amount" type="int"/>
+        <property name="currency" type="string"/>
         <property name="webhookUrl" type="string"/>
         <property name="redirectUrl" type="string"/>
         <property name="createdAt" type="string"/>
@@ -365,6 +373,23 @@
         <property name="status" type="string"/>
         <property name="updatedAt" type="string"/>
         <property name="fkSalesOrder" type="int"/>
+        <property name="lines" type="MollieLines[]" singular="line"/>
+        <property name="billingAddress" type="MollieAddress"/>
+        <property name="minimumAmount" type="int"/>
+    </transfer>
+
+    <transfer name="MollieAddress">
+        <property name="title" type="string"/>
+        <property name="givenName" type="string"/>
+        <property name="familyName" type="string"/>
+        <property name="organizationName" type="string"/>
+        <property name="streetAndNumber" type="string"/>
+        <property name="streetAdditional" type="string"/>
+        <property name="postalCode" type="string"/>
+        <property name="email" type="string"/>
+        <property name="phone" type="string"/>
+        <property name="city" type="string"/>
+        <property name="country" type="string"/>
     </transfer>
 
     <transfer name="MolliePaymentLinkApiResponse">
@@ -489,6 +514,12 @@
         <property name="isSuccessful" type="bool"/>
         <property name="message" type="string"/>
         <property name="expressCheckoutSession" type="MollieExpressCheckoutSession"/>
+    </transfer>
+
+    <transfer name="MollieApplePayPaymentSessionApiResponse">
+        <property name="isSuccessful" type="bool"/>
+        <property name="message" type="string"/>
+        <property name="applePayPaymentSession" type="array" singular="applePayPaymentSessionField"/>
     </transfer>
 
     <transfer name="MollieExpressCheckoutOrderRequest">

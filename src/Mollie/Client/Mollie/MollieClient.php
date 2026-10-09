@@ -7,6 +7,7 @@ namespace Mollie\Client\Mollie;
 
 use Generated\Shared\Transfer\MollieApiRequestTransfer;
 use Generated\Shared\Transfer\MollieApiResponseTransfer;
+use Generated\Shared\Transfer\MollieApplePayPaymentSessionApiResponseTransfer;
 use Generated\Shared\Transfer\MollieCreateCaptureApiResponseTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutConfigCollectionTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutConfigCriteriaTransfer;
@@ -388,6 +389,23 @@ class MollieClient extends AbstractClient implements MollieClientInterface
         $mollieExpressCheckoutSessionApiResponseTransfer = $this->getFactory()->createGetExpressCheckoutSessionApi()->execute($mollieApiRequestTransfer);
 
         return $mollieExpressCheckoutSessionApiResponseTransfer;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\MollieApiRequestTransfer $mollieApiRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieApplePayPaymentSessionApiResponseTransfer
+     */
+    public function createApplePayPaymentSession(MollieApiRequestTransfer $mollieApiRequestTransfer): MollieApplePayPaymentSessionApiResponseTransfer
+    {
+        /** @var \Generated\Shared\Transfer\MollieApplePayPaymentSessionApiResponseTransfer $mollieApplePayPaymentSessionApiResponseTransfer */
+        $mollieApplePayPaymentSessionApiResponseTransfer = $this->getFactory()->createApplePayPaymentSessionApi()->execute($mollieApiRequestTransfer);
+
+        return $mollieApplePayPaymentSessionApiResponseTransfer;
     }
 
     /**

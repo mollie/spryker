@@ -235,6 +235,14 @@ jobs:
               MollieConstants::MOLLIE_WEBHOOK_URL => sprintf('https://%s%s', $sprykerFrontendHost, '/mollie/webhook'),
               MollieConstants::MOLLIE_CREDIT_CARD_COMPONENTS_ENABLED => true,
               MollieConstants::MOLLIE_CREDIT_CARD_COMPONENTS_JS_SRC => 'https://js.mollie.com/v1/mollie.js',
+              MollieConstants::MOLLIE_APPLE_PAY_SDK_JS_SRC => 'https://applepay.cdn-apple.com/jsapi/1.latest/apple-pay-sdk.js',
+              MollieConstants::MOLLIE_APPLE_PAY_VALIDATION_URL_ALLOWED_HOSTS => [
+                  'apple-pay-gateway.apple.com',
+                  'cn-apple-pay-gateway.apple.com',
+                  'apple-pay-gateway-cert.apple.com',
+                  'cn-apple-pay-gateway-cert.apple.com',
+              ],
+              MollieConstants::MOLLIE_APPLE_PAY_MERCHANT_COUNTRY_CODE => 'DE',
               MollieConstants::MOLLIE_TEST_ENVIRONMENT_WEBHOOK_URL => sprintf(
                   'http://%s:%s@%s%s',
                   getenv('SPRYKER_YVES_AUTH_USERNAME') ?? null,
@@ -255,6 +263,7 @@ jobs:
                   'mollieBancontactPayment' => 'bancontact',
                   'mollieKbcPayment' => 'kbc',
                   'molliePayByBankPayment' => 'paybybank',
+                  'mollieApplePayDirectPayment' => 'applepay',
               ],
               MollieConstants::MOLLIE_PAYMENT_METHOD_MANUAL_CAPTURE => [
                   'creditcard',

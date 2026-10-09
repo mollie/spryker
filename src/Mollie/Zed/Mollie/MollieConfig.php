@@ -16,37 +16,7 @@ class MollieConfig extends AbstractBundleConfig
     /**
      * @var string
      */
-    public const PAID = 'paid';
-
-    /**
-     * @var string
-     */
     public const AUTHORIZED = 'authorized';
-
-    /**
-     * @var string
-     */
-    public const EXPIRED = 'expired';
-
-    /**
-     * @var string
-     */
-    public const FAILED = 'failed';
-
-    /**
-     * @var string
-     */
-    public const CANCELED = 'canceled';
-
-    /**
-     * @var string
-     */
-    public const PROCESSING = 'processing';
-
-    /**
-     * @var string
-     */
-    public const REFUNDED = 'refunded';
 
     /**
      * @var string
@@ -84,6 +54,14 @@ class MollieConfig extends AbstractBundleConfig
     public function getMollieOmsToPaymentMethodMapping(): array
     {
         return $this->get(MollieConstants::MOLLIE)[MollieConstants::MOLLIE_OMS_TO_PAYMENT_METHOD_MAPPING] ?? [];
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    public function getBNPLPaymentMethods(): array
+    {
+        return $this->get(MollieConstants::MOLLIE)[MollieConstants::MOLLIE_BNPL_PAYMENT_METHODS] ?? [];
     }
 
     /**

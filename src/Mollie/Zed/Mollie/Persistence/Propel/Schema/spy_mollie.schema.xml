@@ -93,7 +93,8 @@
         <column name="type" type="VARCHAR"/>
         <column name="sequence_type" type="VARCHAR" size="15"/>
         <column name="currency" required="true" type="VARCHAR" size="3"/>
-        <column name="amount" required="true" type="INTEGER"/>
+        <column name="amount" type="INTEGER"/>
+        <column name="minimum_amount" type="INTEGER"/>
         <column name="status" type="VARCHAR" size="64"/>
         <column name="expiry_date" type="DATETIME"/>
         <column name="redirect_url" type="VARCHAR" size="500"/>
