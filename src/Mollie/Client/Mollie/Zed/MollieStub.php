@@ -1,9 +1,18 @@
 <?php
 
+
+declare(strict_types=1);
+
 namespace Mollie\Client\Mollie\Zed;
 
+use Generated\Shared\Transfer\MollieExpressCheckoutConfigCollectionTransfer;
+use Generated\Shared\Transfer\MollieExpressCheckoutConfigCriteriaTransfer;
+use Generated\Shared\Transfer\MollieExpressCheckoutPaymentUpdateRequestTransfer;
+use Generated\Shared\Transfer\MollieExpressCheckoutPaymentUpdateResponseTransfer;
 use Generated\Shared\Transfer\MolliePaymentCaptureResponseTransfer;
 use Generated\Shared\Transfer\MolliePaymentLinkTransfer;
+use Generated\Shared\Transfer\MolliePaymentMethodConfigCollectionTransfer;
+use Generated\Shared\Transfer\MolliePaymentMethodConfigCriteriaTransfer;
 use Generated\Shared\Transfer\MolliePaymentTransfer;
 use Generated\Shared\Transfer\MollieRefundResponseTransfer;
 use Generated\Shared\Transfer\OrderCollectionRequestTransfer;
@@ -29,6 +38,23 @@ class MollieStub implements MollieStubInterface
         $updateOrderCollectionResponseTransfer = $this->zedStub->call('/mollie/gateway/update-order-collection', $updateOrderCollectionRequestTransfer);
 
         return $updateOrderCollectionResponseTransfer;
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MollieExpressCheckoutPaymentUpdateRequestTransfer $mollieExpressCheckoutPaymentUpdateRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieExpressCheckoutPaymentUpdateResponseTransfer
+     */
+    public function updateExpressCheckoutMolliePayment(
+        MollieExpressCheckoutPaymentUpdateRequestTransfer $mollieExpressCheckoutPaymentUpdateRequestTransfer,
+    ): MollieExpressCheckoutPaymentUpdateResponseTransfer {
+        /** @var \Generated\Shared\Transfer\MollieExpressCheckoutPaymentUpdateResponseTransfer $mollieExpressCheckoutPaymentUpdateResponseTransfer */
+        $mollieExpressCheckoutPaymentUpdateResponseTransfer = $this->zedStub->call(
+            '/mollie/gateway/update-express-checkout-mollie-payment',
+            $mollieExpressCheckoutPaymentUpdateRequestTransfer,
+        );
+
+        return $mollieExpressCheckoutPaymentUpdateResponseTransfer;
     }
 
     /**
@@ -69,5 +95,35 @@ class MollieStub implements MollieStubInterface
             ->call('/mollie/gateway/update-payment-link', $molliePaymentLinkTransfer);
 
         return $molliePaymentLinkTransfer;
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MolliePaymentMethodConfigCriteriaTransfer $molliePaymentMethodConfigCriteriaTransfer
+     *
+     * @return \Generated\Shared\Transfer\MolliePaymentMethodConfigCollectionTransfer
+     */
+    public function getPaymentMethodConfigCollection(
+        MolliePaymentMethodConfigCriteriaTransfer $molliePaymentMethodConfigCriteriaTransfer,
+    ): MolliePaymentMethodConfigCollectionTransfer {
+        /** @var \Generated\Shared\Transfer\MolliePaymentMethodConfigCollectionTransfer $molliePaymentMethodConfigCollectionTransfer */
+        $molliePaymentMethodConfigCollectionTransfer = $this->zedStub
+            ->call('/mollie/gateway/get-payment-method-config-collection', $molliePaymentMethodConfigCriteriaTransfer);
+
+        return $molliePaymentMethodConfigCollectionTransfer;
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MollieExpressCheckoutConfigCriteriaTransfer $mollieExpressCheckoutConfigCriteriaTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieExpressCheckoutConfigCollectionTransfer
+     */
+    public function getExpressCheckoutConfigCollection(
+        MollieExpressCheckoutConfigCriteriaTransfer $mollieExpressCheckoutConfigCriteriaTransfer,
+    ): MollieExpressCheckoutConfigCollectionTransfer {
+        /** @var \Generated\Shared\Transfer\MollieExpressCheckoutConfigCollectionTransfer $mollieExpressCheckoutConfigCollectionTransfer */
+        $mollieExpressCheckoutConfigCollectionTransfer = $this->zedStub
+            ->call('/mollie/gateway/get-express-checkout-config-collection', $mollieExpressCheckoutConfigCriteriaTransfer);
+
+        return $mollieExpressCheckoutConfigCollectionTransfer;
     }
 }

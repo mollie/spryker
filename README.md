@@ -17,7 +17,7 @@ A standalone Spryker-convention module under the `Mollie` namespace for integrat
 - (For full integration) A Spryker SCOS project
 
 ## Installation
-Add the package to your project (if hosted privately, adjust the VCS repository settings in your root composer.json) [TO BE ADJUSTED]: 
+Add the package to your project (if hosted privately, adjust the VCS repository settings in your root composer.json): 
 
 ```bash
 composer require mollie/spryker-payment
@@ -40,7 +40,7 @@ $mollie = $client->getClient();
 In a full Spryker setup, you would typically provide the API key via configuration and wire the client into the container using the module's `DependencyProvider` and your project layer.
 
 ## Configuration
-This repository includes a simple placeholder in `config/config_default.php`:
+This repository includes a simple configuration blueprint file in `config/config.dist.php`:
 
 ```php
 return [

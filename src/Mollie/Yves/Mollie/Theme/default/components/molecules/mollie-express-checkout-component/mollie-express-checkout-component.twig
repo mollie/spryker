@@ -1,0 +1,29 @@
+{% extends model('component') %}
+
+{% define config = {
+    name: 'mollie-express-checkout-component',
+    tag: 'mollie-express-checkout-component',
+} %}
+
+{% define data = {
+    expressCheckoutResolveEnabledMethodsEndpoint: required,
+    expressCheckoutCreateSessionEndpoint: required,
+    jsSrc: required,
+    locale: required,
+} %}
+
+{% define attributes = {
+    'locale': data.locale,
+    'express-checkout-resolve-enabled-methods-endpoint': data.expressCheckoutResolveEnabledMethodsEndpoint,
+    'express-checkout-create-session-endpoint': data.expressCheckoutCreateSessionEndpoint,
+    'mount-id': 'mollie-express-checkout',
+} %}
+
+{% block body %}
+    {% include molecule('script-loader') with {
+        attributes: {
+            src: data.jsSrc
+        }
+    } only %}
+    <div id="mollie-express-checkout"></div>
+{% endblock %}

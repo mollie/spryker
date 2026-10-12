@@ -7,6 +7,7 @@ namespace Mollie\Yves\Mollie\Plugin\Webhook;
 use Generated\Shared\Transfer\MolliePaymentTransfer;
 use Generated\Shared\Transfer\MollieWebhookResponseTransfer;
 use Generated\Shared\Transfer\OrderCollectionRequestTransfer;
+use Mollie\Shared\Mollie\MollieConfig;
 use Spryker\Yves\Kernel\AbstractPlugin;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -29,8 +30,14 @@ class MolliePaymentWebhookHandlerPlugin extends AbstractPlugin implements Mollie
     public function isApplicable(MolliePaymentTransfer $molliePaymentTransfer): bool
     {
         $paymentId = $molliePaymentTransfer->getId();
+        if (!str_starts_with($paymentId, static::PAYMENT_ID_PREFIX)) {
+            return false;
+        }
 
-        return str_starts_with($paymentId, static::PAYMENT_ID_PREFIX);
+        $metadata = $molliePaymentTransfer->getMetadata();
+        $isExpressCheckoutPayment = array_key_exists(MollieConfig::EXPRESS_CHECKOUT_METADATA_KEY_UUID, $metadata);
+
+        return !$isExpressCheckoutPayment;
     }
 
     /**

@@ -26,6 +26,7 @@
             <state name="payment link created" display="oms.state.payment-link-created"/>
             <state name="payment link open" display="oms.state.payment-link-open"/>
             <state name="payment link checking" display="oms.state.payment-link-checking"/>
+            <state name="payment link expired" display="oms.state.payment-link-checking"/>
         </states>
 
         <transitions>
@@ -142,8 +143,14 @@
 
             <transition condition="Mollie/IsPaymentLinkStatusExpired">
                 <source>payment link checking</source>
-                <target>expired</target>
+                <target>payment link expired</target>
                 <event>check payment link status</event>
+            </transition>
+
+            <transition>
+                <source>payment link expired</source>
+                <target>closed</target>
+                <event>update payment link status</event>
             </transition>
 
             <!-- Loop back after 5 minutes -->
@@ -176,6 +183,7 @@
             <event name="start checking" onEnter="true"/>
             <event name="check payment link status" onEnter="true"/>
             <event name="recheck" timeout="10 minute"/>
+            <event name="update payment link status" onEnter="true" command="Mollie/SetExpireStatusPaymentLink"/>
         </events>
 
     </process>

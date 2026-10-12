@@ -28,38 +28,65 @@
         <property name="applePayPaymentToken" type="string"/>
     </transfer>
 
+    <transfer name="MollieApplePayDirectPayment">
+        <property name="applePayPaymentToken" type="string"/>
+    </transfer>
+
+    <transfer name="MollieBilliePayment">
+        <property name="registrationNumber" type="string"/>
+        <property name="vatNumber" type="string"/>
+        <property name="entityType" type="string"/>
+    </transfer>
+
+    <transfer name="MollieIdealIn3Payment">
+        <property name="consumerDateOfBirth" type="string"/>
+    </transfer>
+
     <transfer name="Payment">
         <property name="mollieCreditCardPayment" type="MollieCreditCardPayment"/>
         <property name="molliePayPalPayment" type="MolliePayPalPayment"/>
         <property name="mollieBankTransferPayment" type="MollieBankTransferPayment"/>
         <property name="mollieKlarnaPayment" type="MollieKlarnaPayment"/>
-        <property name="mollieKlarnaPayLaterPayment" type="[]"/>
-        <property name="mollieKlarnaPayNowPayment" type="[]"/>
-        <property name="mollieKlarnaSliceItPayment" type="[]"/>
-        <property name="mollieEpsPayment" type="[]"/>
-        <property name="mollieIdealPayment" type="[]"/>
-        <property name="mollieBancontactPayment" type="[]"/>
-        <property name="mollieKbcPayment" type="[]"/>
-        <property name="molliePayByBankPayment" type="[]"/>
+        <property name="mollieKlarnaPayLaterPayment" type="array"/>
+        <property name="mollieKlarnaPayNowPayment" type="array"/>
+        <property name="mollieKlarnaSliceItPayment" type="array"/>
+        <property name="mollieEpsPayment" type="array"/>
+        <property name="mollieIdealPayment" type="array"/>
+        <property name="mollieBancontactPayment" type="array"/>
+        <property name="mollieKbcPayment" type="array"/>
+        <property name="molliePayByBankPayment" type="array"/>
         <property name="mollieApplePayPayment" type="MollieApplePayPayment"/>
-        <property name="molliePrzelewy24Payment" type="[]"/>
-        <property name="mollieMultibancoPayment" type="[]"/>
-        <property name="mollieBancomatPayPayment" type="[]"/>
-        <property name="mollieBizumPayment" type="[]"/>
-        <property name="mollieTrustlyPayment" type="[]"/>
-        <property name="mollieMbWayPayment" type="[]"/>
-        <property name="mollieSwishPayment" type="[]"/>
-        <property name="mollieSatispayPayment" type="[]"/>
-        <property name="mollieTwintPayment" type="[]"/>
-        <property name="mollieVippsPayment" type="[]"/>
+        <property name="mollieApplePayDirectPayment" type="MollieApplePayDirectPayment"/>
+        <property name="molliePrzelewy24Payment" type="array"/>
+        <property name="mollieMultibancoPayment" type="array"/>
+        <property name="mollieBancomatPayPayment" type="array"/>
+        <property name="mollieBizumPayment" type="array"/>
+        <property name="mollieBLIKPayment" type="array"/>
+        <property name="molliePayconiqPayment" type="array"/>
+
+        <property name="mollieTrustlyPayment" type="array"/>
+        <property name="mollieMbWayPayment" type="array"/>
+        <property name="mollieSwishPayment" type="array"/>
+        <property name="mollieSatispayPayment" type="array"/>
+        <property name="mollieTwintPayment" type="array"/>
+        <property name="mollieVippsPayment" type="array"/>
+        <property name="mollieBilliePayment" type="MollieBilliePayment"/>
+        <property name="mollieRivertyPayment" type="array"/>
+        <property name="mollieIdealIn3Payment" type="MollieIdealIn3Payment"/>
+        <property name="mollieAlmaPayment" type="array"/>
+        <property name="mollieExpressPayment" type="MollieExpressPayment"/>
+    </transfer>
+
+    <transfer name="MollieExpressPayment">
+        <property name="expressCheckoutUuid" type="string"/>
     </transfer>
 
     <transfer name="MolliePaymentMethod">
         <property name="id" type="string"/>
         <property name="description" type="string"/>
         <property name="locale" type="string"/>
-        <property name="minimumAmount" type="array"/>
-        <property name="maximumAmount" type="array"/>
+        <property name="minimumAmount" type="MollieAmount"/>
+        <property name="maximumAmount" type="MollieAmount"/>
         <property name="image" type="array"/>
         <property name="issuers" type="array"/>
         <property name="pricing" type="array"/>
@@ -151,7 +178,7 @@
     </transfer>
 
     <transfer name="MollieRefundCollection">
-        <property name="refunds" type="[]"/>
+        <property name="refunds" type="MollieRefund[]" singular="refund"/>
     </transfer>
 
     <transfer name="MollieRefundSave">
@@ -192,6 +219,16 @@
         <property name="id" type="string" />
         <property name="status" type="string" />
         <property name="captureBefore" type="string" />
+    </transfer>
+
+    <transfer name="MollieExpressCheckoutPaymentUpdateRequest">
+        <property name="expressCheckoutUuid" type="string"/>
+        <property name="transactionId" type="string"/>
+        <property name="status" type="string"/>
+    </transfer>
+
+    <transfer name="MollieExpressCheckoutPaymentUpdateResponse">
+        <property name="isSuccessful" type="bool"/>
     </transfer>
 
     <transfer name="OrderCollectionResponse">
@@ -246,6 +283,13 @@
         <property name="refund" type="MollieRefund"/>
         <property name="paymentCapture" type="MolliePaymentCapture"/>
         <property name="paymentLink" type="MolliePaymentLink"/>
+        <property name="idempotencyKey" type="string"/>
+        <property name="sessionId" type="string"/>
+        <property name="redirectUrl" type="string"/>
+        <property name="description" type="string"/>
+        <property name="applePayDomain" type="string"/>
+        <property name="applePayValidationUrl" type="string"/>
+        <property name="expressCheckoutUuid" type="string"/>
     </transfer>
 
     <transfer name="MolliePaymentCaptureRequest">
@@ -312,7 +356,8 @@
         <property name="archived" type="bool"/>
         <property name="reusable" type="bool"/>
         <property name="profileId" type="string"/>
-        <property name="amount" type="MollieAmount"/>
+        <property name="amount" type="int"/>
+        <property name="currency" type="string"/>
         <property name="webhookUrl" type="string"/>
         <property name="redirectUrl" type="string"/>
         <property name="createdAt" type="string"/>
@@ -326,6 +371,23 @@
         <property name="status" type="string"/>
         <property name="updatedAt" type="string"/>
         <property name="fkSalesOrder" type="int"/>
+        <property name="lines" type="MollieLines[]" singular="line"/>
+        <property name="billingAddress" type="MollieAddress"/>
+        <property name="minimumAmount" type="int"/>
+    </transfer>
+
+    <transfer name="MollieAddress">
+        <property name="title" type="string"/>
+        <property name="givenName" type="string"/>
+        <property name="familyName" type="string"/>
+        <property name="organizationName" type="string"/>
+        <property name="streetAndNumber" type="string"/>
+        <property name="streetAdditional" type="string"/>
+        <property name="postalCode" type="string"/>
+        <property name="email" type="string"/>
+        <property name="phone" type="string"/>
+        <property name="city" type="string"/>
+        <property name="country" type="string"/>
     </transfer>
 
     <transfer name="MolliePaymentLinkApiResponse">
@@ -340,6 +402,42 @@
         <property name="quantity" type="int"/>
         <property name="quantityUnit" type="string"/>
         <property name="unitPrice" type="string"/>
+    </transfer>
+
+    <transfer name="MolliePaymentMethodConfig">
+        <property name="idMolliePaymentMethodConfig" type="int" />
+        <property name="mollieId" type="string" />
+        <property name="currencyCode" type="string" />
+        <property name="minimumAmount" type="MollieAmount" />
+        <property name="maximumAmount" type="MollieAmount" />
+        <property name="isActive" type="bool" />
+        <property name="image" type="string" />
+        <property name="isLogoVisible" type="bool" />
+        <property name="status" type="string" />
+    </transfer>
+
+    <transfer name="MolliePaymentMethodConfigCriteria">
+        <property name="localeId" type="string"/>
+        <property name="mollieId" type="string"/>
+        <property name="currencyCode" type="string"/>
+        <property name="showOnlyEnabled" type="bool" />
+    </transfer>
+
+    <transfer name="MolliePaymentMethodConfigCollection">
+        <property name="configs" type="MolliePaymentMethodConfig[]" singular="molliePaymentMethodConfig"/>
+    </transfer>
+
+    <transfer name="MollieExpressCheckoutConfig">
+        <property name="method" type="string"/>
+        <property name="isEnabled" type="bool"/>
+    </transfer>
+
+    <transfer name="MollieExpressCheckoutConfigCollection">
+        <property name="configs" type="MollieExpressCheckoutConfig[]" singular="config"/>
+    </transfer>
+
+    <transfer name="MollieExpressCheckoutConfigCriteria">
+        <property name="expressMethod" type="string"/>
     </transfer>
 
     <transfer name="MollieWebhookEvent">
@@ -358,6 +456,7 @@
         <property name="documentation" type="MollieLink"/>
         <property name="payment" type="MollieLink"/>
     </transfer>
+
     <transfer name="MollieExpirationInformation">
         <property name="showWarningMessage" type="bool" />
         <property name="warningMessage" type="string" />
@@ -368,6 +467,56 @@
         <property name="locale" type="string"/>
         <property name="billingCountry" type="string"/>
         <property name="amount" type="MollieAmount"/>
+    </transfer>
+
+    <transfer name="MollieLines">
+        <property name="type" type="string"/>
+        <property name="description" type="string"/>
+        <property name="quantity" type="int"/>
+        <property name="quantityUnit" type="string"/>
+        <property name="unitPrice" type="MollieAmount"/>
+        <property name="discountAmount" type="MollieAmount"/>
+        <property name="totalAmount" type="MollieAmount"/>
+        <property name="vatRate" type="string"/>
+        <property name="vatAmount" type="MollieAmount"/>
+        <property name="sku" type="string"/>
+        <property name="categories" type="array"/>
+        <property name="imageUrl" type="string"/>
+        <property name="recurring" type="RecurringBillingCycle"/>
+    </transfer>
+
+    <transfer name="MollieExpressCheckoutSession">
+        <property name="resource" type="string"/>
+        <property name="id" type="string"/>
+        <property name="mode" type="string"/>
+        <property name="clientAccessToken" type="string"/>
+        <property name="status" type="string"/>
+        <property name="amount" type="MollieAmount"/>
+        <property name="description" type="string"/>
+        <property name="lines" type="MollieLines[]" singular="line"/>
+        <property name="redirectUrl" type="string"/>
+        <property name="customerId" type="string"/>
+        <property name="sequenceType" type="string"/>
+        <property name="metadata" type="array" singular="metadata"/>
+        <property name="profileId" type="string"/>
+        <property name="createdAt" type="string"/>
+        <property name="expiresAt" type="string"/>
+        <property name="completedAt" type="string"/>
+        <property name="links" type="MollieLinks"/>
+        <property name="billingAddress" type="array" singular="billingAddressField"/>
+        <property name="shippingAddress" type="array" singular="shippingAddressField"/>
+    </transfer>
+
+    <transfer name="MollieExpressCheckoutSessionApiResponse">
+        <property name="isSuccessful" type="bool"/>
+        <property name="message" type="string"/>
+        <property name="expressCheckoutSession" type="MollieExpressCheckoutSession"/>
+    </transfer>
+
+    <transfer name="MollieApplePayPaymentSessionApiResponse">
+        <property name="isSuccessful" type="bool"/>
+        <property name="message" type="string"/>
+        <property name="applePayPaymentSession" type="array" singular="applePayPaymentSessionField"/>
     </transfer>
 
     <transfer name="MollieCustomerApiResponse">

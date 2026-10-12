@@ -4,7 +4,6 @@ declare(strict_types = 1);
 
 namespace Mollie\Client\Mollie\Api\Payment;
 
-use Generated\Shared\Transfer\CheckoutResponseTransfer;
 use Generated\Shared\Transfer\MollieApiRequestTransfer;
 use Generated\Shared\Transfer\MollieApiResponseTransfer;
 use Generated\Shared\Transfer\MollieLinksTransfer;
@@ -14,8 +13,10 @@ use Mollie\Api\Http\Data\Money;
 use Mollie\Api\Http\Request;
 use Mollie\Api\Http\Requests\CreatePaymentRequest;
 use Mollie\Api\MollieApiClient;
+use Mollie\Api\Types\PaymentMethod;
 use Mollie\Client\Mollie\Api\AbstractApiCall;
 use Mollie\Client\Mollie\Dependency\Service\MollieToUtilEncodingServiceInterface;
+use Mollie\Client\Mollie\Handler\PaymentApiHandlerInterface;
 use Mollie\Client\Mollie\Logger\MollieLoggerInterface;
 use Mollie\Client\Mollie\MollieConfig;
 use Mollie\Service\Mollie\MollieServiceInterface;
@@ -33,6 +34,7 @@ class CreatePaymentApi extends AbstractApiCall
      * @param \Mollie\Client\Mollie\Dependency\Service\MollieToUtilEncodingServiceInterface $utilEncodingService
      * @param \Mollie\Client\Mollie\Logger\MollieLoggerInterface $logger
      * @param \Mollie\Service\Mollie\MollieServiceInterface $mollieService
+     * @param \Mollie\Client\Mollie\Handler\PaymentApiHandlerInterface $apiHandler
      */
     public function __construct(
         MollieApiClient $mollieApiClient,
@@ -40,6 +42,7 @@ class CreatePaymentApi extends AbstractApiCall
         MollieToUtilEncodingServiceInterface $utilEncodingService,
         MollieLoggerInterface $logger,
         protected MollieServiceInterface $mollieService,
+        protected PaymentApiHandlerInterface $apiHandler,
     ) {
         parent::__construct($mollieApiClient, $mollieConfig, $utilEncodingService, $logger);
     }
@@ -68,61 +71,28 @@ class CreatePaymentApi extends AbstractApiCall
             $this->mollieConfig->isMollieTestModeEnabled(),
         );
 
-        $method = $this->mollieConfig->getMolliePaymentMethod($paymentTransfer->getPaymentMethod());
-        $metadata = $this->addMetadata($checkoutResponseTransfer);
-        $additionalParameters = $this->addAdditionalParameters($mollieApiRequestTransfer);
+        $paymentMethod = $paymentTransfer->getPaymentMethod();
+        $captureMode = $this->getCaptureMode($paymentMethod);
+        $method = $this->getMethod($paymentMethod);
+        $metadata = $this->apiHandler->createPaymentMetadata($checkoutResponseTransfer);
+        $additionalParameters = $this->apiHandler->createAdditionalParameters($mollieApiRequestTransfer);
+        $billingAddress = $this->apiHandler->createBillingAddress($quoteTransfer);
+        $lines = $this->apiHandler->createLines($quoteTransfer);
 
         $this->request = new CreatePaymentRequest(
             description: $checkoutResponseTransfer->getSaveOrderOrFail()->getOrderReference(),
             amount: $amount,
             redirectUrl: $redirectUrl,
             webhookUrl: $webhookUrl,
+            lines: $lines,
+            billingAddress: $billingAddress,
             method: $method,
             metadata: $metadata,
-            captureMode: $this->getCaptureModeForMethod($method),
+            captureMode: $captureMode,
             additional: $additionalParameters,
         );
 
         return $this->request;
-    }
-
-    /**
-     * @param \Generated\Shared\Transfer\MollieApiRequestTransfer $mollieApiRequestTransfer
-     *
-     * @return array<string, string>
-     */
-    protected function addAdditionalParameters(MollieApiRequestTransfer $mollieApiRequestTransfer): array
-    {
-        $additionalData = [];
-        $paymentTransfer = $mollieApiRequestTransfer->getQuote()->getPayment();
-        switch ($paymentTransfer->getPaymentMethod()) {
-            case SharedConfig::MOLLIE_PAYMENT_CREDIT_CARD:
-                $additionalData[MollieConfig::REQUEST_PARAMETER_CREATE_PAYMENT_CARD_TOKEN] = $paymentTransfer->getMollieCreditCardPayment()->getCardToken();
-
-                break;
-            case SharedConfig::MOLLIE_PAYMENT_PAYPAL:
-                $additionalData[MollieConfig::REQUEST_PARAMETER_CREATE_PAYMENT_PAYPAL_SESSION_ID] = $paymentTransfer->getMolliePayPalPayment()->getSessionId() ?? '';
-                $additionalData[MollieConfig::REQUEST_PARAMETER_CREATE_PAYMENT_PAYPAL_DIGITAL_GOODS] = $paymentTransfer->getMolliePayPalPayment()->getDigitalGoods() ?? false;
-
-                break;
-            case SharedConfig::MOLLIE_PAYMENT_BANK_TRANSFER:
-                $additionalData[MollieConfig::REQUEST_PARAMETER_CREATE_PAYMENT_BANK_TRANSFER_DUE_DATE] = $paymentTransfer->getMollieBankTransferPayment()->getDueDate() ?? '';
-                $additionalData[MollieConfig::REQUEST_PARAMETER_CREATE_PAYMENT_BANK_TRANSFER_BILLING_EMAIL] = $paymentTransfer->getMollieBankTransferPayment()->getBillingEmail() ?? '';
-
-                break;
-            case SharedConfig::MOLLIE_PAYMENT_KLARNA:
-                $additionalData[MollieConfig::REQUEST_PARAMETER_CREATE_PAYMENT_KLARNA_EXTRA_MERCHANT_DATA] = $paymentTransfer->getMollieKlarnaPayment()->getExtraMerchantData() ?? '';
-
-                break;
-            case SharedConfig::MOLLIE_PAYMENT_APPLE_PAY:
-                $additionalData[MollieConfig::REQUEST_PARAMETER_CREATE_PAYMENT_APPLE_PAY_PAYMENT_TOKEN] = $paymentTransfer->getMollieApplePayPayment()->getApplePayPaymentToken() ?? '';
-
-                break;
-            default:
-                break;
-        }
-
-        return $additionalData;
     }
 
     /**
@@ -145,16 +115,6 @@ class CreatePaymentApi extends AbstractApiCall
     protected function getRedirectUrl(string $orderReference): string
     {
         return $this->mollieConfig->getMollieRedirectUrl() . '?orderReference=' . $orderReference;
-    }
-
-    /**
-     * @param \Generated\Shared\Transfer\CheckoutResponseTransfer $checkoutResponseTransfer
-     *
-     * @return array<string>
-     */
-    protected function addMetadata(CheckoutResponseTransfer $checkoutResponseTransfer): array
-    {
-        return [MollieConfig::REQUEST_PARAMETER_CREATE_PAYMENT_ORDER_REFERENCE => $checkoutResponseTransfer->getSaveOrderOrFail()->getOrderReference()];
     }
 
     /**
@@ -196,17 +156,37 @@ class CreatePaymentApi extends AbstractApiCall
 
         $payload = $createPaymentRequest->payload();
         $requestBody = $payload->all();
+        $maskedRequestBody = $this->maskPayload(
+            [MollieConfig::REQUEST_PARAMETER_CREATE_PAYMENT_APPLE_PAY_PAYMENT_TOKEN],
+            $requestBody,
+        );
 
-        return $requestBody;
+        return $maskedRequestBody;
     }
 
     /**
-     * @param string $method
+     * @param string $paymentMethod
      *
      * @return string
      */
-    protected function getCaptureModeForMethod(string $method): string
+    protected function getMethod(string $paymentMethod): string
     {
+        $isApplePayDirectPayment = $paymentMethod === SharedConfig::MOLLIE_PAYMENT_APPLE_PAY_DIRECT;
+        if ($isApplePayDirectPayment) {
+            return PaymentMethod::CREDITCARD;
+        }
+
+        return $this->mollieConfig->getMolliePaymentMethod($paymentMethod);
+    }
+
+    /**
+     * @param string $paymentMethod
+     *
+     * @return string
+     */
+    protected function getCaptureMode(string $paymentMethod): string
+    {
+        $method = $this->mollieConfig->getMolliePaymentMethod($paymentMethod);
         $molliePaymentMethodsManualCapture = $this->mollieConfig->getMolliePaymentMethodsManualCapture();
         if (in_array($method, $molliePaymentMethodsManualCapture)) {
             return $this->mollieConfig->getMollieManualCaptureMode();

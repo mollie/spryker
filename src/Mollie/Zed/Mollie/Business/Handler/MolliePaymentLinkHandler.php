@@ -4,6 +4,8 @@ declare(strict_types = 1);
 
 namespace Mollie\Zed\Mollie\Business\Handler;
 
+use DateTime;
+use DateTimeZone;
 use Generated\Shared\Transfer\MollieApiRequestTransfer;
 use Generated\Shared\Transfer\MolliePaymentLinkApiResponseTransfer;
 use Generated\Shared\Transfer\MolliePaymentLinkTransfer;
@@ -39,8 +41,14 @@ class MolliePaymentLinkHandler implements MolliePaymentLinkHandlerInterface
         $molliePaymentLinkApiResponseTransfer = $this->mollieClient->createPaymentLink($mollieApiRequestTransfer);
 
         if ($molliePaymentLinkApiResponseTransfer->getIsSuccessful()) {
-            $molliePaymentLinkApiResponseTransfer->getMolliePaymentLink()->setFkSalesOrder($molliePaymentLinkTransfer->getFkSalesOrder());
-            $this->mollieEntityManager->writePaymentLink($molliePaymentLinkApiResponseTransfer->getMolliePaymentLink());
+            $createdMolliePaymentLinkTransfer = $molliePaymentLinkApiResponseTransfer->getMolliePaymentLink();
+            $createdMolliePaymentLinkTransfer
+                ->setFkSalesOrder($molliePaymentLinkTransfer->getFkSalesOrder())
+                ->setAmount($molliePaymentLinkTransfer->getAmount())
+                ->setMinimumAmount($molliePaymentLinkTransfer->getMinimumAmount())
+                ->setCurrency($molliePaymentLinkTransfer->getCurrency());
+
+            $this->mollieEntityManager->writePaymentLink($createdMolliePaymentLinkTransfer);
         }
 
         return $molliePaymentLinkApiResponseTransfer;
@@ -88,6 +96,11 @@ class MolliePaymentLinkHandler implements MolliePaymentLinkHandlerInterface
             return false;
         }
 
-        return $paymentLinkTransfer->getStatus() === MollieConstants::STATUS_EXPIRED;
+        $expiryDateTime = $paymentLinkTransfer->getExpiresAt();
+        $timezone = new DateTimeZone(date_default_timezone_get());
+        $expiryDate = new DateTime($expiryDateTime, $timezone);
+        $now = new DateTime('now', $timezone);
+
+        return $now > $expiryDate;
     }
 }

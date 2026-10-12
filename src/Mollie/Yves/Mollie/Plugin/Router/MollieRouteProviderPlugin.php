@@ -1,5 +1,6 @@
 <?php
 
+
 declare(strict_types=1);
 
 namespace Mollie\Yves\Mollie\Plugin\Router;
@@ -25,6 +26,38 @@ class MollieRouteProviderPlugin extends AbstractRouteProviderPlugin
     public const ROUTE_MOLLIE_NEXT_GEN_WEBHOOK = 'mollie/next-gen/webhook';
 
     /**
+     * @var string
+     */
+    public const ROUTE_MOLLIE_EXPRESS_CHECKOUT_RESOLVE_ENABLED_METHODS
+        = 'mollie/express-checkout/resolve-enabled-methods';
+
+    /**
+     * @var string
+     */
+    public const ROUTE_MOLLIE_EXPRESS_CHECKOUT_CREATE_SESSION = 'mollie/express-checkout/create-session';
+
+    /**
+     * @var string
+     */
+    public const ROUTE_PATH_MOLLIE_EXPRESS_CHECKOUT_RESOLVE_ENABLED_METHODS
+        = '/mollie/express-checkout/resolve-enabled-methods';
+
+    /**
+     * @var string
+     */
+    public const ROUTE_PATH_MOLLIE_EXPRESS_CHECKOUT_CREATE_SESSION = '/mollie/express-checkout/create-session';
+
+    /**
+     * @var string
+     */
+    public const ROUTE_MOLLIE_APPLE_PAY_CREATE_PAYMENT_SESSION = 'mollie/apple-pay/create-payment-session';
+
+    /**
+     * @var string
+     */
+    public const ROUTE_PATH_MOLLIE_APPLE_PAY_CREATE_PAYMENT_SESSION = '/mollie/apple-pay/create-payment-session';
+
+    /**
      * @param \Spryker\Yves\Router\Route\RouteCollection $routeCollection
      *
      * @return \Spryker\Yves\Router\Route\RouteCollection
@@ -34,6 +67,9 @@ class MollieRouteProviderPlugin extends AbstractRouteProviderPlugin
         $routeCollection = $this->addPaymentStatusRoute($routeCollection);
         $routeCollection = $this->addWebhookRoute($routeCollection);
         $routeCollection = $this->addNextGenWebhookRoute($routeCollection);
+        $routeCollection = $this->addExpressCheckoutResolveEnabledMethodsRoute($routeCollection);
+        $routeCollection = $this->addExpressCheckoutCreateSessionRoute($routeCollection);
+        $routeCollection = $this->addApplePayCreatePaymentSessionRoute($routeCollection);
 
         return $routeCollection;
     }
@@ -76,6 +112,63 @@ class MollieRouteProviderPlugin extends AbstractRouteProviderPlugin
         $route = $this->buildRoute('/mollie/next-gen/webhook', 'Mollie', 'Webhook', 'nextGenWebhookAction');
         $route = $route->setMethods(['POST']);
         $routeCollection->add(static::ROUTE_MOLLIE_NEXT_GEN_WEBHOOK, $route);
+
+        return $routeCollection;
+    }
+
+    /**
+     * @param \Spryker\Yves\Router\Route\RouteCollection $routeCollection
+     *
+     * @return \Spryker\Yves\Router\Route\RouteCollection
+     */
+    protected function addExpressCheckoutResolveEnabledMethodsRoute(RouteCollection $routeCollection): RouteCollection
+    {
+        $route = $this->buildRoute(
+            static::ROUTE_PATH_MOLLIE_EXPRESS_CHECKOUT_RESOLVE_ENABLED_METHODS,
+            'Mollie',
+            'ExpressCheckout',
+            'resolveEnabledMethodsAction',
+        );
+        $route = $route->setMethods(['POST']);
+        $routeCollection->add(static::ROUTE_MOLLIE_EXPRESS_CHECKOUT_RESOLVE_ENABLED_METHODS, $route);
+
+        return $routeCollection;
+    }
+
+    /**
+     * @param \Spryker\Yves\Router\Route\RouteCollection $routeCollection
+     *
+     * @return \Spryker\Yves\Router\Route\RouteCollection
+     */
+    protected function addExpressCheckoutCreateSessionRoute(RouteCollection $routeCollection): RouteCollection
+    {
+        $route = $this->buildRoute(
+            static::ROUTE_PATH_MOLLIE_EXPRESS_CHECKOUT_CREATE_SESSION,
+            'Mollie',
+            'ExpressCheckout',
+            'createSessionAction',
+        );
+        $route = $route->setMethods(['POST']);
+        $routeCollection->add(static::ROUTE_MOLLIE_EXPRESS_CHECKOUT_CREATE_SESSION, $route);
+
+        return $routeCollection;
+    }
+
+    /**
+     * @param \Spryker\Yves\Router\Route\RouteCollection $routeCollection
+     *
+     * @return \Spryker\Yves\Router\Route\RouteCollection
+     */
+    protected function addApplePayCreatePaymentSessionRoute(RouteCollection $routeCollection): RouteCollection
+    {
+        $route = $this->buildRoute(
+            static::ROUTE_PATH_MOLLIE_APPLE_PAY_CREATE_PAYMENT_SESSION,
+            'Mollie',
+            'ApplePay',
+            'createPaymentSessionAction',
+        );
+        $route = $route->setMethods(['POST']);
+        $routeCollection->add(static::ROUTE_MOLLIE_APPLE_PAY_CREATE_PAYMENT_SESSION, $route);
 
         return $routeCollection;
     }

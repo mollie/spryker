@@ -178,6 +178,7 @@ jobs:
           <?php
           
           use Spryker\Shared\Propel\PropelConstants;
+          use Spryker\Shared\PropelOrm\PropelOrmConstants;
           use Spryker\Shared\Search\SearchConstants;
           use Spryker\Shared\Storage\StorageConstants;
           use Spryker\Shared\Application\ApplicationConstants;
@@ -193,7 +194,8 @@ jobs:
           $config[PropelConstants::ZED_DB_PORT] = 5432;
           $config[PropelConstants::ZED_DB_ENGINE] = $config[PropelConstants::ZED_DB_ENGINE_PGSQL] = 'pgsql';
           $config[PropelConstants::USE_SUDO_TO_MANAGE_DATABASE] = false;
-          
+          $config[PropelOrmConstants::PROPEL_SHOW_EXTENDED_EXCEPTION] = true;
+
           // Force TCP connection instead of Unix socket
           $config[PropelConstants::ZED_DB_ENGINE_PGSQL] = 'pgsql';
           
@@ -233,6 +235,14 @@ jobs:
               MollieConstants::MOLLIE_WEBHOOK_URL => sprintf('https://%s%s', $sprykerFrontendHost, '/mollie/webhook'),
               MollieConstants::MOLLIE_CREDIT_CARD_COMPONENTS_ENABLED => true,
               MollieConstants::MOLLIE_CREDIT_CARD_COMPONENTS_JS_SRC => 'https://js.mollie.com/v1/mollie.js',
+              MollieConstants::MOLLIE_APPLE_PAY_SDK_JS_SRC => 'https://applepay.cdn-apple.com/jsapi/1.latest/apple-pay-sdk.js',
+              MollieConstants::MOLLIE_APPLE_PAY_VALIDATION_URL_ALLOWED_HOSTS => [
+                  'apple-pay-gateway.apple.com',
+                  'cn-apple-pay-gateway.apple.com',
+                  'apple-pay-gateway-cert.apple.com',
+                  'cn-apple-pay-gateway-cert.apple.com',
+              ],
+              MollieConstants::MOLLIE_APPLE_PAY_MERCHANT_COUNTRY_CODE => 'DE',
               MollieConstants::MOLLIE_TEST_ENVIRONMENT_WEBHOOK_URL => sprintf(
                   'http://%s:%s@%s%s',
                   getenv('SPRYKER_YVES_AUTH_USERNAME') ?? null,
@@ -253,9 +263,16 @@ jobs:
                   'mollieBancontactPayment' => 'bancontact',
                   'mollieKbcPayment' => 'kbc',
                   'molliePayByBankPayment' => 'paybybank',
+                  'mollieApplePayDirectPayment' => 'applepay',
               ],
               MollieConstants::MOLLIE_PAYMENT_METHOD_MANUAL_CAPTURE => [
                   'creditcard',
+              ],
+              MollieConstants::MOLLIE_BNPL_PAYMENT_METHODS => ['billie', 'in3', 'klarna', 'riverty', 'voucher', 'alma'],
+              MollieConstants::MOLLIE_EXPRESS_CHECKOUT_METHODS_ENABLED => [
+                  MollieConfig::EXPRESS_METHOD_APPLE_PAY => false,
+                  MollieConfig::EXPRESS_METHOD_GOOGLE_PAY => false,
+                  MollieConfig::EXPRESS_METHOD_PAYPAL => false,
               ],
           ];
           

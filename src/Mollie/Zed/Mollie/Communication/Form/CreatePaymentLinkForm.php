@@ -13,9 +13,12 @@ use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\Callback;
 use Symfony\Component\Validator\Constraints\GreaterThan;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\Url;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 class CreatePaymentLinkForm extends AbstractType
 {
@@ -33,6 +36,11 @@ class CreatePaymentLinkForm extends AbstractType
      * @var string
      */
     public const FIELD_AMOUNT = 'amount';
+
+    /**
+     * @var string
+     */
+    public const FIELD_MINIMUM_AMOUNT = 'minimumAmount';
 
     /**
      * @var string
@@ -86,6 +94,13 @@ class CreatePaymentLinkForm extends AbstractType
             static::OPTION_AVAILABLE_PAYMENT_METHODS,
             static::OPTION_CURRENCY_CODES,
         ]);
+        $resolver->setDefaults([
+            'constraints' => [
+                new Callback([
+                    'callback' => [$this, 'validateAmountOrMinimumAmount'],
+                ]),
+            ],
+        ]);
     }
 
     /**
@@ -99,6 +114,7 @@ class CreatePaymentLinkForm extends AbstractType
         $this
             ->addCurrencyField($builder, $options)
             ->addAmountField($builder)
+            ->addMinimumAmountField($builder)
             ->addDescriptionField($builder)
             ->addExpiryDateField($builder)
             ->addRedirectUrlField($builder)
@@ -134,11 +150,10 @@ class CreatePaymentLinkForm extends AbstractType
     protected function addAmountField(FormBuilderInterface $builder)
     {
         $builder->add(self::FIELD_AMOUNT, NumberType::class, [
-            'label' => 'Amount',
-            'required' => true,
+            'label' => 'Amount (leave empty to let the customer enter the amount)',
+            'required' => false,
             'scale' => 2,
             'constraints' => [
-                new NotBlank(),
                 new GreaterThan([
                     'value' => 0,
                     'message' => 'Amount must be greater than 0',
@@ -147,6 +162,54 @@ class CreatePaymentLinkForm extends AbstractType
         ]);
 
         return $this;
+    }
+
+    /**
+     * @param \Symfony\Component\Form\FormBuilderInterface $builder
+     *
+     * @return $this
+     */
+    protected function addMinimumAmountField(FormBuilderInterface $builder)
+    {
+        $builder->add(self::FIELD_MINIMUM_AMOUNT, NumberType::class, [
+            'label' => 'Minimum amount (only when amount is empty)',
+            'required' => false,
+            'scale' => 2,
+            'constraints' => [
+                new GreaterThan([
+                    'value' => 0,
+                    'message' => 'Minimum amount must be greater than 0',
+                ]),
+            ],
+        ]);
+
+        return $this;
+    }
+
+    /**
+     * @param array<string, mixed> $formData
+     * @param \Symfony\Component\Validator\Context\ExecutionContextInterface $context
+     *
+     * @return void
+     */
+    public function validateAmountOrMinimumAmount(array $formData, ExecutionContextInterface $context): void
+    {
+        $amount = $formData[static::FIELD_AMOUNT] ?? null;
+        $minimumAmount = $formData[static::FIELD_MINIMUM_AMOUNT] ?? null;
+
+        if ($amount !== null && $minimumAmount !== null) {
+            $context->buildViolation('Fill in either an amount or a minimum amount, not both')
+                ->atPath(sprintf('[%s]', static::FIELD_MINIMUM_AMOUNT))
+                ->addViolation();
+
+            return;
+        }
+
+        if ($amount === null && $minimumAmount === null) {
+            $context->buildViolation('Fill in an amount or a minimum amount')
+                ->atPath(sprintf('[%s]', static::FIELD_AMOUNT))
+                ->addViolation();
+        }
     }
 
     /**
@@ -204,6 +267,11 @@ class CreatePaymentLinkForm extends AbstractType
         $builder->add(self::FIELD_REDIRECT_URL, TextType::class, [
             'label' => 'Redirect URL (optional)',
             'required' => false,
+            'constraints' => [
+                new Url([
+                    'message' => 'Redirect URL must be a valid http or https URL',
+                ]),
+            ],
         ]);
 
         return $this;

@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace Mollie\Client\Mollie\Api;
 
+use Composer\InstalledVersions;
 use Exception;
 use Generated\Shared\Transfer\MollieApiRequestTransfer;
 use Generated\Shared\Transfer\MollieApiResponseTransfer;
@@ -43,6 +44,8 @@ abstract class AbstractApiCall implements ApiCallInterface
         protected MollieToUtilEncodingServiceInterface $utilEncodingService,
         protected MollieLoggerInterface $logger,
     ) {
+        $this->setApiKey();
+        $this->setUserAgentStrings();
     }
 
     /**
@@ -69,9 +72,7 @@ abstract class AbstractApiCall implements ApiCallInterface
         $mollieApiResponseTransfer = new MollieApiResponseTransfer();
 
         try {
-            $this->mollieApiClient->setApiKey($this->mollieConfig->getMollieApiKey());
             $request = $this->buildRequest($mollieApiRequestTransfer);
-
             $result = $this->mollieApiClient->send($request);
             [$statusCode, $response] = $this->resolveResult($result);
 
@@ -111,6 +112,26 @@ abstract class AbstractApiCall implements ApiCallInterface
             $result->getResponse()->status(),
             $result->getResponse()->getPsrResponse(),
         ];
+    }
+
+    /**
+     * @return void
+     */
+    protected function setApiKey(): void
+    {
+        $this->mollieApiClient->setApiKey($this->mollieConfig->getMollieApiKey());
+    }
+
+    /**
+     * @return void
+     */
+    protected function setUserAgentStrings(): void
+    {
+        $sprykerCorePackage = InstalledVersions::getVersion($this->mollieConfig->getSprykerCorePackage());
+        $molliePluginPackage = InstalledVersions::getVersion($this->mollieConfig->getMolliePluginPackage());
+        $this->mollieApiClient->addVersionString(sprintf('Spryker/%s', $sprykerCorePackage));
+        $this->mollieApiClient->addVersionString(sprintf('MollieSpryker/%s', $molliePluginPackage));
+        $this->mollieApiClient->addVersionString($this->mollieConfig->getUapIdentifier());
     }
 
     /**

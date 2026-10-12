@@ -23,5 +23,8 @@
 /logs/
 *.log
 
+# Codeception generated actor classes (rebuilt by `codecept build`/`run`)
+tests/**/_support/_generated/
+
 # Node (if present in consuming projects)
 /node_modules/

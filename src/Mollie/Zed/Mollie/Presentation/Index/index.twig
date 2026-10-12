@@ -22,10 +22,16 @@
             <div class="ibox float-e-margins">
                 <div class="ibox-title clearfix">
                     <h2>
-                        {{ 'mollie.profile.information' | trans }}
+                        {{ 'mollie.information' | trans }}
                     </h2>
                 </div>
                 <div class="ibox-content">
+                    <div>
+                        {{ 'mollie.package-version' | trans }}
+                        <h4 id="mollie-package-version" class="badge">
+                            {{ version }}
+                        </h4>
+                    </div>
                     <div>
                         {{ 'mollie.profile.id' | trans }}
                         <h4 id="mollie-profile-id" class="badge">
@@ -52,16 +58,24 @@
         </h3>
     {% endif %}
 
+    <div class="table-filter-container spacing-bottom">
+        {{ form_start(form, {attr: {class: 'table-filter-form', id: 'mollie-filter-form'}}) }}
+            {% for field in form.children %}
+                <div class="col-md-6 col-lg-3">
+                    {{ form_row(field) }}
+                </div>
+            {% endfor %}
+        <div>
+            <button class="btn btn-outline spacing-right">{{ 'Apply filters' | trans }}</button>
+            <a href="{{ url('/mollie/index') }}" class="btn btn-link">{{ 'Reset filters' | trans }}</a>
+        </div>
+        {{ form_end(form) }}
+    </div>
     <div>
         <a class="btn btn-primary"
            href="/mollie/index/clear-cache"
         >
             {{ 'mollie.button.clear_cache' | trans }}
-        </a>
-        <a class="btn btn-primary"
-           href="/mollie?showOnlyEnabledPaymentMethods={{ filterButtonValue }}"
-        >
-            {{ filterButtonText | trans }}
         </a>
     </div>
     {{ mollieTable | raw }}

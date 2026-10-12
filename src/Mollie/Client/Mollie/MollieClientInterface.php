@@ -1,12 +1,19 @@
 <?php
 
-declare(strict_types = 1);
+
+declare(strict_types=1);
 
 namespace Mollie\Client\Mollie;
 
 use Generated\Shared\Transfer\MollieApiRequestTransfer;
 use Generated\Shared\Transfer\MollieApiResponseTransfer;
+use Generated\Shared\Transfer\MollieApplePayPaymentSessionApiResponseTransfer;
 use Generated\Shared\Transfer\MollieCreateCaptureApiResponseTransfer;
+use Generated\Shared\Transfer\MollieExpressCheckoutConfigCollectionTransfer;
+use Generated\Shared\Transfer\MollieExpressCheckoutConfigCriteriaTransfer;
+use Generated\Shared\Transfer\MollieExpressCheckoutPaymentUpdateRequestTransfer;
+use Generated\Shared\Transfer\MollieExpressCheckoutPaymentUpdateResponseTransfer;
+use Generated\Shared\Transfer\MollieExpressCheckoutSessionApiResponseTransfer;
 use Generated\Shared\Transfer\MollieCustomerApiResponseTransfer;
 use Generated\Shared\Transfer\MollieGetCaptureApiResponseTransfer;
 use Generated\Shared\Transfer\MollieGetProfileApiResponseTransfer;
@@ -14,6 +21,8 @@ use Generated\Shared\Transfer\MollieLogApiTransfer;
 use Generated\Shared\Transfer\MolliePaymentApiResponseTransfer;
 use Generated\Shared\Transfer\MolliePaymentLinkApiResponseTransfer;
 use Generated\Shared\Transfer\MolliePaymentLinkTransfer;
+use Generated\Shared\Transfer\MolliePaymentMethodConfigCollectionTransfer;
+use Generated\Shared\Transfer\MolliePaymentMethodConfigCriteriaTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodQueryParametersTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodsApiResponseTransfer;
 use Generated\Shared\Transfer\MolliePaymentTransfer;
@@ -107,6 +116,20 @@ interface MollieClientInterface
      * @return \Generated\Shared\Transfer\OrderCollectionRequestTransfer
      */
     public function updateOrderCollection(OrderCollectionRequestTransfer $updateOrderCollectionRequestTransfer): OrderCollectionResponseTransfer;
+
+    /**
+     * Specification:
+     *  - Updates the express checkout Mollie payment found by its express checkout uuid.
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\MollieExpressCheckoutPaymentUpdateRequestTransfer $mollieExpressCheckoutPaymentUpdateRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieExpressCheckoutPaymentUpdateResponseTransfer
+     */
+    public function updateExpressCheckoutMolliePayment(
+        MollieExpressCheckoutPaymentUpdateRequestTransfer $mollieExpressCheckoutPaymentUpdateRequestTransfer,
+    ): MollieExpressCheckoutPaymentUpdateResponseTransfer;
 
     /**
      * Specification:
@@ -252,6 +275,72 @@ interface MollieClientInterface
      * @return \Generated\Shared\Transfer\MolliePaymentLinkApiResponseTransfer
      */
     public function getPaymentLinks(MollieApiRequestTransfer $mollieApiRequestTransfer): MolliePaymentLinkApiResponseTransfer;
+
+    /**
+     *  Specification:
+     *
+     *  - Gets payment config collection stored in DB
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\MolliePaymentMethodConfigCriteriaTransfer $molliePaymentMethodConfigCriteriaTransfer
+     *
+     * @return \Generated\Shared\Transfer\MolliePaymentMethodConfigCollectionTransfer
+     */
+    public function getPaymentMethodConfigCollection(
+        MolliePaymentMethodConfigCriteriaTransfer $molliePaymentMethodConfigCriteriaTransfer,
+    ): MolliePaymentMethodConfigCollectionTransfer;
+
+    /**
+     *  Specification:
+     *
+     *  - Gets the resolved express checkout toggle state for every supported express method from Zed
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\MollieExpressCheckoutConfigCriteriaTransfer $mollieExpressCheckoutConfigCriteriaTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieExpressCheckoutConfigCollectionTransfer
+     */
+    public function getExpressCheckoutConfigCollection(
+        MollieExpressCheckoutConfigCriteriaTransfer $mollieExpressCheckoutConfigCriteriaTransfer,
+    ): MollieExpressCheckoutConfigCollectionTransfer;
+
+    /**
+     * Specification:
+     * - Creates a Checkout Session in Mollie system for the express checkout flow
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\MollieApiRequestTransfer $mollieApiRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieExpressCheckoutSessionApiResponseTransfer
+     */
+    public function createExpressCheckoutSession(MollieApiRequestTransfer $mollieApiRequestTransfer): MollieExpressCheckoutSessionApiResponseTransfer;
+
+    /**
+     * Specification:
+     * - Gets a Checkout Session by id from Mollie
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\MollieApiRequestTransfer $mollieApiRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieExpressCheckoutSessionApiResponseTransfer
+     */
+    public function getExpressCheckoutSession(MollieApiRequestTransfer $mollieApiRequestTransfer): MollieExpressCheckoutSessionApiResponseTransfer;
+
+    /**
+     * Specification:
+     * - Requests an Apple Pay payment session from Mollie for Apple Pay merchant validation
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\MollieApiRequestTransfer $mollieApiRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieApplePayPaymentSessionApiResponseTransfer
+     */
+    public function createApplePayPaymentSession(MollieApiRequestTransfer $mollieApiRequestTransfer): MollieApplePayPaymentSessionApiResponseTransfer;
 
     /**
      * @param MollieApiRequestTransfer $mollieApiRequestTransfer

@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace Mollie\Zed\Mollie\Persistence;
 
+use Generated\Shared\Transfer\MollieExpressCheckoutPaymentUpdateRequestTransfer;
 use Generated\Shared\Transfer\MollieCustomerTransfer;
 use Generated\Shared\Transfer\MollieItemPaymentCaptureTransfer;
 use Generated\Shared\Transfer\MolliePaymentCaptureTransfer;
 use Generated\Shared\Transfer\MolliePaymentLinkTransfer;
+use Generated\Shared\Transfer\MolliePaymentMethodConfigTransfer;
 use Generated\Shared\Transfer\MolliePaymentTransfer;
 use Generated\Shared\Transfer\MollieRefundCollectionTransfer;
 use Generated\Shared\Transfer\MollieRefundSaveTransfer;
@@ -29,6 +31,23 @@ interface MollieEntityManagerInterface
      * @return void
      */
     public function addMolliePaymentData(int $idSalesOrder, MolliePaymentTransfer $molliePaymentTransfer): void;
+
+    /**
+     * @param int $idSalesOrder
+     * @param string $expressCheckoutUuid
+     *
+     * @return void
+     */
+    public function createExpressCheckoutMolliePayment(int $idSalesOrder, string $expressCheckoutUuid): void;
+
+    /**
+     * @param \Generated\Shared\Transfer\MollieExpressCheckoutPaymentUpdateRequestTransfer $mollieExpressCheckoutPaymentUpdateRequestTransfer
+     *
+     * @return bool
+     */
+    public function updateExpressCheckoutMolliePayment(
+        MollieExpressCheckoutPaymentUpdateRequestTransfer $mollieExpressCheckoutPaymentUpdateRequestTransfer,
+    ): bool;
 
     /**
      * @param \Generated\Shared\Transfer\MollieRefundCollectionTransfer $mollieRefundCollectionTransfer
@@ -78,6 +97,28 @@ interface MollieEntityManagerInterface
      * @return \Generated\Shared\Transfer\MolliePaymentLinkTransfer
      */
     public function updatePaymentLink(MolliePaymentLinkTransfer $molliePaymentLinkTransfer): MolliePaymentLinkTransfer;
+
+    /**
+     * @param int $idMolliePaymentMethodConfig
+     *
+     * @return void
+     */
+    public function deleteMolliePaymentMethodConfig(int $idMolliePaymentMethodConfig): void;
+
+    /**
+     * @param \Generated\Shared\Transfer\MolliePaymentMethodConfigTransfer $paymentMethodConfigTransfer
+     *
+     * @return \Generated\Shared\Transfer\MolliePaymentMethodConfigTransfer
+     */
+    public function writeMolliePaymentMethodConfig(MolliePaymentMethodConfigTransfer $paymentMethodConfigTransfer): MolliePaymentMethodConfigTransfer;
+
+    /**
+     * @param string $expressMethod
+     * @param bool $isActive
+     *
+     * @return void
+     */
+    public function saveExpressCheckoutConfig(string $expressMethod, bool $isActive): void;
 
     /**
      * @param MollieCustomerTransfer $mollieCustomerTransfer

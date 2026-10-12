@@ -6,24 +6,16 @@ namespace Mollie\Yves\Mollie\PaymentPage\Form;
 
 use Mollie\Shared\Mollie\MollieConfig;
 use Mollie\Shared\Mollie\MollieConstants;
-use Spryker\Yves\StepEngine\Dependency\Form\AbstractSubFormType;
-use Spryker\Yves\StepEngine\Dependency\Form\SubFormInterface;
-use Spryker\Yves\StepEngine\Dependency\Form\SubFormProviderNameInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class MollieBizumSubForm extends AbstractSubFormType implements SubFormInterface, SubFormProviderNameInterface
+class MollieBizumSubForm extends AbstractMollieSubForm
 {
     /**
      * @var string
      */
     protected const PAYMENT_METHOD = 'bizum';
-
-    /**
-     * @var string
-     */
-    protected const LOGO_URL = 'logoUrl';
 
     /**
      * @param \Symfony\Component\OptionsResolver\OptionsResolver $resolver

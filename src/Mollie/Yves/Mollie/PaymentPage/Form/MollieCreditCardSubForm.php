@@ -6,10 +6,6 @@ namespace Mollie\Yves\Mollie\PaymentPage\Form;
 
 use Generated\Shared\Transfer\MollieCreditCardPaymentTransfer;
 use Mollie\Shared\Mollie\MollieConfig;
-use Mollie\Shared\Mollie\MollieConstants;
-use Spryker\Yves\StepEngine\Dependency\Form\AbstractSubFormType;
-use Spryker\Yves\StepEngine\Dependency\Form\SubFormInterface;
-use Spryker\Yves\StepEngine\Dependency\Form\SubFormProviderNameInterface;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
@@ -20,7 +16,7 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 /**
  * @method \Mollie\Yves\Mollie\MollieConfig getConfig()
  */
-class MollieCreditCardSubForm extends AbstractSubFormType implements SubFormInterface, SubFormProviderNameInterface
+class MollieCreditCardSubForm extends AbstractMollieSubForm
 {
  /**
   * @var string
@@ -33,15 +29,10 @@ class MollieCreditCardSubForm extends AbstractSubFormType implements SubFormInte
     protected const CARD_TOKEN = 'cardToken';
 
     /**
-     * @var string
+     * @param \Symfony\Component\OptionsResolver\OptionsResolver $resolver
+     *
+     * @return void
      */
-    protected const LOGO_URL = 'logoUrl';
-
- /**
-  * @param \Symfony\Component\OptionsResolver\OptionsResolver $resolver
-  *
-  * @return void
-  */
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver
@@ -92,9 +83,6 @@ class MollieCreditCardSubForm extends AbstractSubFormType implements SubFormInte
         $view->vars['profileId'] = $this->getConfig()->getProfileId();
         $view->vars['testMode'] = $this->getConfig()->isTestMode() ? 'true' : 'false';
         $view->vars['jsSrc'] = $this->getConfig()->getMollieCreditCardComponentsJsSrc();
-
-        $optionLogoKey = $this->getPropertyPath() . MollieConstants::LOGO_URL;
-        $view->vars[static::LOGO_URL] = $options['select_options'][$optionLogoKey];
     }
 
     /**

@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Mollie\Zed\Mollie\Business\Processor\PaymentLink;
 
-use Generated\Shared\Transfer\MollieAmountTransfer;
 use Generated\Shared\Transfer\MolliePaymentLinkTransfer;
 use Generated\Shared\Transfer\OrderTransfer;
 use Mollie\Service\Mollie\MollieServiceInterface;
+use Mollie\Zed\Mollie\Business\Mapper\PaymentLink\PaymentLinkOrderMapperInterface;
 use Mollie\Zed\Mollie\MollieConfig;
 
 class PaymentLinkProcessor implements PaymentLinkProcessorInterface
@@ -20,10 +20,12 @@ class PaymentLinkProcessor implements PaymentLinkProcessorInterface
     /**
      * @param \Mollie\Service\Mollie\MollieServiceInterface $mollieService
      * @param \Mollie\Zed\Mollie\MollieConfig $config
+     * @param \Mollie\Zed\Mollie\Business\Mapper\PaymentLink\PaymentLinkOrderMapperInterface $paymentLinkOrderMapper
      */
     public function __construct(
         protected MollieServiceInterface $mollieService,
         protected MollieConfig $config,
+        protected PaymentLinkOrderMapperInterface $paymentLinkOrderMapper,
     ) {
     }
 
@@ -36,31 +38,20 @@ class PaymentLinkProcessor implements PaymentLinkProcessorInterface
     {
         $molliePaymentLinkTransfer = new MolliePaymentLinkTransfer();
 
-        $amountTransfer = $this->getMollieAmount($orderTransfer);
+        $description = sprintf(static::MOLLIE_PAYMENT_LINK_DESCRIPTION, $orderTransfer->getOrderReference());
         $expirationDateTime = $this->mollieService->getPaymentLinkDefaultExpirationDateTime();
+        $mollieLinesTransfers = $this->paymentLinkOrderMapper->mapOrderItemsAndExpensesToMollieLines($orderTransfer);
+        $mollieBillingAddressTransfer = $this->paymentLinkOrderMapper->mapOrderBillingAddressToMollieAddress($orderTransfer);
 
         $molliePaymentLinkTransfer
             ->setFkSalesOrder($orderTransfer->getIdSalesOrder())
-            ->setDescription(sprintf(static::MOLLIE_PAYMENT_LINK_DESCRIPTION, $orderTransfer->getOrderReference()))
-            ->setAmount($amountTransfer)
-            ->setExpiresAt($expirationDateTime);
+            ->setDescription($description)
+            ->setAmount($orderTransfer->getTotals()->getGrandTotal())
+            ->setCurrency($orderTransfer->getCurrency()->getCode())
+            ->setExpiresAt($expirationDateTime)
+            ->setLines($mollieLinesTransfers)
+            ->setBillingAddress($mollieBillingAddressTransfer);
 
         return $molliePaymentLinkTransfer;
-    }
-
-    /**
-     * @param \Generated\Shared\Transfer\OrderTransfer $orderTransfer
-     *
-     * @return \Generated\Shared\Transfer\MollieAmountTransfer
-     */
-    protected function getMollieAmount(OrderTransfer $orderTransfer): MollieAmountTransfer
-    {
-        $totalsTransfer = $orderTransfer->getTotals();
-        $grandTotal = $totalsTransfer->getGrandTotal();
-        $currency = $orderTransfer->getCurrency()->getCode();
-
-        $amountTransfer = $this->mollieService->convertIntegerToMollieAmount($grandTotal, $currency);
-
-        return $amountTransfer;
     }
 }

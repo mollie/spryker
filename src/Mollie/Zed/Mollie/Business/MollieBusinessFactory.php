@@ -8,10 +8,16 @@ use Mollie\Client\Mollie\MollieClientInterface;
 use Mollie\Service\Mollie\MollieServiceInterface;
 use Mollie\Zed\Mollie\Business\Calculator\OrderItem\OrderItemGrossAmountCalculator;
 use Mollie\Zed\Mollie\Business\Calculator\OrderItem\OrderItemGrossAmountCalculatorInterface;
+use Mollie\Zed\Mollie\Business\ExpressCheckout\ExpressCheckoutConfigReader;
+use Mollie\Zed\Mollie\Business\ExpressCheckout\ExpressCheckoutConfigReaderInterface;
+use Mollie\Zed\Mollie\Business\ExpressCheckout\ExpressCheckoutConfigWriter;
+use Mollie\Zed\Mollie\Business\ExpressCheckout\ExpressCheckoutConfigWriterInterface;
 use Mollie\Zed\Mollie\Business\Filter\MolliePaymentMethodsFilter;
 use Mollie\Zed\Mollie\Business\Filter\MolliePaymentMethodsFilterInterface;
 use Mollie\Zed\Mollie\Business\Filter\MollieRefundFilter;
 use Mollie\Zed\Mollie\Business\Filter\MollieRefundFilterInterface;
+use Mollie\Zed\Mollie\Business\Handler\ExpressCheckoutMolliePaymentHandler;
+use Mollie\Zed\Mollie\Business\Handler\ExpressCheckoutMolliePaymentHandlerInterface;
 use Mollie\Zed\Mollie\Business\Handler\MollieCustomerHandler;
 use Mollie\Zed\Mollie\Business\Handler\MollieCustomerHandlerInterface;
 use Mollie\Zed\Mollie\Business\Handler\MollieExpirationWarningHandler;
@@ -26,6 +32,8 @@ use Mollie\Zed\Mollie\Business\Mapper\Capture\CaptureMapper;
 use Mollie\Zed\Mollie\Business\Mapper\Capture\CaptureMapperInterface;
 use Mollie\Zed\Mollie\Business\Mapper\Order\OrderMapper;
 use Mollie\Zed\Mollie\Business\Mapper\Order\OrderMapperInterface;
+use Mollie\Zed\Mollie\Business\Mapper\PaymentLink\PaymentLinkOrderMapper;
+use Mollie\Zed\Mollie\Business\Mapper\PaymentLink\PaymentLinkOrderMapperInterface;
 use Mollie\Zed\Mollie\Business\Mapper\Refund\MollieRefundMapper;
 use Mollie\Zed\Mollie\Business\Mapper\Refund\MollieRefundMapperInterface;
 use Mollie\Zed\Mollie\Business\Order\OrderUpdater;
@@ -246,6 +254,7 @@ class MollieBusinessFactory extends AbstractBusinessFactory
             $this->getMollieClient(),
             $this->getMollieService(),
             $this->getLocaleFacade(),
+            $this->getRepository(),
             $this->getConfig(),
         );
     }
@@ -316,6 +325,49 @@ class MollieBusinessFactory extends AbstractBusinessFactory
         return new PaymentLinkProcessor(
             $this->getMollieService(),
             $this->getConfig(),
+            $this->createPaymentLinkOrderMapper(),
+        );
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Business\Mapper\PaymentLink\PaymentLinkOrderMapperInterface
+     */
+    public function createPaymentLinkOrderMapper(): PaymentLinkOrderMapperInterface
+    {
+        return new PaymentLinkOrderMapper(
+            $this->getMollieService(),
+        );
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Business\ExpressCheckout\ExpressCheckoutConfigReaderInterface
+     */
+    public function createExpressCheckoutConfigReader(): ExpressCheckoutConfigReaderInterface
+    {
+        return new ExpressCheckoutConfigReader(
+            $this->getConfig(),
+            $this->getRepository(),
+        );
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Business\ExpressCheckout\ExpressCheckoutConfigWriterInterface
+     */
+    public function createExpressCheckoutConfigWriter(): ExpressCheckoutConfigWriterInterface
+    {
+        return new ExpressCheckoutConfigWriter(
+            $this->getEntityManager(),
+            $this->getConfig(),
+        );
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Business\Handler\ExpressCheckoutMolliePaymentHandlerInterface
+     */
+    public function createExpressCheckoutMolliePaymentHandler(): ExpressCheckoutMolliePaymentHandlerInterface
+    {
+        return new ExpressCheckoutMolliePaymentHandler(
+            $this->getEntityManager(),
         );
     }
 

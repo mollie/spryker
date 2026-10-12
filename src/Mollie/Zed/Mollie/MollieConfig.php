@@ -4,16 +4,15 @@ declare(strict_types = 1);
 
 namespace Mollie\Zed\Mollie;
 
+use Mollie\Shared\Mollie\MollieConfig as SharedConfig;
 use Mollie\Shared\Mollie\MollieConstants;
 use Spryker\Zed\Kernel\AbstractBundleConfig;
 
+/**
+ * @method \Mollie\Shared\Mollie\MollieConfig getSharedConfig()
+ */
 class MollieConfig extends AbstractBundleConfig
 {
-    /**
-     * @var string
-     */
-    public const PAID = 'paid';
-
     /**
      * @var string
      */
@@ -22,32 +21,12 @@ class MollieConfig extends AbstractBundleConfig
     /**
      * @var string
      */
-    public const EXPIRED = 'expired';
-
-    /**
-     * @var string
-     */
-    public const FAILED = 'failed';
-
-    /**
-     * @var string
-     */
-    public const CANCELED = 'canceled';
-
-    /**
-     * @var string
-     */
-    public const PROCESSING = 'processing';
-
-    /**
-     * @var string
-     */
-    public const REFUNDED = 'refunded';
-
-    /**
-     * @var string
-     */
     public const MOLLIE_PAYMENT_METHOD_STATUS_ACTIVATED = 'activated';
+
+    /**
+     * @var string
+     */
+    public const MOLLIE_PAYMENT_METHOD_STATUS_NOT_ACTIVATED = 'not activated';
 
     /**
      * @var string
@@ -65,11 +44,24 @@ class MollieConfig extends AbstractBundleConfig
     public const MOLLIE_WALLET_APPLE_PAY = 'applepay';
 
     /**
+     * @var string
+     */
+    public const MOLLIE_GET_METHODS_API_DEFAULT_AMOUNT_VALUE = '100.00';
+
+    /**
      * @return array<string, string>
      */
     public function getMollieOmsToPaymentMethodMapping(): array
     {
         return $this->get(MollieConstants::MOLLIE)[MollieConstants::MOLLIE_OMS_TO_PAYMENT_METHOD_MAPPING] ?? [];
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    public function getBNPLPaymentMethods(): array
+    {
+        return $this->get(MollieConstants::MOLLIE)[MollieConstants::MOLLIE_BNPL_PAYMENT_METHODS] ?? [];
     }
 
     /**
@@ -146,5 +138,57 @@ class MollieConfig extends AbstractBundleConfig
     public function getMollieProfileId(): string|null
     {
         return $this->get(MollieConstants::MOLLIE)[MollieConstants::MOLLIE_PROFILE_ID];
+    }
+
+    /**
+     * @return string
+     */
+    public function getMethodsApiDefaultAmountValue(): string
+    {
+        return $this->get(MollieConstants::MOLLIE)[MollieConstants::MOLLIE_GET_METHODS_API_DEFAULT_AMOUNT_VALUE];
+    }
+
+    /**
+     * @param string $paymentProvider
+     *
+     * @return bool
+     */
+    public function isMollieProvider(string $paymentProvider): bool
+    {
+        return str_starts_with(strtolower($paymentProvider), static::MOLLIE_PAYMENT_PROVIDER);
+    }
+
+    /**
+     * @param string $paymentMethod
+     *
+     * @return bool
+     */
+    public function isMollieExpressPaymentMethod(string $paymentMethod): bool
+    {
+        return $paymentMethod === SharedConfig::MOLLIE_PAYMENT_EXPRESS;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMolliePluginPackage(): string
+    {
+        return $this->getSharedConfig()->getMolliePluginPackage();
+    }
+
+    /**
+     * @return list<string>
+     */
+    public function getExpressMethods(): array
+    {
+        return $this->getSharedConfig()->getExpressMethods();
+    }
+
+    /**
+     * @return array<string, bool>
+     */
+    public function getDefaultExpressCheckoutMethodConfig(): array
+    {
+        return $this->getSharedConfig()->getDefaultExpressCheckoutMethodConfig();
     }
 }

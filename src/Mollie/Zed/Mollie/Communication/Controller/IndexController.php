@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Mollie\Zed\Mollie\Communication\Controller;
 
+use Composer\InstalledVersions;
+use Generated\Shared\Transfer\MolliePaymentMethodConfigCriteriaTransfer;
 use Mollie\Shared\Mollie\MollieConstants;
 use Spryker\Zed\Kernel\Communication\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -26,21 +28,44 @@ class IndexController extends AbstractController
         $profileResponseTransfer = $this->getFactory()->getMollieClient()->getCurrentProfile();
         $showOnlyEnabledPaymentMethods = $request->query->get(MollieConstants::MOLLIE_QUERY_PARAMETER_SHOW_ONLY_ENABLED);
         $table = $this->getFactory()->createMolliePaymentMethodsTable();
+        $dataProvider = $this->getFactory()->createPaymentMethodsFilterFormDataProvider();
+        $form = $this->getFactory()->createPaymentMethodsFilterForm(
+            $dataProvider->getData(),
+            $dataProvider->getOptions(),
+        );
+
+        $form->handleRequest($request);
         $responseData = [
+            'form' => $form->createView(),
             'mollieTable' => $table->render(),
             'response' => $profileResponseTransfer,
             MollieConstants::MOLLIE_QUERY_PARAMETER_SHOW_ONLY_ENABLED => $showOnlyEnabledPaymentMethods,
+            'version' => InstalledVersions::getPrettyVersion($this->getFactory()->getConfig()->getMolliePluginPackage()),
         ];
 
         return $this->viewResponse($responseData);
     }
 
     /**
+     * @param \Symfony\Component\HttpFoundation\Request $request
+     *
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      */
-    public function tableAction(): JsonResponse
+    public function tableAction(Request $request): JsonResponse
     {
+        $dataProvider = $this->getFactory()->createPaymentMethodsFilterFormDataProvider();
+        $form = $this->getFactory()->createPaymentMethodsFilterForm(
+            $dataProvider->getData(),
+            $dataProvider->getOptions(),
+        );
+
+        $criteriaTransfer = $form->handleRequest($request)->getData();
+        if (!$criteriaTransfer) {
+            $criteriaTransfer = new MolliePaymentMethodConfigCriteriaTransfer();
+        }
+
         $reportsTable = $this->getFactory()->createMolliePaymentMethodsTable();
+        $reportsTable->setCriteria($criteriaTransfer);
 
         return $this->jsonResponse(
             $reportsTable->fetchData(),

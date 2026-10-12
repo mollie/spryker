@@ -1,12 +1,17 @@
 <?php
 
+
 declare(strict_types=1);
 
 namespace Mollie\Zed\Mollie\Persistence;
 
 use Generated\Shared\Transfer\MollieCustomerTransfer;
+use Generated\Shared\Transfer\MollieExpressCheckoutConfigCriteriaTransfer;
 use Generated\Shared\Transfer\MollieItemPaymentCaptureTransfer;
 use Generated\Shared\Transfer\MolliePaymentLinkTransfer;
+use Generated\Shared\Transfer\MolliePaymentMethodConfigCollectionTransfer;
+use Generated\Shared\Transfer\MolliePaymentMethodConfigCriteriaTransfer;
+use Generated\Shared\Transfer\MolliePaymentMethodConfigTransfer;
 use Generated\Shared\Transfer\MolliePaymentTransfer;
 use Generated\Shared\Transfer\MollieRefundResponseTransfer;
 use Orm\Zed\Mollie\Persistence\Base\SpyMollieCustomer;
@@ -95,6 +100,72 @@ class MollieRepository extends AbstractRepository implements MollieRepositoryInt
         return $this->getFactory()
             ->createMolliePaymentLinkMapper()
             ->mapMolliePaymentLinkEntityToTransfer($spyMolliePaymentLinkEntity);
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MolliePaymentMethodConfigCriteriaTransfer $criteriaTransfer
+     *
+     * @return \Generated\Shared\Transfer\MolliePaymentMethodConfigCollectionTransfer
+     */
+    public function getPaymentMethodConfigCollection(MolliePaymentMethodConfigCriteriaTransfer $criteriaTransfer): MolliePaymentMethodConfigCollectionTransfer
+    {
+        $query = $this->getFactory()
+            ->createSpyMolliePaymentMethodConfigQuery();
+
+        if ($criteriaTransfer->getCurrencyCode()) {
+            $query->filterByCurrencyCode($criteriaTransfer->getCurrencyCode());
+        }
+
+        $entities = $query->find();
+
+        return $this->getFactory()
+            ->createMolliePaymentMethodConfigMapper()
+            ->mapMolliePaymentMethodConfigEntitiesToCollection($entities);
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MolliePaymentMethodConfigCriteriaTransfer $criteriaTransfer
+     *
+     * @return \Generated\Shared\Transfer\MolliePaymentMethodConfigTransfer|null
+     */
+    public function getPaymentMethodConfigByCriteria(
+        MolliePaymentMethodConfigCriteriaTransfer $criteriaTransfer,
+    ): ?MolliePaymentMethodConfigTransfer {
+        $spyMolliePaymentMethodConfigEntity = $this->getFactory()
+            ->createSpyMolliePaymentMethodConfigQuery()
+            ->filterByMollieId($criteriaTransfer->getMollieId())
+            ->filterByCurrencyCode($criteriaTransfer->getCurrencyCode())
+            ->findOne();
+
+        if (!$spyMolliePaymentMethodConfigEntity) {
+            return null;
+        }
+
+        return $this->getFactory()
+            ->createMolliePaymentMethodConfigMapper()
+            ->mapMolliePaymentMethodConfigEntityToTransfer($spyMolliePaymentMethodConfigEntity);
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MollieExpressCheckoutConfigCriteriaTransfer $criteriaTransfer
+     *
+     * @return array<string, bool>
+     */
+    public function getPersistentExpressCheckoutMethodConfig(
+        MollieExpressCheckoutConfigCriteriaTransfer $criteriaTransfer,
+    ): array {
+        $query = $this->getFactory()
+            ->createSpyMollieExpressCheckoutConfigQuery();
+
+        if ($criteriaTransfer->getExpressMethod()) {
+            $query->filterByExpressMethod($criteriaTransfer->getExpressMethod());
+        }
+
+        $entities = $query->find();
+
+        return $this->getFactory()
+            ->createMollieExpressCheckoutConfigMapper()
+            ->mapEntitiesToMethodConfig($entities);
     }
 
     /**

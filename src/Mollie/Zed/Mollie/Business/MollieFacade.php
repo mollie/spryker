@@ -1,5 +1,6 @@
 <?php
 
+
 declare(strict_types=1);
 
 namespace Mollie\Zed\Mollie\Business;
@@ -7,10 +8,17 @@ namespace Mollie\Zed\Mollie\Business;
 use Generated\Shared\Transfer\CheckoutResponseTransfer;
 use Generated\Shared\Transfer\MollieCustomerApiResponseTransfer;
 use Generated\Shared\Transfer\MollieExpirationInformationTransfer;
+use Generated\Shared\Transfer\MollieExpressCheckoutConfigCollectionTransfer;
+use Generated\Shared\Transfer\MollieExpressCheckoutConfigCriteriaTransfer;
+use Generated\Shared\Transfer\MollieExpressCheckoutPaymentUpdateRequestTransfer;
+use Generated\Shared\Transfer\MollieExpressCheckoutPaymentUpdateResponseTransfer;
 use Generated\Shared\Transfer\MolliePaymentCaptureRequestTransfer;
 use Generated\Shared\Transfer\MolliePaymentCaptureResponseTransfer;
 use Generated\Shared\Transfer\MolliePaymentLinkApiResponseTransfer;
 use Generated\Shared\Transfer\MolliePaymentLinkTransfer;
+use Generated\Shared\Transfer\MolliePaymentMethodConfigCollectionTransfer;
+use Generated\Shared\Transfer\MolliePaymentMethodConfigCriteriaTransfer;
+use Generated\Shared\Transfer\MolliePaymentMethodConfigTransfer;
 use Generated\Shared\Transfer\MolliePaymentTransfer;
 use Generated\Shared\Transfer\MollieRefundApiResponseTransfer;
 use Generated\Shared\Transfer\MollieRefundResponseTransfer;
@@ -278,6 +286,111 @@ class MollieFacade extends AbstractFacade implements MollieFacadeInterface
     public function getExpirationInformation(int $orderId): MollieExpirationInformationTransfer
     {
         return $this->getFactory()->createMollieExpirationWarningHandler()->getExpirationInformation($orderId);
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MolliePaymentMethodConfigCriteriaTransfer $criteriaTransfer
+     *
+     * @return \Generated\Shared\Transfer\MolliePaymentMethodConfigCollectionTransfer
+     */
+    public function getPaymentMethodConfigCollection(MolliePaymentMethodConfigCriteriaTransfer $criteriaTransfer): MolliePaymentMethodConfigCollectionTransfer
+    {
+        return $this->getRepository()->getPaymentMethodConfigCollection($criteriaTransfer);
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MolliePaymentMethodConfigCriteriaTransfer $criteriaTransfer
+     *
+     * @return \Generated\Shared\Transfer\MolliePaymentMethodConfigTransfer|null
+     */
+    public function getPaymentMethodConfigByCriteria(
+        MolliePaymentMethodConfigCriteriaTransfer $criteriaTransfer,
+    ): ?MolliePaymentMethodConfigTransfer {
+        return $this->getRepository()->getPaymentMethodConfigByCriteria($criteriaTransfer);
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MolliePaymentMethodConfigTransfer $molliePaymentMethodConfigTransfer
+     *
+     * @return \Generated\Shared\Transfer\MolliePaymentMethodConfigTransfer
+     */
+    public function writeMolliePaymentConfigData(MolliePaymentMethodConfigTransfer $molliePaymentMethodConfigTransfer): MolliePaymentMethodConfigTransfer
+    {
+        return $this->getEntityManager()->writeMolliePaymentMethodConfig($molliePaymentMethodConfigTransfer);
+    }
+
+    /**
+     * @param int $mollieId
+     *
+     * @return void
+     */
+    public function deleteMolliePaymentConfigData(int $mollieId): void
+    {
+        $this->getEntityManager()->deleteMolliePaymentMethodConfig($mollieId);
+    }
+
+    /**
+     * @param int $idSalesOrder
+     *
+     * @return \Generated\Shared\Transfer\MolliePaymentLinkTransfer|null
+     */
+    public function getMolliePaymentLinkByIdSalesOrder(int $idSalesOrder): ?MolliePaymentLinkTransfer
+    {
+        return $this->getRepository()->getPaymentLinkByFkSalesOrder($idSalesOrder);
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MollieExpressCheckoutConfigCriteriaTransfer $mollieExpressCheckoutConfigCriteriaTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieExpressCheckoutConfigCollectionTransfer
+     */
+    public function getExpressCheckoutConfigCollection(
+        MollieExpressCheckoutConfigCriteriaTransfer $mollieExpressCheckoutConfigCriteriaTransfer,
+    ): MollieExpressCheckoutConfigCollectionTransfer {
+        return $this->getFactory()
+            ->createExpressCheckoutConfigReader()
+            ->getExpressCheckoutConfigCollection($mollieExpressCheckoutConfigCriteriaTransfer);
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MollieExpressCheckoutConfigCollectionTransfer $mollieExpressCheckoutConfigCollectionTransfer
+     *
+     * @return void
+     */
+    public function saveExpressCheckoutConfigCollection(
+        MollieExpressCheckoutConfigCollectionTransfer $mollieExpressCheckoutConfigCollectionTransfer,
+    ): void {
+        $this->getFactory()->createExpressCheckoutConfigWriter()->saveExpressCheckoutConfigCollection(
+            $mollieExpressCheckoutConfigCollectionTransfer,
+        );
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
+     * @param \Generated\Shared\Transfer\CheckoutResponseTransfer $checkoutResponseTransfer
+     *
+     * @return void
+     */
+    public function createExpressCheckoutMolliePayment(
+        QuoteTransfer $quoteTransfer,
+        CheckoutResponseTransfer $checkoutResponseTransfer,
+    ): void {
+        $this->getFactory()
+            ->createExpressCheckoutMolliePaymentHandler()
+            ->createExpressCheckoutMolliePayment($quoteTransfer, $checkoutResponseTransfer);
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MollieExpressCheckoutPaymentUpdateRequestTransfer $mollieExpressCheckoutPaymentUpdateRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieExpressCheckoutPaymentUpdateResponseTransfer
+     */
+    public function updateExpressCheckoutMolliePayment(
+        MollieExpressCheckoutPaymentUpdateRequestTransfer $mollieExpressCheckoutPaymentUpdateRequestTransfer,
+    ): MollieExpressCheckoutPaymentUpdateResponseTransfer {
+        return $this->getFactory()
+            ->createExpressCheckoutMolliePaymentHandler()
+            ->updateExpressCheckoutMolliePayment($mollieExpressCheckoutPaymentUpdateRequestTransfer);
     }
 
     /**

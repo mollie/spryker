@@ -47,6 +47,11 @@ class CreateRefundApi extends AbstractApiCall
      */
     protected function buildRequest(?MollieApiRequestTransfer $mollieApiRequestTransfer = null): ?Request
     {
+        $idempotencyKey = $mollieApiRequestTransfer->getIdempotencyKey();
+        if ($idempotencyKey) {
+            $this->mollieApiClient->setIdempotencyKey($idempotencyKey);
+        }
+
         $orderItemsRefundableAmount = $mollieApiRequestTransfer->getRefund()->getAmount()->getValue();
         $convertedOrderItemsRefundableAmount = $this->convertAmountToString($orderItemsRefundableAmount);
         $currency = $mollieApiRequestTransfer->getRefund()->getAmount()->getCurrency();

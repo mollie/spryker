@@ -1,11 +1,16 @@
 <?php
 
+
 declare(strict_types=1);
 
 namespace Mollie\Zed\Mollie\Persistence;
 
+use Generated\Shared\Transfer\MollieExpressCheckoutConfigCriteriaTransfer;
 use Generated\Shared\Transfer\MollieItemPaymentCaptureTransfer;
 use Generated\Shared\Transfer\MolliePaymentLinkTransfer;
+use Generated\Shared\Transfer\MolliePaymentMethodConfigCollectionTransfer;
+use Generated\Shared\Transfer\MolliePaymentMethodConfigCriteriaTransfer;
+use Generated\Shared\Transfer\MolliePaymentMethodConfigTransfer;
 use Generated\Shared\Transfer\MolliePaymentTransfer;
 use Generated\Shared\Transfer\MollieRefundResponseTransfer;
 
@@ -38,4 +43,29 @@ interface MollieRepositoryInterface
      * @return \Generated\Shared\Transfer\MolliePaymentLinkTransfer|null
      */
     public function getPaymentLinkByFkSalesOrder(int $idSalesOrder): ?MolliePaymentLinkTransfer;
+
+    /**
+     * @param \Generated\Shared\Transfer\MolliePaymentMethodConfigCriteriaTransfer $criteriaTransfer
+     *
+     * @return \Generated\Shared\Transfer\MolliePaymentMethodConfigCollectionTransfer
+     */
+    public function getPaymentMethodConfigCollection(MolliePaymentMethodConfigCriteriaTransfer $criteriaTransfer): MolliePaymentMethodConfigCollectionTransfer;
+
+    /**
+     * @param \Generated\Shared\Transfer\MolliePaymentMethodConfigCriteriaTransfer $criteriaTransfer
+     *
+     * @return \Generated\Shared\Transfer\MolliePaymentMethodConfigTransfer|null
+     */
+    public function getPaymentMethodConfigByCriteria(
+        MolliePaymentMethodConfigCriteriaTransfer $criteriaTransfer,
+    ): ?MolliePaymentMethodConfigTransfer;
+
+    /**
+     * @param \Generated\Shared\Transfer\MollieExpressCheckoutConfigCriteriaTransfer $criteriaTransfer
+     *
+     * @return array<string, bool>
+     */
+    public function getPersistentExpressCheckoutMethodConfig(
+        MollieExpressCheckoutConfigCriteriaTransfer $criteriaTransfer,
+    ): array;
 }

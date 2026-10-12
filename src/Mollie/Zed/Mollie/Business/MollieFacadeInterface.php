@@ -1,16 +1,24 @@
 <?php
 
-declare(strict_types = 1);
+
+declare(strict_types=1);
 
 namespace Mollie\Zed\Mollie\Business;
 
 use Generated\Shared\Transfer\CheckoutResponseTransfer;
 use Generated\Shared\Transfer\MollieCustomerApiResponseTransfer;
 use Generated\Shared\Transfer\MollieExpirationInformationTransfer;
+use Generated\Shared\Transfer\MollieExpressCheckoutConfigCollectionTransfer;
+use Generated\Shared\Transfer\MollieExpressCheckoutConfigCriteriaTransfer;
+use Generated\Shared\Transfer\MollieExpressCheckoutPaymentUpdateRequestTransfer;
+use Generated\Shared\Transfer\MollieExpressCheckoutPaymentUpdateResponseTransfer;
 use Generated\Shared\Transfer\MolliePaymentCaptureRequestTransfer;
 use Generated\Shared\Transfer\MolliePaymentCaptureResponseTransfer;
 use Generated\Shared\Transfer\MolliePaymentLinkApiResponseTransfer;
 use Generated\Shared\Transfer\MolliePaymentLinkTransfer;
+use Generated\Shared\Transfer\MolliePaymentMethodConfigCollectionTransfer;
+use Generated\Shared\Transfer\MolliePaymentMethodConfigCriteriaTransfer;
+use Generated\Shared\Transfer\MolliePaymentMethodConfigTransfer;
 use Generated\Shared\Transfer\MolliePaymentTransfer;
 use Generated\Shared\Transfer\MollieRefundApiResponseTransfer;
 use Generated\Shared\Transfer\MollieRefundResponseTransfer;
@@ -194,6 +202,89 @@ interface MollieFacadeInterface
      * @return \Generated\Shared\Transfer\MollieExpirationInformationTransfer
      */
     public function getExpirationInformation(int $orderId): MollieExpirationInformationTransfer;
+
+    /**
+     * @param \Generated\Shared\Transfer\MolliePaymentMethodConfigCriteriaTransfer $criteriaTransfer
+     *
+     * @return \Generated\Shared\Transfer\MolliePaymentMethodConfigCollectionTransfer
+     */
+    public function getPaymentMethodConfigCollection(MolliePaymentMethodConfigCriteriaTransfer $criteriaTransfer): MolliePaymentMethodConfigCollectionTransfer;
+
+    /**
+     * @param \Generated\Shared\Transfer\MolliePaymentMethodConfigCriteriaTransfer $criteriaTransfer
+     *
+     * @return \Generated\Shared\Transfer\MolliePaymentMethodConfigTransfer|null
+     */
+    public function getPaymentMethodConfigByCriteria(
+        MolliePaymentMethodConfigCriteriaTransfer $criteriaTransfer,
+    ): ?MolliePaymentMethodConfigTransfer;
+
+    /**
+     * @param \Generated\Shared\Transfer\MolliePaymentMethodConfigTransfer $molliePaymentMethodConfigTransfer
+     *
+     * @return \Generated\Shared\Transfer\MolliePaymentMethodConfigTransfer
+     */
+    public function writeMolliePaymentConfigData(MolliePaymentMethodConfigTransfer $molliePaymentMethodConfigTransfer): MolliePaymentMethodConfigTransfer;
+
+    /**
+     * @param int $mollieId
+     *
+     * @return void
+     */
+    public function deleteMolliePaymentConfigData(int $mollieId): void;
+
+    /**
+     * @param int $idSalesOrder
+     *
+     * @return \Generated\Shared\Transfer\MolliePaymentLinkTransfer|null
+     */
+    public function getMolliePaymentLinkByIdSalesOrder(int $idSalesOrder): ?MolliePaymentLinkTransfer;
+
+    /**
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\MollieExpressCheckoutConfigCriteriaTransfer $mollieExpressCheckoutConfigCriteriaTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieExpressCheckoutConfigCollectionTransfer
+     */
+    public function getExpressCheckoutConfigCollection(
+        MollieExpressCheckoutConfigCriteriaTransfer $mollieExpressCheckoutConfigCriteriaTransfer,
+    ): MollieExpressCheckoutConfigCollectionTransfer;
+
+    /**
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\MollieExpressCheckoutConfigCollectionTransfer $mollieExpressCheckoutConfigCollectionTransfer
+     *
+     * @return void
+     */
+    public function saveExpressCheckoutConfigCollection(
+        MollieExpressCheckoutConfigCollectionTransfer $mollieExpressCheckoutConfigCollectionTransfer,
+    ): void;
+
+    /**
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
+     * @param \Generated\Shared\Transfer\CheckoutResponseTransfer $checkoutResponseTransfer
+     *
+     * @return void
+     */
+    public function createExpressCheckoutMolliePayment(
+        QuoteTransfer $quoteTransfer,
+        CheckoutResponseTransfer $checkoutResponseTransfer,
+    ): void;
+
+    /**
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\MollieExpressCheckoutPaymentUpdateRequestTransfer $mollieExpressCheckoutPaymentUpdateRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieExpressCheckoutPaymentUpdateResponseTransfer
+     */
+    public function updateExpressCheckoutMolliePayment(
+        MollieExpressCheckoutPaymentUpdateRequestTransfer $mollieExpressCheckoutPaymentUpdateRequestTransfer,
+    ): MollieExpressCheckoutPaymentUpdateResponseTransfer;
 
     /**
      * @param QuoteTransfer $quoteTransfer

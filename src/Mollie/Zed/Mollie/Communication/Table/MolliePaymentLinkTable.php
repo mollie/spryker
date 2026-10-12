@@ -45,6 +45,11 @@ class MolliePaymentLinkTable extends AbstractTable
     /**
      * @var string
      */
+    protected const COL_MINIMUM_AMOUNT = 'minimum_amount';
+
+    /**
+     * @var string
+     */
     protected const COL_CURRENCY = 'currency';
 
     /**
@@ -104,6 +109,7 @@ class MolliePaymentLinkTable extends AbstractTable
             static::COL_TYPE => 'Type',
             static::COL_SEQUENCE_TYPE => 'Sequence Type',
             static::COL_AMOUNT => 'Amount',
+            static::COL_MINIMUM_AMOUNT => 'Minimum Amount',
             static::COL_CURRENCY => 'Currency',
             static::COL_STATUS => 'Status',
             static::COL_PAYMENT_LINK => 'Payment Link',
@@ -153,7 +159,8 @@ class MolliePaymentLinkTable extends AbstractTable
          * @var \Orm\Zed\Mollie\Persistence\SpyMolliePaymentLink $paymentLink
          */
         foreach ($queryResults->getData() as $paymentLink) {
-            $amount = $this->mollieService->convertIntegerToDecimal($paymentLink->getAmount());
+            $amount = $this->formatAmount($paymentLink->getAmount());
+            $minimumAmount = $this->formatAmount($paymentLink->getMinimumAmount());
 
             $results[] = [
                 static::COL_ID => $paymentLink->getIdMolliePaymentLink(),
@@ -163,6 +170,7 @@ class MolliePaymentLinkTable extends AbstractTable
                 static::COL_TYPE => $paymentLink->getType(),
                 static::COL_SEQUENCE_TYPE => $paymentLink->getSequenceType(),
                 static::COL_AMOUNT => $amount,
+                static::COL_MINIMUM_AMOUNT => $minimumAmount,
                 static::COL_CURRENCY => $paymentLink->getCurrency(),
                 static::COL_STATUS => $paymentLink->getStatus(),
                 static::COL_PAYMENT_LINK => $paymentLink->getPaymentLinkUrl(),
@@ -173,5 +181,21 @@ class MolliePaymentLinkTable extends AbstractTable
         }
 
         return $results;
+    }
+
+    /**
+     * @param int|null $amount
+     *
+     * @return string
+     */
+    protected function formatAmount(?int $amount): string
+    {
+        if ($amount === null) {
+            return '-';
+        }
+
+        $decimalAmount = $this->mollieService->convertIntegerToDecimal($amount);
+
+        return (string)$decimalAmount;
     }
 }
