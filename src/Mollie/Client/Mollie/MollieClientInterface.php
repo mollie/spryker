@@ -333,8 +333,7 @@ interface MollieClientInterface
 
     /**
      * Specification:
-     * - Places a Spryker order for an express checkout via Zed (see MollieFacade::placeExpressCheckoutOrder()).
-     * - Returns `isSuccessful` true with `quote` and `orderReference` when the checkout was successful, or `errors` when not.
+     * - Places the order of an express checkout.
      *
      * @api
      *
@@ -348,8 +347,7 @@ interface MollieClientInterface
 
     /**
      * Specification:
-     * - Gets the express checkout shipping options (Spryker shipment methods) for the Mollie session via Zed.
-     * - See MollieFacade::getExpressCheckoutShippingOptions().
+     * - Returns the shipping options for the express checkout.
      *
      * @api
      *
@@ -363,8 +361,7 @@ interface MollieClientInterface
 
     /**
      * Specification:
-     * - Saves the record of an express checkout payment that has to be refunded, via Zed.
-     * - See MollieFacade::createExpressCheckoutPaymentRefund().
+     * - Registers an express checkout payment for refund.
      *
      * @api
      *
@@ -378,8 +375,7 @@ interface MollieClientInterface
 
     /**
      * Specification:
-     * - Processes the payment webhook of an express checkout payment, via Zed.
-     * - See MollieFacade::processExpressCheckoutPaymentWebhook().
+     * - Processes the payment webhook of an express checkout payment.
      *
      * @api
      *

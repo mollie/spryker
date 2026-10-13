@@ -330,9 +330,6 @@
 
     <transfer name="Quote">
         <property name="molliePaymentId" type="string"/>
-        <property name="orderReference" type="string"/>
-        <property name="checkoutConfirmed" type="bool"/>
-        <property name="isOrderPlacedSuccessfully" type="bool"/>
     </transfer>
 
     <transfer name="Order">

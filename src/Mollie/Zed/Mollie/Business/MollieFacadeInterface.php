@@ -281,14 +281,10 @@ interface MollieFacadeInterface
 
     /**
      * Specification:
-     * - Places a Spryker order for an express checkout (Apple Pay, PayPal via the Mollie express component).
-     * - Sets the billing and shipping address of the request on the quote; both are required.
-     * - Assigns the shipment method with the request's `shipmentMethodKey` and adds its expense.
-     * - Sets the Mollie express payment (`mollieExpressPayment`) with the request's `expressCheckoutUuid`;
-     *   MollieExpressCheckoutDoSaveOrderPlugin stores it in spy_payment_mollie within the order save transaction.
-     * - Recalculates the quote, requires the grand total to equal the request's `expectedGrandTotal` and places the order via the Checkout facade.
-     * - Returns `isSuccessful` true with `quote` and `orderReference` when the checkout response is successful.
-     * - Returns `isSuccessful` false with `errors` when the checkout response is not successful, or when preparing the quote or the checkout throws (never throws).
+     * - Prepares the quote with the addresses, shipment method and payment of the express checkout.
+     * - Verifies that the order total matches the paid amount.
+     * - Places the order.
+     * - Returns the placed quote and the order reference, or the errors when the order could not be placed.
      *
      * @api
      *
@@ -302,9 +298,7 @@ interface MollieFacadeInterface
 
     /**
      * Specification:
-     * - Returns the shipment methods available for the quote as Mollie shipping options, declared on the
-     *   express checkout session so the shopper can pick one in the express sheet.
-     * - Returns `isSuccessful` and `options` (reference = shipment method key, description, amount), or `error`. Never throws.
+     * - Returns the shipment methods available for the quote as shipping options for the express checkout.
      *
      * @api
      *
@@ -318,9 +312,8 @@ interface MollieFacadeInterface
 
     /**
      * Specification:
-     * - Saves the record of an express checkout payment that has to be refunded, because placing the order failed after the shopper paid.
-     * - Stores the express checkout uuid and the Mollie session id.
-     * - The payment webhook requests the refund later, see processExpressCheckoutPaymentWebhook().
+     * - Registers an express checkout payment for refund after the order could not be placed.
+     * - The refund is requested when the payment webhook arrives.
      *
      * @api
      *
@@ -335,12 +328,8 @@ interface MollieFacadeInterface
     /**
      * Specification:
      * - Processes the payment webhook of an express checkout payment.
-     * - Without a payment refund record for the payment's express checkout uuid, stores the payment id and status on the order's spy_payment_mollie row.
-     * - Returns status code 404 when no such row exists yet, so Mollie retries.
-     * - With a payment refund record that has no refund id, stores the payment id, status, amount and currency on the record and fully refunds a paid payment.
-     * - After the refund is created, stores the refund's status on the spy_payment_mollie row of the order, when an order exists for the express checkout uuid.
-     * - Returns status code 500 when the refund could not be created, so Mollie retries.
-     * - With a payment refund record that has a refund id, stores the status of that refund on the record and on the spy_payment_mollie row of the order.
+     * - Refunds the payment and tracks the refund when the payment is registered for refund.
+     * - Otherwise updates the payment of the order.
      *
      * @api
      *
