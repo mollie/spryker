@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Mollie\Zed\Mollie\Business\Handler;
 
-use Generated\Shared\Transfer\CheckoutResponseTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutPaymentUpdateRequestTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutPaymentUpdateResponseTransfer;
 use Generated\Shared\Transfer\QuoteTransfer;
+use Generated\Shared\Transfer\SaveOrderTransfer;
 use Mollie\Zed\Mollie\Persistence\MollieEntityManagerInterface;
 
 class ExpressCheckoutMolliePaymentHandler implements ExpressCheckoutMolliePaymentHandlerInterface
@@ -22,15 +22,14 @@ class ExpressCheckoutMolliePaymentHandler implements ExpressCheckoutMolliePaymen
 
     /**
      * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
-     * @param \Generated\Shared\Transfer\CheckoutResponseTransfer $checkoutResponseTransfer
+     * @param \Generated\Shared\Transfer\SaveOrderTransfer $saveOrderTransfer
      *
      * @return void
      */
     public function createExpressCheckoutMolliePayment(
         QuoteTransfer $quoteTransfer,
-        CheckoutResponseTransfer $checkoutResponseTransfer,
+        SaveOrderTransfer $saveOrderTransfer,
     ): void {
-        $saveOrderTransfer = $checkoutResponseTransfer->getSaveOrderOrFail();
         $idSalesOrder = $saveOrderTransfer->getIdSalesOrderOrFail();
 
         $paymentTransfer = $quoteTransfer->getPaymentOrFail();
@@ -51,7 +50,7 @@ class ExpressCheckoutMolliePaymentHandler implements ExpressCheckoutMolliePaymen
         $isUpdated = $this->entityManager->updateExpressCheckoutMolliePayment($mollieExpressCheckoutPaymentUpdateRequestTransfer);
 
         $mollieExpressCheckoutPaymentUpdateResponseTransfer = new MollieExpressCheckoutPaymentUpdateResponseTransfer();
-        $mollieExpressCheckoutPaymentUpdateResponseTransfer->setIsSuccessful($isUpdated);
+        $mollieExpressCheckoutPaymentUpdateResponseTransfer->setIsExpressPaymentFound($isUpdated);
 
         return $mollieExpressCheckoutPaymentUpdateResponseTransfer;
     }

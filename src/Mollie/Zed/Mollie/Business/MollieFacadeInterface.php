@@ -9,11 +9,9 @@ use Generated\Shared\Transfer\CheckoutResponseTransfer;
 use Generated\Shared\Transfer\MollieExpirationInformationTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutConfigCollectionTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutConfigCriteriaTransfer;
-use Generated\Shared\Transfer\MollieExpressCheckoutFailedOrderTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutOrderRequestTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutOrderResponseTransfer;
-use Generated\Shared\Transfer\MollieExpressCheckoutPaymentUpdateRequestTransfer;
-use Generated\Shared\Transfer\MollieExpressCheckoutPaymentUpdateResponseTransfer;
+use Generated\Shared\Transfer\MollieExpressCheckoutPaymentRefundTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutShippingOptionsRequestTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutShippingOptionsResponseTransfer;
 use Generated\Shared\Transfer\MolliePaymentCaptureRequestTransfer;
@@ -32,6 +30,7 @@ use Generated\Shared\Transfer\OrderCollectionResponseTransfer;
 use Generated\Shared\Transfer\OrderTransfer;
 use Generated\Shared\Transfer\PaymentMethodsTransfer;
 use Generated\Shared\Transfer\QuoteTransfer;
+use Generated\Shared\Transfer\SaveOrderTransfer;
 
 interface MollieFacadeInterface
 {
@@ -271,35 +270,25 @@ interface MollieFacadeInterface
      * @api
      *
      * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
-     * @param \Generated\Shared\Transfer\CheckoutResponseTransfer $checkoutResponseTransfer
+     * @param \Generated\Shared\Transfer\SaveOrderTransfer $saveOrderTransfer
      *
      * @return void
      */
     public function createExpressCheckoutMolliePayment(
         QuoteTransfer $quoteTransfer,
-        CheckoutResponseTransfer $checkoutResponseTransfer,
+        SaveOrderTransfer $saveOrderTransfer,
     ): void;
-
-    /**
-     * @api
-     *
-     * @param \Generated\Shared\Transfer\MollieExpressCheckoutPaymentUpdateRequestTransfer $mollieExpressCheckoutPaymentUpdateRequestTransfer
-     *
-     * @return \Generated\Shared\Transfer\MollieExpressCheckoutPaymentUpdateResponseTransfer
-     */
-    public function updateExpressCheckoutMolliePayment(
-        MollieExpressCheckoutPaymentUpdateRequestTransfer $mollieExpressCheckoutPaymentUpdateRequestTransfer,
-    ): MollieExpressCheckoutPaymentUpdateResponseTransfer;
 
     /**
      * Specification:
      * - Places a Spryker order for an express checkout (Apple Pay, PayPal via the Mollie express component).
-     * - Sets billing and shipping address: request addresses first, then the quote's, then the customer's first stored address.
-     * - Assigns the first available shipment method and adds its expense.
+     * - Sets the billing and shipping address of the request on the quote; both are required.
+     * - Assigns the shipment method with the request's `shipmentMethodKey` and adds its expense.
      * - Sets the Mollie express payment (`mollieExpressPayment`) with the request's `expressCheckoutUuid`;
-     *   MollieExpressCheckoutPostSavePlugin stores it in spy_payment_mollie instead of creating a Mollie payment.
-     * - Recalculates the quote and places the order via the Checkout facade.
-     * - Returns `isSuccessful`, `orderReference` and `idSalesOrder`, or `errors` on failure (never throws).
+     *   MollieExpressCheckoutDoSaveOrderPlugin stores it in spy_payment_mollie within the order save transaction.
+     * - Recalculates the quote, requires the grand total to equal the request's `expectedGrandTotal` and places the order via the Checkout facade.
+     * - Returns `isSuccessful` true with `quote` and `orderReference` when the checkout response is successful.
+     * - Returns `isSuccessful` false with `errors` when the checkout response is not successful, or when preparing the quote or the checkout throws (never throws).
      *
      * @api
      *
@@ -313,8 +302,8 @@ interface MollieFacadeInterface
 
     /**
      * Specification:
-     * - Returns the shipment methods available for the quote and the given shipping address as Mollie shipping
-     *   options, declared on the express checkout session so the shopper can pick one in the express sheet.
+     * - Returns the shipment methods available for the quote as Mollie shipping options, declared on the
+     *   express checkout session so the shopper can pick one in the express sheet.
      * - Returns `isSuccessful` and `options` (reference = shipment method key, description, amount), or `error`. Never throws.
      *
      * @api
@@ -329,26 +318,29 @@ interface MollieFacadeInterface
 
     /**
      * Specification:
-     * - Saves an express checkout order that could not be created after the shopper paid.
-     * - Stores the express checkout uuid and Mollie session id with status `order_failed`;
-     *   the payment webhook refunds the payment later (see processExpressCheckoutFailedOrderPayment()).
+     * - Saves the record of an express checkout payment that has to be refunded, because placing the order failed after the shopper paid.
+     * - Stores the express checkout uuid and the Mollie session id.
+     * - The payment webhook requests the refund later, see processExpressCheckoutPaymentWebhook().
      *
      * @api
      *
-     * @param \Generated\Shared\Transfer\MollieExpressCheckoutFailedOrderTransfer $mollieExpressCheckoutFailedOrderTransfer
+     * @param \Generated\Shared\Transfer\MollieExpressCheckoutPaymentRefundTransfer $mollieExpressCheckoutPaymentRefundTransfer
      *
-     * @return \Generated\Shared\Transfer\MollieExpressCheckoutFailedOrderTransfer
+     * @return \Generated\Shared\Transfer\MollieExpressCheckoutPaymentRefundTransfer
      */
-    public function createExpressCheckoutFailedOrder(
-        MollieExpressCheckoutFailedOrderTransfer $mollieExpressCheckoutFailedOrderTransfer,
-    ): MollieExpressCheckoutFailedOrderTransfer;
+    public function createExpressCheckoutPaymentRefund(
+        MollieExpressCheckoutPaymentRefundTransfer $mollieExpressCheckoutPaymentRefundTransfer,
+    ): MollieExpressCheckoutPaymentRefundTransfer;
 
     /**
      * Specification:
-     * - Handles the payment webhook of an express checkout payment whose order could not be created.
-     * - `isHandled` is false when no failed order record exists for the payment's express checkout uuid.
-     * - Otherwise updates the record with the payment and fully refunds a paid payment once;
-     *   returns the status code and message for Mollie (non-2xx on refund failure, so Mollie retries).
+     * - Processes the payment webhook of an express checkout payment.
+     * - Without a payment refund record for the payment's express checkout uuid, stores the payment id and status on the order's spy_payment_mollie row.
+     * - Returns status code 404 when no such row exists yet, so Mollie retries.
+     * - With a payment refund record that has no refund id, stores the payment id, status, amount and currency on the record and fully refunds a paid payment.
+     * - After the refund is created, stores the refund's status on the spy_payment_mollie row of the order, when an order exists for the express checkout uuid.
+     * - Returns status code 500 when the refund could not be created, so Mollie retries.
+     * - With a payment refund record that has a refund id, stores the status of that refund on the record and on the spy_payment_mollie row of the order.
      *
      * @api
      *
@@ -356,5 +348,5 @@ interface MollieFacadeInterface
      *
      * @return \Generated\Shared\Transfer\MollieWebhookResponseTransfer
      */
-    public function processExpressCheckoutFailedOrderPayment(MolliePaymentTransfer $molliePaymentTransfer): MollieWebhookResponseTransfer;
+    public function processExpressCheckoutPaymentWebhook(MolliePaymentTransfer $molliePaymentTransfer): MollieWebhookResponseTransfer;
 }

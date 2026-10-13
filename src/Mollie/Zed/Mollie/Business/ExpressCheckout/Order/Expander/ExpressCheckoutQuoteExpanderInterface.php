@@ -10,9 +10,6 @@ use Generated\Shared\Transfer\QuoteTransfer;
 interface ExpressCheckoutQuoteExpanderInterface
 {
     /**
-     * Specification:
-     * - Prepares one aspect of the quote so it can be placed as an express checkout order.
-     *
      * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
      * @param \Generated\Shared\Transfer\MollieExpressCheckoutOrderRequestTransfer $mollieExpressCheckoutOrderRequestTransfer
      *

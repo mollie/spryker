@@ -1,14 +1,14 @@
 <?php
 
-
 declare(strict_types=1);
 
 namespace MollieTest\Zed\Mollie\Business\ExpressCheckout;
 
 use Codeception\Test\Unit;
 use Generated\Shared\Transfer\MollieExpressCheckoutPaymentUpdateRequestTransfer;
-use Mollie\Zed\Mollie\Business\Handler\ExpressCheckoutMolliePaymentHandler;
-use Mollie\Zed\Mollie\Persistence\MollieEntityManagerInterface;
+use Mollie\Zed\Mollie\Business\Handler\ExpressCheckoutMolliePaymentHandlerInterface;
+use Mollie\Zed\Mollie\Business\MollieBusinessFactory;
+use Mollie\Zed\Mollie\Persistence\MollieEntityManager;
 
 /**
  * @group MollieTest
@@ -25,13 +25,10 @@ class ExpressCheckoutMolliePaymentHandlerTest extends Unit
      */
     public function testWebhookBeforeOrderIsNotSuccessfulSoMollieRetries(): void
     {
-        $entityManagerMock = $this->createMock(MollieEntityManagerInterface::class);
-        $entityManagerMock->method('updateExpressCheckoutMolliePayment')->willReturn(false);
+        $mollieExpressCheckoutPaymentUpdateResponseTransfer = $this->createExpressCheckoutMolliePaymentHandler(false)
+            ->updateExpressCheckoutMolliePayment($this->createMollieExpressCheckoutPaymentUpdateRequestTransfer());
 
-        $response = (new ExpressCheckoutMolliePaymentHandler($entityManagerMock))
-            ->updateExpressCheckoutMolliePayment($this->createWebhookRequest());
-
-        $this->assertFalse($response->getIsSuccessful());
+        $this->assertFalse($mollieExpressCheckoutPaymentUpdateResponseTransfer->getIsExpressPaymentFound());
     }
 
     /**
@@ -39,19 +36,34 @@ class ExpressCheckoutMolliePaymentHandlerTest extends Unit
      */
     public function testWebhookAfterOrderUpdatesPaymentRow(): void
     {
-        $entityManagerMock = $this->createMock(MollieEntityManagerInterface::class);
-        $entityManagerMock->expects($this->once())->method('updateExpressCheckoutMolliePayment')->willReturn(true);
+        $mollieExpressCheckoutPaymentUpdateResponseTransfer = $this->createExpressCheckoutMolliePaymentHandler(true)
+            ->updateExpressCheckoutMolliePayment($this->createMollieExpressCheckoutPaymentUpdateRequestTransfer());
 
-        $response = (new ExpressCheckoutMolliePaymentHandler($entityManagerMock))
-            ->updateExpressCheckoutMolliePayment($this->createWebhookRequest());
+        $this->assertTrue($mollieExpressCheckoutPaymentUpdateResponseTransfer->getIsExpressPaymentFound());
+    }
 
-        $this->assertTrue($response->getIsSuccessful());
+    /**
+     * @param bool $isPaymentRowUpdated
+     *
+     * @return \Mollie\Zed\Mollie\Business\Handler\ExpressCheckoutMolliePaymentHandlerInterface
+     */
+    protected function createExpressCheckoutMolliePaymentHandler(bool $isPaymentRowUpdated): ExpressCheckoutMolliePaymentHandlerInterface
+    {
+        $entityManagerMock = $this->createMock(MollieEntityManager::class);
+        $entityManagerMock->expects($this->once())
+            ->method('updateExpressCheckoutMolliePayment')
+            ->willReturn($isPaymentRowUpdated);
+
+        $businessFactory = new MollieBusinessFactory();
+        $businessFactory->setEntityManager($entityManagerMock);
+
+        return $businessFactory->createExpressCheckoutMolliePaymentHandler();
     }
 
     /**
      * @return \Generated\Shared\Transfer\MollieExpressCheckoutPaymentUpdateRequestTransfer
      */
-    protected function createWebhookRequest(): MollieExpressCheckoutPaymentUpdateRequestTransfer
+    protected function createMollieExpressCheckoutPaymentUpdateRequestTransfer(): MollieExpressCheckoutPaymentUpdateRequestTransfer
     {
         return (new MollieExpressCheckoutPaymentUpdateRequestTransfer())
             ->setExpressCheckoutUuid('19d863d2-5eaf-4c8c-91f6-e1b9329c6c2d')

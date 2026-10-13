@@ -10,10 +10,6 @@ use Generated\Shared\Transfer\QuoteTransfer;
 interface ExpressCheckoutQuotePreparerInterface
 {
     /**
-     * Specification:
-     * - Runs the configured quote expanders on the request quote, in order.
-     * - Recalculates the quote once afterwards.
-     *
      * @param \Generated\Shared\Transfer\MollieExpressCheckoutOrderRequestTransfer $mollieExpressCheckoutOrderRequestTransfer
      *
      * @throws \Mollie\Zed\Mollie\Business\Exception\ExpressCheckoutOrderException

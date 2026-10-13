@@ -5,9 +5,7 @@ declare(strict_types = 1);
 namespace Mollie\Yves\Mollie\Controller;
 
 use Generated\Shared\Transfer\MollieApiRequestTransfer;
-use Generated\Shared\Transfer\MolliePaymentTransfer;
 use Generated\Shared\Transfer\MollieWebhookResponseTransfer;
-use Mollie\Shared\Mollie\MollieConfig as SharedMollieConfig;
 use Spryker\Shared\Log\LoggerTrait;
 use SprykerShop\Yves\ShopApplication\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -46,20 +44,6 @@ class WebhookController extends AbstractController
                 Response::HTTP_OK,
                 $molliePaymentApiResponseTransfer->getMessage(),
             );
-        }
-
-        $molliePaymentTransfer = $molliePaymentApiResponseTransfer->getMolliePayment();
-
-        // Express checkout payment whose order could not be created: Zed updates the failed order record and refunds the payment.
-        if ($this->isExpressCheckoutPayment($molliePaymentTransfer)) {
-            $expressCheckoutFailedOrderResponseTransfer = $this->getClient()->processExpressCheckoutFailedOrderPayment($molliePaymentTransfer);
-
-            if ($expressCheckoutFailedOrderResponseTransfer->getIsHandled()) {
-                return $this->createResponse(
-                    $expressCheckoutFailedOrderResponseTransfer->getStatusCodeOrFail(),
-                    (string)$expressCheckoutFailedOrderResponseTransfer->getMessage(),
-                );
-            }
         }
 
         $webhookResponseTransfer = $this->initializeMollieWebhookResponseTransfer();
@@ -161,15 +145,5 @@ class WebhookController extends AbstractController
         return (new MollieWebhookResponseTransfer())
             ->setStatusCode($statusCode)
             ->setMessage($message);
-    }
-
-    /**
-     * @param \Generated\Shared\Transfer\MolliePaymentTransfer $molliePaymentTransfer
-     *
-     * @return bool
-     */
-    protected function isExpressCheckoutPayment(MolliePaymentTransfer $molliePaymentTransfer): bool
-    {
-        return array_key_exists(SharedMollieConfig::EXPRESS_CHECKOUT_METADATA_KEY_UUID, $molliePaymentTransfer->getMetadata());
     }
 }

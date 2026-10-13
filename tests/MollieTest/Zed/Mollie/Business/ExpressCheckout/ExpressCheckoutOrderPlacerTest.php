@@ -5,12 +5,10 @@ declare(strict_types=1);
 
 namespace MollieTest\Zed\Mollie\Business\ExpressCheckout;
 
-use ArrayObject;
 use Codeception\Test\Unit;
 use Generated\Shared\Transfer\AddressTransfer;
 use Generated\Shared\Transfer\CheckoutErrorTransfer;
 use Generated\Shared\Transfer\CheckoutResponseTransfer;
-use Generated\Shared\Transfer\CustomerTransfer;
 use Generated\Shared\Transfer\ItemTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutOrderRequestTransfer;
 use Generated\Shared\Transfer\QuoteTransfer;
@@ -20,14 +18,12 @@ use Generated\Shared\Transfer\ShipmentMethodsTransfer;
 use Generated\Shared\Transfer\ShipmentMethodTransfer;
 use Generated\Shared\Transfer\TotalsTransfer;
 use Mollie\Shared\Mollie\MollieConfig as SharedMollieConfig;
-use Mollie\Zed\Mollie\Business\ExpressCheckout\Order\Expander\AddressExpander;
-use Mollie\Zed\Mollie\Business\ExpressCheckout\Order\Expander\PaymentExpander;
-use Mollie\Zed\Mollie\Business\ExpressCheckout\Order\Expander\ShipmentMethodExpander;
-use Mollie\Zed\Mollie\Business\ExpressCheckout\Order\ExpressCheckoutOrderPlacer;
-use Mollie\Zed\Mollie\Business\ExpressCheckout\Order\ExpressCheckoutQuotePreparer;
+use Mollie\Zed\Mollie\Business\ExpressCheckout\Order\ExpressCheckoutOrderPlacerInterface;
+use Mollie\Zed\Mollie\Business\MollieBusinessFactory;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToCalculationFacadeInterface;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToCheckoutFacadeInterface;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToShipmentFacadeInterface;
+use RuntimeException;
 
 /**
  * @group MollieTest
@@ -93,21 +89,33 @@ class ExpressCheckoutOrderPlacerTest extends Unit
         $this->assertSame(static::ID_SHIPMENT_METHOD, $quoteTransfer->getItems()[0]->getShipment()->getMethod()->getIdShipmentMethod());
         $this->assertSame(SharedMollieConfig::MOLLIE_PAYMENT_EXPRESS, $quoteTransfer->getPayment()->getPaymentMethod());
         $this->assertSame(SharedMollieConfig::MOLLIE_PROVIDER_EXPRESS, $quoteTransfer->getPayment()->getPaymentProvider());
-        $this->assertSame(static::GRAND_TOTAL, $quoteTransfer->getPayment()->getAmount());
         $this->assertSame(static::EXPRESS_CHECKOUT_UUID, $quoteTransfer->getPayment()->getMollieExpressPayment()->getExpressCheckoutUuid());
     }
 
     /**
      * @return void
      */
-    public function testPlaceOrderFallsBackToCustomerAddressWhenRequestHasNone(): void
+    public function testPlaceOrderFailsWhenOrderIsSavedAndCheckoutReportsErrors(): void
     {
-        $placer = $this->createPlacer($this->createSuccessfulCheckoutResponse());
+        $checkoutResponseTransfer = $this->createSuccessfulCheckoutResponse()
+            ->setIsSuccess(false)
+            ->addError((new CheckoutErrorTransfer())->setMessage('Post save step failed.'));
 
-        $response = $placer->placeOrder($this->createRequest(false));
+        $response = $this->createPlacer($checkoutResponseTransfer)->placeOrder($this->createRequest(true));
 
-        $this->assertTrue($response->getIsSuccessful());
-        $this->assertSame('Customer Street 9', $this->placedQuoteTransfer->getBillingAddress()->getAddress1());
+        $this->assertFalse($response->getIsSuccessful());
+        $this->assertSame(['Post save step failed.'], $response->getErrors());
+    }
+
+    /**
+     * @return void
+     */
+    public function testPlaceOrderFailsWhenCheckoutThrows(): void
+    {
+        $response = $this->createPlacer(null)->placeOrder($this->createRequest(true));
+
+        $this->assertFalse($response->getIsSuccessful());
+        $this->assertSame(['Checkout crashed.'], $response->getErrors());
     }
 
     /**
@@ -128,10 +136,9 @@ class ExpressCheckoutOrderPlacerTest extends Unit
     /**
      * @return void
      */
-    public function testPlaceOrderFailsWithoutThrowingWhenNoAddressIsAvailable(): void
+    public function testPlaceOrderFailsWithoutPlacingWhenRequestHasNoAddresses(): void
     {
         $request = $this->createRequest(false);
-        $request->getQuote()->setCustomer(null);
 
         $response = $this->createPlacer($this->createSuccessfulCheckoutResponse())->placeOrder($request);
 
@@ -143,7 +150,7 @@ class ExpressCheckoutOrderPlacerTest extends Unit
     /**
      * @return void
      */
-    public function testPlaceOrderFailsWhenChosenShipmentMethodIsNotAvailable(): void
+    public function testPlaceOrderFailsWithoutPlacingWhenChosenShipmentMethodIsNotAvailable(): void
     {
         $request = $this->createRequest(true)->setShipmentMethodKey('unknown_method');
 
@@ -168,23 +175,11 @@ class ExpressCheckoutOrderPlacerTest extends Unit
     }
 
     /**
-     * @return void
-     */
-    public function testPlaceOrderSucceedsWhenOrderTotalMatchesPaidAmount(): void
-    {
-        $request = $this->createRequest(true)->setExpectedGrandTotal(static::GRAND_TOTAL);
-
-        $response = $this->createPlacer($this->createSuccessfulCheckoutResponse())->placeOrder($request);
-
-        $this->assertTrue($response->getIsSuccessful());
-    }
-
-    /**
-     * @param \Generated\Shared\Transfer\CheckoutResponseTransfer $checkoutResponseTransfer
+     * @param \Generated\Shared\Transfer\CheckoutResponseTransfer|null $checkoutResponseTransfer
      *
-     * @return \Mollie\Zed\Mollie\Business\ExpressCheckout\Order\ExpressCheckoutOrderPlacer
+     * @return \Mollie\Zed\Mollie\Business\ExpressCheckout\Order\ExpressCheckoutOrderPlacerInterface
      */
-    protected function createPlacer(CheckoutResponseTransfer $checkoutResponseTransfer): ExpressCheckoutOrderPlacer
+    protected function createPlacer(?CheckoutResponseTransfer $checkoutResponseTransfer): ExpressCheckoutOrderPlacerInterface
     {
         $shipmentFacadeMock = $this->createMock(MollieToShipmentFacadeInterface::class);
         $shipmentFacadeMock->method('getAvailableMethodsByShipment')->willReturn(
@@ -204,22 +199,24 @@ class ExpressCheckoutOrderPlacerTest extends Unit
         $checkoutFacadeMock = $this->createMock(MollieToCheckoutFacadeInterface::class);
         $checkoutFacadeMock->method('placeOrder')->willReturnCallback(
             function (QuoteTransfer $quoteTransfer) use ($checkoutResponseTransfer) {
+                if ($checkoutResponseTransfer === null) {
+                    throw new RuntimeException('Checkout crashed.');
+                }
+
                 $this->placedQuoteTransfer = $quoteTransfer;
 
                 return $checkoutResponseTransfer;
             },
         );
 
-        $quotePreparer = new ExpressCheckoutQuotePreparer(
-            [
-                new AddressExpander(),
-                new ShipmentMethodExpander($shipmentFacadeMock),
-                new PaymentExpander(),
-            ],
-            $calculationFacadeMock,
-        );
+        $businessFactoryMock = $this->getMockBuilder(MollieBusinessFactory::class)
+            ->onlyMethods(['getShipmentFacade', 'getCalculationFacade', 'getCheckoutFacade'])
+            ->getMock();
+        $businessFactoryMock->method('getShipmentFacade')->willReturn($shipmentFacadeMock);
+        $businessFactoryMock->method('getCalculationFacade')->willReturn($calculationFacadeMock);
+        $businessFactoryMock->method('getCheckoutFacade')->willReturn($checkoutFacadeMock);
 
-        return new ExpressCheckoutOrderPlacer($quotePreparer, $checkoutFacadeMock);
+        return $businessFactoryMock->createExpressCheckoutOrderPlacer();
     }
 
     /**
@@ -229,20 +226,14 @@ class ExpressCheckoutOrderPlacerTest extends Unit
      */
     protected function createRequest(bool $withAddresses): MollieExpressCheckoutOrderRequestTransfer
     {
-        $customerAddressTransfer = $this->createAddress('Customer Street 9');
-
         $quoteTransfer = (new QuoteTransfer())
-            ->addItem(new ItemTransfer())
-            ->setCustomer(
-                (new CustomerTransfer())
-                    ->setBillingAddress(new ArrayObject([$customerAddressTransfer]))
-                    ->setShippingAddress(new ArrayObject([$customerAddressTransfer])),
-            );
+            ->addItem(new ItemTransfer());
 
         $request = (new MollieExpressCheckoutOrderRequestTransfer())
             ->setQuote($quoteTransfer)
             ->setExpressCheckoutUuid(static::EXPRESS_CHECKOUT_UUID)
-            ->setShipmentMethodKey(static::SHIPMENT_METHOD_KEY);
+            ->setShipmentMethodKey(static::SHIPMENT_METHOD_KEY)
+            ->setExpectedGrandTotal(static::GRAND_TOTAL);
 
         if ($withAddresses) {
             $request

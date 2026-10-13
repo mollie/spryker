@@ -6,7 +6,7 @@ namespace Mollie\Zed\Mollie\Business\ExpressCheckout\Refund;
 
 use Generated\Shared\Transfer\MollieAmountTransfer;
 use Generated\Shared\Transfer\MollieApiRequestTransfer;
-use Generated\Shared\Transfer\MollieExpressCheckoutFailedOrderTransfer;
+use Generated\Shared\Transfer\MollieExpressCheckoutPaymentRefundTransfer;
 use Generated\Shared\Transfer\MollieRefundApiResponseTransfer;
 use Generated\Shared\Transfer\MollieRefundTransfer;
 use Mollie\Client\Mollie\MollieClientInterface;
@@ -27,22 +27,21 @@ class ExpressCheckoutPaymentRefunder implements ExpressCheckoutPaymentRefunderIn
     }
 
     /**
-     * @param \Generated\Shared\Transfer\MollieExpressCheckoutFailedOrderTransfer $mollieExpressCheckoutFailedOrderTransfer
+     * @param \Generated\Shared\Transfer\MollieExpressCheckoutPaymentRefundTransfer $mollieExpressCheckoutPaymentRefundTransfer
      *
      * @return \Generated\Shared\Transfer\MollieRefundApiResponseTransfer
      */
     public function refund(
-        MollieExpressCheckoutFailedOrderTransfer $mollieExpressCheckoutFailedOrderTransfer,
+        MollieExpressCheckoutPaymentRefundTransfer $mollieExpressCheckoutPaymentRefundTransfer,
     ): MollieRefundApiResponseTransfer {
-        $expressCheckoutUuid = $mollieExpressCheckoutFailedOrderTransfer->getExpressCheckoutUuidOrFail();
+        $expressCheckoutUuid = $mollieExpressCheckoutPaymentRefundTransfer->getExpressCheckoutUuidOrFail();
 
-        // CreateRefundApi expects the amount value in minor units and converts it to the Mollie decimal format.
         $mollieAmountTransfer = (new MollieAmountTransfer())
-            ->setCurrency($mollieExpressCheckoutFailedOrderTransfer->getCurrencyOrFail())
-            ->setValue((string)$mollieExpressCheckoutFailedOrderTransfer->getAmountOrFail());
+            ->setCurrency($mollieExpressCheckoutPaymentRefundTransfer->getCurrencyOrFail())
+            ->setValue((string)$mollieExpressCheckoutPaymentRefundTransfer->getAmountOrFail());
 
         $mollieRefundTransfer = (new MollieRefundTransfer())
-            ->setTransactionId($mollieExpressCheckoutFailedOrderTransfer->getTransactionIdOrFail())
+            ->setTransactionId($mollieExpressCheckoutPaymentRefundTransfer->getTransactionIdOrFail())
             ->setDescription(static::REFUND_DESCRIPTION)
             ->setMetadata([SharedMollieConfig::EXPRESS_CHECKOUT_METADATA_KEY_UUID => $expressCheckoutUuid])
             ->setAmount($mollieAmountTransfer);

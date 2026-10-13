@@ -5,79 +5,95 @@ declare(strict_types=1);
 namespace Mollie\Yves\Mollie\Mapper\ExpressCheckout;
 
 use Generated\Shared\Transfer\AddressTransfer;
+use Generated\Shared\Transfer\MollieAddressTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutOrderRequestTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutSessionTransfer;
-use Generated\Shared\Transfer\QuoteTransfer;
+use Mollie\Service\Mollie\MollieServiceInterface;
+use Mollie\Shared\Mollie\MollieConstants;
 
 class ExpressCheckoutOrderRequestMapper implements ExpressCheckoutOrderRequestMapperInterface
 {
     /**
-     * @var array<string, string>
+     * @param \Mollie\Service\Mollie\MollieServiceInterface $mollieService
      */
-    protected const ADDRESS_FIELD_MAPPING = [
-        'givenName' => 'firstName',
-        'familyName' => 'lastName',
-        'organizationName' => 'company',
-        'streetAndNumber' => 'address1',
-        'streetAdditional' => 'address2',
-        'postalCode' => 'zipCode',
-        'city' => 'city',
-        'region' => 'region',
-        'country' => 'iso2Code',
-        'email' => 'email',
-        'phone' => 'phone',
-    ];
+    public function __construct(protected MollieServiceInterface $mollieService)
+    {
+    }
 
     /**
      * @param \Generated\Shared\Transfer\MollieExpressCheckoutSessionTransfer $mollieExpressCheckoutSessionTransfer
-     * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
-     * @param string $expressCheckoutUuid
+     * @param \Generated\Shared\Transfer\MollieExpressCheckoutOrderRequestTransfer $mollieExpressCheckoutOrderRequestTransfer
      *
      * @return \Generated\Shared\Transfer\MollieExpressCheckoutOrderRequestTransfer
      */
-    public function mapSessionToOrderRequest(
+    public function mapMollieExpressCheckoutSessionTransferToMollieExpressCheckoutOrderRequestTransfer(
         MollieExpressCheckoutSessionTransfer $mollieExpressCheckoutSessionTransfer,
-        QuoteTransfer $quoteTransfer,
-        string $expressCheckoutUuid,
+        MollieExpressCheckoutOrderRequestTransfer $mollieExpressCheckoutOrderRequestTransfer,
     ): MollieExpressCheckoutOrderRequestTransfer {
-        $billingAddress = $mollieExpressCheckoutSessionTransfer->getBillingAddress();
-        $shippingAddress = $mollieExpressCheckoutSessionTransfer->getShippingAddress() ?: $billingAddress;
+        $mollieBillingAddressTransfer = $mollieExpressCheckoutSessionTransfer->getBillingAddress();
+        $mollieShippingAddressTransfer = $mollieExpressCheckoutSessionTransfer->getShippingAddress();
 
-        return (new MollieExpressCheckoutOrderRequestTransfer())
-            ->setQuote($quoteTransfer)
-            ->setExpressCheckoutUuid($expressCheckoutUuid)
-            ->setBillingAddress($this->mapAddress($billingAddress))
-            ->setShippingAddress($this->mapAddress($shippingAddress))
-            ->setShipmentMethodKey($mollieExpressCheckoutSessionTransfer->getShippingFeeReference())
-            ->setExpectedGrandTotal($this->findPaidAmount($mollieExpressCheckoutSessionTransfer));
+        if ($mollieShippingAddressTransfer === null) {
+            $mollieShippingAddressTransfer = $mollieBillingAddressTransfer;
+        }
+
+        if ($mollieBillingAddressTransfer !== null) {
+            $billingAddressTransfer = $this->mapMollieAddressTransferToAddressTransfer($mollieBillingAddressTransfer, new AddressTransfer());
+            $mollieExpressCheckoutOrderRequestTransfer->setBillingAddress($billingAddressTransfer);
+        }
+
+        if ($mollieShippingAddressTransfer !== null) {
+            $shippingAddressTransfer = $this->mapMollieAddressTransferToAddressTransfer($mollieShippingAddressTransfer, new AddressTransfer());
+            $mollieExpressCheckoutOrderRequestTransfer->setShippingAddress($shippingAddressTransfer);
+        }
+
+        $shippingFeeReference = $this->findShippingFeeReference($mollieExpressCheckoutSessionTransfer);
+        $paidAmount = $this->mollieService->convertMollieAmountToInteger($mollieExpressCheckoutSessionTransfer->getAmount());
+
+        return $mollieExpressCheckoutOrderRequestTransfer
+            ->setShipmentMethodKey($shippingFeeReference)
+            ->setExpectedGrandTotal($paidAmount);
     }
 
     /**
-     * @param array<string, mixed> $mollieAddress
+     * @param \Generated\Shared\Transfer\MollieAddressTransfer $mollieAddressTransfer
+     * @param \Generated\Shared\Transfer\AddressTransfer $addressTransfer
      *
      * @return \Generated\Shared\Transfer\AddressTransfer
      */
-    protected function mapAddress(array $mollieAddress): AddressTransfer
-    {
-        $addressData = [];
-        foreach (static::ADDRESS_FIELD_MAPPING as $mollieField => $sprykerField) {
-            if (isset($mollieAddress[$mollieField]) && $mollieAddress[$mollieField] !== '') {
-                $addressData[$sprykerField] = $mollieAddress[$mollieField];
-            }
-        }
-
-        return (new AddressTransfer())->fromArray($addressData, true);
+    protected function mapMollieAddressTransferToAddressTransfer(
+        MollieAddressTransfer $mollieAddressTransfer,
+        AddressTransfer $addressTransfer,
+    ): AddressTransfer {
+        return $addressTransfer
+            ->setFirstName($mollieAddressTransfer->getGivenName())
+            ->setLastName($mollieAddressTransfer->getFamilyName())
+            ->setCompany($mollieAddressTransfer->getOrganizationName())
+            ->setAddress1($mollieAddressTransfer->getStreetAndNumber())
+            ->setAddress2($mollieAddressTransfer->getStreetAdditional())
+            ->setZipCode($mollieAddressTransfer->getPostalCode())
+            ->setCity($mollieAddressTransfer->getCity())
+            ->setRegion($mollieAddressTransfer->getRegion())
+            ->setIso2Code($mollieAddressTransfer->getCountry())
+            ->setEmail($mollieAddressTransfer->getEmail())
+            ->setPhone($mollieAddressTransfer->getPhone());
     }
 
     /**
      * @param \Generated\Shared\Transfer\MollieExpressCheckoutSessionTransfer $mollieExpressCheckoutSessionTransfer
      *
-     * @return int|null
+     * @return string|null
      */
-    protected function findPaidAmount(MollieExpressCheckoutSessionTransfer $mollieExpressCheckoutSessionTransfer): ?int
+    protected function findShippingFeeReference(MollieExpressCheckoutSessionTransfer $mollieExpressCheckoutSessionTransfer): ?string
     {
-        $value = $mollieExpressCheckoutSessionTransfer->getAmount()?->getValue();
+        foreach ($mollieExpressCheckoutSessionTransfer->getLines() as $mollieLinesTransfer) {
+            if ($mollieLinesTransfer->getType() !== MollieConstants::PRODUCT_TYPE_SHIPPING_FEE) {
+                continue;
+            }
 
-        return $value === null ? null : (int)round((float)$value * 100);
+            return $mollieLinesTransfer->getReference();
+        }
+
+        return null;
     }
 }

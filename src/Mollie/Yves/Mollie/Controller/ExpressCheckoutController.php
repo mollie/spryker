@@ -5,13 +5,11 @@ declare(strict_types=1);
 
 namespace Mollie\Yves\Mollie\Controller;
 
-use Generated\Shared\Transfer\AddressTransfer;
 use Generated\Shared\Transfer\MollieApiRequestTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutConfigCollectionTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutConfigCriteriaTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutSessionApiResponseTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutShippingOptionsRequestTransfer;
-use Generated\Shared\Transfer\QuoteTransfer;
 use Mollie\Yves\Mollie\Plugin\Router\MollieRouteProviderPlugin;
 use Ramsey\Uuid\Uuid;
 use SprykerShop\Yves\ShopApplication\Controller\AbstractController;
@@ -111,8 +109,7 @@ class ExpressCheckoutController extends AbstractController
 
         $mollieExpressCheckoutShippingOptionsResponseTransfer = $this->getClient()->getExpressCheckoutShippingOptions(
             (new MollieExpressCheckoutShippingOptionsRequestTransfer())
-                ->setQuote(clone $quoteTransfer)
-                ->setShippingAddress($this->createShippingOptionsAddress($quoteTransfer)),
+                ->setQuote(clone $quoteTransfer),
         );
 
         if (!$mollieExpressCheckoutShippingOptionsResponseTransfer->getIsSuccessful()) {
@@ -137,23 +134,5 @@ class ExpressCheckoutController extends AbstractController
         $config = $this->getFactory()->getConfig();
 
         $request->getSession()->set($config->getExpressCheckoutSessionIdSessionKey(), $mollieSessionId);
-    }
-
-    /**
-     * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
-     *
-     * @return \Generated\Shared\Transfer\AddressTransfer
-     */
-    protected function createShippingOptionsAddress(QuoteTransfer $quoteTransfer): AddressTransfer
-    {
-        $customerShippingAddresses = $quoteTransfer->getCustomer()?->getShippingAddress();
-
-        if ($customerShippingAddresses && $customerShippingAddresses->count() > 0) {
-            return clone $customerShippingAddresses->offsetGet(0);
-        }
-
-        $storeCountries = $quoteTransfer->getStore()?->getCountries() ?? [];
-
-        return (new AddressTransfer())->setIso2Code($storeCountries[0] ?? null);
     }
 }

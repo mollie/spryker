@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Mollie\Yves\Mollie\Controller;
 
 use Generated\Shared\Transfer\MollieApiRequestTransfer;
-use Generated\Shared\Transfer\MollieExpressCheckoutFailedOrderTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutSessionTransfer;
+use Generated\Shared\Transfer\QuoteTransfer;
 use Spryker\Shared\Log\LoggerTrait;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -53,6 +53,11 @@ class ExpressCheckoutRedirectController extends AbstractMollieController
     protected const ERROR_MESSAGE_ORDER_FAILED = 'Your order could not be created. Your payment will be refunded automatically.';
 
     /**
+     * @var string
+     */
+    protected const LOG_MESSAGE_SESSION_NOT_FOUND = 'Express checkout redirect was reached without an express checkout session.';
+
+    /**
      * @param \Symfony\Component\HttpFoundation\Request $request
      *
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
@@ -66,10 +71,19 @@ class ExpressCheckoutRedirectController extends AbstractMollieController
         $mollieSessionId = $session->get($config->getExpressCheckoutSessionIdSessionKey());
         $expressCheckoutUuid = $session->get($config->getExpressCheckoutUuidSessionKey());
 
-        if (!$mollieSessionId || !$expressCheckoutUuid) {
-            if ($quoteClient->getQuote()->getOrderReference()) {
-                return $this->redirectResponseInternal(static::ROUTE_NAME_CHECKOUT_SUCCESS);
-            }
+        $hasExpressCheckoutSession = $mollieSessionId && $expressCheckoutUuid;
+        $quoteTransfer = $quoteClient->getQuote();
+
+        if (!$hasExpressCheckoutSession && $this->isRepeatedRequestAfterOrderPlacement($quoteTransfer)) {
+            return $this->redirectResponseInternal(static::ROUTE_NAME_CHECKOUT_SUCCESS);
+        }
+
+        if (!$hasExpressCheckoutSession) {
+            $this->getLogger()->error(static::LOG_MESSAGE_SESSION_NOT_FOUND, [
+                'mollieSessionId' => $mollieSessionId,
+                'expressCheckoutUuid' => $expressCheckoutUuid,
+                'customerReference' => $quoteTransfer->getCustomerReference(),
+            ]);
 
             $this->addErrorMessage(static::ERROR_MESSAGE_SESSION_NOT_FOUND);
 
@@ -84,40 +98,29 @@ class ExpressCheckoutRedirectController extends AbstractMollieController
             return $this->redirectResponseInternal(static::ROUTE_NAME_CART);
         }
 
-        $mollieExpressCheckoutOrderRequestTransfer = $this->getFactory()
-            ->createExpressCheckoutOrderRequestMapper()
-            ->mapSessionToOrderRequest($mollieExpressCheckoutSessionTransfer, $quoteClient->getQuote(), $expressCheckoutUuid);
+        $mollieExpressCheckoutOrderResponseTransfer = $this->getFactory()
+            ->createExpressCheckoutOrderHandler()
+            ->placeOrder($mollieExpressCheckoutSessionTransfer, $expressCheckoutUuid);
 
-        $mollieExpressCheckoutOrderResponseTransfer = $this->getClient()->placeExpressCheckoutOrder($mollieExpressCheckoutOrderRequestTransfer);
+        $this->clearExpressCheckoutSession($request);
 
         if (!$mollieExpressCheckoutOrderResponseTransfer->getIsSuccessful()) {
-            $this->getLogger()->critical('Express checkout order could not be created after payment.', [
-                'mollieSessionId' => $mollieSessionId,
-                'expressCheckoutUuid' => $expressCheckoutUuid,
-                'errors' => $mollieExpressCheckoutOrderResponseTransfer->getErrors(),
-            ]);
-
-            $this->getClient()->createExpressCheckoutFailedOrder(
-                (new MollieExpressCheckoutFailedOrderTransfer())
-                    ->setExpressCheckoutUuid($expressCheckoutUuid)
-                    ->setMollieSessionId($mollieSessionId),
-            );
-
             $this->addErrorMessage(static::ERROR_MESSAGE_ORDER_FAILED);
-            $this->clearExpressCheckoutSession($request);
 
             return $this->redirectResponseInternal(static::ROUTE_NAME_CART);
         }
 
-        $quoteClient->setQuote(
-            $mollieExpressCheckoutOrderResponseTransfer->getQuoteOrFail()
-                ->setOrderReference($mollieExpressCheckoutOrderResponseTransfer->getOrderReferenceOrFail())
-                ->setCheckoutConfirmed(true)
-                ->setIsOrderPlacedSuccessfully(true),
-        );
-        $this->clearExpressCheckoutSession($request);
-
         return $this->redirectResponseInternal(static::ROUTE_NAME_CHECKOUT_SUCCESS);
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
+     *
+     * @return bool
+     */
+    protected function isRepeatedRequestAfterOrderPlacement(QuoteTransfer $quoteTransfer): bool
+    {
+        return $quoteTransfer->getOrderReference() !== null;
     }
 
     /**

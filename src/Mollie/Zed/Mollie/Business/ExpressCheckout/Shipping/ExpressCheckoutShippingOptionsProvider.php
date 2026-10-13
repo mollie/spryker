@@ -45,7 +45,7 @@ class ExpressCheckoutShippingOptionsProvider implements ExpressCheckoutShippingO
         $responseTransfer = new MollieExpressCheckoutShippingOptionsResponseTransfer();
 
         try {
-            $quoteTransfer = $this->expandQuoteWithShippingAddress($mollieExpressCheckoutShippingOptionsRequestTransfer);
+            $quoteTransfer = $this->addShipmentToItems($mollieExpressCheckoutShippingOptionsRequestTransfer->getQuoteOrFail());
             $this->addShippingOptions($responseTransfer, $quoteTransfer);
         } catch (Throwable $throwable) {
             $this->getLogger()->error('Express checkout shipping options could not be resolved.', ['exception' => $throwable]);
@@ -61,18 +61,13 @@ class ExpressCheckoutShippingOptionsProvider implements ExpressCheckoutShippingO
     }
 
     /**
-     * @param \Generated\Shared\Transfer\MollieExpressCheckoutShippingOptionsRequestTransfer $mollieExpressCheckoutShippingOptionsRequestTransfer
+     * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
      *
      * @return \Generated\Shared\Transfer\QuoteTransfer
      */
-    protected function expandQuoteWithShippingAddress(
-        MollieExpressCheckoutShippingOptionsRequestTransfer $mollieExpressCheckoutShippingOptionsRequestTransfer,
-    ): QuoteTransfer {
-        $quoteTransfer = $mollieExpressCheckoutShippingOptionsRequestTransfer->getQuoteOrFail();
-        $shippingAddressTransfer = $mollieExpressCheckoutShippingOptionsRequestTransfer->getShippingAddressOrFail();
-
-        $shipmentTransfer = (new ShipmentTransfer())->setShippingAddress($shippingAddressTransfer);
-        $quoteTransfer->setShippingAddress($shippingAddressTransfer);
+    protected function addShipmentToItems(QuoteTransfer $quoteTransfer): QuoteTransfer
+    {
+        $shipmentTransfer = new ShipmentTransfer();
 
         foreach ($quoteTransfer->getItems() as $itemTransfer) {
             $itemTransfer->setShipment($shipmentTransfer);
@@ -82,8 +77,6 @@ class ExpressCheckoutShippingOptionsProvider implements ExpressCheckoutShippingO
     }
 
     /**
-     * All items share one shipment, so the first shipment group holds the methods for the whole cart.
-     *
      * @param \Generated\Shared\Transfer\MollieExpressCheckoutShippingOptionsResponseTransfer $responseTransfer
      * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
      *
@@ -122,10 +115,6 @@ class ExpressCheckoutShippingOptionsProvider implements ExpressCheckoutShippingO
     }
 
     /**
-     * Mollie matches the option chosen in the express sheet against the declared options; two options with the same
-     * description (e.g. "Standard" of two carriers) make the payment fail. So the carrier is prefixed and duplicates
-     * get the shipment method key appended.
-     *
      * @param \Generated\Shared\Transfer\ShipmentMethodTransfer $shipmentMethodTransfer
      * @param array<string> $usedDescriptions
      *

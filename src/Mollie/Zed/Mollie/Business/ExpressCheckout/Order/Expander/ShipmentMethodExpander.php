@@ -25,11 +25,6 @@ class ShipmentMethodExpander implements ExpressCheckoutQuoteExpanderInterface
     }
 
     /**
-     * Assigns the shipment method the shopper chose in the express sheet (request `shipmentMethodKey`) to the item
-     * shipments and adds its expense. The method is taken from the methods available for the quote, so it is valid
-     * for the shipping address and carries the store/currency price.
-     * Requires the item shipments to have a shipping address (see AddressExpander).
-     *
      * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
      * @param \Generated\Shared\Transfer\MollieExpressCheckoutOrderRequestTransfer $mollieExpressCheckoutOrderRequestTransfer
      *
@@ -54,7 +49,6 @@ class ShipmentMethodExpander implements ExpressCheckoutQuoteExpanderInterface
                 ->setShipmentSelection((string)$shipmentMethodTransfer->getIdShipmentMethod());
         }
 
-        // Recalculation happens once for the whole quote in ExpressCheckoutOrderPlacer.
         $quoteTransfer->setSkipRecalculation(true);
 
         return $this->shipmentFacade->expandQuoteWithShipmentGroups($quoteTransfer);

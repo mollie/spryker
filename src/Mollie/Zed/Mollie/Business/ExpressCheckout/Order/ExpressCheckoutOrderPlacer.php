@@ -69,14 +69,8 @@ class ExpressCheckoutOrderPlacer implements ExpressCheckoutOrderPlacerInterface
     {
         $quoteTransfer = $this->quotePreparer->prepareQuote($mollieExpressCheckoutOrderRequestTransfer);
 
-        $grandTotal = $quoteTransfer->getTotalsOrFail()->getGrandTotal();
+        $grandTotal = $quoteTransfer->getTotals()->getGrandTotal();
         $this->assertGrandTotalMatchesPaidAmount($grandTotal, $mollieExpressCheckoutOrderRequestTransfer);
-
-        $quoteTransfer->getPaymentOrFail()->setAmount($grandTotal);
-
-        foreach ($quoteTransfer->getPayments() as $paymentTransfer) {
-            $paymentTransfer->setAmount($grandTotal);
-        }
 
         return $quoteTransfer;
     }
@@ -95,7 +89,7 @@ class ExpressCheckoutOrderPlacer implements ExpressCheckoutOrderPlacerInterface
     ): void {
         $expectedGrandTotal = $mollieExpressCheckoutOrderRequestTransfer->getExpectedGrandTotal();
 
-        if ($expectedGrandTotal === null || $expectedGrandTotal === $grandTotal) {
+        if ($expectedGrandTotal === $grandTotal) {
             return;
         }
 
@@ -116,21 +110,38 @@ class ExpressCheckoutOrderPlacer implements ExpressCheckoutOrderPlacerInterface
         CheckoutResponseTransfer $checkoutResponseTransfer,
         QuoteTransfer $quoteTransfer,
     ): MollieExpressCheckoutOrderResponseTransfer {
-        $saveOrderTransfer = $checkoutResponseTransfer->getSaveOrder();
+        if (!$checkoutResponseTransfer->getIsSuccess()) {
+            $checkoutErrorMessages = $this->getCheckoutErrorMessages($checkoutResponseTransfer);
 
-        if (!$checkoutResponseTransfer->getIsSuccess() || !$saveOrderTransfer?->getOrderReference()) {
-            $errors = [];
-            foreach ($checkoutResponseTransfer->getErrors() as $checkoutErrorTransfer) {
-                $errors[] = (string)$checkoutErrorTransfer->getMessage();
-            }
-
-            return $this->createFailedResponse($errors ?: [static::ERROR_MESSAGE_PLACE_ORDER_FAILED]);
+            return $this->createFailedResponse($checkoutErrorMessages);
         }
+
+        $orderReference = $checkoutResponseTransfer->getSaveOrder()->getOrderReference();
 
         return (new MollieExpressCheckoutOrderResponseTransfer())
             ->setIsSuccessful(true)
             ->setQuote($quoteTransfer)
-            ->setOrderReference($saveOrderTransfer->getOrderReference());
+            ->setOrderReference($orderReference);
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\CheckoutResponseTransfer $checkoutResponseTransfer
+     *
+     * @return array<string>
+     */
+    protected function getCheckoutErrorMessages(CheckoutResponseTransfer $checkoutResponseTransfer): array
+    {
+        $checkoutErrorMessages = [];
+
+        foreach ($checkoutResponseTransfer->getErrors() as $checkoutErrorTransfer) {
+            $checkoutErrorMessages[] = (string)$checkoutErrorTransfer->getMessage();
+        }
+
+        if ($checkoutErrorMessages === []) {
+            return [static::ERROR_MESSAGE_PLACE_ORDER_FAILED];
+        }
+
+        return $checkoutErrorMessages;
     }
 
     /**

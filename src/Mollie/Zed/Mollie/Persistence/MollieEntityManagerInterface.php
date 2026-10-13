@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Mollie\Zed\Mollie\Persistence;
 
-use Generated\Shared\Transfer\MollieExpressCheckoutFailedOrderTransfer;
+use Generated\Shared\Transfer\MollieExpressCheckoutPaymentRefundTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutPaymentUpdateRequestTransfer;
 use Generated\Shared\Transfer\MollieItemPaymentCaptureTransfer;
 use Generated\Shared\Transfer\MolliePaymentCaptureTransfer;
@@ -50,22 +50,22 @@ interface MollieEntityManagerInterface
     ): bool;
 
     /**
-     * @param \Generated\Shared\Transfer\MollieExpressCheckoutFailedOrderTransfer $mollieExpressCheckoutFailedOrderTransfer
+     * @param \Generated\Shared\Transfer\MollieExpressCheckoutPaymentRefundTransfer $mollieExpressCheckoutPaymentRefundTransfer
      *
-     * @return \Generated\Shared\Transfer\MollieExpressCheckoutFailedOrderTransfer
+     * @return \Generated\Shared\Transfer\MollieExpressCheckoutPaymentRefundTransfer
      */
-    public function createExpressCheckoutFailedOrder(
-        MollieExpressCheckoutFailedOrderTransfer $mollieExpressCheckoutFailedOrderTransfer,
-    ): MollieExpressCheckoutFailedOrderTransfer;
+    public function createExpressCheckoutPaymentRefund(
+        MollieExpressCheckoutPaymentRefundTransfer $mollieExpressCheckoutPaymentRefundTransfer,
+    ): MollieExpressCheckoutPaymentRefundTransfer;
 
     /**
-     * @param \Generated\Shared\Transfer\MollieExpressCheckoutFailedOrderTransfer $mollieExpressCheckoutFailedOrderTransfer
+     * @param \Generated\Shared\Transfer\MollieExpressCheckoutPaymentRefundTransfer $mollieExpressCheckoutPaymentRefundTransfer
      *
-     * @return \Generated\Shared\Transfer\MollieExpressCheckoutFailedOrderTransfer
+     * @return \Generated\Shared\Transfer\MollieExpressCheckoutPaymentRefundTransfer
      */
-    public function updateExpressCheckoutFailedOrder(
-        MollieExpressCheckoutFailedOrderTransfer $mollieExpressCheckoutFailedOrderTransfer,
-    ): MollieExpressCheckoutFailedOrderTransfer;
+    public function updateExpressCheckoutPaymentRefund(
+        MollieExpressCheckoutPaymentRefundTransfer $mollieExpressCheckoutPaymentRefundTransfer,
+    ): MollieExpressCheckoutPaymentRefundTransfer;
 
     /**
      * @param \Generated\Shared\Transfer\MollieRefundCollectionTransfer $mollieRefundCollectionTransfer

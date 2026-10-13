@@ -4,24 +4,24 @@ declare(strict_types=1);
 
 namespace Mollie\Zed\Mollie\Communication\Plugin\Checkout;
 
-use Generated\Shared\Transfer\CheckoutResponseTransfer;
 use Generated\Shared\Transfer\QuoteTransfer;
-use Spryker\Zed\CheckoutExtension\Dependency\Plugin\CheckoutPostSaveInterface;
+use Generated\Shared\Transfer\SaveOrderTransfer;
+use Spryker\Zed\CheckoutExtension\Dependency\Plugin\CheckoutDoSaveOrderInterface;
 use Spryker\Zed\Kernel\Communication\AbstractPlugin;
 
 /**
  * @method \Mollie\Zed\Mollie\Business\MollieFacadeInterface getFacade()
  * @method \Mollie\Zed\Mollie\MollieConfig getConfig()
  */
-class MollieExpressCheckoutPostSavePlugin extends AbstractPlugin implements CheckoutPostSaveInterface
+class MollieExpressCheckoutDoSaveOrderPlugin extends AbstractPlugin implements CheckoutDoSaveOrderInterface
 {
     /**
      * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
-     * @param \Generated\Shared\Transfer\CheckoutResponseTransfer $checkoutResponseTransfer
+     * @param \Generated\Shared\Transfer\SaveOrderTransfer $saveOrderTransfer
      *
      * @return void
      */
-    public function executeHook(QuoteTransfer $quoteTransfer, CheckoutResponseTransfer $checkoutResponseTransfer): void
+    public function saveOrder(QuoteTransfer $quoteTransfer, SaveOrderTransfer $saveOrderTransfer): void
     {
         $paymentTransfer = $quoteTransfer->getPaymentOrFail();
         $paymentMethod = $paymentTransfer->getPaymentMethodOrFail();
@@ -30,6 +30,6 @@ class MollieExpressCheckoutPostSavePlugin extends AbstractPlugin implements Chec
             return;
         }
 
-        $this->getFacade()->createExpressCheckoutMolliePayment($quoteTransfer, $checkoutResponseTransfer);
+        $this->getFacade()->createExpressCheckoutMolliePayment($quoteTransfer, $saveOrderTransfer);
     }
 }

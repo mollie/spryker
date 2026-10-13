@@ -6,7 +6,7 @@ declare(strict_types=1);
 namespace Mollie\Zed\Mollie\Persistence;
 
 use Generated\Shared\Transfer\MollieExpressCheckoutConfigCriteriaTransfer;
-use Generated\Shared\Transfer\MollieExpressCheckoutFailedOrderTransfer;
+use Generated\Shared\Transfer\MollieExpressCheckoutPaymentRefundTransfer;
 use Generated\Shared\Transfer\MollieItemPaymentCaptureTransfer;
 use Generated\Shared\Transfer\MolliePaymentLinkTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodConfigCollectionTransfer;
@@ -170,34 +170,21 @@ class MollieRepository extends AbstractRepository implements MollieRepositoryInt
     /**
      * @param string $expressCheckoutUuid
      *
-     * @return \Generated\Shared\Transfer\MollieExpressCheckoutFailedOrderTransfer|null
+     * @return \Generated\Shared\Transfer\MollieExpressCheckoutPaymentRefundTransfer|null
      */
-    public function findExpressCheckoutFailedOrderByExpressCheckoutUuid(string $expressCheckoutUuid): ?MollieExpressCheckoutFailedOrderTransfer
+    public function findExpressCheckoutPaymentRefundByExpressCheckoutUuid(string $expressCheckoutUuid): ?MollieExpressCheckoutPaymentRefundTransfer
     {
-        $spyMollieExpressCheckoutFailedOrderEntity = $this->getFactory()
-            ->createSpyMollieExpressCheckoutFailedOrderQuery()
+        $spyMollieExpressCheckoutPaymentRefundEntity = $this->getFactory()
+            ->createSpyMollieExpressCheckoutPaymentRefundQuery()
             ->filterByExpressCheckoutUuid($expressCheckoutUuid)
             ->findOne();
 
-        if (!$spyMollieExpressCheckoutFailedOrderEntity) {
+        if (!$spyMollieExpressCheckoutPaymentRefundEntity) {
             return null;
         }
 
         return $this->getFactory()
-            ->createMollieExpressCheckoutFailedOrderMapper()
-            ->mapEntityToTransfer($spyMollieExpressCheckoutFailedOrderEntity, new MollieExpressCheckoutFailedOrderTransfer());
-    }
-
-    /**
-     * @param string $expressCheckoutUuid
-     *
-     * @return bool
-     */
-    public function hasMolliePaymentByExpressCheckoutUuid(string $expressCheckoutUuid): bool
-    {
-        return $this->getFactory()
-            ->createSpyPaymentMollieQuery()
-            ->filterByExpressCheckoutUuid($expressCheckoutUuid)
-            ->exists();
+            ->createMollieExpressCheckoutPaymentRefundMapper()
+            ->mapEntityToTransfer($spyMollieExpressCheckoutPaymentRefundEntity, new MollieExpressCheckoutPaymentRefundTransfer());
     }
 }

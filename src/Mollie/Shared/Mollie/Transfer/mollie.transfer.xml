@@ -225,7 +225,7 @@
     </transfer>
 
     <transfer name="MollieExpressCheckoutPaymentUpdateResponse">
-        <property name="isSuccessful" type="bool"/>
+        <property name="isExpressPaymentFound" type="bool"/>
     </transfer>
 
     <transfer name="OrderCollectionResponse">
@@ -346,7 +346,6 @@
     <transfer name="MollieWebhookResponse">
         <property name="statusCode" type="int"/>
         <property name="message" type="string"/>
-        <property name="isHandled" type="bool"/>
     </transfer>
 
     <transfer name="MolliePaymentLink">
@@ -389,6 +388,7 @@
         <property name="email" type="string"/>
         <property name="phone" type="string"/>
         <property name="city" type="string"/>
+        <property name="region" type="string"/>
         <property name="country" type="string"/>
     </transfer>
 
@@ -485,6 +485,7 @@
         <property name="categories" type="array"/>
         <property name="imageUrl" type="string"/>
         <property name="recurring" type="RecurringBillingCycle"/>
+        <property name="reference" type="string"/>
     </transfer>
 
     <transfer name="MollieExpressCheckoutSession">
@@ -505,9 +506,8 @@
         <property name="expiresAt" type="string"/>
         <property name="completedAt" type="string"/>
         <property name="links" type="MollieLinks"/>
-        <property name="billingAddress" type="array" singular="billingAddressField"/>
-        <property name="shippingAddress" type="array" singular="shippingAddressField"/>
-        <property name="shippingFeeReference" type="string"/>
+        <property name="billingAddress" type="MollieAddress"/>
+        <property name="shippingAddress" type="MollieAddress"/>
     </transfer>
 
     <transfer name="MollieExpressCheckoutSessionApiResponse">
@@ -540,7 +540,6 @@
 
     <transfer name="MollieExpressCheckoutShippingOptionsRequest">
         <property name="quote" type="Quote"/>
-        <property name="shippingAddress" type="Address"/>
     </transfer>
 
     <transfer name="MollieExpressCheckoutShippingOptionsResponse">
@@ -555,12 +554,13 @@
         <property name="amount" type="MollieAmount"/>
     </transfer>
 
-    <transfer name="MollieExpressCheckoutFailedOrder">
-        <property name="idMollieExpressCheckoutFailedOrder" type="int"/>
+    <transfer name="MollieExpressCheckoutPaymentRefund">
+        <property name="idMollieExpressCheckoutPaymentRefund" type="int"/>
         <property name="expressCheckoutUuid" type="string"/>
         <property name="mollieSessionId" type="string"/>
         <property name="transactionId" type="string"/>
-        <property name="status" type="string"/>
+        <property name="paymentStatus" type="string"/>
+        <property name="refundStatus" type="string"/>
         <property name="amount" type="int"/>
         <property name="currency" type="string"/>
         <property name="refundId" type="string"/>

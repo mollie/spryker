@@ -12,10 +12,6 @@ use Mollie\Zed\Mollie\Business\ExpressCheckout\ExpressCheckoutConfigReader;
 use Mollie\Zed\Mollie\Business\ExpressCheckout\ExpressCheckoutConfigReaderInterface;
 use Mollie\Zed\Mollie\Business\ExpressCheckout\ExpressCheckoutConfigWriter;
 use Mollie\Zed\Mollie\Business\ExpressCheckout\ExpressCheckoutConfigWriterInterface;
-use Mollie\Zed\Mollie\Business\ExpressCheckout\FailedOrder\ExpressCheckoutFailedOrderWebhookProcessor;
-use Mollie\Zed\Mollie\Business\ExpressCheckout\FailedOrder\ExpressCheckoutFailedOrderWebhookProcessorInterface;
-use Mollie\Zed\Mollie\Business\ExpressCheckout\FailedOrder\ExpressCheckoutFailedOrderWriter;
-use Mollie\Zed\Mollie\Business\ExpressCheckout\FailedOrder\ExpressCheckoutFailedOrderWriterInterface;
 use Mollie\Zed\Mollie\Business\ExpressCheckout\Order\Expander\AddressExpander;
 use Mollie\Zed\Mollie\Business\ExpressCheckout\Order\Expander\ExpressCheckoutQuoteExpanderInterface;
 use Mollie\Zed\Mollie\Business\ExpressCheckout\Order\Expander\PaymentExpander;
@@ -26,8 +22,14 @@ use Mollie\Zed\Mollie\Business\ExpressCheckout\Order\ExpressCheckoutQuotePrepare
 use Mollie\Zed\Mollie\Business\ExpressCheckout\Order\ExpressCheckoutQuotePreparerInterface;
 use Mollie\Zed\Mollie\Business\ExpressCheckout\Refund\ExpressCheckoutPaymentRefunder;
 use Mollie\Zed\Mollie\Business\ExpressCheckout\Refund\ExpressCheckoutPaymentRefunderInterface;
+use Mollie\Zed\Mollie\Business\ExpressCheckout\Refund\ExpressCheckoutPaymentRefundRequester;
+use Mollie\Zed\Mollie\Business\ExpressCheckout\Refund\ExpressCheckoutPaymentRefundRequesterInterface;
+use Mollie\Zed\Mollie\Business\ExpressCheckout\Refund\ExpressCheckoutPaymentRefundStatusUpdater;
+use Mollie\Zed\Mollie\Business\ExpressCheckout\Refund\ExpressCheckoutPaymentRefundStatusUpdaterInterface;
 use Mollie\Zed\Mollie\Business\ExpressCheckout\Shipping\ExpressCheckoutShippingOptionsProvider;
 use Mollie\Zed\Mollie\Business\ExpressCheckout\Shipping\ExpressCheckoutShippingOptionsProviderInterface;
+use Mollie\Zed\Mollie\Business\ExpressCheckout\Webhook\ExpressCheckoutPaymentWebhookProcessor;
+use Mollie\Zed\Mollie\Business\ExpressCheckout\Webhook\ExpressCheckoutPaymentWebhookProcessorInterface;
 use Mollie\Zed\Mollie\Business\Filter\MolliePaymentMethodsFilter;
 use Mollie\Zed\Mollie\Business\Filter\MolliePaymentMethodsFilterInterface;
 use Mollie\Zed\Mollie\Business\Filter\MollieRefundFilter;
@@ -489,24 +491,38 @@ class MollieBusinessFactory extends AbstractBusinessFactory
     }
 
     /**
-     * @return \Mollie\Zed\Mollie\Business\ExpressCheckout\FailedOrder\ExpressCheckoutFailedOrderWriterInterface
+     * @return \Mollie\Zed\Mollie\Business\ExpressCheckout\Refund\ExpressCheckoutPaymentRefundRequesterInterface
      */
-    public function createExpressCheckoutFailedOrderWriter(): ExpressCheckoutFailedOrderWriterInterface
+    public function createExpressCheckoutPaymentRefundRequester(): ExpressCheckoutPaymentRefundRequesterInterface
     {
-        return new ExpressCheckoutFailedOrderWriter(
+        return new ExpressCheckoutPaymentRefundRequester(
             $this->getEntityManager(),
+            $this->createExpressCheckoutPaymentRefunder(),
+            $this->getMollieService(),
         );
     }
 
     /**
-     * @return \Mollie\Zed\Mollie\Business\ExpressCheckout\FailedOrder\ExpressCheckoutFailedOrderWebhookProcessorInterface
+     * @return \Mollie\Zed\Mollie\Business\ExpressCheckout\Refund\ExpressCheckoutPaymentRefundStatusUpdaterInterface
      */
-    public function createExpressCheckoutFailedOrderWebhookProcessor(): ExpressCheckoutFailedOrderWebhookProcessorInterface
+    public function createExpressCheckoutPaymentRefundStatusUpdater(): ExpressCheckoutPaymentRefundStatusUpdaterInterface
     {
-        return new ExpressCheckoutFailedOrderWebhookProcessor(
-            $this->getRepository(),
+        return new ExpressCheckoutPaymentRefundStatusUpdater(
             $this->getEntityManager(),
-            $this->createExpressCheckoutPaymentRefunder(),
+            $this->createMollieRefundMapper(),
+        );
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Business\ExpressCheckout\Webhook\ExpressCheckoutPaymentWebhookProcessorInterface
+     */
+    public function createExpressCheckoutPaymentWebhookProcessor(): ExpressCheckoutPaymentWebhookProcessorInterface
+    {
+        return new ExpressCheckoutPaymentWebhookProcessor(
+            $this->getRepository(),
+            $this->createExpressCheckoutMolliePaymentHandler(),
+            $this->createExpressCheckoutPaymentRefundRequester(),
+            $this->createExpressCheckoutPaymentRefundStatusUpdater(),
         );
     }
 }
