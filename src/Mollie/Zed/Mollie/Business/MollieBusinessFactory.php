@@ -18,8 +18,6 @@ use Mollie\Zed\Mollie\Business\Filter\MollieRefundFilter;
 use Mollie\Zed\Mollie\Business\Filter\MollieRefundFilterInterface;
 use Mollie\Zed\Mollie\Business\Handler\ExpressCheckoutMolliePaymentHandler;
 use Mollie\Zed\Mollie\Business\Handler\ExpressCheckoutMolliePaymentHandlerInterface;
-use Mollie\Zed\Mollie\Business\Handler\MollieCustomerHandler;
-use Mollie\Zed\Mollie\Business\Handler\MollieCustomerHandlerInterface;
 use Mollie\Zed\Mollie\Business\Handler\MollieExpirationWarningHandler;
 use Mollie\Zed\Mollie\Business\Handler\MollieExpirationWarningHandlerInterface;
 use Mollie\Zed\Mollie\Business\Handler\MollieMailHandler;
@@ -49,6 +47,16 @@ use Mollie\Zed\Mollie\Business\Processor\PaymentLink\PaymentLinkProcessor;
 use Mollie\Zed\Mollie\Business\Processor\PaymentLink\PaymentLinkProcessorInterface;
 use Mollie\Zed\Mollie\Business\Processor\Refund\RefundProcessor;
 use Mollie\Zed\Mollie\Business\Processor\Refund\RefundProcessorInterface;
+use Mollie\Zed\Mollie\Business\SingleClick\MollieCustomerProvider;
+use Mollie\Zed\Mollie\Business\SingleClick\MollieCustomerProviderInterface;
+use Mollie\Zed\Mollie\Business\SingleClick\SavedCardReader;
+use Mollie\Zed\Mollie\Business\SingleClick\SavedCardReaderInterface;
+use Mollie\Zed\Mollie\Business\SingleClick\SingleClickConfigReader;
+use Mollie\Zed\Mollie\Business\SingleClick\SingleClickConfigReaderInterface;
+use Mollie\Zed\Mollie\Business\SingleClick\SingleClickConfigWriter;
+use Mollie\Zed\Mollie\Business\SingleClick\SingleClickConfigWriterInterface;
+use Mollie\Zed\Mollie\Business\SingleClick\SingleClickPaymentResolver;
+use Mollie\Zed\Mollie\Business\SingleClick\SingleClickPaymentResolverInterface;
 use Mollie\Zed\Mollie\Business\Writer\MolliePaymentWriter;
 use Mollie\Zed\Mollie\Business\Writer\MolliePaymentWriterInterface;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToLocaleFacadeInterface;
@@ -226,6 +234,7 @@ class MollieBusinessFactory extends AbstractBusinessFactory
             $this->getStorageClient(),
             $this->createMolliePaymentWriter(),
             $this->getConfig(),
+            $this->createSingleClickPaymentResolver(),
         );
     }
 
@@ -372,13 +381,60 @@ class MollieBusinessFactory extends AbstractBusinessFactory
     }
 
     /**
-     * @return MollieCustomerHandlerInterface
+     * @return \Mollie\Zed\Mollie\Business\SingleClick\SingleClickConfigReaderInterface
      */
-    public function createMollieCustomerHandler(): MollieCustomerHandlerInterface
+    public function createSingleClickConfigReader(): SingleClickConfigReaderInterface
     {
-        return new MollieCustomerHandler(
-            $this->getMollieClient(),
+        return new SingleClickConfigReader(
+            $this->getConfig(),
+            $this->getRepository(),
+        );
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Business\SingleClick\SingleClickConfigWriterInterface
+     */
+    public function createSingleClickConfigWriter(): SingleClickConfigWriterInterface
+    {
+        return new SingleClickConfigWriter(
             $this->getEntityManager(),
+        );
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Business\SingleClick\MollieCustomerProviderInterface
+     */
+    public function createMollieCustomerProvider(): MollieCustomerProviderInterface
+    {
+        return new MollieCustomerProvider(
+            $this->getMollieClient(),
+            $this->getRepository(),
+            $this->getEntityManager(),
+            $this->getConfig(),
+        );
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Business\SingleClick\SavedCardReaderInterface
+     */
+    public function createSavedCardReader(): SavedCardReaderInterface
+    {
+        return new SavedCardReader(
+            $this->getMollieClient(),
+            $this->createSingleClickConfigReader(),
+            $this->createMollieCustomerProvider(),
+        );
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Business\SingleClick\SingleClickPaymentResolverInterface
+     */
+    public function createSingleClickPaymentResolver(): SingleClickPaymentResolverInterface
+    {
+        return new SingleClickPaymentResolver(
+            $this->createSingleClickConfigReader(),
+            $this->createMollieCustomerProvider(),
+            $this->createSavedCardReader(),
         );
     }
 }

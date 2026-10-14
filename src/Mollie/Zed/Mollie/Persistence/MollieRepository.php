@@ -14,7 +14,6 @@ use Generated\Shared\Transfer\MolliePaymentMethodConfigCriteriaTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodConfigTransfer;
 use Generated\Shared\Transfer\MolliePaymentTransfer;
 use Generated\Shared\Transfer\MollieRefundResponseTransfer;
-use Orm\Zed\Mollie\Persistence\Base\SpyMollieCustomer;
 use Spryker\Zed\Kernel\Persistence\AbstractRepository;
 
 /**
@@ -170,22 +169,40 @@ class MollieRepository extends AbstractRepository implements MollieRepositoryInt
 
     /**
      * @param int $idCustomer
-     * @return MollieCustomerTransfer|null
+     * @param string $mode
+     *
+     * @return \Generated\Shared\Transfer\MollieCustomerTransfer|null
      */
-    public function getMollieCustomerByFkCustomer(int $idCustomer): ?MollieCustomerTransfer
+    public function findMollieCustomer(int $idCustomer, string $mode): ?MollieCustomerTransfer
     {
-        /** @var SpyMollieCustomer $spyMollieCustomerEntity */
         $spyMollieCustomerEntity = $this->getFactory()
             ->createSpyMollieCustomerQuery()
             ->filterByFkCustomer($idCustomer)
+            ->filterByMode($mode)
             ->findOne();
 
-        if (!$spyMollieCustomerEntity){
+        if (!$spyMollieCustomerEntity) {
             return null;
         }
 
         return $this->getFactory()
             ->createMollieCustomerMapper()
-            ->mapMollieCustomerEntityToTransfer($spyMollieCustomerEntity);
+            ->mapMollieCustomerEntityToTransfer($spyMollieCustomerEntity, new MollieCustomerTransfer());
+    }
+
+    /**
+     * @return bool|null
+     */
+    public function findSingleClickConfig(): ?bool
+    {
+        $spyMollieSingleClickConfigEntity = $this->getFactory()
+            ->createSpyMollieSingleClickConfigQuery()
+            ->findOne();
+
+        if (!$spyMollieSingleClickConfigEntity) {
+            return null;
+        }
+
+        return (bool)$spyMollieSingleClickConfigEntity->getIsActive();
     }
 }

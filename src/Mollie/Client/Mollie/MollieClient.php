@@ -18,6 +18,7 @@ use Generated\Shared\Transfer\MollieExpressCheckoutSessionApiResponseTransfer;
 use Generated\Shared\Transfer\MollieGetCaptureApiResponseTransfer;
 use Generated\Shared\Transfer\MollieGetProfileApiResponseTransfer;
 use Generated\Shared\Transfer\MollieLogApiTransfer;
+use Generated\Shared\Transfer\MollieMandateApiResponseTransfer;
 use Generated\Shared\Transfer\MolliePaymentApiResponseTransfer;
 use Generated\Shared\Transfer\MolliePaymentLinkApiResponseTransfer;
 use Generated\Shared\Transfer\MolliePaymentLinkTransfer;
@@ -28,6 +29,8 @@ use Generated\Shared\Transfer\MolliePaymentMethodsApiResponseTransfer;
 use Generated\Shared\Transfer\MolliePaymentTransfer;
 use Generated\Shared\Transfer\MollieRefundApiResponseTransfer;
 use Generated\Shared\Transfer\MollieRefundResponseTransfer;
+use Generated\Shared\Transfer\MollieSingleClickPaymentDataRequestTransfer;
+use Generated\Shared\Transfer\MollieSingleClickPaymentDataTransfer;
 use Generated\Shared\Transfer\OrderCollectionRequestTransfer;
 use Generated\Shared\Transfer\OrderCollectionResponseTransfer;
 use Spryker\Client\Kernel\AbstractClient;
@@ -404,11 +407,57 @@ class MollieClient extends AbstractClient implements MollieClientInterface
     }
 
     /**
-     * @param MollieApiRequestTransfer $mollieApiRequestTransfer
-     * @return MollieCustomerApiResponseTransfer
+     * {@inheritDoc}
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\MollieApiRequestTransfer $mollieApiRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieCustomerApiResponseTransfer
      */
     public function createCustomer(MollieApiRequestTransfer $mollieApiRequestTransfer): MollieCustomerApiResponseTransfer
     {
-        return $this->getFactory()->createCustomerApi()->execute($mollieApiRequestTransfer);
+        /** @var \Generated\Shared\Transfer\MollieCustomerApiResponseTransfer $mollieCustomerApiResponseTransfer */
+        $mollieCustomerApiResponseTransfer = $this->getFactory()
+            ->createCreateCustomerApi()
+            ->execute($mollieApiRequestTransfer);
+
+        return $mollieCustomerApiResponseTransfer;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\MollieApiRequestTransfer $mollieApiRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieMandateApiResponseTransfer
+     */
+    public function getCustomerMandates(MollieApiRequestTransfer $mollieApiRequestTransfer): MollieMandateApiResponseTransfer
+    {
+        /** @var \Generated\Shared\Transfer\MollieMandateApiResponseTransfer $mollieMandateApiResponseTransfer */
+        $mollieMandateApiResponseTransfer = $this->getFactory()
+            ->createGetCustomerMandatesApi()
+            ->execute($mollieApiRequestTransfer);
+
+        return $mollieMandateApiResponseTransfer;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\MollieSingleClickPaymentDataRequestTransfer $mollieSingleClickPaymentDataRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieSingleClickPaymentDataTransfer
+     */
+    public function getSingleClickPaymentData(
+        MollieSingleClickPaymentDataRequestTransfer $mollieSingleClickPaymentDataRequestTransfer,
+    ): MollieSingleClickPaymentDataTransfer {
+        return $this->getFactory()
+            ->createZedMollieStub()
+            ->getSingleClickPaymentData($mollieSingleClickPaymentDataRequestTransfer);
     }
 }

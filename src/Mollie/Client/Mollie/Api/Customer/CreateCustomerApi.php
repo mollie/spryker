@@ -8,19 +8,14 @@ use Generated\Shared\Transfer\MollieApiRequestTransfer;
 use Generated\Shared\Transfer\MollieApiResponseTransfer;
 use Generated\Shared\Transfer\MollieCustomerApiResponseTransfer;
 use Generated\Shared\Transfer\MollieCustomerTransfer;
-use Generated\Shared\Transfer\MollieLinksTransfer;
 use Mollie\Api\Http\Request;
 use Mollie\Api\Http\Requests\CreateCustomerRequest;
 use Mollie\Client\Mollie\Api\AbstractApiCall;
-use Mollie\Client\Mollie\MollieConfig;
 use Mollie\Shared\Mollie\MollieConstants;
 use Spryker\Shared\Kernel\Transfer\AbstractTransfer;
-use Spryker\Shared\Log\LoggerTrait;
 
 class CreateCustomerApi extends AbstractApiCall
 {
-    use LoggerTrait;
-
     /**
      * @param \Generated\Shared\Transfer\MollieApiRequestTransfer|null $mollieApiRequestTransfer
      *
@@ -28,15 +23,14 @@ class CreateCustomerApi extends AbstractApiCall
      */
     protected function buildRequest(?MollieApiRequestTransfer $mollieApiRequestTransfer = null): ?Request
     {
-        $quoteTransfer = $mollieApiRequestTransfer->getQuote();
-        $customerTransfer = $quoteTransfer->getCustomer();
+        $customerTransfer = $mollieApiRequestTransfer->getQuoteOrFail()->getCustomerOrFail();
 
         $this->request = new CreateCustomerRequest(
-            name: $customerTransfer->getFirstName() . ' ' . $customerTransfer->getLastName(),
+            name: trim($customerTransfer->getFirstName() . ' ' . $customerTransfer->getLastName()),
             email: $customerTransfer->getEmail(),
             metadata: [
                 MollieConstants::MOLLIE_CUSTOMER_METADATA_ID_CUSTOMER => $customerTransfer->getIdCustomer(),
-            ]
+            ],
         );
 
         return $this->request;
@@ -51,19 +45,33 @@ class CreateCustomerApi extends AbstractApiCall
     {
         $mollieCustomerApiResponseTransfer = (new MollieCustomerApiResponseTransfer())
             ->setIsSuccessful($mollieApiResponseTransfer->getIsSuccessful())
+            ->setCode($mollieApiResponseTransfer->getCode())
             ->setMessage($mollieApiResponseTransfer->getMessage());
 
-        $mollieCustomerTransfer = new MollieCustomerTransfer();
-        $mollieCustomerTransfer->fromArray($mollieApiResponseTransfer->getPayload(), true);
+        if (!$mollieApiResponseTransfer->getIsSuccessful()) {
+            return $mollieCustomerApiResponseTransfer;
+        }
 
-        $links = $mollieApiResponseTransfer->getPayload()[MollieConfig::RESPONSE_PARAMETER_CREATE_PAYMENT_LINKS] ?? [];
-        $mollieLinksTransfer = new MollieLinksTransfer();
-        $mollieLinksTransfer->fromArray($links, true);
-        $mollieCustomerTransfer
-            ->setLinks($mollieLinksTransfer);
+        $payload = $mollieApiResponseTransfer->getPayload() ?? [];
+        $mollieCustomerTransfer = (new MollieCustomerTransfer())
+            ->fromArray($payload, true)
+            ->setMollieCustomerId($payload['id'] ?? null);
 
-        $mollieCustomerApiResponseTransfer->setMollieCustomer($mollieCustomerTransfer);
+        return $mollieCustomerApiResponseTransfer->setMollieCustomer($mollieCustomerTransfer);
+    }
 
-        return $mollieCustomerApiResponseTransfer;
+    /**
+     * @return array<string, mixed>
+     */
+    protected function getRequestBody(): array
+    {
+        /** @var \Mollie\Api\Http\Requests\CreateCustomerRequest|null $createCustomerRequest */
+        $createCustomerRequest = $this->request;
+
+        if (!$createCustomerRequest) {
+            return [];
+        }
+
+        return $this->maskPayload(['name', 'email'], $createCustomerRequest->payload()->all());
     }
 }

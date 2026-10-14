@@ -6,7 +6,6 @@ declare(strict_types=1);
 namespace Mollie\Zed\Mollie\Business;
 
 use Generated\Shared\Transfer\CheckoutResponseTransfer;
-use Generated\Shared\Transfer\MollieCustomerApiResponseTransfer;
 use Generated\Shared\Transfer\MollieExpirationInformationTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutConfigCollectionTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutConfigCriteriaTransfer;
@@ -22,6 +21,9 @@ use Generated\Shared\Transfer\MolliePaymentMethodConfigTransfer;
 use Generated\Shared\Transfer\MolliePaymentTransfer;
 use Generated\Shared\Transfer\MollieRefundApiResponseTransfer;
 use Generated\Shared\Transfer\MollieRefundResponseTransfer;
+use Generated\Shared\Transfer\MollieSingleClickConfigTransfer;
+use Generated\Shared\Transfer\MollieSingleClickPaymentDataRequestTransfer;
+use Generated\Shared\Transfer\MollieSingleClickPaymentDataTransfer;
 use Generated\Shared\Transfer\OrderCollectionRequestTransfer;
 use Generated\Shared\Transfer\OrderCollectionResponseTransfer;
 use Generated\Shared\Transfer\OrderTransfer;
@@ -394,12 +396,49 @@ class MollieFacade extends AbstractFacade implements MollieFacadeInterface
     }
 
     /**
-     * @param QuoteTransfer $quoteTransfer
-     * @param CheckoutResponseTransfer $checkoutResponseTransfer
-     * @return MollieCustomerApiResponseTransfer
+     * {@inheritDoc}
+     *
+     * @api
+     *
+     * @return bool
      */
-    public function createCustomer(QuoteTransfer $quoteTransfer, CheckoutResponseTransfer $checkoutResponseTransfer): MollieCustomerApiResponseTransfer
+    public function isSingleClickPaymentEnabled(): bool
     {
-        return $this->getFactory()->createMollieCustomerHandler()->createCustomer($quoteTransfer, $checkoutResponseTransfer);
+        return $this->getFactory()
+            ->createSingleClickConfigReader()
+            ->isSingleClickPaymentEnabled();
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\MollieSingleClickConfigTransfer $mollieSingleClickConfigTransfer
+     *
+     * @return void
+     */
+    public function saveSingleClickConfig(MollieSingleClickConfigTransfer $mollieSingleClickConfigTransfer): void
+    {
+        $this->getFactory()
+            ->createSingleClickConfigWriter()
+            ->saveSingleClickConfig($mollieSingleClickConfigTransfer);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\MollieSingleClickPaymentDataRequestTransfer $mollieSingleClickPaymentDataRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieSingleClickPaymentDataTransfer
+     */
+    public function getSingleClickPaymentData(
+        MollieSingleClickPaymentDataRequestTransfer $mollieSingleClickPaymentDataRequestTransfer,
+    ): MollieSingleClickPaymentDataTransfer {
+        return $this->getFactory()
+            ->createSavedCardReader()
+            ->getSingleClickPaymentData($mollieSingleClickPaymentDataRequestTransfer);
     }
 }

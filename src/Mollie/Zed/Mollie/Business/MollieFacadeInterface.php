@@ -6,7 +6,6 @@ declare(strict_types=1);
 namespace Mollie\Zed\Mollie\Business;
 
 use Generated\Shared\Transfer\CheckoutResponseTransfer;
-use Generated\Shared\Transfer\MollieCustomerApiResponseTransfer;
 use Generated\Shared\Transfer\MollieExpirationInformationTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutConfigCollectionTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutConfigCriteriaTransfer;
@@ -22,6 +21,9 @@ use Generated\Shared\Transfer\MolliePaymentMethodConfigTransfer;
 use Generated\Shared\Transfer\MolliePaymentTransfer;
 use Generated\Shared\Transfer\MollieRefundApiResponseTransfer;
 use Generated\Shared\Transfer\MollieRefundResponseTransfer;
+use Generated\Shared\Transfer\MollieSingleClickConfigTransfer;
+use Generated\Shared\Transfer\MollieSingleClickPaymentDataRequestTransfer;
+use Generated\Shared\Transfer\MollieSingleClickPaymentDataTransfer;
 use Generated\Shared\Transfer\OrderCollectionRequestTransfer;
 use Generated\Shared\Transfer\OrderCollectionResponseTransfer;
 use Generated\Shared\Transfer\OrderTransfer;
@@ -287,9 +289,41 @@ interface MollieFacadeInterface
     ): MollieExpressCheckoutPaymentUpdateResponseTransfer;
 
     /**
-     * @param QuoteTransfer $quoteTransfer
-     * @param CheckoutResponseTransfer $checkoutResponseTransfer
-     * @return MollieCustomerApiResponseTransfer
+     * Specification:
+     * - Returns the single-click setting saved in the Back Office.
+     * - Falls back to `MollieConstants::MOLLIE_SINGLE_CLICK_PAYMENTS_ENABLED` when nothing was saved.
+     *
+     * @api
+     *
+     * @return bool
      */
-    public function createCustomer(QuoteTransfer $quoteTransfer, CheckoutResponseTransfer $checkoutResponseTransfer): MollieCustomerApiResponseTransfer;
+    public function isSingleClickPaymentEnabled(): bool;
+
+    /**
+     * Specification:
+     * - Saves the single-click setting from the Back Office; it overrides the config value.
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\MollieSingleClickConfigTransfer $mollieSingleClickConfigTransfer
+     *
+     * @return void
+     */
+    public function saveSingleClickConfig(MollieSingleClickConfigTransfer $mollieSingleClickConfigTransfer): void;
+
+    /**
+     * Specification:
+     * - Returns whether single-click payments are enabled.
+     * - When enabled, returns the saved cards (valid credit card mandates) of the given customer.
+     * - Removes a stored Mollie customer that Mollie no longer knows (404/410) and returns no saved cards.
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\MollieSingleClickPaymentDataRequestTransfer $mollieSingleClickPaymentDataRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieSingleClickPaymentDataTransfer
+     */
+    public function getSingleClickPaymentData(
+        MollieSingleClickPaymentDataRequestTransfer $mollieSingleClickPaymentDataRequestTransfer,
+    ): MollieSingleClickPaymentDataTransfer;
 }

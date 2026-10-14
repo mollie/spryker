@@ -13,16 +13,21 @@ use Mollie\Api\Http\Data\DataCollection;
 interface PaymentApiHandlerInterface
 {
     /**
+     * Specification:
+     * - Adds the order reference.
+     * - Adds the single-click checkout path when the quote has one.
+     *
      * @param \Generated\Shared\Transfer\CheckoutResponseTransfer $checkoutResponseTransfer
+     * @param \Generated\Shared\Transfer\QuoteTransfer|null $quoteTransfer
      *
      * @return array<string>
      */
-    public function createPaymentMetadata(CheckoutResponseTransfer $checkoutResponseTransfer): array;
+    public function createPaymentMetadata(CheckoutResponseTransfer $checkoutResponseTransfer, ?QuoteTransfer $quoteTransfer = null): array;
 
     /**
      * @param \Generated\Shared\Transfer\MollieApiRequestTransfer $mollieApiRequestTransfer
      *
-     * @return array<string, string>
+     * @return array<string, mixed>
      */
     public function createAdditionalParameters(MollieApiRequestTransfer $mollieApiRequestTransfer): array;
 

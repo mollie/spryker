@@ -100,7 +100,6 @@ use Mollie\Yves\Mollie\PaymentPage\Form\MolliePayPalSubForm;
 use Mollie\Yves\Mollie\PaymentPage\Form\MolliePrzelewy24SubForm;
 use Mollie\Yves\Mollie\PaymentPage\Form\MollieRivertySubForm;
 use Mollie\Yves\Mollie\PaymentPage\Form\MollieSatispaySubForm;
-use Mollie\Yves\Mollie\PaymentPage\Form\MollieSingleClickPaymentConsentSubForm;
 use Mollie\Yves\Mollie\PaymentPage\Form\MollieSwishSubForm;
 use Mollie\Yves\Mollie\PaymentPage\Form\MollieTrustlySubForm;
 use Mollie\Yves\Mollie\PaymentPage\Form\MollieTwintSubForm;
@@ -452,6 +451,8 @@ class MollieFactory extends AbstractFactory
     {
         return new MollieCreditCardSubFormDataProvider(
             $this->createMollieCachedOptionsExpander(),
+            $this->getMollieApiClient(),
+            $this->getConfig(),
         );
     }
 

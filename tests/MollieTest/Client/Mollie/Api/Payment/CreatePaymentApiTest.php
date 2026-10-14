@@ -143,6 +143,110 @@ class CreatePaymentApiTest extends AbstractClientTest
     }
 
     /**
+     * @return void
+     */
+    public function testCreatePaymentWithSavedCardSendsCustomerAndMandateWithoutCardToken(): void
+    {
+        $mockMollieClient = $this->createMockApiClientForCreatePaymentRequest();
+        $mollieFactoryMock = $this->createMollieFactoryMock();
+        $mollieFactoryMock->method('createMollieApiClient')
+            ->willReturn($mockMollieClient);
+        $client = $this->createClientMock($mollieFactoryMock);
+
+        $mollieCreditCardPaymentTransfer = (new MollieCreditCardPaymentTransfer())
+            ->setCardToken('tkn_should_not_be_sent')
+            ->setMandateId('mdt_pWUnw6pkBN')
+            ->setMollieCustomerId('cst_8wmqcHMN4U')
+            ->setCheckoutPath(SharedMollieConfig::SINGLE_CLICK_CHECKOUT_PATH_ONE_CLICK);
+
+        $client->createPayment($this->createCreditCardMollieApiRequestTransfer($mollieCreditCardPaymentTransfer));
+
+        $mockMollieClient->assertSent(function (PendingRequest $pendingRequest): bool {
+            $requestBody = $pendingRequest->getRequest()->payload()->all();
+
+            return $requestBody['customerId'] === 'cst_8wmqcHMN4U'
+                && $requestBody['mandateId'] === 'mdt_pWUnw6pkBN'
+                && $requestBody['sequenceType'] === 'oneoff'
+                && !isset($requestBody['cardToken'])
+                && !isset($requestBody['storeCredentials'])
+                && $requestBody['metadata'][SharedMollieConfig::SINGLE_CLICK_METADATA_KEY_CHECKOUT_PATH] === SharedMollieConfig::SINGLE_CLICK_CHECKOUT_PATH_ONE_CLICK;
+        });
+    }
+
+    /**
+     * @return void
+     */
+    public function testCreatePaymentWithSaveCardConsentSendsCustomerCardTokenAndStoreCredentials(): void
+    {
+        $mockMollieClient = $this->createMockApiClientForCreatePaymentRequest();
+        $mollieFactoryMock = $this->createMollieFactoryMock();
+        $mollieFactoryMock->method('createMollieApiClient')
+            ->willReturn($mockMollieClient);
+        $client = $this->createClientMock($mollieFactoryMock);
+
+        $mollieCreditCardPaymentTransfer = (new MollieCreditCardPaymentTransfer())
+            ->setCardToken('tkn_UqAvArS3gw')
+            ->setMollieCustomerId('cst_8wmqcHMN4U')
+            ->setIsStoreCredentials(true)
+            ->setCheckoutPath(SharedMollieConfig::SINGLE_CLICK_CHECKOUT_PATH_SAVE_CARD);
+
+        $client->createPayment($this->createCreditCardMollieApiRequestTransfer($mollieCreditCardPaymentTransfer));
+
+        $mockMollieClient->assertSent(function (PendingRequest $pendingRequest): bool {
+            $requestBody = $pendingRequest->getRequest()->payload()->all();
+
+            return $requestBody['customerId'] === 'cst_8wmqcHMN4U'
+                && $requestBody['cardToken'] === 'tkn_UqAvArS3gw'
+                && $requestBody['storeCredentials'] === true
+                && $requestBody['sequenceType'] === 'oneoff'
+                && empty($requestBody['mandateId']);
+        });
+    }
+
+    /**
+     * @return void
+     */
+    public function testCreatePaymentWithFallbackSendsNoCardTokenAndNoCustomer(): void
+    {
+        $mockMollieClient = $this->createMockApiClientForCreatePaymentRequest();
+        $mollieFactoryMock = $this->createMollieFactoryMock();
+        $mollieFactoryMock->method('createMollieApiClient')
+            ->willReturn($mockMollieClient);
+        $client = $this->createClientMock($mollieFactoryMock);
+
+        $mollieCreditCardPaymentTransfer = (new MollieCreditCardPaymentTransfer())
+            ->setCheckoutPath(SharedMollieConfig::SINGLE_CLICK_CHECKOUT_PATH_FULL_FALLBACK);
+
+        $client->createPayment($this->createCreditCardMollieApiRequestTransfer($mollieCreditCardPaymentTransfer));
+
+        $mockMollieClient->assertSent(function (PendingRequest $pendingRequest): bool {
+            $requestBody = $pendingRequest->getRequest()->payload()->all();
+
+            return $requestBody['method'] === PaymentMethod::CREDITCARD
+                && !isset($requestBody['cardToken'])
+                && empty($requestBody['customerId'])
+                && empty($requestBody['mandateId']);
+        });
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MollieCreditCardPaymentTransfer $mollieCreditCardPaymentTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieApiRequestTransfer
+     */
+    protected function createCreditCardMollieApiRequestTransfer(
+        MollieCreditCardPaymentTransfer $mollieCreditCardPaymentTransfer,
+    ): MollieApiRequestTransfer {
+        $mollieApiRequestTransfer = $this->createApplePayDirectMollieApiRequestTransfer();
+        $mollieApiRequestTransfer->getQuote()->getPayment()
+            ->setPaymentMethod(SharedMollieConfig::MOLLIE_PAYMENT_CREDIT_CARD)
+            ->setMollieApplePayDirectPayment(null)
+            ->setMollieCreditCardPayment($mollieCreditCardPaymentTransfer);
+
+        return $mollieApiRequestTransfer;
+    }
+
+    /**
      * @return \Generated\Shared\Transfer\MollieApiRequestTransfer
      */
     protected function createApplePayDirectMollieApiRequestTransfer(): MollieApiRequestTransfer

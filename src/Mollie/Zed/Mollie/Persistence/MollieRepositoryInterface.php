@@ -5,6 +5,7 @@ declare(strict_types=1);
 
 namespace Mollie\Zed\Mollie\Persistence;
 
+use Generated\Shared\Transfer\MollieCustomerTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutConfigCriteriaTransfer;
 use Generated\Shared\Transfer\MollieItemPaymentCaptureTransfer;
 use Generated\Shared\Transfer\MolliePaymentLinkTransfer;
@@ -68,4 +69,23 @@ interface MollieRepositoryInterface
     public function getPersistentExpressCheckoutMethodConfig(
         MollieExpressCheckoutConfigCriteriaTransfer $criteriaTransfer,
     ): array;
+
+    /**
+     * Specification:
+     * - Finds the stored Mollie customer of a Spryker customer for the given Mollie mode (`live`/`test`).
+     *
+     * @param int $idCustomer
+     * @param string $mode
+     *
+     * @return \Generated\Shared\Transfer\MollieCustomerTransfer|null
+     */
+    public function findMollieCustomer(int $idCustomer, string $mode): ?MollieCustomerTransfer;
+
+    /**
+     * Specification:
+     * - Returns the single-click setting saved in the Back Office, or `null` when it was never saved.
+     *
+     * @return bool|null
+     */
+    public function findSingleClickConfig(): ?bool;
 }

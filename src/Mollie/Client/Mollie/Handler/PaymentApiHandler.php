@@ -8,6 +8,7 @@ namespace Mollie\Client\Mollie\Handler;
 use Generated\Shared\Transfer\CheckoutResponseTransfer;
 use Generated\Shared\Transfer\ExpenseTransfer;
 use Generated\Shared\Transfer\MollieApiRequestTransfer;
+use Generated\Shared\Transfer\MollieCreditCardPaymentTransfer;
 use Generated\Shared\Transfer\MollieLinesTransfer;
 use Generated\Shared\Transfer\QuoteTransfer;
 use Mollie\Api\Http\Data\Address;
@@ -32,18 +33,26 @@ class PaymentApiHandler implements PaymentApiHandlerInterface
 
     /**
      * @param \Generated\Shared\Transfer\CheckoutResponseTransfer $checkoutResponseTransfer
+     * @param \Generated\Shared\Transfer\QuoteTransfer|null $quoteTransfer
      *
      * @return array<string>
      */
-    public function createPaymentMetadata(CheckoutResponseTransfer $checkoutResponseTransfer): array
+    public function createPaymentMetadata(CheckoutResponseTransfer $checkoutResponseTransfer, ?QuoteTransfer $quoteTransfer = null): array
     {
-        return [MollieConfig::REQUEST_PARAMETER_CREATE_PAYMENT_ORDER_REFERENCE => $checkoutResponseTransfer->getSaveOrderOrFail()->getOrderReference()];
+        $metadata = [MollieConfig::REQUEST_PARAMETER_CREATE_PAYMENT_ORDER_REFERENCE => $checkoutResponseTransfer->getSaveOrderOrFail()->getOrderReference()];
+
+        $checkoutPath = $quoteTransfer?->getPayment()?->getMollieCreditCardPayment()?->getCheckoutPath();
+        if ($checkoutPath) {
+            $metadata[SharedConfig::SINGLE_CLICK_METADATA_KEY_CHECKOUT_PATH] = $checkoutPath;
+        }
+
+        return $metadata;
     }
 
     /**
      * @param \Generated\Shared\Transfer\MollieApiRequestTransfer $mollieApiRequestTransfer
      *
-     * @return array<string, string>
+     * @return array<string, mixed>
      */
     public function createAdditionalParameters(MollieApiRequestTransfer $mollieApiRequestTransfer): array
     {
@@ -51,7 +60,7 @@ class PaymentApiHandler implements PaymentApiHandlerInterface
         $paymentTransfer = $mollieApiRequestTransfer->getQuote()->getPayment();
         switch ($paymentTransfer->getPaymentMethod()) {
             case SharedConfig::MOLLIE_PAYMENT_CREDIT_CARD:
-                $additionalData[MollieConfig::REQUEST_PARAMETER_CREATE_PAYMENT_CARD_TOKEN] = $paymentTransfer->getMollieCreditCardPayment()->getCardToken();
+                $additionalData = $this->createCreditCardParameters($paymentTransfer->getMollieCreditCardPayment());
 
                 break;
             case SharedConfig::MOLLIE_PAYMENT_PAYPAL:
@@ -84,6 +93,34 @@ class PaymentApiHandler implements PaymentApiHandlerInterface
                 break;
             default:
                 break;
+        }
+
+        return $additionalData;
+    }
+
+    /**
+     * Specification:
+     * - A saved-card payment (mandate) sends no card token; the mandate and customer ID go in the main request.
+     * - Without a card token (fallback), Mollie asks for the card on its payment page.
+     * - `storeCredentials` asks Mollie to save the card once the payment succeeds.
+     *
+     * @param \Generated\Shared\Transfer\MollieCreditCardPaymentTransfer|null $mollieCreditCardPaymentTransfer
+     *
+     * @return array<string, mixed>
+     */
+    protected function createCreditCardParameters(?MollieCreditCardPaymentTransfer $mollieCreditCardPaymentTransfer): array
+    {
+        $additionalData = [];
+        if (!$mollieCreditCardPaymentTransfer) {
+            return $additionalData;
+        }
+
+        if ($mollieCreditCardPaymentTransfer->getCardToken() && !$mollieCreditCardPaymentTransfer->getMandateId()) {
+            $additionalData[MollieConfig::REQUEST_PARAMETER_CREATE_PAYMENT_CARD_TOKEN] = $mollieCreditCardPaymentTransfer->getCardToken();
+        }
+
+        if ($mollieCreditCardPaymentTransfer->getMollieCustomerId() && $mollieCreditCardPaymentTransfer->getIsStoreCredentials()) {
+            $additionalData[MollieConfig::REQUEST_PARAMETER_CREATE_PAYMENT_STORE_CREDENTIALS] = true;
         }
 
         return $additionalData;

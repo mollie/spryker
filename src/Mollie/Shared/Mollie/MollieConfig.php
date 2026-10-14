@@ -366,6 +366,39 @@ class MollieConfig extends AbstractSharedConfig
     /**
      * @var string
      */
+    public const SINGLE_CLICK_CHECKOUT_PATH_FULL = 'full';
+
+    /**
+     * @var string
+     */
+    public const SINGLE_CLICK_CHECKOUT_PATH_FULL_FALLBACK = 'full_fallback';
+
+    /**
+     * @var string
+     */
+    public const SINGLE_CLICK_CHECKOUT_PATH_SAVE_CARD = 'save_card';
+
+    /**
+     * @var string
+     */
+    public const SINGLE_CLICK_CHECKOUT_PATH_ONE_CLICK = 'one_click';
+
+    /**
+     * @var string
+     */
+    public const SINGLE_CLICK_METADATA_KEY_CHECKOUT_PATH = 'checkoutPath';
+
+    /**
+     * Version of the "save card" consent text; stored with the Mollie customer when the shopper gives consent.
+     * Increase it whenever the glossary text `mollie.checkout.payment.credit.card.save.card.consent` changes.
+     *
+     * @var string
+     */
+    public const SINGLE_CLICK_CONSENT_VERSION = '1';
+
+    /**
+     * @var string
+     */
     public const MOLLIE_PLUGIN_PACKAGE = 'mollie/spryker-payment';
 
     /**
@@ -390,6 +423,14 @@ class MollieConfig extends AbstractSharedConfig
     public function getDefaultExpressCheckoutMethodConfig(): array
     {
         return $this->get(MollieConstants::MOLLIE)[MollieConstants::MOLLIE_EXPRESS_CHECKOUT_METHODS_ENABLED] ?? [];
+    }
+
+    /**
+     * @return bool
+     */
+    public function isSingleClickPaymentEnabledByDefault(): bool
+    {
+        return (bool)($this->get(MollieConstants::MOLLIE)[MollieConstants::MOLLIE_SINGLE_CLICK_PAYMENTS_ENABLED] ?? false);
     }
 
     /**

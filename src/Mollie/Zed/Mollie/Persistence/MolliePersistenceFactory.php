@@ -7,10 +7,10 @@ namespace Mollie\Zed\Mollie\Persistence;
 use Mollie\Service\Mollie\MollieServiceInterface;
 use Mollie\Zed\Mollie\Dependency\Service\MollieToUtilEncodingServiceInterface;
 use Mollie\Zed\Mollie\MollieDependencyProvider;
-use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MollieExpressCheckoutConfigMapper;
-use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MollieExpressCheckoutConfigMapperInterface;
 use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MollieCustomerMapper;
 use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MollieCustomerMapperInterface;
+use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MollieExpressCheckoutConfigMapper;
+use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MollieExpressCheckoutConfigMapperInterface;
 use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MollieOrderMapper;
 use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MollieOrderMapperInterface;
 use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MolliePaymentCaptureMapper;
@@ -21,11 +21,12 @@ use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MolliePaymentMethodConfigMapper;
 use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MolliePaymentMethodConfigMapperInterface;
 use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MollieRefundMapper;
 use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MollieRefundMapperInterface;
+use Orm\Zed\Mollie\Persistence\SpyMollieCustomerQuery;
 use Orm\Zed\Mollie\Persistence\SpyMollieExpressCheckoutConfigQuery;
-use Orm\Zed\Mollie\Persistence\Base\SpyMollieCustomerQuery;
 use Orm\Zed\Mollie\Persistence\SpyMollieOrderItemPaymentCaptureQuery;
 use Orm\Zed\Mollie\Persistence\SpyMolliePaymentLinkQuery;
 use Orm\Zed\Mollie\Persistence\SpyMolliePaymentMethodConfigQuery;
+use Orm\Zed\Mollie\Persistence\SpyMollieSingleClickConfigQuery;
 use Orm\Zed\Mollie\Persistence\SpyPaymentMollieQuery;
 use Orm\Zed\Mollie\Persistence\SpyRefundMollieQuery;
 use Spryker\Zed\Kernel\Persistence\AbstractPersistenceFactory;
@@ -92,7 +93,7 @@ class MolliePersistenceFactory extends AbstractPersistenceFactory
     }
 
     /**
-     * @return MollieCustomerMapperInterface
+     * @return \Mollie\Zed\Mollie\Persistence\Propel\Mapper\MollieCustomerMapperInterface
      */
     public function createMollieCustomerMapper(): MollieCustomerMapperInterface
     {
@@ -148,11 +149,19 @@ class MolliePersistenceFactory extends AbstractPersistenceFactory
     }
 
     /**
-     * @return SpyMollieCustomerQuery
+     * @return \Orm\Zed\Mollie\Persistence\SpyMollieCustomerQuery
      */
     public function createSpyMollieCustomerQuery(): SpyMollieCustomerQuery
     {
         return SpyMollieCustomerQuery::create();
+    }
+
+    /**
+     * @return \Orm\Zed\Mollie\Persistence\SpyMollieSingleClickConfigQuery
+     */
+    public function createSpyMollieSingleClickConfigQuery(): SpyMollieSingleClickConfigQuery
+    {
+        return SpyMollieSingleClickConfigQuery::create();
     }
 
     /**

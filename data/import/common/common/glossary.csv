@@ -140,3 +140,9 @@ checkout.payment.provider.mollieRiverty.descriptionText,Schließen Sie Ihren Ein
 checkout.payment.provider.mollieRiverty.descriptionText,Complete your purchase securely using Riverty.,en_US
 checkout.payment.provider.mollieAlma.descriptionText,Schließen Sie Ihren Einkauf sicher mit Alma ab.,de_DE
 checkout.payment.provider.mollieAlma.descriptionText,Complete your purchase securely using Alma.,en_US
+mollie.checkout.payment.credit.card.saved.cards.title,Gespeicherte Karten,de_DE
+mollie.checkout.payment.credit.card.saved.cards.title,Saved cards,en_US
+mollie.checkout.payment.credit.card.new.card,Neue Karte verwenden,de_DE
+mollie.checkout.payment.credit.card.new.card,Use a new card,en_US
+mollie.checkout.payment.credit.card.save.card.consent,"Meine Karte bei Mollie speichern, um beim nächsten Mal schneller zu bezahlen.",de_DE
+mollie.checkout.payment.credit.card.save.card.consent,Save my card with Mollie for faster checkout next time.,en_US
