@@ -8,8 +8,8 @@ use Codeception\Test\Unit;
 use Generated\Shared\Transfer\MollieAddressTransfer;
 use Generated\Shared\Transfer\MollieAmountTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutOrderRequestTransfer;
+use Generated\Shared\Transfer\MollieExpressCheckoutSessionLineTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutSessionTransfer;
-use Generated\Shared\Transfer\MollieLinesTransfer;
 use Mollie\Service\Mollie\MollieService;
 use Mollie\Yves\Mollie\Mapper\ExpressCheckout\ExpressCheckoutOrderRequestMapperInterface;
 use Mollie\Yves\Mollie\MollieFactory;
@@ -110,18 +110,18 @@ class ExpressCheckoutOrderRequestMapperTest extends Unit
         $mollieAmountTransfer = (new MollieAmountTransfer())
             ->setCurrency('EUR')
             ->setValue('54.98');
-        $productMollieLinesTransfer = (new MollieLinesTransfer())
+        $productMollieExpressCheckoutSessionLineTransfer = (new MollieExpressCheckoutSessionLineTransfer())
             ->setType('physical')
             ->setReference('not-a-shipment-method');
-        $shippingFeeMollieLinesTransfer = (new MollieLinesTransfer())
+        $shippingFeeMollieExpressCheckoutSessionLineTransfer = (new MollieExpressCheckoutSessionLineTransfer())
             ->setType('shipping_fee')
             ->setReference(static::SHIPMENT_METHOD_KEY);
 
         return (new MollieExpressCheckoutSessionTransfer())
             ->setId('sess_7behWYUFsjn5hwRB86mXJ')
             ->setAmount($mollieAmountTransfer)
-            ->addLine($productMollieLinesTransfer)
-            ->addLine($shippingFeeMollieLinesTransfer);
+            ->addLine($productMollieExpressCheckoutSessionLineTransfer)
+            ->addLine($shippingFeeMollieExpressCheckoutSessionLineTransfer);
     }
 
     /**

@@ -79,6 +79,7 @@
 
     <transfer name="MollieExpressPayment">
         <property name="expressCheckoutUuid" type="string"/>
+        <property name="idSalesOrder" type="int"/>
     </transfer>
 
     <transfer name="MolliePaymentMethod">
@@ -482,6 +483,10 @@
         <property name="categories" type="array"/>
         <property name="imageUrl" type="string"/>
         <property name="recurring" type="RecurringBillingCycle"/>
+    </transfer>
+
+    <transfer name="MollieExpressCheckoutSessionLine">
+        <property name="type" type="string"/>
         <property name="reference" type="string"/>
     </transfer>
 
@@ -493,7 +498,7 @@
         <property name="status" type="string"/>
         <property name="amount" type="MollieAmount"/>
         <property name="description" type="string"/>
-        <property name="lines" type="MollieLines[]" singular="line"/>
+        <property name="lines" type="MollieExpressCheckoutSessionLine[]" singular="line"/>
         <property name="redirectUrl" type="string"/>
         <property name="customerId" type="string"/>
         <property name="sequenceType" type="string"/>

@@ -6,6 +6,7 @@ namespace Mollie\Zed\Mollie\Persistence;
 
 use Generated\Shared\Transfer\MollieExpressCheckoutPaymentRefundTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutPaymentUpdateRequestTransfer;
+use Generated\Shared\Transfer\MollieExpressPaymentTransfer;
 use Generated\Shared\Transfer\MollieItemPaymentCaptureTransfer;
 use Generated\Shared\Transfer\MolliePaymentCaptureTransfer;
 use Generated\Shared\Transfer\MolliePaymentLinkTransfer;
@@ -33,12 +34,15 @@ interface MollieEntityManagerInterface
     public function addMolliePaymentData(int $idSalesOrder, MolliePaymentTransfer $molliePaymentTransfer): void;
 
     /**
-     * @param int $idSalesOrder
-     * @param string $expressCheckoutUuid
+     * @param \Generated\Shared\Transfer\MollieExpressPaymentTransfer $mollieExpressPaymentTransfer
+     * @param \Generated\Shared\Transfer\MolliePaymentTransfer $molliePaymentTransfer
      *
      * @return void
      */
-    public function createExpressCheckoutMolliePayment(int $idSalesOrder, string $expressCheckoutUuid): void;
+    public function createExpressCheckoutMolliePayment(
+        MollieExpressPaymentTransfer $mollieExpressPaymentTransfer,
+        MolliePaymentTransfer $molliePaymentTransfer,
+    ): void;
 
     /**
      * @param \Generated\Shared\Transfer\MollieExpressCheckoutPaymentUpdateRequestTransfer $mollieExpressCheckoutPaymentUpdateRequestTransfer

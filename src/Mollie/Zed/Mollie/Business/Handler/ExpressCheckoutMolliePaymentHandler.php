@@ -6,12 +6,19 @@ namespace Mollie\Zed\Mollie\Business\Handler;
 
 use Generated\Shared\Transfer\MollieExpressCheckoutPaymentUpdateRequestTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutPaymentUpdateResponseTransfer;
+use Generated\Shared\Transfer\MolliePaymentTransfer;
 use Generated\Shared\Transfer\QuoteTransfer;
 use Generated\Shared\Transfer\SaveOrderTransfer;
+use Mollie\Shared\Mollie\MollieConstants;
 use Mollie\Zed\Mollie\Persistence\MollieEntityManagerInterface;
 
 class ExpressCheckoutMolliePaymentHandler implements ExpressCheckoutMolliePaymentHandlerInterface
 {
+    /**
+     * @var string
+     */
+    protected const METADATA_KEY_ORDER_REFERENCE = 'orderReference';
+
     /**
      * @param \Mollie\Zed\Mollie\Persistence\MollieEntityManagerInterface $entityManager
      */
@@ -30,13 +37,19 @@ class ExpressCheckoutMolliePaymentHandler implements ExpressCheckoutMolliePaymen
         QuoteTransfer $quoteTransfer,
         SaveOrderTransfer $saveOrderTransfer,
     ): void {
-        $idSalesOrder = $saveOrderTransfer->getIdSalesOrderOrFail();
+        $orderReference = $saveOrderTransfer->getOrderReferenceOrFail();
 
         $paymentTransfer = $quoteTransfer->getPaymentOrFail();
         $mollieExpressPaymentTransfer = $paymentTransfer->getMollieExpressPaymentOrFail();
-        $expressCheckoutUuid = $mollieExpressPaymentTransfer->getExpressCheckoutUuidOrFail();
+        $mollieExpressPaymentTransfer->setIdSalesOrder($saveOrderTransfer->getIdSalesOrderOrFail());
 
-        $this->entityManager->createExpressCheckoutMolliePayment($idSalesOrder, $expressCheckoutUuid);
+        $molliePaymentTransfer = (new MolliePaymentTransfer())
+            ->setStatus(MollieConstants::STATUS_OPEN)
+            ->setDescription($orderReference)
+            ->setSequenceType(MollieConstants::MOLLIE_SEQUENCE_TYPE_ONE_OFF)
+            ->setMetadata([static::METADATA_KEY_ORDER_REFERENCE => $orderReference]);
+
+        $this->entityManager->createExpressCheckoutMolliePayment($mollieExpressPaymentTransfer, $molliePaymentTransfer);
     }
 
     /**

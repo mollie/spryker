@@ -86,12 +86,12 @@ class ExpressCheckoutOrderRequestMapper implements ExpressCheckoutOrderRequestMa
      */
     protected function findShippingFeeReference(MollieExpressCheckoutSessionTransfer $mollieExpressCheckoutSessionTransfer): ?string
     {
-        foreach ($mollieExpressCheckoutSessionTransfer->getLines() as $mollieLinesTransfer) {
-            if ($mollieLinesTransfer->getType() !== MollieConstants::PRODUCT_TYPE_SHIPPING_FEE) {
+        foreach ($mollieExpressCheckoutSessionTransfer->getLines() as $mollieExpressCheckoutSessionLineTransfer) {
+            if ($mollieExpressCheckoutSessionLineTransfer->getType() !== MollieConstants::PRODUCT_TYPE_SHIPPING_FEE) {
                 continue;
             }
 
-            return $mollieLinesTransfer->getReference();
+            return $mollieExpressCheckoutSessionLineTransfer->getReference();
         }
 
         return null;
