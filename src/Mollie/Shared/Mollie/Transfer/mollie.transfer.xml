@@ -226,6 +226,7 @@
         <property name="id" type="string" />
         <property name="status" type="string" />
         <property name="captureBefore" type="string" />
+        <property name="mandateId" type="string" />
     </transfer>
 
     <transfer name="MollieExpressCheckoutPaymentUpdateRequest">

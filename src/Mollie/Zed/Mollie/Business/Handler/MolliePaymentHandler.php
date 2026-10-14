@@ -9,6 +9,7 @@ use Generated\Shared\Transfer\CheckoutErrorTransfer;
 use Generated\Shared\Transfer\CheckoutResponseTransfer;
 use Generated\Shared\Transfer\MollieApiRequestTransfer;
 use Generated\Shared\Transfer\MolliePaymentApiResponseTransfer;
+use Generated\Shared\Transfer\MolliePaymentTransfer;
 use Generated\Shared\Transfer\QuoteTransfer;
 use Mollie\Client\Mollie\MollieClientInterface;
 use Mollie\Shared\Mollie\MollieConstants;
@@ -84,7 +85,8 @@ class MolliePaymentHandler implements MolliePaymentHandlerInterface
         }
 
         $this->savePaymentIdToStorage($molliePaymentApiResponseTransfer->getMolliePayment()->getId(), $orderReference);
-        $this->molliePaymentWriter->addMolliePaymentData($checkoutResponseTransfer->getSaveOrder()->getIdSalesOrder(), $molliePaymentApiResponseTransfer->getMolliePayment());
+        $molliePaymentTransfer = $this->addRequestedMandateId($quoteTransfer, $molliePaymentApiResponseTransfer->getMolliePayment());
+        $this->molliePaymentWriter->addMolliePaymentData($checkoutResponseTransfer->getSaveOrder()->getIdSalesOrder(), $molliePaymentTransfer);
         $redirectUrl = $this->getSuccessfulPaymentRedirectUrl($molliePaymentApiResponseTransfer, $orderReference);
 
         return $checkoutResponseTransfer
@@ -108,6 +110,32 @@ class MolliePaymentHandler implements MolliePaymentHandlerInterface
             ->setQuote($quoteTransfer);
 
         return $this->mollieClient->createPayment($mollieApiRequestTransfer);
+    }
+
+    /**
+     * Mollie leaves the mandate out of the create-payment response while the payment is open,
+     * so the saved card we requested is stored until the webhook confirms the charged one.
+     *
+     * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
+     * @param \Generated\Shared\Transfer\MolliePaymentTransfer $molliePaymentTransfer
+     *
+     * @return \Generated\Shared\Transfer\MolliePaymentTransfer
+     */
+    protected function addRequestedMandateId(
+        QuoteTransfer $quoteTransfer,
+        MolliePaymentTransfer $molliePaymentTransfer,
+    ): MolliePaymentTransfer {
+        if ($molliePaymentTransfer->getMandateId()) {
+            return $molliePaymentTransfer;
+        }
+
+        $requestedMandateId = $quoteTransfer->getPayment()?->getMollieCreditCardPayment()?->getMandateId();
+
+        if (!$requestedMandateId) {
+            return $molliePaymentTransfer;
+        }
+
+        return $molliePaymentTransfer->setMandateId($requestedMandateId);
     }
 
     /**

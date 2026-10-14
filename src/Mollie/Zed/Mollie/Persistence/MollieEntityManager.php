@@ -49,6 +49,10 @@ class MollieEntityManager extends AbstractEntityManager implements MollieEntityM
             ->setStatus($updateOrderCollectionRequestTransfer->getStatus())
             ->setCaptureBefore($updateOrderCollectionRequestTransfer->getCaptureBefore());
 
+        if ($updateOrderCollectionRequestTransfer->getMandateId()) {
+            $spyPaymentMolleEntity->setMandateId($updateOrderCollectionRequestTransfer->getMandateId());
+        }
+
         $spyPaymentMolleEntity->save();
     }
 
