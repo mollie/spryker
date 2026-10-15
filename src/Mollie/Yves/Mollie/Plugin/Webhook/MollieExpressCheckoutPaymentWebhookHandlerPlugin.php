@@ -4,12 +4,10 @@ declare(strict_types=1);
 
 namespace Mollie\Yves\Mollie\Plugin\Webhook;
 
-use Generated\Shared\Transfer\MollieExpressCheckoutPaymentUpdateRequestTransfer;
 use Generated\Shared\Transfer\MolliePaymentTransfer;
 use Generated\Shared\Transfer\MollieWebhookResponseTransfer;
 use Mollie\Shared\Mollie\MollieConfig;
 use Spryker\Yves\Kernel\AbstractPlugin;
-use Symfony\Component\HttpFoundation\Response;
 
 /**
  * @method \Mollie\Yves\Mollie\MollieFactory getFactory()
@@ -47,48 +45,6 @@ class MollieExpressCheckoutPaymentWebhookHandlerPlugin extends AbstractPlugin im
      */
     public function handle(MolliePaymentTransfer $molliePaymentTransfer): MollieWebhookResponseTransfer
     {
-        $mollieExpressCheckoutPaymentUpdateRequestTransfer = $this->createMollieExpressCheckoutPaymentUpdateRequestTransfer(
-            $molliePaymentTransfer,
-        );
-
-        $this->getClient()->updateExpressCheckoutMolliePayment($mollieExpressCheckoutPaymentUpdateRequestTransfer);
-
-        return $this->createWebhookResponseTransfer(
-            Response::HTTP_OK,
-            'Express checkout payment webhook processed successfully',
-        );
-    }
-
-    /**
-     * @param int $statusCode
-     * @param string $message
-     *
-     * @return \Generated\Shared\Transfer\MollieWebhookResponseTransfer
-     */
-    protected function createWebhookResponseTransfer(int $statusCode, string $message): MollieWebhookResponseTransfer
-    {
-        return (new MollieWebhookResponseTransfer())
-            ->setStatusCode($statusCode)
-            ->setMessage($message);
-    }
-
-    /**
-     * @param \Generated\Shared\Transfer\MolliePaymentTransfer $molliePaymentTransfer
-     *
-     * @return \Generated\Shared\Transfer\MollieExpressCheckoutPaymentUpdateRequestTransfer
-     */
-    protected function createMollieExpressCheckoutPaymentUpdateRequestTransfer(
-        MolliePaymentTransfer $molliePaymentTransfer,
-    ): MollieExpressCheckoutPaymentUpdateRequestTransfer {
-        $metadata = $molliePaymentTransfer->getMetadata();
-        $expressCheckoutUuid = $metadata[MollieConfig::EXPRESS_CHECKOUT_METADATA_KEY_UUID];
-
-        $mollieExpressCheckoutPaymentUpdateRequestTransfer = new MollieExpressCheckoutPaymentUpdateRequestTransfer();
-        $mollieExpressCheckoutPaymentUpdateRequestTransfer
-            ->setExpressCheckoutUuid($expressCheckoutUuid)
-            ->setTransactionId($molliePaymentTransfer->getId())
-            ->setStatus($molliePaymentTransfer->getStatus());
-
-        return $mollieExpressCheckoutPaymentUpdateRequestTransfer;
+        return $this->getClient()->processExpressCheckoutPaymentWebhook($molliePaymentTransfer);
     }
 }

@@ -6,6 +6,7 @@ declare(strict_types=1);
 namespace Mollie\Zed\Mollie\Persistence;
 
 use Generated\Shared\Transfer\MollieExpressCheckoutConfigCriteriaTransfer;
+use Generated\Shared\Transfer\MollieExpressCheckoutPaymentRefundTransfer;
 use Generated\Shared\Transfer\MollieItemPaymentCaptureTransfer;
 use Generated\Shared\Transfer\MolliePaymentLinkTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodConfigCollectionTransfer;
@@ -164,5 +165,26 @@ class MollieRepository extends AbstractRepository implements MollieRepositoryInt
         return $this->getFactory()
             ->createMollieExpressCheckoutConfigMapper()
             ->mapEntitiesToMethodConfig($entities);
+    }
+
+    /**
+     * @param string $expressCheckoutUuid
+     *
+     * @return \Generated\Shared\Transfer\MollieExpressCheckoutPaymentRefundTransfer|null
+     */
+    public function findExpressCheckoutPaymentRefundByExpressCheckoutUuid(string $expressCheckoutUuid): ?MollieExpressCheckoutPaymentRefundTransfer
+    {
+        $spyMollieExpressCheckoutPaymentRefundEntity = $this->getFactory()
+            ->createSpyMollieExpressCheckoutPaymentRefundQuery()
+            ->filterByExpressCheckoutUuid($expressCheckoutUuid)
+            ->findOne();
+
+        if (!$spyMollieExpressCheckoutPaymentRefundEntity) {
+            return null;
+        }
+
+        return $this->getFactory()
+            ->createMollieExpressCheckoutPaymentRefundMapper()
+            ->mapEntityToTransfer($spyMollieExpressCheckoutPaymentRefundEntity, new MollieExpressCheckoutPaymentRefundTransfer());
     }
 }

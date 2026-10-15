@@ -9,6 +9,8 @@ use Mollie\Zed\Mollie\Dependency\Service\MollieToUtilEncodingServiceInterface;
 use Mollie\Zed\Mollie\MollieDependencyProvider;
 use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MollieExpressCheckoutConfigMapper;
 use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MollieExpressCheckoutConfigMapperInterface;
+use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MollieExpressCheckoutPaymentRefundMapper;
+use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MollieExpressCheckoutPaymentRefundMapperInterface;
 use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MollieOrderMapper;
 use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MollieOrderMapperInterface;
 use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MolliePaymentCaptureMapper;
@@ -20,6 +22,7 @@ use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MolliePaymentMethodConfigMapperI
 use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MollieRefundMapper;
 use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MollieRefundMapperInterface;
 use Orm\Zed\Mollie\Persistence\SpyMollieExpressCheckoutConfigQuery;
+use Orm\Zed\Mollie\Persistence\SpyMollieExpressCheckoutPaymentRefundQuery;
 use Orm\Zed\Mollie\Persistence\SpyMollieOrderItemPaymentCaptureQuery;
 use Orm\Zed\Mollie\Persistence\SpyMolliePaymentLinkQuery;
 use Orm\Zed\Mollie\Persistence\SpyMolliePaymentMethodConfigQuery;
@@ -134,6 +137,22 @@ class MolliePersistenceFactory extends AbstractPersistenceFactory
     public function createSpyMollieExpressCheckoutConfigQuery(): SpyMollieExpressCheckoutConfigQuery
     {
         return SpyMollieExpressCheckoutConfigQuery::create();
+    }
+
+    /**
+     * @return \Orm\Zed\Mollie\Persistence\SpyMollieExpressCheckoutPaymentRefundQuery
+     */
+    public function createSpyMollieExpressCheckoutPaymentRefundQuery(): SpyMollieExpressCheckoutPaymentRefundQuery
+    {
+        return SpyMollieExpressCheckoutPaymentRefundQuery::create();
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Persistence\Propel\Mapper\MollieExpressCheckoutPaymentRefundMapperInterface
+     */
+    public function createMollieExpressCheckoutPaymentRefundMapper(): MollieExpressCheckoutPaymentRefundMapperInterface
+    {
+        return new MollieExpressCheckoutPaymentRefundMapper();
     }
 
     /**

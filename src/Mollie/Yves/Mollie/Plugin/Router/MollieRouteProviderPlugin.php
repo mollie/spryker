@@ -39,6 +39,11 @@ class MollieRouteProviderPlugin extends AbstractRouteProviderPlugin
     /**
      * @var string
      */
+    public const ROUTE_MOLLIE_EXPRESS_CHECKOUT_REDIRECT = 'mollie/express-checkout/redirect';
+
+    /**
+     * @var string
+     */
     public const ROUTE_PATH_MOLLIE_EXPRESS_CHECKOUT_RESOLVE_ENABLED_METHODS
         = '/mollie/express-checkout/resolve-enabled-methods';
 
@@ -58,6 +63,11 @@ class MollieRouteProviderPlugin extends AbstractRouteProviderPlugin
     public const ROUTE_PATH_MOLLIE_APPLE_PAY_CREATE_PAYMENT_SESSION = '/mollie/apple-pay/create-payment-session';
 
     /**
+     * @var string
+     */
+    public const ROUTE_PATH_MOLLIE_EXPRESS_CHECKOUT_REDIRECT = '/mollie/express-checkout/redirect';
+
+    /**
      * @param \Spryker\Yves\Router\Route\RouteCollection $routeCollection
      *
      * @return \Spryker\Yves\Router\Route\RouteCollection
@@ -70,6 +80,7 @@ class MollieRouteProviderPlugin extends AbstractRouteProviderPlugin
         $routeCollection = $this->addExpressCheckoutResolveEnabledMethodsRoute($routeCollection);
         $routeCollection = $this->addExpressCheckoutCreateSessionRoute($routeCollection);
         $routeCollection = $this->addApplePayCreatePaymentSessionRoute($routeCollection);
+        $routeCollection = $this->addExpressCheckoutRedirectRoute($routeCollection);
 
         return $routeCollection;
     }
@@ -169,6 +180,25 @@ class MollieRouteProviderPlugin extends AbstractRouteProviderPlugin
         );
         $route = $route->setMethods(['POST']);
         $routeCollection->add(static::ROUTE_MOLLIE_APPLE_PAY_CREATE_PAYMENT_SESSION, $route);
+
+        return $routeCollection;
+    }
+
+    /**
+     * @param \Spryker\Yves\Router\Route\RouteCollection $routeCollection
+     *
+     * @return \Spryker\Yves\Router\Route\RouteCollection
+     */
+    protected function addExpressCheckoutRedirectRoute(RouteCollection $routeCollection): RouteCollection
+    {
+        $route = $this->buildRoute(
+            static::ROUTE_PATH_MOLLIE_EXPRESS_CHECKOUT_REDIRECT,
+            'Mollie',
+            'ExpressCheckoutRedirect',
+            'expressCheckoutRedirectAction',
+        );
+        $route = $route->setMethods(['GET']);
+        $routeCollection->add(static::ROUTE_MOLLIE_EXPRESS_CHECKOUT_REDIRECT, $route);
 
         return $routeCollection;
     }
