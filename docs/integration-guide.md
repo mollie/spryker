@@ -41,6 +41,7 @@ This guide provides comprehensive instructions for integrating Mollie payment se
   - [Route Provider Plugin](#route-provider-plugin)
   - [4.2. Checkout Dependency Provider (Zed)](#42-checkout-dependency-provider-zed)
   - [Post Hooks](#post-hooks)
+  - [Order Savers](#order-savers)
   - [4.3. Checkout Page Dependency Provider (Yves)](#43-checkout-page-dependency-provider-yves)
   - [Payment Method Handlers](#payment-method-handlers)
   - [Subform Plugin Collection](#subform-plugin-collection)
@@ -684,8 +685,11 @@ Add Mollie's state machines to the active processes configuration:
 $config[OmsConstants::ACTIVE_PROCESSES] = [
     'MolliePaymentStateMachine01',
     'MolliePaymentStateMachineManualCapture01',
+    'MolliePaymentStateMachineExpress01',
 ];
 ```
+
+`MolliePaymentStateMachineExpress01` is only needed for [Express Checkout](#10-express-checkout).
 
 Add Mollie's state machine process location so Spryker can locate and load the state machine XML definitions:
 
@@ -731,12 +735,12 @@ $config[SalesConstants::PAYMENT_METHOD_STATEMACHINE_MAPPING] = [
 	MollieConfig::MOLLIE_PAYMENT_MB_WAY => 'MolliePaymentStateMachine01',  
 	MollieConfig::MOLLIE_PAYMENT_TWINT => 'MolliePaymentStateMachine01',  
 	MollieConfig::MOLLIE_PAYMENT_SATISPAY => 'MolliePaymentStateMachine01',
-    MollieConfig::MOLLIE_PAYMENT_EXPRESS => 'MolliePaymentStateMachine01',
+    MollieConfig::MOLLIE_PAYMENT_EXPRESS => 'MolliePaymentStateMachineExpress01',
     MollieConfig::MOLLIE_PAYMENT_APPLE_PAY_DIRECT => 'MolliePaymentStateMachine01',
 ];
 ```
 
-`MollieConfig::MOLLIE_PAYMENT_EXPRESS` (`mollieExpressPayment`) is used by [Express Checkout](#10-express-checkout) orders. Express payments are captured by Mollie when the shopper confirms the wallet sheet, so they use `MolliePaymentStateMachine01`. It doesn't need an entry in `MOLLIE_OMS_TO_PAYMENT_METHOD_MAPPING`.
+`MollieConfig::MOLLIE_PAYMENT_EXPRESS` (`mollieExpressPayment`) is used by [Express Checkout](#10-express-checkout) orders and must be mapped to `MolliePaymentStateMachineExpress01`. That state machine is `MolliePaymentStateMachine01` plus one transition from `payment pending` to `refunded`, used when an express order was saved but its payment is refunded (see [Section 10.7](#107-failed-orders-and-automatic-refunds)). It doesn't need an entry in `MOLLIE_OMS_TO_PAYMENT_METHOD_MAPPING`.
 
 `MollieConfig::MOLLIE_PAYMENT_APPLE_PAY_DIRECT` (`mollieApplePayDirectPayment`) is used by [Apple Pay Direct](#92-apple-pay-direct) and does need the `'mollieApplePayDirectPayment' => 'applepay'` mapping.
 
@@ -818,7 +822,7 @@ console data:import:payment-method
 console data:import:payment-method-store
 ```
 
-`console propel:install` creates the module's database tables, including `spy_mollie_express_checkout_config` and `spy_mollie_express_checkout_failed_order` used by [Express Checkout](#10-express-checkout).
+`console propel:install` creates the module's database tables, including `spy_mollie_express_checkout_config` and `spy_mollie_express_checkout_payment_refund` used by [Express Checkout](#10-express-checkout).
 
 Clear cache if needed.
 
@@ -952,7 +956,7 @@ The plugin registers these storefront routes:
 
 #### Post Hooks
 
-**Purpose:** Handles post-checkout operations for Mollie payments. `MollieExpressCheckoutPostSavePlugin` stores the Mollie payment of an [Express Checkout](#10-express-checkout) order; it only runs for `mollieExpressPayment` orders.
+**Purpose:** Handles post-checkout operations for Mollie payments.
 
 **File:** `src/Pyz/Zed/Checkout/CheckoutDependencyProvider.php`
 
@@ -960,7 +964,6 @@ The plugin registers these storefront routes:
 
 **Plugins:**
 - `vendor/mollie/spryker-payment/src/Mollie\Zed\Mollie\Communication\Plugin\Checkout\MollieCheckoutPostSavePlugin`
-- `vendor/mollie/spryker-payment/src/Mollie\Zed\Mollie\Communication\Plugin\Checkout\MollieExpressCheckoutPostSavePlugin` (Express Checkout only)
 
 ```php
 <?php
@@ -968,7 +971,6 @@ The plugin registers these storefront routes:
 namespace Pyz\Zed\Checkout;
 
 use Mollie\Zed\Mollie\Communication\Plugin\Checkout\MollieCheckoutPostSavePlugin;
-use Mollie\Zed\Mollie\Communication\Plugin\Checkout\MollieExpressCheckoutPostSavePlugin;
 use Spryker\Zed\Checkout\CheckoutDependencyProvider as SprykerCheckoutDependencyProvider;
 use Spryker\Zed\Kernel\Container;
 
@@ -986,7 +988,47 @@ class CheckoutDependencyProvider extends SprykerCheckoutDependencyProvider
         return [
             // ... other post hooks
             new MollieCheckoutPostSavePlugin(),
-            new MollieExpressCheckoutPostSavePlugin(),
+        ];
+    }
+}
+```
+
+#### Order Savers
+
+**Purpose:** `MollieExpressCheckoutDoSaveOrderPlugin` stores the Mollie payment of an [Express Checkout](#10-express-checkout) order. It runs inside the order's save transaction, so the order and its Mollie payment are always saved together. It only runs for `mollieExpressPayment` orders. Only needed for Express Checkout.
+
+**File:** `src/Pyz/Zed/Checkout/CheckoutDependencyProvider.php`
+
+**Method:** `getCheckoutOrderSavers`
+
+**Plugins:**
+- `vendor/mollie/spryker-payment/src/Mollie\Zed\Mollie\Communication\Plugin\Checkout\MollieExpressCheckoutDoSaveOrderPlugin`
+
+Add it as the last order saver.
+
+```php
+<?php
+
+namespace Pyz\Zed\Checkout;
+
+use Mollie\Zed\Mollie\Communication\Plugin\Checkout\MollieExpressCheckoutDoSaveOrderPlugin;
+use Spryker\Zed\Checkout\CheckoutDependencyProvider as SprykerCheckoutDependencyProvider;
+use Spryker\Zed\Kernel\Container;
+
+class CheckoutDependencyProvider extends SprykerCheckoutDependencyProvider
+{
+    // ... rest of the implementation
+
+    /**
+     * @param \Spryker\Zed\Kernel\Container $container
+     *
+     * @return list<\Spryker\Zed\Checkout\Dependency\Plugin\CheckoutSaveOrderInterface|\Spryker\Zed\CheckoutExtension\Dependency\Plugin\CheckoutDoSaveOrderInterface>
+     */
+    protected function getCheckoutOrderSavers(Container $container): array
+    {
+        return [
+            // ... other order savers
+            new MollieExpressCheckoutDoSaveOrderPlugin(),
         ];
     }
 }
@@ -1339,6 +1381,7 @@ use Mollie\Zed\Mollie\Communication\Plugin\Oms\Condition\MollieIsPaymentStatusCa
 use Mollie\Zed\Mollie\Communication\Plugin\Oms\Condition\MollieIsPaymentStatusExpiredConditionPlugin;
 use Mollie\Zed\Mollie\Communication\Plugin\Oms\Condition\MollieIsPaymentStatusFailedConditionPlugin;
 use Mollie\Zed\Mollie\Communication\Plugin\Oms\Condition\MollieIsPaymentStatusPaidConditionPlugin;
+use Mollie\Zed\Mollie\Communication\Plugin\Oms\Condition\MollieIsPaymentStatusRefundedConditionPlugin;
 use Mollie\Zed\Mollie\Communication\Plugin\Oms\Condition\MollieIsRefundStatusFailedConditionPlugin;
 use Mollie\Zed\Mollie\Communication\Plugin\Oms\Condition\MollieIsRefundStatusRefundedConditionPlugin;
 use Mollie\Zed\Mollie\Communication\Plugin\Oms\Condition\Authorization\IsAuthorizationCanceledConditionPlugin;
@@ -1383,6 +1426,9 @@ class OmsDependencyProvider extends SprykerOmsDependencyProvider
             $conditionCollection->add(new IsAuthorizationFailedConditionPlugin(), 'Mollie/IsAuthorizationFailed');
             $conditionCollection->add(new IsCapturedConditionPlugin(), 'Mollie/IsCaptured');
             $conditionCollection->add(new IsCaptureFailedConditionPlugin(), 'Mollie/IsCaptureFailed');
+
+            // If using express checkout:
+            $conditionCollection->add(new MollieIsPaymentStatusRefundedConditionPlugin(), 'Mollie/IsPaymentStatusRefunded');
 
 			// If using payment links:
 			$conditionCollection->add(new MollieIsPaymentLinkCreationSuccessfulConditionPlugin(), 'Mollie/IsPaymentLinkCreationSuccessful');  
@@ -2221,12 +2267,13 @@ Whether an express method is shown is resolved in this order:
 
 1. Add the configuration from [Section 10.3](#103-configuration)
 2. Add `mollieExpressPayment` to `payment_method.csv` and each store's `payment_method_store.csv` ([Section 3.1](#31-add-mollie-payment-methods-to-csv), [Section 3.2](#32-assign-payment-methods-to-stores)) and import them ([Section 3.3](#33-import-payment-methods))
-3. Map `MollieConfig::MOLLIE_PAYMENT_EXPRESS` to `MolliePaymentStateMachine01` ([Section 3.4](#34-configure-oms--mollie-payment-mapping))
-4. Register `MollieExpressCheckoutPostSavePlugin` ([Section 4.2](#42-checkout-dependency-provider-zed))
-5. Register `MollieExpressCheckoutWidget` ([Section 4.7](#47-shop-application-dependency-provider-yves)) and place it on the cart page ([Section 10.5](#105-placing-the-express-checkout-buttons))
-6. Add the glossary keys ([Section 5](#5-glossary-keys-and-translations))
-7. Add the `mollie-express-checkout` navigation entry ([Section 7](#7-backoffice-configuration))
-8. Run:
+3. Add `MolliePaymentStateMachineExpress01` to `ACTIVE_PROCESSES` and map `MollieConfig::MOLLIE_PAYMENT_EXPRESS` to it ([Section 3.4](#34-configure-oms--mollie-payment-mapping))
+4. Register `MollieExpressCheckoutDoSaveOrderPlugin` as the last order saver ([Section 4.2](#order-savers))
+5. Register the `Mollie/IsPaymentStatusRefunded` condition plugin ([Section 4.5](#condition-plugins))
+6. Register `MollieExpressCheckoutWidget` ([Section 4.7](#47-shop-application-dependency-provider-yves)) and place it on the cart page ([Section 10.5](#105-placing-the-express-checkout-buttons))
+7. Add the glossary keys ([Section 5](#5-glossary-keys-and-translations))
+8. Add the `mollie-express-checkout` navigation entry ([Section 7](#7-backoffice-configuration))
+9. Run:
 
 ```bash
 console transfer:generate
@@ -2235,8 +2282,15 @@ console data:import:payment-method
 console data:import:payment-method-store
 console data:import:glossary
 console navigation:build-cache
+console oms:process-cache:warm-up
+console router:cache:warm-up
+console router:cache:warm-up:backend-gateway
 npm run yves
 ```
+
+> **Router cache**
+>
+> Express Checkout adds new Zed gateway actions. Without `router:cache:warm-up:backend-gateway` the gateway answers `404` for them and creating the express session fails with `500`.
 
 The express routes are added by `MollieRouteProviderPlugin` ([Section 4.1](#41-router-dependency-provider)), and the express webhook handler (`MollieExpressCheckoutPaymentWebhookHandlerPlugin`) is registered by the module itself, so no extra wiring is needed for them.
 
@@ -2269,52 +2323,70 @@ The widget asks `/mollie/express-checkout/resolve-enabled-methods` which methods
 3. The wallet sheet opens. The shopper chooses an address and a shipping option and confirms.
 4. Mollie charges the payment. The payment's metadata contains the UUID (`expressCheckoutUuid`).
 5. Mollie redirects the shopper to `/mollie/express-checkout/redirect`. The module:
+   - reads the Mollie session ID and the UUID from the shopper's Yves session; if they are missing, an error is logged and the shopper goes back to the cart with "Your express checkout could not be found. Please contact us if you have been charged.",
    - reads the Mollie session; it must have status `completed`, otherwise the shopper goes back to the cart with "Your express payment was not completed. You have not been charged.",
-   - adds the address, shipment method and the `mollieExpressPayment` payment from the session to the cart and places the order,
-   - `MollieExpressCheckoutPostSavePlugin` creates the `spy_payment_mollie` row for the order with the UUID,
+   - adds the billing and shipping address, the shipment method chosen in the wallet and the `mollieExpressPayment` payment to the cart, recalculates it, and checks that the grand total equals the amount the shopper paid,
+   - places the order; `MollieExpressCheckoutDoSaveOrderPlugin` saves the order's `spy_payment_mollie` row with the UUID, status `open`, and the order reference as description and metadata, in the same transaction as the order,
    - redirects the shopper to the checkout success page.
-6. Mollie calls the webhook for the payment. `MollieExpressCheckoutPaymentWebhookHandlerPlugin` finds the order's `spy_payment_mollie` row by the UUID and links the Mollie payment to it. From then on the order follows `MolliePaymentStateMachine01` like any other Mollie payment.
+6. Mollie calls the webhook for the payment. `MollieExpressCheckoutPaymentWebhookHandlerPlugin` finds the order's `spy_payment_mollie` row by the UUID and saves the payment ID and status on it. From then on the order follows `MolliePaymentStateMachineExpress01` like any other Mollie payment.
+
+If placing the order fails in step 5, the shopper has already paid, so the payment is refunded automatically, see [Section 10.7](#107-failed-orders-and-automatic-refunds).
 
 > **Webhook before order**
 >
-> Mollie can call the webhook before the redirect has created the order. The handler then responds with `404` ("Express checkout payment not found"), and Mollie retries the webhook later, when the order exists.
+> Mollie usually calls the webhook in the same second as the redirect, before the order exists. The handler then responds with `404` ("Express checkout payment not found"), and Mollie retries the webhook a minute later, when the order exists. A `404` for the first webhook call of an express payment in the Mollie Dashboard is expected.
+
+A placed express order can later be refunded from the Back Office like any other Mollie order.
 
 ### 10.7 Failed Orders and Automatic Refunds
 
-If the payment succeeded but the order can't be created (e.g. a product went out of stock), the shopper has already paid. The module refunds the payment automatically:
+With Express Checkout the shopper pays first and the order is placed afterwards. If placing the order fails, the shopper has already paid, and the module refunds the payment automatically.
 
-1. The redirect logs a `CRITICAL` message, saves a row in `spy_mollie_express_checkout_failed_order` with the UUID and the Mollie session ID (status `order_failed`), and sends the shopper back to the cart with "Your order could not be created. Your payment will be refunded automatically."
-2. When Mollie calls the webhook for the payment, the module finds the row by the UUID, saves the payment ID, status, amount and currency, and creates a refund for the full amount. The refund ID is saved in `refund_id`. The UUID is sent as the idempotency key, so the payment is never refunded twice.
-3. If creating the refund fails, the webhook responds with `500`, a `CRITICAL` message is logged, and Mollie retries the webhook.
-4. Mollie calls the webhook again when the refund's status changes, and the row's status is updated.
+Placing the order counts as failed when anything throws while preparing the cart or placing the order, or when the checkout reports an error. Typical causes are a cart that changed after the wallet sheet was opened (the grand total no longer equals the paid amount), a product that went out of stock, or a wallet that returned no address.
 
-| Status | Meaning |
-|--------|---------|
-| `order_failed` | Order creation failed; waiting for the payment webhook |
-| `paid` | Payment received; if `refund_id` is set, the refund was created and is pending at Mollie |
-| `refunded` | Mollie has issued the refund |
-| `refund_failed` | Mollie couldn't issue the refund. A `CRITICAL` message is logged; refund the payment manually in the Mollie Dashboard |
+There are two cases:
+
+| | No order saved | Order saved, then failed |
+|---|---|---|
+| Example | The cart changed, a product went out of stock | A checkout post-save plugin reported an error |
+| Shopper sees | Cart, "Your order could not be created. Your payment will be refunded automatically." | Same |
+| Order | None | Stays in `payment pending` while the refund is in progress, then moves to `refunded` and is closed after 5 days (or to `failed` if the refund fails) |
+| `spy_payment_mollie` | No row | `status` follows the refund's status at Mollie |
+
+The refund itself works the same in both cases:
+
+1. The redirect logs a `CRITICAL` message ("Express checkout order could not be created after payment.") with the UUID, the Mollie session ID and the errors, saves a row in `spy_mollie_express_checkout_payment_refund` with the UUID and the Mollie session ID, and sends the shopper back to the cart.
+2. When Mollie calls the webhook for the payment, the module finds the row by the UUID and saves the payment ID, payment status, amount and currency. If the payment is `paid`, it creates a refund for the full amount and saves the refund ID and status. The UUID is sent as the idempotency key, so the payment is never refunded twice. If an order was saved, the refund status is also written onto its `spy_payment_mollie` row.
+3. If creating the refund fails, the webhook responds with `500`, a `CRITICAL` message ("Express checkout payment refund could not be created") is logged, and Mollie retries the webhook.
+4. Mollie calls the webhook again when the refund's status changes. The new status is saved on the row, and on the order's `spy_payment_mollie` row if an order exists. Once it is `refunded`, the order moves to `refunded`.
+
+`payment_status` holds the Mollie payment status and `refund_status` the Mollie refund status (`queued`, `pending`, `processing`, `refunded`, `failed`, `canceled`). If `refund_status` is `failed`, refund the payment manually in the Mollie Dashboard.
 
 > **Refund timing**
 >
 > Mollie keeps a new refund pending for about 2 hours, during which it can still be canceled in the Mollie Dashboard. Only after that is it issued and the status changes to `refunded`. The money reaches the shopper's account a few days later, depending on the card issuer.
+>
+> If the Mollie balance is too low, Mollie accepts the refund and queues it until the balance is topped up. Mollie sends no webhook for `queued`, `pending` or `canceled`, so the row keeps showing `pending` until the refund is processed.
 
-To check failed orders:
+To check failed express orders:
 
 ```sql
-SELECT express_checkout_uuid, transaction_id, status, amount, currency, refund_id, created_at
-FROM spy_mollie_express_checkout_failed_order
+SELECT express_checkout_uuid, mollie_session_id, transaction_id, payment_status, amount, currency, refund_id, refund_status, created_at
+FROM spy_mollie_express_checkout_payment_refund
 ORDER BY created_at DESC;
 ```
 
 ### 10.8 Testing Express Checkout
 
-1. Use a test API key and set `MOLLIE_TEST_MODE` to `true`
-2. For Apple Pay, open the shop in Safari on an Apple device with a card in Apple Wallet
-3. Add a product to the cart and click the express button
-4. Complete the payment in the wallet sheet; you should land on the checkout success page
-5. Check that the order has payment method `mollieExpressPayment` and that its `spy_payment_mollie` row has a `transaction_id` after the webhook
-6. To test the refund flow, make the order creation fail after payment and check that a row appears in `spy_mollie_express_checkout_failed_order` with a `refund_id`
+> **Important**
+>
+> Express Checkout doesn't work in Mollie test mode: Mollie.js shows "Express Checkout does not work in test mode." and the wallet sheet doesn't open. Test with a live API key and a low-priced product, on a public HTTPS domain that is verified for Apple Pay.
+
+1. For Apple Pay, open the shop in Safari on an Apple device with a card in Apple Wallet
+2. Add a product to the cart and click the express button
+3. Complete the payment in the wallet sheet; you should land on the checkout success page
+4. Check that the order has payment method `mollieExpressPayment`, runs on `MolliePaymentStateMachineExpress01`, and that its `spy_payment_mollie` row has a `transaction_id` and status `paid` after the webhook
+5. To test the refund flow, change the cart in another tab after the wallet sheet has opened, then pay. Check that you land on the cart with the refund message, that no order was created, and that a row appears in `spy_mollie_express_checkout_payment_refund` with a `refund_id` after the webhook
 
 ## 11. Payment Links
 
@@ -2628,19 +2700,24 @@ $config[MollieConstants::MOLLIE] = [
 
 - No shipment method is available for the cart, or none has a price in the store currency
 - Invalid API key or Profile ID
+- The Zed gateway router cache was not rebuilt after installing Express Checkout (the gateway answers `404` and `/mollie/express-checkout/create-session` returns `500`)
 
 **Solutions:**
 
 1. Check the shipment methods and their prices for the store in the Back Office
 2. Check the debug logs for the Mollie API response
+3. Run `console router:cache:warm-up:backend-gateway`
 
 ### Order failed after express payment
 
 The shopper sees "Your order could not be created. Your payment will be refunded automatically."
 
-1. Check the `CRITICAL` log entry "Express checkout order could not be created after payment." for the reason
-2. Check the row in `spy_mollie_express_checkout_failed_order` and its `status` and `refund_id` (see [Section 10.7](#107-failed-orders-and-automatic-refunds))
-3. If the status is `refund_failed`, refund the payment manually in the Mollie Dashboard
+1. Check the `CRITICAL` log entry "Express checkout order could not be created after payment." for the reason; it contains the UUID, the Mollie session ID and the errors
+2. Check the row in `spy_mollie_express_checkout_payment_refund` and its `refund_id` and `refund_status` (see [Section 10.7](#107-failed-orders-and-automatic-refunds))
+3. If `refund_status` is `failed`, refund the payment manually in the Mollie Dashboard
+4. If `refund_status` stays `pending`, check the Mollie balance; refunds are queued until it is topped up
+
+If the shopper instead sees "Your express checkout could not be found. Please contact us if you have been charged.", the shopper's Yves session was lost after the payment. No order and no automatic refund exist in that case. Find the payment in the Mollie Dashboard and refund it there.
 
 ## 15. Webhook Handling
 
