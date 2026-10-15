@@ -58,6 +58,26 @@ class MollieRouteProviderPlugin extends AbstractRouteProviderPlugin
     public const ROUTE_PATH_MOLLIE_APPLE_PAY_CREATE_PAYMENT_SESSION = '/mollie/apple-pay/create-payment-session';
 
     /**
+     * @var string
+     */
+    public const ROUTE_MOLLIE_CUSTOMER_SAVED_CARDS = 'customer/saved-cards';
+
+    /**
+     * @var string
+     */
+    public const ROUTE_PATH_MOLLIE_CUSTOMER_SAVED_CARDS = '/customer/saved-cards';
+
+    /**
+     * @var string
+     */
+    public const ROUTE_MOLLIE_CUSTOMER_SAVED_CARDS_REMOVE = 'customer/saved-cards/remove';
+
+    /**
+     * @var string
+     */
+    public const ROUTE_PATH_MOLLIE_CUSTOMER_SAVED_CARDS_REMOVE = '/customer/saved-cards/remove';
+
+    /**
      * @param \Spryker\Yves\Router\Route\RouteCollection $routeCollection
      *
      * @return \Spryker\Yves\Router\Route\RouteCollection
@@ -70,6 +90,8 @@ class MollieRouteProviderPlugin extends AbstractRouteProviderPlugin
         $routeCollection = $this->addExpressCheckoutResolveEnabledMethodsRoute($routeCollection);
         $routeCollection = $this->addExpressCheckoutCreateSessionRoute($routeCollection);
         $routeCollection = $this->addApplePayCreatePaymentSessionRoute($routeCollection);
+        $routeCollection = $this->addCustomerSavedCardsRoute($routeCollection);
+        $routeCollection = $this->addCustomerSavedCardsRemoveRoute($routeCollection);
 
         return $routeCollection;
     }
@@ -169,6 +191,34 @@ class MollieRouteProviderPlugin extends AbstractRouteProviderPlugin
         );
         $route = $route->setMethods(['POST']);
         $routeCollection->add(static::ROUTE_MOLLIE_APPLE_PAY_CREATE_PAYMENT_SESSION, $route);
+
+        return $routeCollection;
+    }
+
+    /**
+     * @param \Spryker\Yves\Router\Route\RouteCollection $routeCollection
+     *
+     * @return \Spryker\Yves\Router\Route\RouteCollection
+     */
+    protected function addCustomerSavedCardsRoute(RouteCollection $routeCollection): RouteCollection
+    {
+        $route = $this->buildRoute(static::ROUTE_PATH_MOLLIE_CUSTOMER_SAVED_CARDS, 'Mollie', 'SavedCards', 'indexAction');
+        $route = $route->setMethods(['GET']);
+        $routeCollection->add(static::ROUTE_MOLLIE_CUSTOMER_SAVED_CARDS, $route);
+
+        return $routeCollection;
+    }
+
+    /**
+     * @param \Spryker\Yves\Router\Route\RouteCollection $routeCollection
+     *
+     * @return \Spryker\Yves\Router\Route\RouteCollection
+     */
+    protected function addCustomerSavedCardsRemoveRoute(RouteCollection $routeCollection): RouteCollection
+    {
+        $route = $this->buildRoute(static::ROUTE_PATH_MOLLIE_CUSTOMER_SAVED_CARDS_REMOVE, 'Mollie', 'SavedCards', 'removeAction');
+        $route = $route->setMethods(['POST']);
+        $routeCollection->add(static::ROUTE_MOLLIE_CUSTOMER_SAVED_CARDS_REMOVE, $route);
 
         return $routeCollection;
     }

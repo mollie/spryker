@@ -15,6 +15,8 @@ use Generated\Shared\Transfer\MolliePaymentMethodConfigCollectionTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodConfigCriteriaTransfer;
 use Generated\Shared\Transfer\MolliePaymentTransfer;
 use Generated\Shared\Transfer\MollieRefundResponseTransfer;
+use Generated\Shared\Transfer\MollieSavedCardRemoveRequestTransfer;
+use Generated\Shared\Transfer\MollieSavedCardRemoveResponseTransfer;
 use Generated\Shared\Transfer\MollieSingleClickPaymentDataRequestTransfer;
 use Generated\Shared\Transfer\MollieSingleClickPaymentDataTransfer;
 use Generated\Shared\Transfer\OrderCollectionRequestTransfer;
@@ -142,5 +144,35 @@ class MollieStub implements MollieStubInterface
             ->call('/mollie/gateway/get-express-checkout-config-collection', $mollieExpressCheckoutConfigCriteriaTransfer);
 
         return $mollieExpressCheckoutConfigCollectionTransfer;
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MollieSingleClickPaymentDataRequestTransfer $mollieSingleClickPaymentDataRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieSingleClickPaymentDataTransfer
+     */
+    public function getCustomerSavedCards(
+        MollieSingleClickPaymentDataRequestTransfer $mollieSingleClickPaymentDataRequestTransfer,
+    ): MollieSingleClickPaymentDataTransfer {
+        /** @var \Generated\Shared\Transfer\MollieSingleClickPaymentDataTransfer $mollieSingleClickPaymentDataTransfer */
+        $mollieSingleClickPaymentDataTransfer = $this->zedStub
+            ->call('/mollie/gateway/get-customer-saved-cards', $mollieSingleClickPaymentDataRequestTransfer);
+
+        return $mollieSingleClickPaymentDataTransfer;
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MollieSavedCardRemoveRequestTransfer $mollieSavedCardRemoveRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieSavedCardRemoveResponseTransfer
+     */
+    public function removeSavedCard(
+        MollieSavedCardRemoveRequestTransfer $mollieSavedCardRemoveRequestTransfer,
+    ): MollieSavedCardRemoveResponseTransfer {
+        /** @var \Generated\Shared\Transfer\MollieSavedCardRemoveResponseTransfer $mollieSavedCardRemoveResponseTransfer */
+        $mollieSavedCardRemoveResponseTransfer = $this->zedStub
+            ->call('/mollie/gateway/remove-saved-card', $mollieSavedCardRemoveRequestTransfer);
+
+        return $mollieSavedCardRemoveResponseTransfer;
     }
 }

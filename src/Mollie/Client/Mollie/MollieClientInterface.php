@@ -29,6 +29,8 @@ use Generated\Shared\Transfer\MolliePaymentMethodsApiResponseTransfer;
 use Generated\Shared\Transfer\MolliePaymentTransfer;
 use Generated\Shared\Transfer\MollieRefundApiResponseTransfer;
 use Generated\Shared\Transfer\MollieRefundResponseTransfer;
+use Generated\Shared\Transfer\MollieSavedCardRemoveRequestTransfer;
+use Generated\Shared\Transfer\MollieSavedCardRemoveResponseTransfer;
 use Generated\Shared\Transfer\MollieSingleClickPaymentDataRequestTransfer;
 use Generated\Shared\Transfer\MollieSingleClickPaymentDataTransfer;
 use Generated\Shared\Transfer\OrderCollectionRequestTransfer;
@@ -388,4 +390,50 @@ interface MollieClientInterface
     public function getSingleClickPaymentData(
         MollieSingleClickPaymentDataRequestTransfer $mollieSingleClickPaymentDataRequestTransfer,
     ): MollieSingleClickPaymentDataTransfer;
+
+    /**
+     * Specification:
+     * - Requires `MollieApiRequestTransfer.mollieCustomerId` and `MollieApiRequestTransfer.mandateId`.
+     * - Revokes the mandate at Mollie; a revoked mandate can no longer be charged.
+     * - Returns the HTTP `code` on failure.
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\MollieApiRequestTransfer $mollieApiRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieMandateApiResponseTransfer
+     */
+    public function revokeCustomerMandate(MollieApiRequestTransfer $mollieApiRequestTransfer): MollieMandateApiResponseTransfer;
+
+    /**
+     * Specification:
+     * - Makes a Zed call.
+     * - Returns the saved cards of the given customer, also when single-click payments are disabled,
+     *   so the customer can still remove them.
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\MollieSingleClickPaymentDataRequestTransfer $mollieSingleClickPaymentDataRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieSingleClickPaymentDataTransfer
+     */
+    public function getCustomerSavedCards(
+        MollieSingleClickPaymentDataRequestTransfer $mollieSingleClickPaymentDataRequestTransfer,
+    ): MollieSingleClickPaymentDataTransfer;
+
+    /**
+     * Specification:
+     * - Makes a Zed call.
+     * - Requires `MollieSavedCardRemoveRequestTransfer.idCustomer` and `MollieSavedCardRemoveRequestTransfer.mandateId`.
+     * - Revokes the saved card only when it belongs to the given customer.
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\MollieSavedCardRemoveRequestTransfer $mollieSavedCardRemoveRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieSavedCardRemoveResponseTransfer
+     */
+    public function removeSavedCard(
+        MollieSavedCardRemoveRequestTransfer $mollieSavedCardRemoveRequestTransfer,
+    ): MollieSavedCardRemoveResponseTransfer;
 }

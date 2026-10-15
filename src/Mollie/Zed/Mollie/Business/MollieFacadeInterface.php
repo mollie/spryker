@@ -21,6 +21,8 @@ use Generated\Shared\Transfer\MolliePaymentMethodConfigTransfer;
 use Generated\Shared\Transfer\MolliePaymentTransfer;
 use Generated\Shared\Transfer\MollieRefundApiResponseTransfer;
 use Generated\Shared\Transfer\MollieRefundResponseTransfer;
+use Generated\Shared\Transfer\MollieSavedCardRemoveRequestTransfer;
+use Generated\Shared\Transfer\MollieSavedCardRemoveResponseTransfer;
 use Generated\Shared\Transfer\MollieSingleClickConfigTransfer;
 use Generated\Shared\Transfer\MollieSingleClickPaymentDataRequestTransfer;
 use Generated\Shared\Transfer\MollieSingleClickPaymentDataTransfer;
@@ -326,4 +328,37 @@ interface MollieFacadeInterface
     public function getSingleClickPaymentData(
         MollieSingleClickPaymentDataRequestTransfer $mollieSingleClickPaymentDataRequestTransfer,
     ): MollieSingleClickPaymentDataTransfer;
+
+    /**
+     * Specification:
+     * - Returns whether single-click payments are enabled.
+     * - Returns the saved cards (valid credit card mandates) of the given customer, also when single-click payments
+     *   are disabled, so the customer can still remove them.
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\MollieSingleClickPaymentDataRequestTransfer $mollieSingleClickPaymentDataRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieSingleClickPaymentDataTransfer
+     */
+    public function getCustomerSavedCards(
+        MollieSingleClickPaymentDataRequestTransfer $mollieSingleClickPaymentDataRequestTransfer,
+    ): MollieSingleClickPaymentDataTransfer;
+
+    /**
+     * Specification:
+     * - Requires `MollieSavedCardRemoveRequestTransfer.idCustomer` and `MollieSavedCardRemoveRequestTransfer.mandateId`.
+     * - Checks that the mandate is one of the customer's current saved cards at Mollie.
+     * - Revokes the mandate at Mollie, so it can no longer be charged and disappears from the saved cards.
+     * - Returns `isSuccessful=false` when the card does not belong to the customer or Mollie rejects the revoke.
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\MollieSavedCardRemoveRequestTransfer $mollieSavedCardRemoveRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieSavedCardRemoveResponseTransfer
+     */
+    public function removeSavedCard(
+        MollieSavedCardRemoveRequestTransfer $mollieSavedCardRemoveRequestTransfer,
+    ): MollieSavedCardRemoveResponseTransfer;
 }

@@ -49,20 +49,31 @@ class SavedCardReader implements SavedCardReaderInterface
         $mollieSingleClickPaymentDataTransfer = (new MollieSingleClickPaymentDataTransfer())
             ->setIsEnabled($this->singleClickConfigReader->isSingleClickPaymentEnabled());
 
-        $idCustomer = $mollieSingleClickPaymentDataRequestTransfer->getIdCustomer();
-        if (!$mollieSingleClickPaymentDataTransfer->getIsEnabled() || !$idCustomer) {
+        if (!$mollieSingleClickPaymentDataTransfer->getIsEnabled()) {
             return $mollieSingleClickPaymentDataTransfer;
         }
 
-        $mollieCustomerTransfer = $this->mollieCustomerProvider->findMollieCustomer(
-            (new CustomerTransfer())->setIdCustomer($idCustomer),
+        return $this->addCustomerSavedCards(
+            $mollieSingleClickPaymentDataTransfer,
+            $mollieSingleClickPaymentDataRequestTransfer->getIdCustomer(),
         );
+    }
 
-        if (!$mollieCustomerTransfer) {
-            return $mollieSingleClickPaymentDataTransfer;
-        }
+    /**
+     * @param \Generated\Shared\Transfer\MollieSingleClickPaymentDataRequestTransfer $mollieSingleClickPaymentDataRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieSingleClickPaymentDataTransfer
+     */
+    public function getCustomerSavedCards(
+        MollieSingleClickPaymentDataRequestTransfer $mollieSingleClickPaymentDataRequestTransfer,
+    ): MollieSingleClickPaymentDataTransfer {
+        $mollieSingleClickPaymentDataTransfer = (new MollieSingleClickPaymentDataTransfer())
+            ->setIsEnabled($this->singleClickConfigReader->isSingleClickPaymentEnabled());
 
-        return $mollieSingleClickPaymentDataTransfer->setSavedCards($this->getSavedCards($mollieCustomerTransfer));
+        return $this->addCustomerSavedCards(
+            $mollieSingleClickPaymentDataTransfer,
+            $mollieSingleClickPaymentDataRequestTransfer->getIdCustomer(),
+        );
     }
 
     /**
@@ -100,5 +111,30 @@ class SavedCardReader implements SavedCardReaderInterface
         ]);
 
         return new ArrayObject();
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MollieSingleClickPaymentDataTransfer $mollieSingleClickPaymentDataTransfer
+     * @param int|null $idCustomer
+     *
+     * @return \Generated\Shared\Transfer\MollieSingleClickPaymentDataTransfer
+     */
+    protected function addCustomerSavedCards(
+        MollieSingleClickPaymentDataTransfer $mollieSingleClickPaymentDataTransfer,
+        ?int $idCustomer,
+    ): MollieSingleClickPaymentDataTransfer {
+        if (!$idCustomer) {
+            return $mollieSingleClickPaymentDataTransfer;
+        }
+
+        $mollieCustomerTransfer = $this->mollieCustomerProvider->findMollieCustomer(
+            (new CustomerTransfer())->setIdCustomer($idCustomer),
+        );
+
+        if (!$mollieCustomerTransfer) {
+            return $mollieSingleClickPaymentDataTransfer;
+        }
+
+        return $mollieSingleClickPaymentDataTransfer->setSavedCards($this->getSavedCards($mollieCustomerTransfer));
     }
 }

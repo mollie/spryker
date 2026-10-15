@@ -6,10 +6,12 @@ namespace Mollie\Yves\Mollie;
 
 use Mollie\Client\Mollie\MollieClientInterface;
 use Mollie\Service\Mollie\MollieServiceInterface;
+use Mollie\Yves\Mollie\Dependency\Client\MollieToCustomerClientInterface;
 use Mollie\Yves\Mollie\Dependency\Client\MollieToLocaleClientInterface;
 use Mollie\Yves\Mollie\Dependency\Client\MollieToQuoteClientInterface;
 use Mollie\Yves\Mollie\Dependency\Client\MollieToStorageClientInterface;
 use Mollie\Yves\Mollie\Dependency\Service\MollieToUtilEncodingServiceInterface;
+use Mollie\Yves\Mollie\Form\SavedCard\SavedCardRemoveForm;
 use Mollie\Yves\Mollie\Handler\Payment\MolliePaymentAlmaHandler;
 use Mollie\Yves\Mollie\Handler\Payment\MolliePaymentApplePayDirectHandler;
 use Mollie\Yves\Mollie\Handler\Payment\MolliePaymentApplePayHandler;
@@ -108,9 +110,12 @@ use Mollie\Yves\Mollie\Validator\ApplePayValidationUrlValidator;
 use Mollie\Yves\Mollie\Validator\ApplePayValidationUrlValidatorInterface;
 use Mollie\Yves\Mollie\Validator\WebhookSignatureValidator;
 use Mollie\Yves\Mollie\Validator\WebhookSignatureValidatorInterface;
+use Spryker\Shared\Application\ApplicationConstants;
 use Spryker\Yves\Kernel\AbstractFactory;
 use Spryker\Yves\StepEngine\Dependency\Form\StepEngineFormDataProviderInterface;
 use Spryker\Yves\StepEngine\Dependency\Form\SubFormInterface;
+use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\Form\FormInterface;
 
 /**
  * @method \Mollie\Yves\Mollie\MollieConfig getConfig()
@@ -1009,5 +1014,33 @@ class MollieFactory extends AbstractFactory
     public function getMollieService(): MollieServiceInterface
     {
         return $this->getProvidedDependency(MollieDependencyProvider::SERVICE_MOLLIE);
+    }
+
+    /**
+     * @return \Mollie\Yves\Mollie\Dependency\Client\MollieToCustomerClientInterface
+     */
+    public function getCustomerClient(): MollieToCustomerClientInterface
+    {
+        return $this->getProvidedDependency(MollieDependencyProvider::CLIENT_CUSTOMER);
+    }
+
+    /**
+     * @return \Symfony\Component\Form\FormFactoryInterface
+     */
+    public function getFormFactory(): FormFactoryInterface
+    {
+        return $this->getProvidedDependency(ApplicationConstants::FORM_FACTORY);
+    }
+
+    /**
+     * @param string|null $mandateId
+     *
+     * @return \Symfony\Component\Form\FormInterface
+     */
+    public function createSavedCardRemoveForm(?string $mandateId = null): FormInterface
+    {
+        return $this->getFormFactory()->create(SavedCardRemoveForm::class, [
+            SavedCardRemoveForm::FIELD_MANDATE_ID => $mandateId,
+        ]);
     }
 }

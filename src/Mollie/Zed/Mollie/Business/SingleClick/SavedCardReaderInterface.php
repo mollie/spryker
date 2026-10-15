@@ -26,6 +26,20 @@ interface SavedCardReaderInterface
 
     /**
      * Specification:
+     * - Returns whether single-click payments are enabled.
+     * - Returns the saved cards (valid credit card mandates) of the customer, also when single-click payments are disabled,
+     *   so the customer can still remove them.
+     *
+     * @param \Generated\Shared\Transfer\MollieSingleClickPaymentDataRequestTransfer $mollieSingleClickPaymentDataRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieSingleClickPaymentDataTransfer
+     */
+    public function getCustomerSavedCards(
+        MollieSingleClickPaymentDataRequestTransfer $mollieSingleClickPaymentDataRequestTransfer,
+    ): MollieSingleClickPaymentDataTransfer;
+
+    /**
+     * Specification:
      * - Fetches the valid credit card mandates of the Mollie customer.
      * - When Mollie no longer knows the customer (404/410), deletes the stored customer and returns no cards.
      *

@@ -12,6 +12,8 @@ use Generated\Shared\Transfer\MolliePaymentMethodConfigCollectionTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodConfigCriteriaTransfer;
 use Generated\Shared\Transfer\MolliePaymentTransfer;
 use Generated\Shared\Transfer\MollieRefundResponseTransfer;
+use Generated\Shared\Transfer\MollieSavedCardRemoveRequestTransfer;
+use Generated\Shared\Transfer\MollieSavedCardRemoveResponseTransfer;
 use Generated\Shared\Transfer\MollieSingleClickPaymentDataRequestTransfer;
 use Generated\Shared\Transfer\MollieSingleClickPaymentDataTransfer;
 use Generated\Shared\Transfer\OrderCollectionRequestTransfer;
@@ -82,4 +84,22 @@ interface MollieStubInterface
     public function getSingleClickPaymentData(
         MollieSingleClickPaymentDataRequestTransfer $mollieSingleClickPaymentDataRequestTransfer,
     ): MollieSingleClickPaymentDataTransfer;
+
+    /**
+     * @param \Generated\Shared\Transfer\MollieSingleClickPaymentDataRequestTransfer $mollieSingleClickPaymentDataRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieSingleClickPaymentDataTransfer
+     */
+    public function getCustomerSavedCards(
+        MollieSingleClickPaymentDataRequestTransfer $mollieSingleClickPaymentDataRequestTransfer,
+    ): MollieSingleClickPaymentDataTransfer;
+
+    /**
+     * @param \Generated\Shared\Transfer\MollieSavedCardRemoveRequestTransfer $mollieSavedCardRemoveRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieSavedCardRemoveResponseTransfer
+     */
+    public function removeSavedCard(
+        MollieSavedCardRemoveRequestTransfer $mollieSavedCardRemoveRequestTransfer,
+    ): MollieSavedCardRemoveResponseTransfer;
 }

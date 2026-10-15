@@ -51,6 +51,8 @@ use Mollie\Zed\Mollie\Business\SingleClick\MollieCustomerProvider;
 use Mollie\Zed\Mollie\Business\SingleClick\MollieCustomerProviderInterface;
 use Mollie\Zed\Mollie\Business\SingleClick\SavedCardReader;
 use Mollie\Zed\Mollie\Business\SingleClick\SavedCardReaderInterface;
+use Mollie\Zed\Mollie\Business\SingleClick\SavedCardRemover;
+use Mollie\Zed\Mollie\Business\SingleClick\SavedCardRemoverInterface;
 use Mollie\Zed\Mollie\Business\SingleClick\SingleClickConfigReader;
 use Mollie\Zed\Mollie\Business\SingleClick\SingleClickConfigReaderInterface;
 use Mollie\Zed\Mollie\Business\SingleClick\SingleClickConfigWriter;
@@ -433,6 +435,18 @@ class MollieBusinessFactory extends AbstractBusinessFactory
     {
         return new SingleClickPaymentResolver(
             $this->createSingleClickConfigReader(),
+            $this->createMollieCustomerProvider(),
+            $this->createSavedCardReader(),
+        );
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Business\SingleClick\SavedCardRemoverInterface
+     */
+    public function createSavedCardRemover(): SavedCardRemoverInterface
+    {
+        return new SavedCardRemover(
+            $this->getMollieClient(),
             $this->createMollieCustomerProvider(),
             $this->createSavedCardReader(),
         );

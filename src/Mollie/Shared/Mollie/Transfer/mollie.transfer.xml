@@ -299,6 +299,7 @@
         <property name="applePayValidationUrl" type="string"/>
         <property name="expressCheckoutUuid" type="string"/>
         <property name="mollieCustomerId" type="string"/>
+        <property name="mandateId" type="string"/>
     </transfer>
 
     <transfer name="MolliePaymentCaptureRequest">
@@ -582,6 +583,16 @@
     <transfer name="MollieSingleClickPaymentData">
         <property name="isEnabled" type="bool"/>
         <property name="savedCards" type="MollieMandate[]" singular="savedCard"/>
+    </transfer>
+
+    <transfer name="MollieSavedCardRemoveRequest">
+        <property name="idCustomer" type="int"/>
+        <property name="mandateId" type="string"/>
+    </transfer>
+
+    <transfer name="MollieSavedCardRemoveResponse">
+        <property name="isSuccessful" type="bool"/>
+        <property name="message" type="string"/>
     </transfer>
 
 </transfers>

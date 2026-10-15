@@ -21,6 +21,8 @@ use Generated\Shared\Transfer\MolliePaymentMethodConfigTransfer;
 use Generated\Shared\Transfer\MolliePaymentTransfer;
 use Generated\Shared\Transfer\MollieRefundApiResponseTransfer;
 use Generated\Shared\Transfer\MollieRefundResponseTransfer;
+use Generated\Shared\Transfer\MollieSavedCardRemoveRequestTransfer;
+use Generated\Shared\Transfer\MollieSavedCardRemoveResponseTransfer;
 use Generated\Shared\Transfer\MollieSingleClickConfigTransfer;
 use Generated\Shared\Transfer\MollieSingleClickPaymentDataRequestTransfer;
 use Generated\Shared\Transfer\MollieSingleClickPaymentDataTransfer;
@@ -440,5 +442,39 @@ class MollieFacade extends AbstractFacade implements MollieFacadeInterface
         return $this->getFactory()
             ->createSavedCardReader()
             ->getSingleClickPaymentData($mollieSingleClickPaymentDataRequestTransfer);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\MollieSingleClickPaymentDataRequestTransfer $mollieSingleClickPaymentDataRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieSingleClickPaymentDataTransfer
+     */
+    public function getCustomerSavedCards(
+        MollieSingleClickPaymentDataRequestTransfer $mollieSingleClickPaymentDataRequestTransfer,
+    ): MollieSingleClickPaymentDataTransfer {
+        return $this->getFactory()
+            ->createSavedCardReader()
+            ->getCustomerSavedCards($mollieSingleClickPaymentDataRequestTransfer);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\MollieSavedCardRemoveRequestTransfer $mollieSavedCardRemoveRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieSavedCardRemoveResponseTransfer
+     */
+    public function removeSavedCard(
+        MollieSavedCardRemoveRequestTransfer $mollieSavedCardRemoveRequestTransfer,
+    ): MollieSavedCardRemoveResponseTransfer {
+        return $this->getFactory()
+            ->createSavedCardRemover()
+            ->removeSavedCard($mollieSavedCardRemoveRequestTransfer);
     }
 }

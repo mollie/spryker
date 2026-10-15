@@ -146,3 +146,19 @@ mollie.checkout.payment.credit.card.new.card,Neue Karte verwenden,de_DE
 mollie.checkout.payment.credit.card.new.card,Use a new card,en_US
 mollie.checkout.payment.credit.card.save.card.consent,"Meine Karte bei Mollie speichern, um beim nächsten Mal schneller zu bezahlen.",de_DE
 mollie.checkout.payment.credit.card.save.card.consent,Save my card with Mollie for faster checkout next time.,en_US
+mollie.customer.saved_cards.menu,Gespeicherte Karten,de_DE
+mollie.customer.saved_cards.menu,Saved cards,en_US
+mollie.customer.saved_cards.title,Gespeicherte Karten,de_DE
+mollie.customer.saved_cards.title,Saved cards,en_US
+mollie.customer.saved_cards.empty,Sie haben keine gespeicherten Karten.,de_DE
+mollie.customer.saved_cards.empty,You have no saved cards.,en_US
+mollie.customer.saved_cards.expires,Gültig bis,de_DE
+mollie.customer.saved_cards.expires,Expires,en_US
+mollie.customer.saved_cards.remove,Entfernen,de_DE
+mollie.customer.saved_cards.remove,Remove,en_US
+mollie.customer.saved_cards.remove.confirm,Möchten Sie diese Karte wirklich entfernen?,de_DE
+mollie.customer.saved_cards.remove.confirm,Do you really want to remove this card?,en_US
+mollie.customer.saved_cards.remove.success,Die Karte wurde entfernt.,de_DE
+mollie.customer.saved_cards.remove.success,The card has been removed.,en_US
+mollie.customer.saved_cards.remove.error,Die Karte konnte nicht entfernt werden. Bitte versuchen Sie es erneut.,de_DE
+mollie.customer.saved_cards.remove.error,The card could not be removed. Please try again.,en_US

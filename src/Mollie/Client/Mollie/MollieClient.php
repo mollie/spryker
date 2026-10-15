@@ -29,6 +29,8 @@ use Generated\Shared\Transfer\MolliePaymentMethodsApiResponseTransfer;
 use Generated\Shared\Transfer\MolliePaymentTransfer;
 use Generated\Shared\Transfer\MollieRefundApiResponseTransfer;
 use Generated\Shared\Transfer\MollieRefundResponseTransfer;
+use Generated\Shared\Transfer\MollieSavedCardRemoveRequestTransfer;
+use Generated\Shared\Transfer\MollieSavedCardRemoveResponseTransfer;
 use Generated\Shared\Transfer\MollieSingleClickPaymentDataRequestTransfer;
 use Generated\Shared\Transfer\MollieSingleClickPaymentDataTransfer;
 use Generated\Shared\Transfer\OrderCollectionRequestTransfer;
@@ -459,5 +461,58 @@ class MollieClient extends AbstractClient implements MollieClientInterface
         return $this->getFactory()
             ->createZedMollieStub()
             ->getSingleClickPaymentData($mollieSingleClickPaymentDataRequestTransfer);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\MollieApiRequestTransfer $mollieApiRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieMandateApiResponseTransfer
+     */
+    public function revokeCustomerMandate(MollieApiRequestTransfer $mollieApiRequestTransfer): MollieMandateApiResponseTransfer
+    {
+        /** @var \Generated\Shared\Transfer\MollieMandateApiResponseTransfer $mollieMandateApiResponseTransfer */
+        $mollieMandateApiResponseTransfer = $this->getFactory()
+            ->createRevokeCustomerMandateApi()
+            ->execute($mollieApiRequestTransfer);
+
+        return $mollieMandateApiResponseTransfer;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\MollieSingleClickPaymentDataRequestTransfer $mollieSingleClickPaymentDataRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieSingleClickPaymentDataTransfer
+     */
+    public function getCustomerSavedCards(
+        MollieSingleClickPaymentDataRequestTransfer $mollieSingleClickPaymentDataRequestTransfer,
+    ): MollieSingleClickPaymentDataTransfer {
+        return $this->getFactory()
+            ->createZedMollieStub()
+            ->getCustomerSavedCards($mollieSingleClickPaymentDataRequestTransfer);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\MollieSavedCardRemoveRequestTransfer $mollieSavedCardRemoveRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieSavedCardRemoveResponseTransfer
+     */
+    public function removeSavedCard(
+        MollieSavedCardRemoveRequestTransfer $mollieSavedCardRemoveRequestTransfer,
+    ): MollieSavedCardRemoveResponseTransfer {
+        return $this->getFactory()
+            ->createZedMollieStub()
+            ->removeSavedCard($mollieSavedCardRemoveRequestTransfer);
     }
 }
