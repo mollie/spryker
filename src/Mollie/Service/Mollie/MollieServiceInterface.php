@@ -32,6 +32,17 @@ interface MollieServiceInterface
     public function convertIntegerToMollieAmount(int $value, ?string $currency = null): MollieAmountTransfer;
 
     /**
+     * Converts Mollie amount format into Spryker integer amount
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\MollieAmountTransfer $mollieAmountTransfer
+     *
+     * @return int
+     */
+    public function convertMollieAmountToInteger(MollieAmountTransfer $mollieAmountTransfer): int;
+
+    /**
      * Calls UrlResolver class from client layer
      *
      * @api

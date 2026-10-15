@@ -7,6 +7,7 @@ namespace Mollie\Zed\Mollie\Persistence;
 
 use Generated\Shared\Transfer\MollieCustomerTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutConfigCriteriaTransfer;
+use Generated\Shared\Transfer\MollieExpressCheckoutPaymentRefundTransfer;
 use Generated\Shared\Transfer\MollieItemPaymentCaptureTransfer;
 use Generated\Shared\Transfer\MolliePaymentLinkTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodConfigCollectionTransfer;
@@ -69,6 +70,13 @@ interface MollieRepositoryInterface
     public function getPersistentExpressCheckoutMethodConfig(
         MollieExpressCheckoutConfigCriteriaTransfer $criteriaTransfer,
     ): array;
+
+    /**
+     * @param string $expressCheckoutUuid
+     *
+     * @return \Generated\Shared\Transfer\MollieExpressCheckoutPaymentRefundTransfer|null
+     */
+    public function findExpressCheckoutPaymentRefundByExpressCheckoutUuid(string $expressCheckoutUuid): ?MollieExpressCheckoutPaymentRefundTransfer;
 
     /**
      * Specification:

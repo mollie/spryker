@@ -12,9 +12,12 @@ use Generated\Shared\Transfer\MollieCreateCaptureApiResponseTransfer;
 use Generated\Shared\Transfer\MollieCustomerApiResponseTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutConfigCollectionTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutConfigCriteriaTransfer;
-use Generated\Shared\Transfer\MollieExpressCheckoutPaymentUpdateRequestTransfer;
-use Generated\Shared\Transfer\MollieExpressCheckoutPaymentUpdateResponseTransfer;
+use Generated\Shared\Transfer\MollieExpressCheckoutOrderRequestTransfer;
+use Generated\Shared\Transfer\MollieExpressCheckoutOrderResponseTransfer;
+use Generated\Shared\Transfer\MollieExpressCheckoutPaymentRefundTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutSessionApiResponseTransfer;
+use Generated\Shared\Transfer\MollieExpressCheckoutShippingOptionsRequestTransfer;
+use Generated\Shared\Transfer\MollieExpressCheckoutShippingOptionsResponseTransfer;
 use Generated\Shared\Transfer\MollieGetCaptureApiResponseTransfer;
 use Generated\Shared\Transfer\MollieGetProfileApiResponseTransfer;
 use Generated\Shared\Transfer\MollieLogApiTransfer;
@@ -29,6 +32,7 @@ use Generated\Shared\Transfer\MolliePaymentMethodsApiResponseTransfer;
 use Generated\Shared\Transfer\MolliePaymentTransfer;
 use Generated\Shared\Transfer\MollieRefundApiResponseTransfer;
 use Generated\Shared\Transfer\MollieRefundResponseTransfer;
+use Generated\Shared\Transfer\MollieWebhookResponseTransfer;
 use Generated\Shared\Transfer\MollieSavedCardRemoveRequestTransfer;
 use Generated\Shared\Transfer\MollieSavedCardRemoveResponseTransfer;
 use Generated\Shared\Transfer\MollieSingleClickPaymentDataRequestTransfer;
@@ -140,23 +144,6 @@ class MollieClient extends AbstractClient implements MollieClientInterface
     public function updateOrderCollection(OrderCollectionRequestTransfer $updateOrderCollectionRequestTransfer): OrderCollectionResponseTransfer
     {
         return $this->getFactory()->createZedMollieStub()->updateOrderCollection($updateOrderCollectionRequestTransfer);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @api
-     *
-     * @param \Generated\Shared\Transfer\MollieExpressCheckoutPaymentUpdateRequestTransfer $mollieExpressCheckoutPaymentUpdateRequestTransfer
-     *
-     * @return \Generated\Shared\Transfer\MollieExpressCheckoutPaymentUpdateResponseTransfer
-     */
-    public function updateExpressCheckoutMolliePayment(
-        MollieExpressCheckoutPaymentUpdateRequestTransfer $mollieExpressCheckoutPaymentUpdateRequestTransfer,
-    ): MollieExpressCheckoutPaymentUpdateResponseTransfer {
-        $mollieStub = $this->getFactory()->createZedMollieStub();
-
-        return $mollieStub->updateExpressCheckoutMolliePayment($mollieExpressCheckoutPaymentUpdateRequestTransfer);
     }
 
     /**
@@ -406,6 +393,73 @@ class MollieClient extends AbstractClient implements MollieClientInterface
         $mollieApplePayPaymentSessionApiResponseTransfer = $this->getFactory()->createApplePayPaymentSessionApi()->execute($mollieApiRequestTransfer);
 
         return $mollieApplePayPaymentSessionApiResponseTransfer;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\MollieExpressCheckoutOrderRequestTransfer $mollieExpressCheckoutOrderRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieExpressCheckoutOrderResponseTransfer
+     */
+    public function placeExpressCheckoutOrder(
+        MollieExpressCheckoutOrderRequestTransfer $mollieExpressCheckoutOrderRequestTransfer,
+    ): MollieExpressCheckoutOrderResponseTransfer {
+        return $this->getFactory()
+            ->createZedMollieStub()
+            ->placeExpressCheckoutOrder($mollieExpressCheckoutOrderRequestTransfer);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\MollieExpressCheckoutShippingOptionsRequestTransfer $mollieExpressCheckoutShippingOptionsRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieExpressCheckoutShippingOptionsResponseTransfer
+     */
+    public function getExpressCheckoutShippingOptions(
+        MollieExpressCheckoutShippingOptionsRequestTransfer $mollieExpressCheckoutShippingOptionsRequestTransfer,
+    ): MollieExpressCheckoutShippingOptionsResponseTransfer {
+        return $this->getFactory()
+            ->createZedMollieStub()
+            ->getExpressCheckoutShippingOptions($mollieExpressCheckoutShippingOptionsRequestTransfer);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\MollieExpressCheckoutPaymentRefundTransfer $mollieExpressCheckoutPaymentRefundTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieExpressCheckoutPaymentRefundTransfer
+     */
+    public function createExpressCheckoutPaymentRefund(
+        MollieExpressCheckoutPaymentRefundTransfer $mollieExpressCheckoutPaymentRefundTransfer,
+    ): MollieExpressCheckoutPaymentRefundTransfer {
+        return $this->getFactory()
+            ->createZedMollieStub()
+            ->createExpressCheckoutPaymentRefund($mollieExpressCheckoutPaymentRefundTransfer);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\MolliePaymentTransfer $molliePaymentTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieWebhookResponseTransfer
+     */
+    public function processExpressCheckoutPaymentWebhook(MolliePaymentTransfer $molliePaymentTransfer): MollieWebhookResponseTransfer
+    {
+        return $this->getFactory()
+            ->createZedMollieStub()
+            ->processExpressCheckoutPaymentWebhook($molliePaymentTransfer);
     }
 
     /**

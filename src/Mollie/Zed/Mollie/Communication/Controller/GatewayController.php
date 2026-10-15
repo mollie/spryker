@@ -7,8 +7,11 @@ namespace Mollie\Zed\Mollie\Communication\Controller;
 
 use Generated\Shared\Transfer\MollieExpressCheckoutConfigCollectionTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutConfigCriteriaTransfer;
-use Generated\Shared\Transfer\MollieExpressCheckoutPaymentUpdateRequestTransfer;
-use Generated\Shared\Transfer\MollieExpressCheckoutPaymentUpdateResponseTransfer;
+use Generated\Shared\Transfer\MollieExpressCheckoutOrderRequestTransfer;
+use Generated\Shared\Transfer\MollieExpressCheckoutOrderResponseTransfer;
+use Generated\Shared\Transfer\MollieExpressCheckoutPaymentRefundTransfer;
+use Generated\Shared\Transfer\MollieExpressCheckoutShippingOptionsRequestTransfer;
+use Generated\Shared\Transfer\MollieExpressCheckoutShippingOptionsResponseTransfer;
 use Generated\Shared\Transfer\MolliePaymentCaptureResponseTransfer;
 use Generated\Shared\Transfer\MolliePaymentLinkTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodConfigCollectionTransfer;
@@ -19,6 +22,7 @@ use Generated\Shared\Transfer\MollieSavedCardRemoveRequestTransfer;
 use Generated\Shared\Transfer\MollieSavedCardRemoveResponseTransfer;
 use Generated\Shared\Transfer\MollieSingleClickPaymentDataRequestTransfer;
 use Generated\Shared\Transfer\MollieSingleClickPaymentDataTransfer;
+use Generated\Shared\Transfer\MollieWebhookResponseTransfer;
 use Generated\Shared\Transfer\OrderCollectionRequestTransfer;
 use Generated\Shared\Transfer\OrderCollectionResponseTransfer;
 use Spryker\Zed\Kernel\Communication\Controller\AbstractGatewayController;
@@ -37,17 +41,6 @@ class GatewayController extends AbstractGatewayController
         OrderCollectionRequestTransfer $updateOrderCollectionRequestTransfer,
     ): OrderCollectionResponseTransfer {
         return $this->getFacade()->updateOrderCollection($updateOrderCollectionRequestTransfer);
-    }
-
-    /**
-     * @param \Generated\Shared\Transfer\MollieExpressCheckoutPaymentUpdateRequestTransfer $mollieExpressCheckoutPaymentUpdateRequestTransfer
-     *
-     * @return \Generated\Shared\Transfer\MollieExpressCheckoutPaymentUpdateResponseTransfer
-     */
-    public function updateExpressCheckoutMolliePaymentAction(
-        MollieExpressCheckoutPaymentUpdateRequestTransfer $mollieExpressCheckoutPaymentUpdateRequestTransfer,
-    ): MollieExpressCheckoutPaymentUpdateResponseTransfer {
-        return $this->getFacade()->updateExpressCheckoutMolliePayment($mollieExpressCheckoutPaymentUpdateRequestTransfer);
     }
 
     /**
@@ -133,5 +126,48 @@ class GatewayController extends AbstractGatewayController
         MollieExpressCheckoutConfigCriteriaTransfer $mollieExpressCheckoutConfigCriteriaTransfer,
     ): MollieExpressCheckoutConfigCollectionTransfer {
         return $this->getFacade()->getExpressCheckoutConfigCollection($mollieExpressCheckoutConfigCriteriaTransfer);
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MollieExpressCheckoutOrderRequestTransfer $mollieExpressCheckoutOrderRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieExpressCheckoutOrderResponseTransfer
+     */
+    public function placeExpressCheckoutOrderAction(
+        MollieExpressCheckoutOrderRequestTransfer $mollieExpressCheckoutOrderRequestTransfer,
+    ): MollieExpressCheckoutOrderResponseTransfer {
+        return $this->getFacade()->placeExpressCheckoutOrder($mollieExpressCheckoutOrderRequestTransfer);
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MollieExpressCheckoutShippingOptionsRequestTransfer $mollieExpressCheckoutShippingOptionsRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieExpressCheckoutShippingOptionsResponseTransfer
+     */
+    public function getExpressCheckoutShippingOptionsAction(
+        MollieExpressCheckoutShippingOptionsRequestTransfer $mollieExpressCheckoutShippingOptionsRequestTransfer,
+    ): MollieExpressCheckoutShippingOptionsResponseTransfer {
+        return $this->getFacade()->getExpressCheckoutShippingOptions($mollieExpressCheckoutShippingOptionsRequestTransfer);
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MollieExpressCheckoutPaymentRefundTransfer $mollieExpressCheckoutPaymentRefundTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieExpressCheckoutPaymentRefundTransfer
+     */
+    public function createExpressCheckoutPaymentRefundAction(
+        MollieExpressCheckoutPaymentRefundTransfer $mollieExpressCheckoutPaymentRefundTransfer,
+    ): MollieExpressCheckoutPaymentRefundTransfer {
+        return $this->getFacade()->createExpressCheckoutPaymentRefund($mollieExpressCheckoutPaymentRefundTransfer);
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MolliePaymentTransfer $molliePaymentTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieWebhookResponseTransfer
+     */
+    public function processExpressCheckoutPaymentWebhookAction(MolliePaymentTransfer $molliePaymentTransfer): MollieWebhookResponseTransfer
+    {
+        return $this->getFacade()->processExpressCheckoutPaymentWebhook($molliePaymentTransfer);
     }
 }

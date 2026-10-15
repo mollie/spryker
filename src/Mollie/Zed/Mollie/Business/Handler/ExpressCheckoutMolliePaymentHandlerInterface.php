@@ -4,22 +4,22 @@ declare(strict_types=1);
 
 namespace Mollie\Zed\Mollie\Business\Handler;
 
-use Generated\Shared\Transfer\CheckoutResponseTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutPaymentUpdateRequestTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutPaymentUpdateResponseTransfer;
 use Generated\Shared\Transfer\QuoteTransfer;
+use Generated\Shared\Transfer\SaveOrderTransfer;
 
 interface ExpressCheckoutMolliePaymentHandlerInterface
 {
     /**
      * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
-     * @param \Generated\Shared\Transfer\CheckoutResponseTransfer $checkoutResponseTransfer
+     * @param \Generated\Shared\Transfer\SaveOrderTransfer $saveOrderTransfer
      *
      * @return void
      */
     public function createExpressCheckoutMolliePayment(
         QuoteTransfer $quoteTransfer,
-        CheckoutResponseTransfer $checkoutResponseTransfer,
+        SaveOrderTransfer $saveOrderTransfer,
     ): void;
 
     /**
