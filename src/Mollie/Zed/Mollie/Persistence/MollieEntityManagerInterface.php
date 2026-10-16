@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Mollie\Zed\Mollie\Persistence;
 
 use Generated\Shared\Transfer\MollieExpressCheckoutPaymentRefundTransfer;
+use Generated\Shared\Transfer\MollieCustomerTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutPaymentUpdateRequestTransfer;
 use Generated\Shared\Transfer\MollieExpressPaymentTransfer;
 use Generated\Shared\Transfer\MollieItemPaymentCaptureTransfer;
@@ -141,4 +142,28 @@ interface MollieEntityManagerInterface
      * @return void
      */
     public function saveExpressCheckoutConfig(string $expressMethod, bool $isActive): void;
+
+    /**
+     * Specification:
+     * - Creates or updates the Mollie customer row of a Spryker customer and Mollie mode.
+     *
+     * @param \Generated\Shared\Transfer\MollieCustomerTransfer $mollieCustomerTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieCustomerTransfer
+     */
+    public function saveMollieCustomer(MollieCustomerTransfer $mollieCustomerTransfer): MollieCustomerTransfer;
+
+    /**
+     * @param int $idMollieCustomer
+     *
+     * @return void
+     */
+    public function deleteMollieCustomer(int $idMollieCustomer): void;
+
+    /**
+     * @param bool $isActive
+     *
+     * @return void
+     */
+    public function saveSingleClickConfig(bool $isActive): void;
 }

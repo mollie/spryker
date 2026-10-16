@@ -21,6 +21,7 @@ use Mollie\Client\Mollie\Logger\MollieLoggerInterface;
 use Mollie\Client\Mollie\MollieConfig;
 use Mollie\Service\Mollie\MollieServiceInterface;
 use Mollie\Shared\Mollie\MollieConfig as SharedConfig;
+use Mollie\Shared\Mollie\MollieConstants;
 use Spryker\Shared\Kernel\Transfer\AbstractTransfer;
 use Spryker\Shared\Log\LoggerTrait;
 
@@ -74,7 +75,8 @@ class CreatePaymentApi extends AbstractApiCall
         $paymentMethod = $paymentTransfer->getPaymentMethod();
         $captureMode = $this->getCaptureMode($paymentMethod);
         $method = $this->getMethod($paymentMethod);
-        $metadata = $this->apiHandler->createPaymentMetadata($checkoutResponseTransfer);
+        $metadata = $this->apiHandler->createPaymentMetadata($checkoutResponseTransfer, $quoteTransfer);
+        $creditCardPaymentTransfer = $paymentTransfer->getMollieCreditCardPayment();
         $additionalParameters = $this->apiHandler->createAdditionalParameters($mollieApiRequestTransfer);
         $billingAddress = $this->apiHandler->createBillingAddress($quoteTransfer);
         $lines = $this->apiHandler->createLines($quoteTransfer);
@@ -89,6 +91,9 @@ class CreatePaymentApi extends AbstractApiCall
             method: $method,
             metadata: $metadata,
             captureMode: $captureMode,
+            sequenceType: $creditCardPaymentTransfer?->getMollieCustomerId() ? MollieConstants::MOLLIE_SEQUENCE_TYPE_ONE_OFF : null,
+            mandateId: $creditCardPaymentTransfer?->getMollieCustomerId() ? $creditCardPaymentTransfer->getMandateId() : null,
+            customerId: $creditCardPaymentTransfer?->getMollieCustomerId(),
             additional: $additionalParameters,
         );
 

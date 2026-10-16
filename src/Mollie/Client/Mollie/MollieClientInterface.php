@@ -9,6 +9,7 @@ use Generated\Shared\Transfer\MollieApiRequestTransfer;
 use Generated\Shared\Transfer\MollieApiResponseTransfer;
 use Generated\Shared\Transfer\MollieApplePayPaymentSessionApiResponseTransfer;
 use Generated\Shared\Transfer\MollieCreateCaptureApiResponseTransfer;
+use Generated\Shared\Transfer\MollieCustomerApiResponseTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutConfigCollectionTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutConfigCriteriaTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutOrderRequestTransfer;
@@ -20,6 +21,7 @@ use Generated\Shared\Transfer\MollieExpressCheckoutShippingOptionsResponseTransf
 use Generated\Shared\Transfer\MollieGetCaptureApiResponseTransfer;
 use Generated\Shared\Transfer\MollieGetProfileApiResponseTransfer;
 use Generated\Shared\Transfer\MollieLogApiTransfer;
+use Generated\Shared\Transfer\MollieMandateApiResponseTransfer;
 use Generated\Shared\Transfer\MolliePaymentApiResponseTransfer;
 use Generated\Shared\Transfer\MolliePaymentLinkApiResponseTransfer;
 use Generated\Shared\Transfer\MolliePaymentLinkTransfer;
@@ -31,6 +33,10 @@ use Generated\Shared\Transfer\MolliePaymentTransfer;
 use Generated\Shared\Transfer\MollieRefundApiResponseTransfer;
 use Generated\Shared\Transfer\MollieRefundResponseTransfer;
 use Generated\Shared\Transfer\MollieWebhookResponseTransfer;
+use Generated\Shared\Transfer\MollieSavedCardRemoveRequestTransfer;
+use Generated\Shared\Transfer\MollieSavedCardRemoveResponseTransfer;
+use Generated\Shared\Transfer\MollieSingleClickPaymentDataRequestTransfer;
+use Generated\Shared\Transfer\MollieSingleClickPaymentDataTransfer;
 use Generated\Shared\Transfer\OrderCollectionRequestTransfer;
 use Generated\Shared\Transfer\OrderCollectionResponseTransfer;
 
@@ -384,4 +390,94 @@ interface MollieClientInterface
      * @return \Generated\Shared\Transfer\MollieWebhookResponseTransfer
      */
     public function processExpressCheckoutPaymentWebhook(MolliePaymentTransfer $molliePaymentTransfer): MollieWebhookResponseTransfer;
+
+    /**
+     * Specification:
+     * - Creates a Mollie customer for the quote customer (name, email, `idCustomer` as metadata).
+     * - Returns `isSuccessful`, the HTTP `code` and the created customer (`mollieCustomerId`, `mode`).
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\MollieApiRequestTransfer $mollieApiRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieCustomerApiResponseTransfer
+     */
+    public function createCustomer(MollieApiRequestTransfer $mollieApiRequestTransfer): MollieCustomerApiResponseTransfer;
+
+    /**
+     * Specification:
+     * - Requires `MollieApiRequestTransfer.mollieCustomerId`.
+     * - Lists the customer's mandates usable while the customer is present (`customer-present` scope).
+     * - Keeps only valid credit card mandates.
+     * - Returns the HTTP `code`, so callers can detect a removed customer (404/410).
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\MollieApiRequestTransfer $mollieApiRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieMandateApiResponseTransfer
+     */
+    public function getCustomerMandates(MollieApiRequestTransfer $mollieApiRequestTransfer): MollieMandateApiResponseTransfer;
+
+    /**
+     * Specification:
+     * - Makes a Zed call.
+     * - Returns whether single-click payments are enabled and the saved cards of the given customer.
+     * - Returns no saved cards when the feature is disabled or the customer has no valid Mollie customer.
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\MollieSingleClickPaymentDataRequestTransfer $mollieSingleClickPaymentDataRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieSingleClickPaymentDataTransfer
+     */
+    public function getSingleClickPaymentData(
+        MollieSingleClickPaymentDataRequestTransfer $mollieSingleClickPaymentDataRequestTransfer,
+    ): MollieSingleClickPaymentDataTransfer;
+
+    /**
+     * Specification:
+     * - Requires `MollieApiRequestTransfer.mollieCustomerId` and `MollieApiRequestTransfer.mandateId`.
+     * - Revokes the mandate at Mollie; a revoked mandate can no longer be charged.
+     * - Returns the HTTP `code` on failure.
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\MollieApiRequestTransfer $mollieApiRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieMandateApiResponseTransfer
+     */
+    public function revokeCustomerMandate(MollieApiRequestTransfer $mollieApiRequestTransfer): MollieMandateApiResponseTransfer;
+
+    /**
+     * Specification:
+     * - Makes a Zed call.
+     * - Returns the saved cards of the given customer, also when single-click payments are disabled,
+     *   so the customer can still remove them.
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\MollieSingleClickPaymentDataRequestTransfer $mollieSingleClickPaymentDataRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieSingleClickPaymentDataTransfer
+     */
+    public function getCustomerSavedCards(
+        MollieSingleClickPaymentDataRequestTransfer $mollieSingleClickPaymentDataRequestTransfer,
+    ): MollieSingleClickPaymentDataTransfer;
+
+    /**
+     * Specification:
+     * - Makes a Zed call.
+     * - Requires `MollieSavedCardRemoveRequestTransfer.idCustomer` and `MollieSavedCardRemoveRequestTransfer.mandateId`.
+     * - Revokes the saved card only when it belongs to the given customer.
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\MollieSavedCardRemoveRequestTransfer $mollieSavedCardRemoveRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieSavedCardRemoveResponseTransfer
+     */
+    public function removeSavedCard(
+        MollieSavedCardRemoveRequestTransfer $mollieSavedCardRemoveRequestTransfer,
+    ): MollieSavedCardRemoveResponseTransfer;
 }

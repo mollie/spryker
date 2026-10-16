@@ -24,6 +24,11 @@ use Generated\Shared\Transfer\MolliePaymentMethodConfigTransfer;
 use Generated\Shared\Transfer\MolliePaymentTransfer;
 use Generated\Shared\Transfer\MollieRefundApiResponseTransfer;
 use Generated\Shared\Transfer\MollieRefundResponseTransfer;
+use Generated\Shared\Transfer\MollieSavedCardRemoveRequestTransfer;
+use Generated\Shared\Transfer\MollieSavedCardRemoveResponseTransfer;
+use Generated\Shared\Transfer\MollieSingleClickConfigTransfer;
+use Generated\Shared\Transfer\MollieSingleClickPaymentDataRequestTransfer;
+use Generated\Shared\Transfer\MollieSingleClickPaymentDataTransfer;
 use Generated\Shared\Transfer\MollieWebhookResponseTransfer;
 use Generated\Shared\Transfer\OrderCollectionRequestTransfer;
 use Generated\Shared\Transfer\OrderCollectionResponseTransfer;
@@ -337,5 +342,80 @@ interface MollieFacadeInterface
      *
      * @return \Generated\Shared\Transfer\MollieWebhookResponseTransfer
      */
+    public function updateExpressCheckoutMolliePayment(
+        MollieExpressCheckoutPaymentUpdateRequestTransfer $mollieExpressCheckoutPaymentUpdateRequestTransfer,
+    ): MollieExpressCheckoutPaymentUpdateResponseTransfer;
+
+    /**
+     * Specification:
+     * - Returns the single-click setting saved in the Back Office.
+     * - Falls back to `MollieConstants::MOLLIE_SINGLE_CLICK_PAYMENTS_ENABLED` when nothing was saved.
+     *
+     * @api
+     *
+     * @return bool
+     */
+    public function isSingleClickPaymentEnabled(): bool;
+
+    /**
+     * Specification:
+     * - Saves the single-click setting from the Back Office; it overrides the config value.
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\MollieSingleClickConfigTransfer $mollieSingleClickConfigTransfer
+     *
+     * @return void
+     */
+    public function saveSingleClickConfig(MollieSingleClickConfigTransfer $mollieSingleClickConfigTransfer): void;
+
+    /**
+     * Specification:
+     * - Returns whether single-click payments are enabled.
+     * - When enabled, returns the saved cards (valid credit card mandates) of the given customer.
+     * - Removes a stored Mollie customer that Mollie no longer knows (404/410) and returns no saved cards.
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\MollieSingleClickPaymentDataRequestTransfer $mollieSingleClickPaymentDataRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieSingleClickPaymentDataTransfer
+     */
+    public function getSingleClickPaymentData(
+        MollieSingleClickPaymentDataRequestTransfer $mollieSingleClickPaymentDataRequestTransfer,
+    ): MollieSingleClickPaymentDataTransfer;
+
+    /**
+     * Specification:
+     * - Returns whether single-click payments are enabled.
+     * - Returns the saved cards (valid credit card mandates) of the given customer, also when single-click payments
+     *   are disabled, so the customer can still remove them.
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\MollieSingleClickPaymentDataRequestTransfer $mollieSingleClickPaymentDataRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieSingleClickPaymentDataTransfer
+     */
+    public function getCustomerSavedCards(
+        MollieSingleClickPaymentDataRequestTransfer $mollieSingleClickPaymentDataRequestTransfer,
+    ): MollieSingleClickPaymentDataTransfer;
+
+    /**
+     * Specification:
+     * - Requires `MollieSavedCardRemoveRequestTransfer.idCustomer` and `MollieSavedCardRemoveRequestTransfer.mandateId`.
+     * - Checks that the mandate is one of the customer's current saved cards at Mollie.
+     * - Revokes the mandate at Mollie, so it can no longer be charged and disappears from the saved cards.
+     * - Returns `isSuccessful=false` when the card does not belong to the customer or Mollie rejects the revoke.
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\MollieSavedCardRemoveRequestTransfer $mollieSavedCardRemoveRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieSavedCardRemoveResponseTransfer
+     */
+    public function removeSavedCard(
+        MollieSavedCardRemoveRequestTransfer $mollieSavedCardRemoveRequestTransfer,
+    ): MollieSavedCardRemoveResponseTransfer;
     public function processExpressCheckoutPaymentWebhook(MolliePaymentTransfer $molliePaymentTransfer): MollieWebhookResponseTransfer;
 }

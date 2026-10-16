@@ -4,6 +4,11 @@
 
     <transfer name="MollieCreditCardPayment">
         <property name="cardToken" type="string"/>
+        <property name="mandateId" type="string"/>
+        <property name="isSaveCardConsentGiven" type="bool"/>
+        <property name="mollieCustomerId" type="string"/>
+        <property name="isStoreCredentials" type="bool"/>
+        <property name="checkoutPath" type="string"/>
     </transfer>
 
     <transfer name="MolliePayPalPayment">
@@ -111,6 +116,8 @@
         <property name="webhookUrl" type="string"/>
         <property name="metadata" type="array" singular="metadata"/>
         <property name="profileId" type="string"/>
+        <property name="customerId" type="string"/>
+        <property name="mandateId" type="string"/>
         <property name="status" type="string"/>
         <property name="isCancelable" type="bool"/>
         <property name="createdAt" type="string"/>
@@ -206,6 +213,9 @@
         <property name="documentation" type="MollieLink"/>
         <property name="payment" type="MollieLink"/>
         <property name="paymentLink" type="MollieLink"/>
+        <property name="payments" type="MollieLink"/>
+        <property name="mandates" type="MollieLink"/>
+        <property name="subscriptions" type="MollieLink"/>
     </transfer>
 
     <transfer name="MollieLink">
@@ -217,6 +227,7 @@
         <property name="id" type="string" />
         <property name="status" type="string" />
         <property name="captureBefore" type="string" />
+        <property name="mandateId" type="string" />
     </transfer>
 
     <transfer name="MollieExpressCheckoutPaymentUpdateRequest">
@@ -289,6 +300,8 @@
         <property name="applePayValidationUrl" type="string"/>
         <property name="expressCheckoutUuid" type="string"/>
         <property name="shippingOptions" type="MollieExpressCheckoutShippingOption[]" singular="shippingOption"/>
+        <property name="mollieCustomerId" type="string"/>
+        <property name="mandateId" type="string"/>
     </transfer>
 
     <transfer name="MolliePaymentCaptureRequest">
@@ -566,6 +579,72 @@
         <property name="amount" type="int"/>
         <property name="currency" type="string"/>
         <property name="refundId" type="string"/>
+    </transfer>
+
+    <transfer name="MollieCustomerApiResponse">
+        <property name="isSuccessful" type="bool"/>
+        <property name="code" type="int"/>
+        <property name="message" type="string"/>
+        <property name="mollieCustomer" type="MollieCustomer"/>
+    </transfer>
+
+    <transfer name="MollieCustomer">
+        <property name="idMollieCustomer" type="int"/>
+        <property name="resource" type="string"/>
+        <property name="id" type="string"/>
+        <property name="mollieCustomerId" type="string"/>
+        <property name="fkCustomer" type="int"/>
+        <property name="mode" type="string"/>
+        <property name="consentGivenAt" type="string"/>
+        <property name="consentVersion" type="string"/>
+        <property name="createdAt" type="string"/>
+        <property name="isNew" type="bool"/>
+    </transfer>
+
+    <transfer name="MollieMandate">
+        <property name="id" type="string"/>
+        <property name="mode" type="string"/>
+        <property name="status" type="string"/>
+        <property name="method" type="string"/>
+        <property name="cardHolder" type="string"/>
+        <property name="cardNumberLast4" type="string"/>
+        <property name="cardExpiryDate" type="string"/>
+        <property name="cardLabel" type="string"/>
+        <property name="createdAt" type="string"/>
+    </transfer>
+
+    <transfer name="MollieMandateCollection">
+        <property name="mandates" type="MollieMandate[]" singular="mandate"/>
+    </transfer>
+
+    <transfer name="MollieMandateApiResponse">
+        <property name="isSuccessful" type="bool"/>
+        <property name="code" type="int"/>
+        <property name="message" type="string"/>
+        <property name="mandateCollection" type="MollieMandateCollection"/>
+    </transfer>
+
+    <transfer name="MollieSingleClickConfig">
+        <property name="isEnabled" type="bool"/>
+    </transfer>
+
+    <transfer name="MollieSingleClickPaymentDataRequest">
+        <property name="idCustomer" type="int"/>
+    </transfer>
+
+    <transfer name="MollieSingleClickPaymentData">
+        <property name="isEnabled" type="bool"/>
+        <property name="savedCards" type="MollieMandate[]" singular="savedCard"/>
+    </transfer>
+
+    <transfer name="MollieSavedCardRemoveRequest">
+        <property name="idCustomer" type="int"/>
+        <property name="mandateId" type="string"/>
+    </transfer>
+
+    <transfer name="MollieSavedCardRemoveResponse">
+        <property name="isSuccessful" type="bool"/>
+        <property name="message" type="string"/>
     </transfer>
 
 </transfers>

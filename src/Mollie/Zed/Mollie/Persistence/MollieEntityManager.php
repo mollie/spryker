@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace Mollie\Zed\Mollie\Persistence;
 
+use Generated\Shared\Transfer\MollieCustomerTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutPaymentRefundTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutPaymentUpdateRequestTransfer;
 use Generated\Shared\Transfer\MollieExpressPaymentTransfer;
@@ -15,6 +16,7 @@ use Generated\Shared\Transfer\MolliePaymentTransfer;
 use Generated\Shared\Transfer\MollieRefundCollectionTransfer;
 use Generated\Shared\Transfer\MollieRefundSaveTransfer;
 use Generated\Shared\Transfer\OrderCollectionRequestTransfer;
+use Mollie\Shared\Mollie\MollieConfig;
 use Mollie\Shared\Mollie\MollieConstants;
 use Orm\Zed\Mollie\Persistence\SpyMollieExpressCheckoutPaymentRefund;
 use Orm\Zed\Mollie\Persistence\SpyMollieOrderItemPaymentCapture;
@@ -49,6 +51,10 @@ class MollieEntityManager extends AbstractEntityManager implements MollieEntityM
         $spyPaymentMolleEntity
             ->setStatus($updateOrderCollectionRequestTransfer->getStatus())
             ->setCaptureBefore($updateOrderCollectionRequestTransfer->getCaptureBefore());
+
+        if ($updateOrderCollectionRequestTransfer->getMandateId()) {
+            $spyPaymentMolleEntity->setMandateId($updateOrderCollectionRequestTransfer->getMandateId());
+        }
 
         $spyPaymentMolleEntity->save();
     }
@@ -195,6 +201,9 @@ class MollieEntityManager extends AbstractEntityManager implements MollieEntityM
             ->setIsCancelable($molliePaymentTransfer->getIsCancelable())
             ->setDescription($molliePaymentTransfer->getDescription())
             ->setSequenceType($molliePaymentTransfer->getSequenceType())
+            ->setCustomerId($molliePaymentTransfer->getCustomerId())
+            ->setMandateId($molliePaymentTransfer->getMandateId())
+            ->setCheckoutPath($molliePaymentTransfer->getMetadata()[MollieConfig::SINGLE_CLICK_METADATA_KEY_CHECKOUT_PATH] ?? null)
             ->setMetadata($metadata)
             ->setExpiresAt($molliePaymentTransfer->getExpiresAt())
             ->setCreatedAt($molliePaymentTransfer->getCreatedAt());
@@ -377,5 +386,53 @@ class MollieEntityManager extends AbstractEntityManager implements MollieEntityM
 
         $spyMollieExpressCheckoutConfigEntity->setIsActive($isActive);
         $spyMollieExpressCheckoutConfigEntity->save();
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MollieCustomerTransfer $mollieCustomerTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieCustomerTransfer
+     */
+    public function saveMollieCustomer(MollieCustomerTransfer $mollieCustomerTransfer): MollieCustomerTransfer
+    {
+        $spyMollieCustomerEntity = $this->getFactory()
+            ->createSpyMollieCustomerQuery()
+            ->filterByFkCustomer($mollieCustomerTransfer->getFkCustomerOrFail())
+            ->filterByMode($mollieCustomerTransfer->getModeOrFail())
+            ->findOneOrCreate();
+
+        $mollieCustomerMapper = $this->getFactory()->createMollieCustomerMapper();
+        $spyMollieCustomerEntity = $mollieCustomerMapper->mapMollieCustomerTransferToEntity($mollieCustomerTransfer, $spyMollieCustomerEntity);
+        $spyMollieCustomerEntity->save();
+
+        return $mollieCustomerMapper->mapMollieCustomerEntityToTransfer($spyMollieCustomerEntity, $mollieCustomerTransfer);
+    }
+
+    /**
+     * @param int $idMollieCustomer
+     *
+     * @return void
+     */
+    public function deleteMollieCustomer(int $idMollieCustomer): void
+    {
+        $this->getFactory()
+            ->createSpyMollieCustomerQuery()
+            ->filterByIdMollieCustomer($idMollieCustomer)
+            ->delete();
+    }
+
+    /**
+     * @param bool $isActive
+     *
+     * @return void
+     */
+    public function saveSingleClickConfig(bool $isActive): void
+    {
+        $spyMollieSingleClickConfigEntity = $this->getFactory()
+            ->createSpyMollieSingleClickConfigQuery()
+            ->findOneOrCreate();
+
+        $spyMollieSingleClickConfigEntity->setIsActive($isActive);
+        $spyMollieSingleClickConfigEntity->save();
     }
 }

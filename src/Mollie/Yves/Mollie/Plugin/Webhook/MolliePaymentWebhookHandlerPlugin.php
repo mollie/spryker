@@ -85,7 +85,8 @@ class MolliePaymentWebhookHandlerPlugin extends AbstractPlugin implements Mollie
         $orderCollectionRequestTransfer
             ->setId($molliePaymentTransfer->getId())
             ->setStatus($molliePaymentTransfer->getStatus())
-            ->setCaptureBefore($molliePaymentTransfer->getCaptureBefore());
+            ->setCaptureBefore($molliePaymentTransfer->getCaptureBefore())
+            ->setMandateId($molliePaymentTransfer->getMandateId());
 
         return $orderCollectionRequestTransfer;
     }

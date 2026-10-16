@@ -39,6 +39,7 @@ $config[MollieConstants::MOLLIE] = [
         MollieConfig::EXPRESS_METHOD_GOOGLE_PAY => true,
         MollieConfig::EXPRESS_METHOD_PAYPAL => true,
     ],
+    MollieConstants::MOLLIE_SINGLE_CLICK_PAYMENTS_ENABLED => false,
     MollieConstants::MOLLIE_PAYMENT_LINK_EXPIRATION_TIME => 10080,
     MollieConstants::MOLLIE_BNPL_PAYMENT_METHODS => ['billie', 'in3', 'klarna', 'riverty', 'voucher', 'alma'],
 ];

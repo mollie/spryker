@@ -1,0 +1,48 @@
+{% extends template('page-layout-customer', 'CustomerPage') %}
+
+{% define data = {
+    savedCards: _view.savedCards,
+    activePage: 'mollieSavedCards',
+    title: 'mollie.customer.saved_cards.title' | trans,
+} %}
+
+{% block customerContent %}
+    {% include molecule('action-bar') with {
+        modifiers: ['first'],
+        data: {
+            title: 'mollie.customer.saved_cards.title' | trans,
+        },
+    } only %}
+
+    {% if data.savedCards is empty %}
+        <p>{{ 'mollie.customer.saved_cards.empty' | trans }}</p>
+    {% else %}
+        <ul class="list">
+            {% for savedCard in data.savedCards %}
+                {% set card = savedCard.card %}
+                <li class="list__item grid grid--middle grid--justify spacing-y spacing-y--inner">
+                    <div class="col">
+                        <strong>{{ card.cardLabel }} •••• {{ card.cardNumberLast4 }}</strong>
+                        {% if card.cardExpiryDate %}
+                            <span class="spacing-left">{{ 'mollie.customer.saved_cards.expires' | trans }} {{ card.cardExpiryDate | date('m/Y') }}</span>
+                        {% endif %}
+                        {% if card.cardHolder %}
+                            <span class="spacing-left">{{ card.cardHolder }}</span>
+                        {% endif %}
+                    </div>
+                    <div class="col">
+                        {{ form_start(savedCard.removeForm, {
+                            action: path('customer/saved-cards/remove'),
+                            method: 'POST',
+                        }) }}
+                            {{ form_widget(savedCard.removeForm.mandateId) }}
+                            <button type="submit" class="button button--hollow button--small">
+                                {{ 'mollie.customer.saved_cards.remove' | trans }}
+                            </button>
+                        {{ form_end(savedCard.removeForm) }}
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endblock %}

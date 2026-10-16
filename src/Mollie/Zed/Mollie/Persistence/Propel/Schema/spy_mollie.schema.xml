@@ -15,6 +15,9 @@
         <column name="expires_at" type="TIMESTAMP"/>
         <column name="capture_before" type="TIMESTAMP"/>
         <column name="release_authorization_request" type="TIMESTAMP" required="false" />
+        <column name="customer_id" type="VARCHAR" size="64" required="false"/>
+        <column name="mandate_id" type="VARCHAR" size="64" required="false"/>
+        <column name="checkout_path" type="VARCHAR" size="32" required="false"/>
 
         <foreign-key name="spy_payment_mollie-fk_sales_order" foreignTable="spy_sales_order" phpName="SpySalesOrder">
             <reference foreign="id_sales_order" local="fk_sales_order"/>
@@ -139,6 +142,41 @@
         </unique>
 
         <id-method-parameter value="spy_mollie_express_checkout_config_pk_seq"/>
+
+        <behavior name="timestampable"/>
+    </table>
+
+    <table name="spy_mollie_customer" idMethod="native" allowPkInsert="true" phpName="SpyMollieCustomer">
+        <column name="id_mollie_customer" required="true" type="INTEGER" autoIncrement="true" primaryKey="true"/>
+        <column name="mollie_customer_id" required="true" type="VARCHAR" size="64"/>
+        <column name="fk_customer" required="true" type="INTEGER"/>
+        <column name="mode" required="true" type="VARCHAR" size="10"/>
+        <column name="consent_given_at" type="TIMESTAMP" required="false"/>
+        <column name="consent_version" type="VARCHAR" size="32" required="false"/>
+
+        <foreign-key name="spy_mollie_customer-fk_customer" foreignTable="spy_customer" phpName="SpyCustomer" onDelete="CASCADE">
+            <reference foreign="id_customer" local="fk_customer"/>
+        </foreign-key>
+
+        <unique name="spy_mollie_customer-unique-fk_customer-mode">
+            <unique-column name="fk_customer"/>
+            <unique-column name="mode"/>
+        </unique>
+
+        <index name="index-spy_mollie_customer-mollie_customer_id">
+            <index-column name="mollie_customer_id"/>
+        </index>
+
+        <id-method-parameter value="spy_mollie_customer_pk_seq"/>
+
+        <behavior name="timestampable"/>
+    </table>
+
+    <table name="spy_mollie_single_click_config">
+        <column name="id_mollie_single_click_config" type="INTEGER" primaryKey="true" autoIncrement="true"/>
+        <column name="is_active" type="BOOLEAN" required="true" default="false"/>
+
+        <id-method-parameter value="spy_mollie_single_click_config_pk_seq"/>
 
         <behavior name="timestampable"/>
     </table>

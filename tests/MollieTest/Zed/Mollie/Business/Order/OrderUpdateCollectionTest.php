@@ -46,4 +46,51 @@ class OrderUpdateCollectionTest extends AbstractBusinessTest
         $this->assertEquals('paid', $updatedMolliePaymentEntity->getStatus());
         $this->assertTrue($response->getIsSuccess());
     }
+
+    /**
+     * @return void
+     */
+    public function testWebHookRequestStoresMandateIdConfirmedByMollie(): void
+    {
+        // Arrange
+        $saveOrderTransfer = $this->tester->haveOrder([
+        ], static::TEST_STATE_MACHINE_NAME);
+
+        $molliePaymentEntity = $this->tester->createMolliePayment($saveOrderTransfer->getIdSalesOrder());
+        $molliePaymentEntity->setMandateId('mdt_requested')->save();
+        $orderCollectionRequestTransfer = (new OrderCollectionRequestTransfer())
+            ->setId($molliePaymentEntity->getTransactionId())
+            ->setStatus('paid')
+            ->setMandateId('mdt_charged');
+
+        //Act
+        $this->mollieFacade->updateOrderCollection($orderCollectionRequestTransfer);
+        $updatedMolliePaymentEntity = $this->tester->findMolliePayment($molliePaymentEntity->getFkSalesOrder());
+
+        //Assert
+        $this->assertSame('mdt_charged', $updatedMolliePaymentEntity->getMandateId());
+    }
+
+    /**
+     * @return void
+     */
+    public function testWebHookRequestWithoutMandateIdKeepsStoredMandateId(): void
+    {
+        // Arrange
+        $saveOrderTransfer = $this->tester->haveOrder([
+        ], static::TEST_STATE_MACHINE_NAME);
+
+        $molliePaymentEntity = $this->tester->createMolliePayment($saveOrderTransfer->getIdSalesOrder());
+        $molliePaymentEntity->setMandateId('mdt_requested')->save();
+        $orderCollectionRequestTransfer = (new OrderCollectionRequestTransfer())
+            ->setId($molliePaymentEntity->getTransactionId())
+            ->setStatus('paid');
+
+        //Act
+        $this->mollieFacade->updateOrderCollection($orderCollectionRequestTransfer);
+        $updatedMolliePaymentEntity = $this->tester->findMolliePayment($molliePaymentEntity->getFkSalesOrder());
+
+        //Assert
+        $this->assertSame('mdt_requested', $updatedMolliePaymentEntity->getMandateId());
+    }
 }

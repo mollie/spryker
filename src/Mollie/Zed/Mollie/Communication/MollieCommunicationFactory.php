@@ -15,9 +15,11 @@ use Mollie\Zed\Mollie\Communication\Form\CreatePaymentLinkForm;
 use Mollie\Zed\Mollie\Communication\Form\DataProvider\ExpressCheckoutConfigFormDataProvider;
 use Mollie\Zed\Mollie\Communication\Form\DataProvider\PaymentLinkFormDataProvider;
 use Mollie\Zed\Mollie\Communication\Form\DataProvider\PaymentMethodsFilterFormDataProvider;
+use Mollie\Zed\Mollie\Communication\Form\DataProvider\SingleClickConfigFormDataProvider;
 use Mollie\Zed\Mollie\Communication\Form\ExpressCheckoutConfigForm;
 use Mollie\Zed\Mollie\Communication\Form\PaymentMethodConfigForm;
 use Mollie\Zed\Mollie\Communication\Form\PaymentMethodsFilterForm;
+use Mollie\Zed\Mollie\Communication\Form\SingleClickConfigForm;
 use Mollie\Zed\Mollie\Communication\Mapper\MollieCommunicationMapper;
 use Mollie\Zed\Mollie\Communication\Mapper\MollieCommunicationMapperInterface;
 use Mollie\Zed\Mollie\Communication\Mapper\Order\OrderItemMapper;
@@ -207,6 +209,26 @@ class MollieCommunicationFactory extends AbstractCommunicationFactory
     public function createExpressCheckoutConfigFormDataProvider(): ExpressCheckoutConfigFormDataProvider
     {
         return new ExpressCheckoutConfigFormDataProvider(
+            $this->getFacade(),
+        );
+    }
+
+    /**
+     * @param array<string, bool> $data
+     *
+     * @return \Symfony\Component\Form\FormInterface
+     */
+    public function createSingleClickConfigForm(array $data = []): FormInterface
+    {
+        return $this->getFormFactory()->create(SingleClickConfigForm::class, $data);
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Communication\Form\DataProvider\SingleClickConfigFormDataProvider
+     */
+    public function createSingleClickConfigFormDataProvider(): SingleClickConfigFormDataProvider
+    {
+        return new SingleClickConfigFormDataProvider(
             $this->getFacade(),
         );
     }
