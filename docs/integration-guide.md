@@ -2145,7 +2145,7 @@ With Apple Pay Direct the shopper selects Apple Pay on the checkout payment step
 - Apple Pay enabled for your profile in the Mollie Dashboard
 - Your shop domain verified for Apple Pay: download the domain verification file from the Mollie Dashboard and serve it at `https://<your-domain>/.well-known/apple-developer-merchantid-domain-association` (in Spryker: `public/Yves/.well-known/apple-developer-merchantid-domain-association`). The domain sent to Mollie is the host of the storefront request, so it must be the verified domain
 - HTTPS on the storefront
-- A device and browser that support Apple Pay (e.g. Safari on iPhone, iPad or Mac)
+- A device that supports Apple Pay
 - The `mollie` frontend path registered in `frontend/settings.js` (see [TypeScript Component Recognition](#typescript-component-recognition))
 
 #### Configuration
@@ -2217,12 +2217,6 @@ If the shopper closes the Apple Pay sheet, the submit button is enabled again an
 ### 10.1 Overview
 
 Express Checkout lets a shopper pay directly from the **cart page** with a wallet, without going through the Spryker checkout steps. The shopper's address and the shipping method are taken from the wallet sheet, Mollie charges the payment, and the module creates the Spryker order afterwards.
-
-| Express method | Config constant | Status |
-|----------------|-----------------|--------|
-| Apple Pay | `MollieConfig::EXPRESS_METHOD_APPLE_PAY` (`applepay`) | Supported |
-| Google Pay | `MollieConfig::EXPRESS_METHOD_GOOGLE_PAY` (`googlepay`) | Toggle available |
-| PayPal | `MollieConfig::EXPRESS_METHOD_PAYPAL` (`paypal`) | Toggle available |
 
 All express orders are saved with the payment method `mollieExpressPayment` (provider `MollieExpressPayment`).
 
@@ -2382,7 +2376,7 @@ ORDER BY created_at DESC;
 >
 > Express Checkout doesn't work in Mollie test mode: Mollie.js shows "Express Checkout does not work in test mode." and the wallet sheet doesn't open. Test with a live API key and a low-priced product, on a public HTTPS domain that is verified for Apple Pay.
 
-1. For Apple Pay, open the shop in Safari on an Apple device with a card in Apple Wallet
+1. F.e: for Apple Pay, open the shop in a browser that supports Apple Pay, with a card in Apple Wallet
 2. Add a product to the cart and click the express button
 3. Complete the payment in the wallet sheet; you should land on the checkout success page
 4. Check that the order has payment method `mollieExpressPayment`, runs on `MolliePaymentStateMachineExpress01`, and that its `spy_payment_mollie` row has a `transaction_id` and status `paid` after the webhook
