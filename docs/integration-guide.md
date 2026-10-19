@@ -1536,7 +1536,7 @@ class ShopApplicationDependencyProvider extends SprykerShopApplicationDependency
 }
 ```
 
-`MollieSavedCardsMenuItemWidget` also has to be placed in the customer account menu. In the B2B demo shop that menu is `src/Pyz/Yves/CustomerPage/Theme/default/components/molecules/navigation-sidebar/navigation-sidebar.twig`:
+`MollieSavedCardsMenuItemWidget` shows the "Saved cards" link only to customers who have a Mollie customer (they saved a card at least once), whether single-click is switched on or off, so they can always remove their cards. It reads this from the logged-in customer in the session and makes no Zed call. The widget also has to be placed in the customer account menu. In the B2B demo shop that menu is `src/Pyz/Yves/CustomerPage/Theme/default/components/molecules/navigation-sidebar/navigation-sidebar.twig`:
 
 ```twig
 {% widget 'MollieSavedCardsMenuItemWidget' args [data.activePage] only %}{% endwidget %}
@@ -2258,7 +2258,7 @@ Whether single-click payments are on is resolved in this order:
 2. The value in `MOLLIE_SINGLE_CLICK_PAYMENTS_ENABLED`
 3. Off, if neither is set
 
-When the feature is off, the checkout shows neither the saved cards nor the "save my card" checkbox. Cards that shoppers saved earlier stay at Mollie, and the **Saved cards** page (`/customer/saved-cards`) still lists them so shoppers can remove them.
+When the feature is off, the checkout shows neither the saved cards nor the "save my card" checkbox. Cards that shoppers saved earlier stay at Mollie, and the **Saved cards** page (`/customer/saved-cards`) and its menu link stay available, so shoppers can remove them.
 
 #### Single-Click Consent Text
 

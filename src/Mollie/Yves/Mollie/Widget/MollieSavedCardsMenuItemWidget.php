@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Mollie\Yves\Mollie\Widget;
 
-use Generated\Shared\Transfer\MollieSingleClickPaymentDataRequestTransfer;
 use Spryker\Yves\Kernel\Widget\AbstractWidget;
 
 /**
@@ -32,7 +31,7 @@ class MollieSavedCardsMenuItemWidget extends AbstractWidget
      */
     public function __construct(string $activePage)
     {
-        $this->addParameter(static::PARAMETER_IS_VISIBLE, $this->isSingleClickPaymentEnabled());
+        $this->addParameter(static::PARAMETER_IS_VISIBLE, $this->hasMollieCustomer());
         $this->addParameter(static::PARAMETER_IS_ACTIVE_PAGE, $activePage === static::PAGE_KEY_SAVED_CARDS);
     }
 
@@ -59,11 +58,13 @@ class MollieSavedCardsMenuItemWidget extends AbstractWidget
     /**
      * @return bool
      */
-    protected function isSingleClickPaymentEnabled(): bool
+    protected function hasMollieCustomer(): bool
     {
-        return (bool)$this->getFactory()
-            ->getMollieApiClient()
-            ->getSingleClickPaymentData(new MollieSingleClickPaymentDataRequestTransfer())
-            ->getIsEnabled();
+        $mollieCustomerTransfer = $this->getFactory()
+            ->getCustomerClient()
+            ->getCustomer()
+            ->getMollieCustomer();
+
+        return $mollieCustomerTransfer !== null;
     }
 }
