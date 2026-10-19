@@ -55,11 +55,6 @@ class MollieConfig extends AbstractBundleConfig
     /**
      * @var string
      */
-    public const RESPONSE_PARAMETER_DETAILS = 'details';
-
-    /**
-     * @var string
-     */
     public const REQUEST_PARAMETER_CREATE_PAYMENT_STORE_CREDENTIALS = 'storeCredentials';
 
     /**

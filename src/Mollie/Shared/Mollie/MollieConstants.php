@@ -198,8 +198,4 @@ interface MollieConstants
     public const string QUERY_MOLLIE_PAYMENT_METHOD_CONFIG_ID = 'id-mollie-payment-method-config';
 
     public const string MOLLIE_CUSTOMER_METADATA_ID_CUSTOMER = 'idCustomer';
-
-    public const string MOLLIE_MODE_LIVE = 'live';
-
-    public const string MOLLIE_MODE_TEST = 'test';
 }

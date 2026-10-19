@@ -28,6 +28,7 @@
         {% if saveCardConsentField %}
             <div class="spacing-top js-mollie-credit-card-new-card-only">
                 {{ form_row(saveCardConsentField) }}
+                <p class="text-small">{{ 'mollie.checkout.payment.credit.card.save.card.consent.description' | trans | raw }}</p>
             </div>
         {% endif %}
         {% else %}

@@ -75,9 +75,10 @@ class CreatePaymentApi extends AbstractApiCall
         $paymentMethod = $paymentTransfer->getPaymentMethod();
         $captureMode = $this->getCaptureMode($paymentMethod);
         $method = $this->getMethod($paymentMethod);
-        $metadata = $this->apiHandler->createPaymentMetadata($checkoutResponseTransfer, $quoteTransfer);
-        $creditCardPaymentTransfer = $paymentTransfer->getMollieCreditCardPayment();
+        $metadata = $this->apiHandler->createPaymentMetadata($checkoutResponseTransfer);
         $additionalParameters = $this->apiHandler->createAdditionalParameters($mollieApiRequestTransfer);
+        $mollieCustomerId = $this->apiHandler->findMollieCustomerId($quoteTransfer);
+        $mandateId = $this->apiHandler->findMandateId($quoteTransfer);
         $billingAddress = $this->apiHandler->createBillingAddress($quoteTransfer);
         $lines = $this->apiHandler->createLines($quoteTransfer);
 
@@ -91,9 +92,9 @@ class CreatePaymentApi extends AbstractApiCall
             method: $method,
             metadata: $metadata,
             captureMode: $captureMode,
-            sequenceType: $creditCardPaymentTransfer?->getMollieCustomerId() ? MollieConstants::MOLLIE_SEQUENCE_TYPE_ONE_OFF : null,
-            mandateId: $creditCardPaymentTransfer?->getMollieCustomerId() ? $creditCardPaymentTransfer->getMandateId() : null,
-            customerId: $creditCardPaymentTransfer?->getMollieCustomerId(),
+            sequenceType: $mollieCustomerId ? MollieConstants::MOLLIE_SEQUENCE_TYPE_ONE_OFF : null,
+            mandateId: $mandateId,
+            customerId: $mollieCustomerId,
             additional: $additionalParameters,
         );
 

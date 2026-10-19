@@ -12,7 +12,7 @@ interface MollieCustomerProviderInterface
 {
     /**
      * Specification:
-     * - Returns the stored Mollie customer of the Spryker customer for the current Mollie mode, or `null`.
+     * - Returns the stored Mollie customer of the Spryker customer, or `null`.
      *
      * @param \Generated\Shared\Transfer\CustomerTransfer $customerTransfer
      *
@@ -23,16 +23,15 @@ interface MollieCustomerProviderInterface
     /**
      * Specification:
      * - Must only be called after the shopper gave consent to save the card.
-     * - Reuses the stored Mollie customer; creates one in Mollie and stores it only when none exists (no duplicates).
-     * - Stores the consent timestamp and consent version.
-     * - Sets `MollieCustomerTransfer.isNew` to tell a created customer from a reused one.
-     * - Returns `null` when the Mollie customer can't be created.
+     * - Uses the stored Mollie customer of the quote's customer when one exists.
+     * - Otherwise creates the customer in Mollie and stores it with the consent timestamp and consent version.
+     * - Sets the Mollie customer on `QuoteTransfer.customer.mollieCustomer`; sets null when Mollie can't create it.
      *
      * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
      *
-     * @return \Generated\Shared\Transfer\MollieCustomerTransfer|null
+     * @return void
      */
-    public function getOrCreateMollieCustomer(QuoteTransfer $quoteTransfer): ?MollieCustomerTransfer;
+    public function createMollieCustomer(QuoteTransfer $quoteTransfer): void;
 
     /**
      * @param \Generated\Shared\Transfer\MollieCustomerTransfer $mollieCustomerTransfer

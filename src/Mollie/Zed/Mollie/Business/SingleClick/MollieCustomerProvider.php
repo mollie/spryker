@@ -50,46 +50,23 @@ class MollieCustomerProvider implements MollieCustomerProviderInterface
             return null;
         }
 
-        return $this->repository->findMollieCustomer($idCustomer, $this->config->getMollieMode());
+        return $this->repository->findMollieCustomer($idCustomer);
     }
 
     /**
      * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
      *
-     * @return \Generated\Shared\Transfer\MollieCustomerTransfer|null
+     * @return void
      */
-    public function getOrCreateMollieCustomer(QuoteTransfer $quoteTransfer): ?MollieCustomerTransfer
+    public function createMollieCustomer(QuoteTransfer $quoteTransfer): void
     {
-        $customerTransfer = $quoteTransfer->getCustomerOrFail();
+        $customerTransfer = $quoteTransfer->getCustomer();
         $mollieCustomerTransfer = $this->findMollieCustomer($customerTransfer);
-
-        if ($mollieCustomerTransfer) {
-            $mollieCustomerTransfer = $this->entityManager->saveMollieCustomer($this->addConsent($mollieCustomerTransfer));
-
-            return $mollieCustomerTransfer->setIsNew(false);
+        if (!$mollieCustomerTransfer) {
+            $mollieCustomerTransfer = $this->requestMollieCustomer($quoteTransfer);
         }
 
-        $mollieApiRequestTransfer = (new MollieApiRequestTransfer())->setQuote($quoteTransfer);
-        $mollieCustomerApiResponseTransfer = $this->mollieClient->createCustomer($mollieApiRequestTransfer);
-
-        if (!$mollieCustomerApiResponseTransfer->getIsSuccessful() || !$mollieCustomerApiResponseTransfer->getMollieCustomer()?->getMollieCustomerId()) {
-            $this->getLogger()->error('Mollie single-click: Mollie customer could not be created.', [
-                'idCustomer' => $customerTransfer->getIdCustomer(),
-                'code' => $mollieCustomerApiResponseTransfer->getCode(),
-                'message' => $mollieCustomerApiResponseTransfer->getMessage(),
-            ]);
-
-            return null;
-        }
-
-        $mollieCustomerTransfer = (new MollieCustomerTransfer())
-            ->setMollieCustomerId($mollieCustomerApiResponseTransfer->getMollieCustomerOrFail()->getMollieCustomerId())
-            ->setFkCustomer($customerTransfer->getIdCustomerOrFail())
-            ->setMode($this->config->getMollieMode());
-
-        $mollieCustomerTransfer = $this->entityManager->saveMollieCustomer($this->addConsent($mollieCustomerTransfer));
-
-        return $mollieCustomerTransfer->setIsNew(true);
+        $customerTransfer->setMollieCustomer($mollieCustomerTransfer);
     }
 
     /**
@@ -103,14 +80,31 @@ class MollieCustomerProvider implements MollieCustomerProviderInterface
     }
 
     /**
-     * @param \Generated\Shared\Transfer\MollieCustomerTransfer $mollieCustomerTransfer
+     * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
      *
-     * @return \Generated\Shared\Transfer\MollieCustomerTransfer
+     * @return \Generated\Shared\Transfer\MollieCustomerTransfer|null
      */
-    protected function addConsent(MollieCustomerTransfer $mollieCustomerTransfer): MollieCustomerTransfer
+    protected function requestMollieCustomer(QuoteTransfer $quoteTransfer): ?MollieCustomerTransfer
     {
-        return $mollieCustomerTransfer
+        $mollieApiRequestTransfer = (new MollieApiRequestTransfer())->setQuote($quoteTransfer);
+        $mollieCustomerApiResponseTransfer = $this->mollieClient->createCustomer($mollieApiRequestTransfer);
+
+        if (!$mollieCustomerApiResponseTransfer->getIsSuccessful()) {
+            $this->getLogger()->error('Mollie single-click: Mollie customer could not be created.', [
+                'idCustomer' => $quoteTransfer->getCustomer()->getIdCustomer(),
+                'code' => $mollieCustomerApiResponseTransfer->getCode(),
+                'message' => $mollieCustomerApiResponseTransfer->getMessage(),
+            ]);
+
+            return null;
+        }
+
+        $mollieCustomerTransfer = (new MollieCustomerTransfer())
+            ->setMollieCustomerId($mollieCustomerApiResponseTransfer->getMollieCustomer()->getMollieCustomerId())
+            ->setFkCustomer($quoteTransfer->getCustomer()->getIdCustomer())
             ->setConsentGivenAt((new DateTime())->format(static::DATE_TIME_FORMAT))
             ->setConsentVersion($this->config->getSingleClickConsentVersion());
+
+        return $this->entityManager->saveMollieCustomer($mollieCustomerTransfer);
     }
 }

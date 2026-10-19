@@ -45,10 +45,10 @@ class GetCustomerMandatesApiTest extends AbstractClientTest
         $this->assertTrue($mollieMandateApiResponseTransfer->getIsSuccessful());
         $this->assertCount(1, $mandates);
         $this->assertSame('mdt_valid_card', $mandates[0]->getId());
-        $this->assertSame('John Doe', $mandates[0]->getCardHolder());
-        $this->assertSame('4242', $mandates[0]->getCardNumberLast4());
-        $this->assertSame('Visa', $mandates[0]->getCardLabel());
-        $this->assertSame('2027-12-31', $mandates[0]->getCardExpiryDate());
+        $this->assertSame('John Doe', $mandates[0]->getDetails()->getCardHolder());
+        $this->assertSame('4242', $mandates[0]->getDetails()->getCardNumber());
+        $this->assertSame('Visa', $mandates[0]->getDetails()->getCardLabel());
+        $this->assertSame('2027-12-31', $mandates[0]->getDetails()->getCardExpiryDate());
         $mockMollieClient->assertSent(function (PendingRequest $pendingRequest): bool {
             return str_contains($pendingRequest->getRequest()->resolveResourcePath(), static::MOLLIE_CUSTOMER_ID);
         });

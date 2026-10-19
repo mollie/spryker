@@ -6,6 +6,7 @@ declare(strict_types=1);
 namespace Mollie\Zed\Mollie\Business;
 
 use Generated\Shared\Transfer\CheckoutResponseTransfer;
+use Generated\Shared\Transfer\CustomerTransfer;
 use Generated\Shared\Transfer\MollieExpirationInformationTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutConfigCollectionTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutConfigCriteriaTransfer;
@@ -533,5 +534,37 @@ class MollieFacade extends AbstractFacade implements MollieFacadeInterface
         return $this->getFactory()
             ->createSavedCardRemover()
             ->removeSavedCard($mollieSavedCardRemoveRequestTransfer);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\CustomerTransfer $customerTransfer
+     *
+     * @return \Generated\Shared\Transfer\CustomerTransfer
+     */
+    public function expandCustomerWithMollieCustomer(CustomerTransfer $customerTransfer): CustomerTransfer
+    {
+        return $this->getFactory()
+            ->createMollieCustomerExpander()
+            ->expandCustomer($customerTransfer);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
+     *
+     * @return void
+     */
+    public function createMollieCustomer(QuoteTransfer $quoteTransfer): void
+    {
+        $this->getFactory()
+            ->createMollieCustomerProvider()
+            ->createMollieCustomer($quoteTransfer);
     }
 }

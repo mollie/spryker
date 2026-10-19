@@ -15,10 +15,9 @@ use Generated\Shared\Transfer\PaymentTransfer;
 use Generated\Shared\Transfer\QuoteTransfer;
 use Generated\Shared\Transfer\SaveOrderTransfer;
 use Mollie\Client\Mollie\MollieClientInterface;
+use Mollie\Shared\Mollie\MollieConfig as SharedConfig;
 use Mollie\Zed\Mollie\Business\Handler\MolliePaymentHandlerInterface;
 use Mollie\Zed\Mollie\Business\MollieBusinessFactory;
-use Mollie\Zed\Mollie\Business\SingleClick\SingleClickPaymentResolver;
-use Mollie\Zed\Mollie\Business\SingleClick\SingleClickPaymentResolverInterface;
 use Mollie\Zed\Mollie\Business\Writer\MolliePaymentWriterInterface;
 use Mollie\Zed\Mollie\Dependency\MollieToStorageClientInterface;
 use Mollie\Zed\Mollie\MollieConfig;
@@ -57,7 +56,7 @@ class MolliePaymentHandlerTest extends Unit
     {
         $molliePaymentHandler = $this->createMolliePaymentHandler(new MollieLinksTransfer());
 
-        $checkoutResponseTransfer = $molliePaymentHandler->createPayment(new QuoteTransfer(), $this->createCheckoutResponseTransfer());
+        $checkoutResponseTransfer = $molliePaymentHandler->createPayment((new QuoteTransfer())->setPayment(new PaymentTransfer()), $this->createCheckoutResponseTransfer());
 
         $this->assertTrue($checkoutResponseTransfer->getIsSuccess());
         $this->assertTrue($checkoutResponseTransfer->getIsExternalRedirect());
@@ -73,42 +72,10 @@ class MolliePaymentHandlerTest extends Unit
             ->setCheckout((new MollieLinkTransfer())->setHref(static::MOLLIE_CHECKOUT_URL));
         $molliePaymentHandler = $this->createMolliePaymentHandler($mollieLinksTransfer);
 
-        $checkoutResponseTransfer = $molliePaymentHandler->createPayment(new QuoteTransfer(), $this->createCheckoutResponseTransfer());
+        $checkoutResponseTransfer = $molliePaymentHandler->createPayment((new QuoteTransfer())->setPayment(new PaymentTransfer()), $this->createCheckoutResponseTransfer());
 
         $this->assertTrue($checkoutResponseTransfer->getIsSuccess());
         $this->assertSame(static::MOLLIE_CHECKOUT_URL, $checkoutResponseTransfer->getRedirectUrl());
-    }
-
-    /**
-     * @return void
-     */
-    public function testCreatePaymentRetriesWithFullCheckoutWhenOneClickPaymentFails(): void
-    {
-        $molliePaymentApiResponseTransfer = (new MolliePaymentApiResponseTransfer())
-            ->setIsSuccessful(true)
-            ->setMolliePayment((new MolliePaymentTransfer())->setId(static::PAYMENT_ID)->setLinks(new MollieLinksTransfer()));
-
-        $mollieClientMock = $this->createMock(MollieClientInterface::class);
-        $mollieClientMock->expects($this->exactly(2))
-            ->method('createPayment')
-            ->willReturnOnConsecutiveCalls(
-                (new MolliePaymentApiResponseTransfer())->setIsSuccessful(false)->setMessage('The mandate is invalid'),
-                $molliePaymentApiResponseTransfer,
-            );
-
-        $singleClickPaymentResolverMock = $this->createMock(SingleClickPaymentResolverInterface::class);
-        $singleClickPaymentResolverMock->method('resolve')->willReturnArgument(0);
-        $singleClickPaymentResolverMock->method('isOneClickPayment')->willReturn(true);
-        $singleClickPaymentResolverMock->expects($this->once())
-            ->method('applyFallback')
-            ->with($this->anything(), static::ORDER_REFERENCE, SingleClickPaymentResolver::REASON_ONE_CLICK_PAYMENT_FAILED)
-            ->willReturnArgument(0);
-
-        $molliePaymentHandler = $this->createMolliePaymentHandlerWithMocks($mollieClientMock, $singleClickPaymentResolverMock);
-
-        $checkoutResponseTransfer = $molliePaymentHandler->createPayment(new QuoteTransfer(), $this->createCheckoutResponseTransfer());
-
-        $this->assertTrue($checkoutResponseTransfer->getIsSuccess());
     }
 
     /**
@@ -123,9 +90,6 @@ class MolliePaymentHandlerTest extends Unit
         $mollieClientMock = $this->createMock(MollieClientInterface::class);
         $mollieClientMock->method('createPayment')->willReturn($molliePaymentApiResponseTransfer);
 
-        $singleClickPaymentResolverMock = $this->createMock(SingleClickPaymentResolverInterface::class);
-        $singleClickPaymentResolverMock->method('resolve')->willReturnArgument(0);
-
         $molliePaymentWriterMock = $this->createMock(MolliePaymentWriterInterface::class);
         $molliePaymentWriterMock->expects($this->once())
             ->method('addMolliePaymentData')
@@ -133,9 +97,11 @@ class MolliePaymentHandlerTest extends Unit
                 return $molliePaymentTransfer->getMandateId() === static::MANDATE_ID;
             }));
 
-        $molliePaymentHandler = $this->createMolliePaymentHandlerWithMocks($mollieClientMock, $singleClickPaymentResolverMock, $molliePaymentWriterMock);
+        $molliePaymentHandler = $this->createMolliePaymentHandlerWithMocks($mollieClientMock, $molliePaymentWriterMock);
         $quoteTransfer = (new QuoteTransfer())->setPayment(
-            (new PaymentTransfer())->setMollieCreditCardPayment((new MollieCreditCardPaymentTransfer())->setMandateId(static::MANDATE_ID)),
+            (new PaymentTransfer())
+                ->setPaymentMethod(SharedConfig::MOLLIE_PAYMENT_CREDIT_CARD)
+                ->setMollieCreditCardPayment((new MollieCreditCardPaymentTransfer())->setMandateId(static::MANDATE_ID)),
         );
 
         $molliePaymentHandler->createPayment($quoteTransfer, $this->createCheckoutResponseTransfer());
@@ -159,22 +125,17 @@ class MolliePaymentHandlerTest extends Unit
         $mollieClientMock->method('createPayment')
             ->willReturn($molliePaymentApiResponseTransfer);
 
-        $singleClickPaymentResolverMock = $this->createMock(SingleClickPaymentResolverInterface::class);
-        $singleClickPaymentResolverMock->method('resolve')->willReturnArgument(0);
-
-        return $this->createMolliePaymentHandlerWithMocks($mollieClientMock, $singleClickPaymentResolverMock);
+        return $this->createMolliePaymentHandlerWithMocks($mollieClientMock);
     }
 
     /**
      * @param \Mollie\Client\Mollie\MollieClientInterface $mollieClientMock
-     * @param \Mollie\Zed\Mollie\Business\SingleClick\SingleClickPaymentResolverInterface $singleClickPaymentResolverMock
      * @param \Mollie\Zed\Mollie\Business\Writer\MolliePaymentWriterInterface|null $molliePaymentWriterMock
      *
      * @return \Mollie\Zed\Mollie\Business\Handler\MolliePaymentHandlerInterface
      */
     protected function createMolliePaymentHandlerWithMocks(
         MollieClientInterface $mollieClientMock,
-        SingleClickPaymentResolverInterface $singleClickPaymentResolverMock,
         ?MolliePaymentWriterInterface $molliePaymentWriterMock = null,
     ): MolliePaymentHandlerInterface {
         $mollieConfigMock = $this->createMock(MollieConfig::class);
@@ -182,10 +143,8 @@ class MolliePaymentHandlerTest extends Unit
             ->willReturn(static::MOLLIE_REDIRECT_URL);
 
         $mollieBusinessFactoryMock = $this->getMockBuilder(MollieBusinessFactory::class)
-            ->onlyMethods(['getMollieClient', 'getStorageClient', 'createMolliePaymentWriter', 'createSingleClickPaymentResolver'])
+            ->onlyMethods(['getMollieClient', 'getStorageClient', 'createMolliePaymentWriter'])
             ->getMock();
-        $mollieBusinessFactoryMock->method('createSingleClickPaymentResolver')
-            ->willReturn($singleClickPaymentResolverMock);
         $mollieBusinessFactoryMock->method('getMollieClient')
             ->willReturn($mollieClientMock);
         $mollieBusinessFactoryMock->method('getStorageClient')

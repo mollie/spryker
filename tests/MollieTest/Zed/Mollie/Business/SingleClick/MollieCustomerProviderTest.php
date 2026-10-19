@@ -31,26 +31,25 @@ class MollieCustomerProviderTest extends Unit
     /**
      * @return void
      */
-    public function testGetOrCreateReusesStoredCustomerWithoutCallingMollie(): void
+    public function testCreateMollieCustomerUsesStoredCustomerWithoutCallingMollie(): void
     {
         $mollieClientMock = $this->createMock(MollieClientInterface::class);
         $mollieClientMock->expects($this->never())->method('createCustomer');
 
-        $storedCustomerTransfer = $this->createStoredCustomerTransfer();
         $entityManagerMock = $this->createEntityManagerMock();
+        $entityManagerMock->expects($this->never())->method('saveMollieCustomer');
 
-        $mollieCustomerTransfer = $this->createProvider($mollieClientMock, $storedCustomerTransfer, $entityManagerMock)
-            ->getOrCreateMollieCustomer($this->createQuoteTransfer());
+        $quoteTransfer = $this->createQuoteTransfer();
+        $this->createProvider($mollieClientMock, $this->createStoredCustomerTransfer(), $entityManagerMock)
+            ->createMollieCustomer($quoteTransfer);
 
-        $this->assertSame(static::MOLLIE_CUSTOMER_ID, $mollieCustomerTransfer->getMollieCustomerId());
-        $this->assertFalse($mollieCustomerTransfer->getIsNew());
-        $this->assertNotNull($mollieCustomerTransfer->getConsentGivenAt());
+        $this->assertSame(static::MOLLIE_CUSTOMER_ID, $quoteTransfer->getCustomer()->getMollieCustomer()->getMollieCustomerId());
     }
 
     /**
      * @return void
      */
-    public function testGetOrCreateCreatesAndStoresCustomerWithConsentWhenNoneIsStored(): void
+    public function testCreateMollieCustomerCreatesAndStoresCustomerWithConsentWhenNoneIsStored(): void
     {
         $mollieClientMock = $this->createMock(MollieClientInterface::class);
         $mollieClientMock->expects($this->once())
@@ -65,21 +64,21 @@ class MollieCustomerProviderTest extends Unit
             ->with($this->callback(function (MollieCustomerTransfer $mollieCustomerTransfer): bool {
                 return $mollieCustomerTransfer->getFkCustomer() === static::ID_CUSTOMER
                     && $mollieCustomerTransfer->getMollieCustomerId() === static::MOLLIE_CUSTOMER_ID
-                    && $mollieCustomerTransfer->getMode() === 'test'
                     && $mollieCustomerTransfer->getConsentVersion() === '1'
                     && $mollieCustomerTransfer->getConsentGivenAt() !== null;
             }));
 
-        $mollieCustomerTransfer = $this->createProvider($mollieClientMock, null, $entityManagerMock)
-            ->getOrCreateMollieCustomer($this->createQuoteTransfer());
+        $quoteTransfer = $this->createQuoteTransfer();
+        $this->createProvider($mollieClientMock, null, $entityManagerMock)
+            ->createMollieCustomer($quoteTransfer);
 
-        $this->assertTrue($mollieCustomerTransfer->getIsNew());
+        $this->assertSame(static::MOLLIE_CUSTOMER_ID, $quoteTransfer->getCustomer()->getMollieCustomer()->getMollieCustomerId());
     }
 
     /**
      * @return void
      */
-    public function testGetOrCreateReturnsNullWhenMollieCustomerCannotBeCreated(): void
+    public function testCreateMollieCustomerSetsNoMollieCustomerWhenMollieCannotCreateIt(): void
     {
         $mollieClientMock = $this->createMock(MollieClientInterface::class);
         $mollieClientMock->method('createCustomer')
@@ -88,10 +87,11 @@ class MollieCustomerProviderTest extends Unit
         $entityManagerMock = $this->createEntityManagerMock();
         $entityManagerMock->expects($this->never())->method('saveMollieCustomer');
 
-        $mollieCustomerTransfer = $this->createProvider($mollieClientMock, null, $entityManagerMock)
-            ->getOrCreateMollieCustomer($this->createQuoteTransfer());
+        $quoteTransfer = $this->createQuoteTransfer();
+        $this->createProvider($mollieClientMock, null, $entityManagerMock)
+            ->createMollieCustomer($quoteTransfer);
 
-        $this->assertNull($mollieCustomerTransfer);
+        $this->assertNull($quoteTransfer->getCustomer()->getMollieCustomer());
     }
 
     /**
@@ -108,11 +108,10 @@ class MollieCustomerProviderTest extends Unit
     ): MollieCustomerProvider {
         $repositoryMock = $this->createMock(MollieRepositoryInterface::class);
         $repositoryMock->method('findMollieCustomer')
-            ->with(static::ID_CUSTOMER, 'test')
+            ->with(static::ID_CUSTOMER)
             ->willReturn($storedCustomerTransfer);
 
         $configMock = $this->createMock(MollieConfig::class);
-        $configMock->method('getMollieMode')->willReturn('test');
         $configMock->method('getSingleClickConsentVersion')->willReturn('1');
 
         return new MollieCustomerProvider($mollieClient, $repositoryMock, $entityManager, $configMock);
@@ -138,8 +137,7 @@ class MollieCustomerProviderTest extends Unit
         return (new MollieCustomerTransfer())
             ->setIdMollieCustomer(1)
             ->setMollieCustomerId(static::MOLLIE_CUSTOMER_ID)
-            ->setFkCustomer(static::ID_CUSTOMER)
-            ->setMode('test');
+            ->setFkCustomer(static::ID_CUSTOMER);
     }
 
     /**

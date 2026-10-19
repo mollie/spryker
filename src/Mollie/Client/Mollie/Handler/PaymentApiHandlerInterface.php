@@ -13,16 +13,11 @@ use Mollie\Api\Http\Data\DataCollection;
 interface PaymentApiHandlerInterface
 {
     /**
-     * Specification:
-     * - Adds the order reference.
-     * - Adds the single-click checkout path when the quote has one.
-     *
      * @param \Generated\Shared\Transfer\CheckoutResponseTransfer $checkoutResponseTransfer
-     * @param \Generated\Shared\Transfer\QuoteTransfer|null $quoteTransfer
      *
      * @return array<string>
      */
-    public function createPaymentMetadata(CheckoutResponseTransfer $checkoutResponseTransfer, ?QuoteTransfer $quoteTransfer = null): array;
+    public function createPaymentMetadata(CheckoutResponseTransfer $checkoutResponseTransfer): array;
 
     /**
      * @param \Generated\Shared\Transfer\MollieApiRequestTransfer $mollieApiRequestTransfer
@@ -44,4 +39,26 @@ interface PaymentApiHandlerInterface
      * @return \Mollie\Api\Http\Data\DataCollection<array<mixed>>
      */
     public function createLines(QuoteTransfer $quoteTransfer): DataCollection;
+
+    /**
+     * Specification:
+     * - Returns the Mollie customer ID of the quote's customer for a credit card payment with a saved card or with consent to save the card.
+     * - Returns null for any other payment.
+     *
+     * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
+     *
+     * @return string|null
+     */
+    public function findMollieCustomerId(QuoteTransfer $quoteTransfer): ?string;
+
+    /**
+     * Specification:
+     * - Returns the selected saved card (mandate) ID for a credit card payment.
+     * - Returns null for any other payment method.
+     *
+     * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
+     *
+     * @return string|null
+     */
+    public function findMandateId(QuoteTransfer $quoteTransfer): ?string;
 }

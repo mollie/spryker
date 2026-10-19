@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace Mollie\Yves\Mollie\PaymentPage\Form;
 
+use ArrayObject;
 use Generated\Shared\Transfer\MollieCreditCardPaymentTransfer;
 use Generated\Shared\Transfer\MollieMandateTransfer;
 use Mollie\Shared\Mollie\MollieConfig;
@@ -45,12 +46,7 @@ class MollieCreditCardSubForm extends AbstractMollieSubForm
     /**
      * @var string
      */
-    public const OPTION_SINGLE_CLICK_ENABLED = 'mollieCreditCardPaymentSingleClickEnabled';
-
-    /**
-     * @var string
-     */
-    public const OPTION_SAVED_CARDS = 'mollieCreditCardPaymentSavedCards';
+    public const OPTION_SINGLE_CLICK_PAYMENT_DATA = 'mollieCreditCardPaymentSingleClickPaymentData';
 
     /**
      * @var string
@@ -98,11 +94,12 @@ class MollieCreditCardSubForm extends AbstractMollieSubForm
         ]);
 
         $selectOptions = $options[static::OPTIONS_FIELD_NAME] ?? [];
-        if (empty($selectOptions[static::OPTION_SINGLE_CLICK_ENABLED])) {
+        $mollieSingleClickPaymentDataTransfer = $selectOptions[static::OPTION_SINGLE_CLICK_PAYMENT_DATA] ?? null;
+        if (!$mollieSingleClickPaymentDataTransfer || !$mollieSingleClickPaymentDataTransfer->getIsEnabled()) {
             return;
         }
 
-        $this->addSavedCardField($builder, $selectOptions[static::OPTION_SAVED_CARDS] ?? []);
+        $this->addSavedCardField($builder, $mollieSingleClickPaymentDataTransfer->getSavedCards());
         $this->addSaveCardConsentField($builder);
     }
 
@@ -135,13 +132,13 @@ class MollieCreditCardSubForm extends AbstractMollieSubForm
 
     /**
      * @param \Symfony\Component\Form\FormBuilderInterface $builder
-     * @param array<\Generated\Shared\Transfer\MollieMandateTransfer> $savedCards
+     * @param \ArrayObject<int, \Generated\Shared\Transfer\MollieMandateTransfer> $savedCards
      *
      * @return void
      */
-    protected function addSavedCardField(FormBuilderInterface $builder, array $savedCards): void
+    protected function addSavedCardField(FormBuilderInterface $builder, ArrayObject $savedCards): void
     {
-        if (!$savedCards) {
+        if (!$savedCards->count()) {
             return;
         }
 
@@ -185,10 +182,12 @@ class MollieCreditCardSubForm extends AbstractMollieSubForm
      */
     protected function createSavedCardLabel(MollieMandateTransfer $mollieMandateTransfer): string
     {
+        $mollieMandateDetailsTransfer = $mollieMandateTransfer->getDetails();
+
         $labelParts = array_filter([
-            trim(sprintf('%s **** %s', $mollieMandateTransfer->getCardLabel(), $mollieMandateTransfer->getCardNumberLast4())),
-            $mollieMandateTransfer->getCardExpiryDate(),
-            $mollieMandateTransfer->getCardHolder(),
+            trim(sprintf('%s **** %s', $mollieMandateDetailsTransfer->getCardLabel(), $mollieMandateDetailsTransfer->getCardNumber())),
+            $mollieMandateDetailsTransfer->getCardExpiryDate(),
+            $mollieMandateDetailsTransfer->getCardHolder(),
         ]);
 
         return implode(static::SAVED_CARD_LABEL_SEPARATOR, $labelParts);
@@ -208,7 +207,6 @@ class MollieCreditCardSubForm extends AbstractMollieSubForm
         $view->vars['profileId'] = $this->getConfig()->getProfileId();
         $view->vars['testMode'] = $this->getConfig()->isTestMode() ? 'true' : 'false';
         $view->vars['jsSrc'] = $this->getConfig()->getMollieCreditCardComponentsJsSrc();
-        $view->vars['isSingleClickEnabled'] = !empty($options[static::OPTIONS_FIELD_NAME][static::OPTION_SINGLE_CLICK_ENABLED]);
     }
 
     /**

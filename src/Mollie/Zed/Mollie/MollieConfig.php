@@ -201,23 +201,6 @@ class MollieConfig extends AbstractBundleConfig
     }
 
     /**
-     * Specification:
-     * - Returns the Mollie mode (`live`/`test`) of the configured API key.
-     * - Mollie customers and mandates exist per mode, so they are stored and looked up per mode.
-     *
-     * @return string
-     */
-    public function getMollieMode(): string
-    {
-        $apiKey = (string)$this->getSharedConfig()->getMollieApiKey();
-        if (str_starts_with($apiKey, 'live_')) {
-            return MollieConstants::MOLLIE_MODE_LIVE;
-        }
-
-        return MollieConstants::MOLLIE_MODE_TEST;
-    }
-
-    /**
      * @return string
      */
     public function getSingleClickConsentVersion(): string

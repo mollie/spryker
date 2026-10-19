@@ -191,16 +191,14 @@ class MollieRepository extends AbstractRepository implements MollieRepositoryInt
 
     /**
      * @param int $idCustomer
-     * @param string $mode
      *
      * @return \Generated\Shared\Transfer\MollieCustomerTransfer|null
      */
-    public function findMollieCustomer(int $idCustomer, string $mode): ?MollieCustomerTransfer
+    public function findMollieCustomer(int $idCustomer): ?MollieCustomerTransfer
     {
         $spyMollieCustomerEntity = $this->getFactory()
             ->createSpyMollieCustomerQuery()
             ->filterByFkCustomer($idCustomer)
-            ->filterByMode($mode)
             ->findOne();
 
         if (!$spyMollieCustomerEntity) {

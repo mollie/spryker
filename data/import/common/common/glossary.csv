@@ -144,8 +144,10 @@ mollie.checkout.payment.credit.card.saved.cards.title,Gespeicherte Karten,de_DE
 mollie.checkout.payment.credit.card.saved.cards.title,Saved cards,en_US
 mollie.checkout.payment.credit.card.new.card,Neue Karte verwenden,de_DE
 mollie.checkout.payment.credit.card.new.card,Use a new card,en_US
-mollie.checkout.payment.credit.card.save.card.consent,"Meine Karte bei Mollie speichern, um beim nächsten Mal schneller zu bezahlen.",de_DE
-mollie.checkout.payment.credit.card.save.card.consent,Save my card with Mollie for faster checkout next time.,en_US
+mollie.checkout.payment.credit.card.save.card.consent,Karte für schnelleres Bezahlen speichern.,de_DE
+mollie.checkout.payment.credit.card.save.card.consent,Save your card for faster checkout.,en_US
+mollie.checkout.payment.credit.card.save.card.consent.description,"Indem Sie dieses Kästchen ankreuzen, ermächtigen Sie [Handelsname], Ihre Zahlungskartendaten sicher zu speichern, um zukünftige Bezahlvorgänge zu beschleunigen. Ihre Daten werden von Mollie B.V. in unserem Auftrag gespeichert. Ihre gespeicherte Karte wird nur dann belastet, wenn Sie einen Kauf an der Kasse aktiv und erfolgreich abschließen – wir werden Ihre Karte niemals ohne Ihre direkte Beteiligung belasten. Sie können Ihre gespeicherte Karte jederzeit über Ihre Kontoeinstellungen entfernen oder uns unter [Support-Kontakt] kontaktieren. Weitere Informationen finden Sie in unserer [Datenschutzerklärung].",de_DE
+mollie.checkout.payment.credit.card.save.card.consent.description,"By ticking this box, you authorise [Doing Business As Name] to securely store your payment card details to speed up future checkouts. Your details will be held by Mollie B.V. on our behalf. Your saved card will only be charged when you actively successfully complete a purchase at checkout - we will never charge your card without your direct involvement. You can remove your saved card at any time via your account settings or by contacting us at [support contact]. For further information, please see our [Privacy Policy].",en_US
 mollie.customer.saved_cards.menu,Gespeicherte Karten,de_DE
 mollie.customer.saved_cards.menu,Saved cards,en_US
 mollie.customer.saved_cards.title,Gespeicherte Karten,de_DE

@@ -6,6 +6,7 @@ declare(strict_types=1);
 namespace Mollie\Zed\Mollie\Business;
 
 use Generated\Shared\Transfer\CheckoutResponseTransfer;
+use Generated\Shared\Transfer\CustomerTransfer;
 use Generated\Shared\Transfer\MollieExpirationInformationTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutConfigCollectionTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutConfigCriteriaTransfer;
@@ -342,9 +343,7 @@ interface MollieFacadeInterface
      *
      * @return \Generated\Shared\Transfer\MollieWebhookResponseTransfer
      */
-    public function updateExpressCheckoutMolliePayment(
-        MollieExpressCheckoutPaymentUpdateRequestTransfer $mollieExpressCheckoutPaymentUpdateRequestTransfer,
-    ): MollieExpressCheckoutPaymentUpdateResponseTransfer;
+    public function processExpressCheckoutPaymentWebhook(MolliePaymentTransfer $molliePaymentTransfer): MollieWebhookResponseTransfer;
 
     /**
      * Specification:
@@ -417,5 +416,32 @@ interface MollieFacadeInterface
     public function removeSavedCard(
         MollieSavedCardRemoveRequestTransfer $mollieSavedCardRemoveRequestTransfer,
     ): MollieSavedCardRemoveResponseTransfer;
-    public function processExpressCheckoutPaymentWebhook(MolliePaymentTransfer $molliePaymentTransfer): MollieWebhookResponseTransfer;
+
+    /**
+     * Specification:
+     * - Sets the customer's stored Mollie customer on `CustomerTransfer.mollieCustomer`.
+     * - Sets null when the customer has no stored Mollie customer yet.
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\CustomerTransfer $customerTransfer
+     *
+     * @return \Generated\Shared\Transfer\CustomerTransfer
+     */
+    public function expandCustomerWithMollieCustomer(CustomerTransfer $customerTransfer): CustomerTransfer;
+
+    /**
+     * Specification:
+     * - Must only be called for a credit card payment where the shopper gave consent to save the card.
+     * - Uses the customer's stored Mollie customer when one exists.
+     * - Otherwise creates the customer in Mollie and stores it with the consent timestamp and consent version.
+     * - Sets the Mollie customer on `QuoteTransfer.customer.mollieCustomer`, so the payment request can send its ID.
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
+     *
+     * @return void
+     */
+    public function createMollieCustomer(QuoteTransfer $quoteTransfer): void;
 }

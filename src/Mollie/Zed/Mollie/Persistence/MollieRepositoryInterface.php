@@ -80,14 +80,13 @@ interface MollieRepositoryInterface
 
     /**
      * Specification:
-     * - Finds the stored Mollie customer of a Spryker customer for the given Mollie mode (`live`/`test`).
+     * - Finds the stored Mollie customer of a Spryker customer.
      *
      * @param int $idCustomer
-     * @param string $mode
      *
      * @return \Generated\Shared\Transfer\MollieCustomerTransfer|null
      */
-    public function findMollieCustomer(int $idCustomer, string $mode): ?MollieCustomerTransfer;
+    public function findMollieCustomer(int $idCustomer): ?MollieCustomerTransfer;
 
     /**
      * Specification:

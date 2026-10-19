@@ -58,45 +58,26 @@ class GetCustomerMandatesApi extends AbstractApiCall
         $mandates = $payload[MollieConfig::RESPONSE_PARAMETER_EMBEDDED][MollieConfig::RESPONSE_PARAMETER_MANDATES] ?? [];
 
         foreach ($mandates as $mandate) {
-            if (!$this->isUsableCardMandate($mandate)) {
+            $mollieMandateTransfer = (new MollieMandateTransfer())->fromArray($mandate, true);
+
+            if (!$this->isUsableCardMandate($mollieMandateTransfer)) {
                 continue;
             }
 
-            $mollieMandateApiResponseTransfer->getMandateCollectionOrFail()->addMandate($this->mapMandate($mandate));
+            $mollieMandateApiResponseTransfer->getMandateCollectionOrFail()->addMandate($mollieMandateTransfer);
         }
 
         return $mollieMandateApiResponseTransfer;
     }
 
     /**
-     * @param array<string, mixed> $mandate
+     * @param \Generated\Shared\Transfer\MollieMandateTransfer $mollieMandateTransfer
      *
      * @return bool
      */
-    protected function isUsableCardMandate(array $mandate): bool
+    protected function isUsableCardMandate(MollieMandateTransfer $mollieMandateTransfer): bool
     {
-        return ($mandate['status'] ?? null) === MollieConfig::MANDATE_STATUS_VALID
-            && ($mandate['method'] ?? null) === PaymentMethod::CREDITCARD;
-    }
-
-    /**
-     * @param array<string, mixed> $mandate
-     *
-     * @return \Generated\Shared\Transfer\MollieMandateTransfer
-     */
-    protected function mapMandate(array $mandate): MollieMandateTransfer
-    {
-        $details = $mandate[MollieConfig::RESPONSE_PARAMETER_DETAILS] ?? [];
-
-        return (new MollieMandateTransfer())
-            ->setId($mandate['id'] ?? null)
-            ->setMode($mandate['mode'] ?? null)
-            ->setStatus($mandate['status'] ?? null)
-            ->setMethod($mandate['method'] ?? null)
-            ->setCreatedAt($mandate['createdAt'] ?? null)
-            ->setCardHolder($details['cardHolder'] ?? null)
-            ->setCardNumberLast4($details['cardNumber'] ?? $details['cardNumberLast4'] ?? null)
-            ->setCardExpiryDate($details['cardExpiryDate'] ?? null)
-            ->setCardLabel($details['cardLabel'] ?? null);
+        return $mollieMandateTransfer->getStatus() === MollieConfig::MANDATE_STATUS_VALID
+            && $mollieMandateTransfer->getMethod() === PaymentMethod::CREDITCARD;
     }
 }

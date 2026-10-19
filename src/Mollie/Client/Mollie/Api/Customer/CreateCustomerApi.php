@@ -72,6 +72,6 @@ class CreateCustomerApi extends AbstractApiCall
             return [];
         }
 
-        return $this->maskPayload(['name', 'email'], $createCustomerRequest->payload()->all());
+        return $createCustomerRequest->payload()->all();
     }
 }

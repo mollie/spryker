@@ -65,20 +65,20 @@ class MollieCreditCardSubFormDataProvider implements StepEngineFormDataProviderI
      */
     protected function expandWithSingleClickOptions(QuoteTransfer $quoteTransfer, array $options): array
     {
-        $options[MollieCreditCardSubForm::OPTION_SINGLE_CLICK_ENABLED] = false;
-        $options[MollieCreditCardSubForm::OPTION_SAVED_CARDS] = [];
+        if (!$this->config->isMollieCreditCardComponentEnabled()) {
+            return $options;
+        }
 
-        $customerTransfer = $quoteTransfer->getCustomer();
-        if (!$this->config->isMollieCreditCardComponentEnabled() || !$customerTransfer || $customerTransfer->getIsGuest() || !$customerTransfer->getIdCustomer()) {
+        $idCustomer = $quoteTransfer->getCustomer()->getIdCustomer();
+        if (!$idCustomer) {
             return $options;
         }
 
         $mollieSingleClickPaymentDataTransfer = $this->mollieClient->getSingleClickPaymentData(
-            (new MollieSingleClickPaymentDataRequestTransfer())->setIdCustomer($customerTransfer->getIdCustomer()),
+            (new MollieSingleClickPaymentDataRequestTransfer())->setIdCustomer($idCustomer),
         );
 
-        $options[MollieCreditCardSubForm::OPTION_SINGLE_CLICK_ENABLED] = (bool)$mollieSingleClickPaymentDataTransfer->getIsEnabled();
-        $options[MollieCreditCardSubForm::OPTION_SAVED_CARDS] = $mollieSingleClickPaymentDataTransfer->getSavedCards()->getArrayCopy();
+        $options[MollieCreditCardSubForm::OPTION_SINGLE_CLICK_PAYMENT_DATA] = $mollieSingleClickPaymentDataTransfer;
 
         return $options;
     }

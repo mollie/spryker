@@ -6,9 +6,6 @@
         <property name="cardToken" type="string"/>
         <property name="mandateId" type="string"/>
         <property name="isSaveCardConsentGiven" type="bool"/>
-        <property name="mollieCustomerId" type="string"/>
-        <property name="isStoreCredentials" type="bool"/>
-        <property name="checkoutPath" type="string"/>
     </transfer>
 
     <transfer name="MolliePayPalPayment">
@@ -594,11 +591,13 @@
         <property name="id" type="string"/>
         <property name="mollieCustomerId" type="string"/>
         <property name="fkCustomer" type="int"/>
-        <property name="mode" type="string"/>
         <property name="consentGivenAt" type="string"/>
         <property name="consentVersion" type="string"/>
         <property name="createdAt" type="string"/>
-        <property name="isNew" type="bool"/>
+    </transfer>
+
+    <transfer name="Customer">
+        <property name="mollieCustomer" type="MollieCustomer"/>
     </transfer>
 
     <transfer name="MollieMandate">
@@ -606,11 +605,15 @@
         <property name="mode" type="string"/>
         <property name="status" type="string"/>
         <property name="method" type="string"/>
+        <property name="details" type="MollieMandateDetails"/>
+        <property name="createdAt" type="string"/>
+    </transfer>
+
+    <transfer name="MollieMandateDetails">
         <property name="cardHolder" type="string"/>
-        <property name="cardNumberLast4" type="string"/>
+        <property name="cardNumber" type="string"/>
         <property name="cardExpiryDate" type="string"/>
         <property name="cardLabel" type="string"/>
-        <property name="createdAt" type="string"/>
     </transfer>
 
     <transfer name="MollieMandateCollection">

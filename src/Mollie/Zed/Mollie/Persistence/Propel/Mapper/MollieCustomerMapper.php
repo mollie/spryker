@@ -23,7 +23,6 @@ class MollieCustomerMapper implements MollieCustomerMapperInterface
             ->setIdMollieCustomer($spyMollieCustomerEntity->getIdMollieCustomer())
             ->setMollieCustomerId($spyMollieCustomerEntity->getMollieCustomerId())
             ->setFkCustomer($spyMollieCustomerEntity->getFkCustomer())
-            ->setMode($spyMollieCustomerEntity->getMode())
             ->setConsentGivenAt($spyMollieCustomerEntity->getConsentGivenAt()?->format('Y-m-d H:i:s'))
             ->setConsentVersion($spyMollieCustomerEntity->getConsentVersion())
             ->setCreatedAt($spyMollieCustomerEntity->getCreatedAt()?->format('Y-m-d H:i:s'));
@@ -42,7 +41,6 @@ class MollieCustomerMapper implements MollieCustomerMapperInterface
         return $spyMollieCustomerEntity
             ->setMollieCustomerId($mollieCustomerTransfer->getMollieCustomerIdOrFail())
             ->setFkCustomer($mollieCustomerTransfer->getFkCustomerOrFail())
-            ->setMode($mollieCustomerTransfer->getModeOrFail())
             ->setConsentGivenAt($mollieCustomerTransfer->getConsentGivenAt())
             ->setConsentVersion($mollieCustomerTransfer->getConsentVersion());
     }

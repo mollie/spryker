@@ -47,7 +47,6 @@ class CreateCustomerApiTest extends AbstractClientTest
 
         $this->assertTrue($mollieCustomerApiResponseTransfer->getIsSuccessful());
         $this->assertSame(static::MOLLIE_CUSTOMER_ID, $mollieCustomerApiResponseTransfer->getMollieCustomer()->getMollieCustomerId());
-        $this->assertSame('test', $mollieCustomerApiResponseTransfer->getMollieCustomer()->getMode());
         $mockMollieClient->assertSent(function (PendingRequest $pendingRequest): bool {
             $requestBody = $pendingRequest->getRequest()->payload()->all();
 

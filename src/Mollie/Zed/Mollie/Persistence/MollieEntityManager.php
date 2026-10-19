@@ -16,7 +16,6 @@ use Generated\Shared\Transfer\MolliePaymentTransfer;
 use Generated\Shared\Transfer\MollieRefundCollectionTransfer;
 use Generated\Shared\Transfer\MollieRefundSaveTransfer;
 use Generated\Shared\Transfer\OrderCollectionRequestTransfer;
-use Mollie\Shared\Mollie\MollieConfig;
 use Mollie\Shared\Mollie\MollieConstants;
 use Orm\Zed\Mollie\Persistence\SpyMollieExpressCheckoutPaymentRefund;
 use Orm\Zed\Mollie\Persistence\SpyMollieOrderItemPaymentCapture;
@@ -203,7 +202,6 @@ class MollieEntityManager extends AbstractEntityManager implements MollieEntityM
             ->setSequenceType($molliePaymentTransfer->getSequenceType())
             ->setCustomerId($molliePaymentTransfer->getCustomerId())
             ->setMandateId($molliePaymentTransfer->getMandateId())
-            ->setCheckoutPath($molliePaymentTransfer->getMetadata()[MollieConfig::SINGLE_CLICK_METADATA_KEY_CHECKOUT_PATH] ?? null)
             ->setMetadata($metadata)
             ->setExpiresAt($molliePaymentTransfer->getExpiresAt())
             ->setCreatedAt($molliePaymentTransfer->getCreatedAt());
@@ -398,7 +396,6 @@ class MollieEntityManager extends AbstractEntityManager implements MollieEntityM
         $spyMollieCustomerEntity = $this->getFactory()
             ->createSpyMollieCustomerQuery()
             ->filterByFkCustomer($mollieCustomerTransfer->getFkCustomerOrFail())
-            ->filterByMode($mollieCustomerTransfer->getModeOrFail())
             ->findOneOrCreate();
 
         $mollieCustomerMapper = $this->getFactory()->createMollieCustomerMapper();

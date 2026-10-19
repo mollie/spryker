@@ -65,6 +65,8 @@ use Mollie\Zed\Mollie\Business\Processor\PaymentLink\PaymentLinkProcessor;
 use Mollie\Zed\Mollie\Business\Processor\PaymentLink\PaymentLinkProcessorInterface;
 use Mollie\Zed\Mollie\Business\Processor\Refund\RefundProcessor;
 use Mollie\Zed\Mollie\Business\Processor\Refund\RefundProcessorInterface;
+use Mollie\Zed\Mollie\Business\SingleClick\MollieCustomerExpander;
+use Mollie\Zed\Mollie\Business\SingleClick\MollieCustomerExpanderInterface;
 use Mollie\Zed\Mollie\Business\SingleClick\MollieCustomerProvider;
 use Mollie\Zed\Mollie\Business\SingleClick\MollieCustomerProviderInterface;
 use Mollie\Zed\Mollie\Business\SingleClick\SavedCardReader;
@@ -75,8 +77,6 @@ use Mollie\Zed\Mollie\Business\SingleClick\SingleClickConfigReader;
 use Mollie\Zed\Mollie\Business\SingleClick\SingleClickConfigReaderInterface;
 use Mollie\Zed\Mollie\Business\SingleClick\SingleClickConfigWriter;
 use Mollie\Zed\Mollie\Business\SingleClick\SingleClickConfigWriterInterface;
-use Mollie\Zed\Mollie\Business\SingleClick\SingleClickPaymentResolver;
-use Mollie\Zed\Mollie\Business\SingleClick\SingleClickPaymentResolverInterface;
 use Mollie\Zed\Mollie\Business\Writer\MolliePaymentWriter;
 use Mollie\Zed\Mollie\Business\Writer\MolliePaymentWriterInterface;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToCalculationFacadeInterface;
@@ -257,7 +257,6 @@ class MollieBusinessFactory extends AbstractBusinessFactory
             $this->getStorageClient(),
             $this->createMolliePaymentWriter(),
             $this->getConfig(),
-            $this->createSingleClickPaymentResolver(),
         );
     }
 
@@ -574,6 +573,16 @@ class MollieBusinessFactory extends AbstractBusinessFactory
     }
 
     /**
+     * @return \Mollie\Zed\Mollie\Business\SingleClick\MollieCustomerExpanderInterface
+     */
+    public function createMollieCustomerExpander(): MollieCustomerExpanderInterface
+    {
+        return new MollieCustomerExpander(
+            $this->createMollieCustomerProvider(),
+        );
+    }
+
+    /**
      * @return \Mollie\Zed\Mollie\Business\SingleClick\SavedCardReaderInterface
      */
     public function createSavedCardReader(): SavedCardReaderInterface
@@ -582,18 +591,6 @@ class MollieBusinessFactory extends AbstractBusinessFactory
             $this->getMollieClient(),
             $this->createSingleClickConfigReader(),
             $this->createMollieCustomerProvider(),
-        );
-    }
-
-    /**
-     * @return \Mollie\Zed\Mollie\Business\SingleClick\SingleClickPaymentResolverInterface
-     */
-    public function createSingleClickPaymentResolver(): SingleClickPaymentResolverInterface
-    {
-        return new SingleClickPaymentResolver(
-            $this->createSingleClickConfigReader(),
-            $this->createMollieCustomerProvider(),
-            $this->createSavedCardReader(),
         );
     }
 

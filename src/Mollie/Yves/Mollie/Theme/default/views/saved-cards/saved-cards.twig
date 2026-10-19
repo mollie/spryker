@@ -22,12 +22,12 @@
                 {% set card = savedCard.card %}
                 <li class="list__item grid grid--middle grid--justify spacing-y spacing-y--inner">
                     <div class="col">
-                        <strong>{{ card.cardLabel }} •••• {{ card.cardNumberLast4 }}</strong>
-                        {% if card.cardExpiryDate %}
-                            <span class="spacing-left">{{ 'mollie.customer.saved_cards.expires' | trans }} {{ card.cardExpiryDate | date('m/Y') }}</span>
+                        <strong>{{ card.details.cardLabel }} •••• {{ card.details.cardNumber }}</strong>
+                        {% if card.details.cardExpiryDate %}
+                            <span class="spacing-left">{{ 'mollie.customer.saved_cards.expires' | trans }} {{ card.details.cardExpiryDate | date('m/Y') }}</span>
                         {% endif %}
-                        {% if card.cardHolder %}
-                            <span class="spacing-left">{{ card.cardHolder }}</span>
+                        {% if card.details.cardHolder %}
+                            <span class="spacing-left">{{ card.details.cardHolder }}</span>
                         {% endif %}
                     </div>
                     <div class="col">
