@@ -73,24 +73,6 @@ class MollieCustomerDeleterTest extends Unit
     /**
      * @return void
      */
-    public function testDeleteMollieCustomerRemovesStoredCustomerWhenMollieNoLongerKnowsIt(): void
-    {
-        $mollieClientMock = $this->createMock(MollieClientInterface::class);
-        $mollieClientMock->method('deleteCustomer')
-            ->willReturn((new MollieCustomerApiResponseTransfer())->setIsSuccessful(false)->setCode(404));
-
-        $entityManagerMock = $this->createMock(MollieEntityManagerInterface::class);
-        $entityManagerMock->expects($this->once())
-            ->method('deleteMollieCustomer')
-            ->with(static::ID_MOLLIE_CUSTOMER);
-
-        $this->createMollieCustomerDeleter($mollieClientMock, $this->createMollieCustomerTransfer(), $entityManagerMock)
-            ->deleteMollieCustomer($this->createCustomerTransfer());
-    }
-
-    /**
-     * @return void
-     */
     public function testDeleteMollieCustomerKeepsStoredCustomerWhenMollieRejectsTheDeletion(): void
     {
         $mollieClientMock = $this->createMock(MollieClientInterface::class);

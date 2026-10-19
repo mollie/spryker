@@ -11,9 +11,11 @@ use Generated\Shared\Transfer\MollieMandateCollectionTransfer;
 use Generated\Shared\Transfer\MollieMandateTransfer;
 use Generated\Shared\Transfer\MollieSingleClickPaymentDataRequestTransfer;
 use Mollie\Client\Mollie\MollieClientInterface;
-use Mollie\Zed\Mollie\Business\SingleClick\MollieCustomerProviderInterface;
-use Mollie\Zed\Mollie\Business\SingleClick\SavedCardReader;
-use Mollie\Zed\Mollie\Business\SingleClick\SingleClickConfigReaderInterface;
+use Mollie\Zed\Mollie\Business\MollieBusinessFactory;
+use Mollie\Zed\Mollie\Business\SingleClick\SavedCardReaderInterface;
+use Mollie\Zed\Mollie\MollieConfig;
+use Mollie\Zed\Mollie\Persistence\MollieEntityManagerInterface;
+use Mollie\Zed\Mollie\Persistence\MollieRepositoryInterface;
 
 class SavedCardReaderTest extends Unit
 {
@@ -49,9 +51,9 @@ class SavedCardReaderTest extends Unit
     /**
      * @param bool $isSingleClickPaymentEnabled
      *
-     * @return \Mollie\Zed\Mollie\Business\SingleClick\SavedCardReader
+     * @return \Mollie\Zed\Mollie\Business\SingleClick\SavedCardReaderInterface
      */
-    protected function createReader(bool $isSingleClickPaymentEnabled): SavedCardReader
+    protected function createReader(bool $isSingleClickPaymentEnabled): SavedCardReaderInterface
     {
         $mollieClientMock = $this->createMock(MollieClientInterface::class);
         $mollieClientMock->method('getCustomerMandates')
@@ -59,13 +61,22 @@ class SavedCardReaderTest extends Unit
                 ->setIsSuccessful(true)
                 ->setMandateCollection((new MollieMandateCollectionTransfer())->addMandate((new MollieMandateTransfer())->setId('mdt_pWUnw6pkBN'))));
 
-        $singleClickConfigReaderMock = $this->createMock(SingleClickConfigReaderInterface::class);
-        $singleClickConfigReaderMock->method('isSingleClickPaymentEnabled')->willReturn($isSingleClickPaymentEnabled);
-
-        $mollieCustomerProviderMock = $this->createMock(MollieCustomerProviderInterface::class);
-        $mollieCustomerProviderMock->method('findMollieCustomer')
+        $repositoryMock = $this->createMock(MollieRepositoryInterface::class);
+        $repositoryMock->method('findSingleClickConfig')->willReturn(null);
+        $repositoryMock->method('findMollieCustomer')
             ->willReturn((new MollieCustomerTransfer())->setFkCustomer(static::ID_CUSTOMER)->setMollieCustomerId('cst_8wmqcHMN4U'));
 
-        return new SavedCardReader($mollieClientMock, $singleClickConfigReaderMock, $mollieCustomerProviderMock);
+        $configMock = $this->createMock(MollieConfig::class);
+        $configMock->method('isSingleClickPaymentEnabledByDefault')->willReturn($isSingleClickPaymentEnabled);
+
+        $mollieBusinessFactoryMock = $this->getMockBuilder(MollieBusinessFactory::class)
+            ->onlyMethods(['getMollieClient', 'getRepository', 'getEntityManager'])
+            ->getMock();
+        $mollieBusinessFactoryMock->method('getMollieClient')->willReturn($mollieClientMock);
+        $mollieBusinessFactoryMock->method('getRepository')->willReturn($repositoryMock);
+        $mollieBusinessFactoryMock->method('getEntityManager')->willReturn($this->createMock(MollieEntityManagerInterface::class));
+        $mollieBusinessFactoryMock->setConfig($configMock);
+
+        return $mollieBusinessFactoryMock->createSavedCardReader();
     }
 }

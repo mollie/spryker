@@ -4,17 +4,20 @@ declare(strict_types = 1);
 
 namespace MollieTest\Zed\Mollie\Business\SingleClick;
 
-use ArrayObject;
 use Codeception\Test\Unit;
 use Generated\Shared\Transfer\MollieApiRequestTransfer;
 use Generated\Shared\Transfer\MollieCustomerTransfer;
 use Generated\Shared\Transfer\MollieMandateApiResponseTransfer;
+use Generated\Shared\Transfer\MollieMandateCollectionTransfer;
 use Generated\Shared\Transfer\MollieMandateTransfer;
 use Generated\Shared\Transfer\MollieSavedCardRemoveRequestTransfer;
 use Mollie\Client\Mollie\MollieClientInterface;
-use Mollie\Zed\Mollie\Business\SingleClick\MollieCustomerProviderInterface;
-use Mollie\Zed\Mollie\Business\SingleClick\SavedCardReaderInterface;
-use Mollie\Zed\Mollie\Business\SingleClick\SavedCardRemover;
+use Mollie\Zed\Mollie\Business\MollieBusinessFactory;
+use Mollie\Zed\Mollie\Business\SingleClick\SavedCardRemoverInterface;
+use Mollie\Zed\Mollie\MollieConfig;
+use Mollie\Zed\Mollie\Persistence\MollieEntityManagerInterface;
+use Mollie\Zed\Mollie\Persistence\MollieRepositoryInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 
 class SavedCardRemoverTest extends Unit
 {
@@ -98,29 +101,39 @@ class SavedCardRemoverTest extends Unit
     }
 
     /**
-     * @param \Mollie\Client\Mollie\MollieClientInterface $mollieClientMock
+     * @param \Mollie\Client\Mollie\MollieClientInterface|\PHPUnit\Framework\MockObject\MockObject $mollieClientMock
      * @param \Generated\Shared\Transfer\MollieCustomerTransfer|null $mollieCustomerTransfer
      * @param list<string> $savedMandateIds
      *
-     * @return \Mollie\Zed\Mollie\Business\SingleClick\SavedCardRemover
+     * @return \Mollie\Zed\Mollie\Business\SingleClick\SavedCardRemoverInterface
      */
     protected function createRemover(
-        MollieClientInterface $mollieClientMock,
+        MollieClientInterface|MockObject $mollieClientMock,
         ?MollieCustomerTransfer $mollieCustomerTransfer,
         array $savedMandateIds,
-    ): SavedCardRemover {
-        $mollieCustomerProviderMock = $this->createMock(MollieCustomerProviderInterface::class);
-        $mollieCustomerProviderMock->method('findMollieCustomer')->willReturn($mollieCustomerTransfer);
-
-        $savedCards = new ArrayObject();
+    ): SavedCardRemoverInterface {
+        $mollieMandateCollectionTransfer = new MollieMandateCollectionTransfer();
         foreach ($savedMandateIds as $savedMandateId) {
-            $savedCards->append((new MollieMandateTransfer())->setId($savedMandateId));
+            $mollieMandateCollectionTransfer->addMandate((new MollieMandateTransfer())->setId($savedMandateId));
         }
 
-        $savedCardReaderMock = $this->createMock(SavedCardReaderInterface::class);
-        $savedCardReaderMock->method('getSavedCards')->willReturn($savedCards);
+        $mollieClientMock->method('getCustomerMandates')
+            ->willReturn((new MollieMandateApiResponseTransfer())
+                ->setIsSuccessful(true)
+                ->setMandateCollection($mollieMandateCollectionTransfer));
 
-        return new SavedCardRemover($mollieClientMock, $mollieCustomerProviderMock, $savedCardReaderMock);
+        $repositoryMock = $this->createMock(MollieRepositoryInterface::class);
+        $repositoryMock->method('findMollieCustomer')->willReturn($mollieCustomerTransfer);
+
+        $mollieBusinessFactoryMock = $this->getMockBuilder(MollieBusinessFactory::class)
+            ->onlyMethods(['getMollieClient', 'getRepository', 'getEntityManager'])
+            ->getMock();
+        $mollieBusinessFactoryMock->method('getMollieClient')->willReturn($mollieClientMock);
+        $mollieBusinessFactoryMock->method('getRepository')->willReturn($repositoryMock);
+        $mollieBusinessFactoryMock->method('getEntityManager')->willReturn($this->createMock(MollieEntityManagerInterface::class));
+        $mollieBusinessFactoryMock->setConfig($this->createMock(MollieConfig::class));
+
+        return $mollieBusinessFactoryMock->createSavedCardRemover();
     }
 
     /**

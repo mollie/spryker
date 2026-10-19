@@ -35,9 +35,6 @@ class GetCustomerMandatesApi extends AbstractApiCall
     }
 
     /**
-     * Specification:
-     * - Keeps only valid credit card mandates, as only those can be used for single-click payments.
-     *
      * @param \Generated\Shared\Transfer\MollieApiResponseTransfer $mollieApiResponseTransfer
      *
      * @return \Spryker\Shared\Kernel\Transfer\AbstractTransfer

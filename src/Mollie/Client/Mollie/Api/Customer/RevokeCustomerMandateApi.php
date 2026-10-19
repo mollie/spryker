@@ -30,9 +30,6 @@ class RevokeCustomerMandateApi extends AbstractApiCall
     }
 
     /**
-     * Specification:
-     * - Mollie answers a successful revoke with `204 No Content`, so only the result and the HTTP code are mapped.
-     *
      * @param \Generated\Shared\Transfer\MollieApiResponseTransfer $mollieApiResponseTransfer
      *
      * @return \Spryker\Shared\Kernel\Transfer\AbstractTransfer

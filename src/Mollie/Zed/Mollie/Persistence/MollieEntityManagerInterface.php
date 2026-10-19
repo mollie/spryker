@@ -144,9 +144,6 @@ interface MollieEntityManagerInterface
     public function saveExpressCheckoutConfig(string $expressMethod, bool $isActive): void;
 
     /**
-     * Specification:
-     * - Creates or updates the Mollie customer row of a Spryker customer and Mollie mode.
-     *
      * @param \Generated\Shared\Transfer\MollieCustomerTransfer $mollieCustomerTransfer
      *
      * @return \Generated\Shared\Transfer\MollieCustomerTransfer

@@ -11,9 +11,6 @@ use Generated\Shared\Transfer\QuoteTransfer;
 interface MollieCustomerProviderInterface
 {
     /**
-     * Specification:
-     * - Returns the stored Mollie customer of the Spryker customer, or `null`.
-     *
      * @param \Generated\Shared\Transfer\CustomerTransfer $customerTransfer
      *
      * @return \Generated\Shared\Transfer\MollieCustomerTransfer|null

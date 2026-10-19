@@ -12,10 +12,6 @@ use Generated\Shared\Transfer\MollieSingleClickPaymentDataTransfer;
 interface SavedCardReaderInterface
 {
     /**
-     * Specification:
-     * - Returns whether single-click payments are enabled.
-     * - Returns the saved cards (valid credit card mandates) of the customer when enabled.
-     *
      * @param \Generated\Shared\Transfer\MollieSingleClickPaymentDataRequestTransfer $mollieSingleClickPaymentDataRequestTransfer
      *
      * @return \Generated\Shared\Transfer\MollieSingleClickPaymentDataTransfer
@@ -25,11 +21,6 @@ interface SavedCardReaderInterface
     ): MollieSingleClickPaymentDataTransfer;
 
     /**
-     * Specification:
-     * - Returns whether single-click payments are enabled.
-     * - Returns the saved cards (valid credit card mandates) of the customer, also when single-click payments are disabled,
-     *   so the customer can still remove them.
-     *
      * @param \Generated\Shared\Transfer\MollieSingleClickPaymentDataRequestTransfer $mollieSingleClickPaymentDataRequestTransfer
      *
      * @return \Generated\Shared\Transfer\MollieSingleClickPaymentDataTransfer
@@ -39,10 +30,6 @@ interface SavedCardReaderInterface
     ): MollieSingleClickPaymentDataTransfer;
 
     /**
-     * Specification:
-     * - Fetches the valid credit card mandates of the Mollie customer.
-     * - Returns no cards when Mollie can't list them.
-     *
      * @param \Generated\Shared\Transfer\MollieCustomerTransfer $mollieCustomerTransfer
      *
      * @return \ArrayObject<int, \Generated\Shared\Transfer\MollieMandateTransfer>

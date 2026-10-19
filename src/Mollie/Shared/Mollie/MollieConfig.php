@@ -364,10 +364,6 @@ class MollieConfig extends AbstractSharedConfig
     public const EXPRESS_CHECKOUT_METADATA_KEY_UUID = 'expressCheckoutUuid';
 
     /**
-     * Version of the "save card" consent text; stored with the Mollie customer when the shopper gives consent.
-     * Increase it whenever the glossary text `mollie.checkout.payment.credit.card.save.card.consent` or
-     * `mollie.checkout.payment.credit.card.save.card.consent.description` changes.
-     *
      * @var string
      */
     public const SINGLE_CLICK_CONSENT_VERSION = '2';

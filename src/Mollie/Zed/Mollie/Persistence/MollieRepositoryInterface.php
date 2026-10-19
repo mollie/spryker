@@ -79,9 +79,6 @@ interface MollieRepositoryInterface
     public function findExpressCheckoutPaymentRefundByExpressCheckoutUuid(string $expressCheckoutUuid): ?MollieExpressCheckoutPaymentRefundTransfer;
 
     /**
-     * Specification:
-     * - Finds the stored Mollie customer of a Spryker customer.
-     *
      * @param int $idCustomer
      *
      * @return \Generated\Shared\Transfer\MollieCustomerTransfer|null
@@ -89,9 +86,6 @@ interface MollieRepositoryInterface
     public function findMollieCustomer(int $idCustomer): ?MollieCustomerTransfer;
 
     /**
-     * Specification:
-     * - Returns the single-click setting saved in the Back Office, or `null` when it was never saved.
-     *
      * @return bool|null
      */
     public function findSingleClickConfig(): ?bool;

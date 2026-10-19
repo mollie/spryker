@@ -5,7 +5,8 @@ declare(strict_types = 1);
 namespace MollieTest\Zed\Mollie\Business\SingleClick;
 
 use Codeception\Test\Unit;
-use Mollie\Zed\Mollie\Business\SingleClick\SingleClickConfigReader;
+use Mollie\Zed\Mollie\Business\MollieBusinessFactory;
+use Mollie\Zed\Mollie\Business\SingleClick\SingleClickConfigReaderInterface;
 use Mollie\Zed\Mollie\MollieConfig;
 use Mollie\Zed\Mollie\Persistence\MollieRepositoryInterface;
 
@@ -35,9 +36,9 @@ class SingleClickConfigReaderTest extends Unit
      * @param bool|null $persistentConfig
      * @param bool $defaultConfig
      *
-     * @return \Mollie\Zed\Mollie\Business\SingleClick\SingleClickConfigReader
+     * @return \Mollie\Zed\Mollie\Business\SingleClick\SingleClickConfigReaderInterface
      */
-    protected function createSingleClickConfigReader(?bool $persistentConfig, bool $defaultConfig): SingleClickConfigReader
+    protected function createSingleClickConfigReader(?bool $persistentConfig, bool $defaultConfig): SingleClickConfigReaderInterface
     {
         $repositoryMock = $this->createMock(MollieRepositoryInterface::class);
         $repositoryMock->method('findSingleClickConfig')->willReturn($persistentConfig);
@@ -45,6 +46,12 @@ class SingleClickConfigReaderTest extends Unit
         $configMock = $this->createMock(MollieConfig::class);
         $configMock->method('isSingleClickPaymentEnabledByDefault')->willReturn($defaultConfig);
 
-        return new SingleClickConfigReader($configMock, $repositoryMock);
+        $mollieBusinessFactoryMock = $this->getMockBuilder(MollieBusinessFactory::class)
+            ->onlyMethods(['getRepository'])
+            ->getMock();
+        $mollieBusinessFactoryMock->method('getRepository')->willReturn($repositoryMock);
+        $mollieBusinessFactoryMock->setConfig($configMock);
+
+        return $mollieBusinessFactoryMock->createSingleClickConfigReader();
     }
 }

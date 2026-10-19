@@ -449,8 +449,8 @@ interface MollieFacadeInterface
      * Specification:
      * - Does nothing when the customer has no stored Mollie customer.
      * - Deletes the customer at Mollie, which also cancels all of its mandates (saved cards).
-     * - Removes the stored Mollie customer when Mollie deleted it or no longer knows it (404/410).
-     * - Keeps the stored Mollie customer and logs an error when Mollie rejects the deletion for any other reason.
+     * - Removes the stored Mollie customer when Mollie deleted it.
+     * - Keeps the stored Mollie customer and logs an error when Mollie rejects the deletion.
      *
      * @api
      *

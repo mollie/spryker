@@ -91,10 +91,6 @@ interface MollieConstants
     public const MOLLIE_EXPRESS_CHECKOUT_JS_SRC = 'MOLLIE:MOLLIE_EXPRESS_CHECKOUT_JS_SRC';
 
     /**
-     * Specification:
-     * - Default on/off value for single-click credit card payments (saved cards).
-     * - The Back Office setting overrides this value.
-     *
      * @api
      *
      * @var string

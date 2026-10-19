@@ -1616,7 +1616,7 @@ class CustomerDependencyProvider extends SprykerCustomerDependencyProvider
 }
 ```
 
-If Mollie rejects the deletion (other than `404`/`410`, which mean the customer is already gone), the stored Mollie customer is kept and an error is logged, so the deletion can be repeated.
+If Mollie rejects the deletion, the stored Mollie customer is kept and an error is logged, so the deletion can be repeated.
 
 ## 5. Glossary Keys and Translations
 

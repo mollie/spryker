@@ -32,7 +32,7 @@ export default class MollieCreditCardComponent extends Component {
     protected form: HTMLFormElement;
     protected cardToken: HTMLInputElement;
     protected errorOutput: HTMLDivElement;
-    protected savedCardInputs: HTMLInputElement[];
+    protected newCardWrapper: HTMLElement;
 
     protected readyCallback(): void {}
 
@@ -41,9 +41,7 @@ export default class MollieCreditCardComponent extends Component {
         this.scriptLoader = <ScriptLoader>this.querySelector(this.scriptLoaderTag);
         this.errorOutput = <HTMLDivElement>this.querySelector(this.errorTokenOutputClass);
         this.form = <HTMLFormElement>document.querySelector(this.formSelector);
-        this.savedCardInputs = this.savedCardInputName
-            ? Array.from(document.querySelectorAll<HTMLInputElement>(`[name="${this.savedCardInputName}"]`))
-            : [];
+        this.newCardWrapper = <HTMLElement>this.querySelector(this.newCardWrapperClass);
 
         this.mapEvents();
         this.toggleNewCardFields();
@@ -53,18 +51,13 @@ export default class MollieCreditCardComponent extends Component {
     {
         this.scriptLoader.addEventListener('scriptload', () => this.onScriptLoad());
         this.form.addEventListener('submit', (event: Event) => this.onSubmit(event));
-        this.savedCardInputs.forEach((input: HTMLInputElement) => {
-            input.addEventListener('change', () => this.toggleNewCardFields());
-        });
+        this.form.querySelector(this.savedCardFieldClass)
+            ?.addEventListener('change', () => this.toggleNewCardFields());
     }
 
     protected toggleNewCardFields(): void
     {
-        const isSavedCardSelected = this.isSavedCardSelected;
-
-        document.querySelectorAll(this.newCardOnlySelector).forEach((element: Element) => {
-            element.classList.toggle('is-hidden', isSavedCardSelected);
-        });
+        this.newCardWrapper.classList.toggle('is-hidden', this.isSavedCardSelected);
     }
 
     protected onScriptLoad(): void
@@ -183,17 +176,17 @@ export default class MollieCreditCardComponent extends Component {
     }
 
     protected get isSavedCardSelected(): boolean {
-        const checkedSavedCardInput = this.savedCardInputs.find((input: HTMLInputElement) => input.checked);
+        const checkedSavedCardInput = this.form.querySelector<HTMLInputElement>(`${this.savedCardFieldClass} input:checked`);
 
         return Boolean(checkedSavedCardInput?.value);
     }
 
-    protected get savedCardInputName(): string {
-        return this.getAttribute('saved-card-input-name');
+    protected get savedCardFieldClass(): string {
+        return '.js-mollie-saved-card';
     }
 
-    protected get newCardOnlySelector(): string {
-        return this.getAttribute('new-card-only-selector');
+    protected get newCardWrapperClass(): string {
+        return `.${this.name}__wrapper`;
     }
 
     protected get cardTokenClass(): string {

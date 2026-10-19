@@ -19,13 +19,7 @@ class MollieCustomerMapper implements MollieCustomerMapperInterface
         SpyMollieCustomer $spyMollieCustomerEntity,
         MollieCustomerTransfer $mollieCustomerTransfer,
     ): MollieCustomerTransfer {
-        return $mollieCustomerTransfer
-            ->setIdMollieCustomer($spyMollieCustomerEntity->getIdMollieCustomer())
-            ->setMollieCustomerId($spyMollieCustomerEntity->getMollieCustomerId())
-            ->setFkCustomer($spyMollieCustomerEntity->getFkCustomer())
-            ->setConsentGivenAt($spyMollieCustomerEntity->getConsentGivenAt()?->format('Y-m-d H:i:s'))
-            ->setConsentVersion($spyMollieCustomerEntity->getConsentVersion())
-            ->setCreatedAt($spyMollieCustomerEntity->getCreatedAt()?->format('Y-m-d H:i:s'));
+        return $mollieCustomerTransfer->fromArray($spyMollieCustomerEntity->toArray(), true);
     }
 
     /**
@@ -38,10 +32,6 @@ class MollieCustomerMapper implements MollieCustomerMapperInterface
         MollieCustomerTransfer $mollieCustomerTransfer,
         SpyMollieCustomer $spyMollieCustomerEntity,
     ): SpyMollieCustomer {
-        return $spyMollieCustomerEntity
-            ->setMollieCustomerId($mollieCustomerTransfer->getMollieCustomerIdOrFail())
-            ->setFkCustomer($mollieCustomerTransfer->getFkCustomerOrFail())
-            ->setConsentGivenAt($mollieCustomerTransfer->getConsentGivenAt())
-            ->setConsentVersion($mollieCustomerTransfer->getConsentVersion());
+        return $spyMollieCustomerEntity->fromArray($mollieCustomerTransfer->modifiedToArray());
     }
 }

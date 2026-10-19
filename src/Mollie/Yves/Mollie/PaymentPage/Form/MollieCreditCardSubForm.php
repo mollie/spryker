@@ -104,10 +104,6 @@ class MollieCreditCardSubForm extends AbstractMollieSubForm
     }
 
     /**
-     * Specification:
-     * - A card token is required unless a saved card is chosen.
-     * - Whether the chosen saved card belongs to the customer is checked again in Zed before the payment is created.
-     *
      * @param \Generated\Shared\Transfer\MollieCreditCardPaymentTransfer|null $mollieCreditCardPaymentTransfer
      * @param \Symfony\Component\Validator\Context\ExecutionContextInterface $context
      *

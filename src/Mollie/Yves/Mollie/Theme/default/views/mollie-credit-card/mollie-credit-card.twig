@@ -22,15 +22,9 @@
                 profileId: vars.profileId,
                 testMode: vars.testMode,
                 jsSrc: vars.jsSrc,
-                savedCardInputName: savedCardField ? savedCardField.vars.full_name : '',
+                saveCardConsentField: saveCardConsentField,
             }
         } only %}
-        {% if saveCardConsentField %}
-            <div class="spacing-top js-mollie-credit-card-new-card-only">
-                {{ form_row(saveCardConsentField) }}
-                <p class="text-small">{{ 'mollie.checkout.payment.credit.card.save.card.consent.description' | trans | raw }}</p>
-            </div>
-        {% endif %}
         {% else %}
         <div class="spacing-top--big">
             {{ 'checkout.payment.provider.mollieCreditCard.descriptionText' | trans }}

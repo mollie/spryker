@@ -55,9 +55,6 @@ class MollieCreditCardSubFormDataProvider implements StepEngineFormDataProviderI
     }
 
     /**
-     * Specification:
-     * - Single-click needs Mollie Components (card token) and a logged-in customer.
-     *
      * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
      * @param array<string, mixed> $options
      *

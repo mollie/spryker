@@ -10,7 +10,8 @@ use Generated\Shared\Transfer\MollieCustomerApiResponseTransfer;
 use Generated\Shared\Transfer\MollieCustomerTransfer;
 use Generated\Shared\Transfer\QuoteTransfer;
 use Mollie\Client\Mollie\MollieClientInterface;
-use Mollie\Zed\Mollie\Business\SingleClick\MollieCustomerProvider;
+use Mollie\Zed\Mollie\Business\MollieBusinessFactory;
+use Mollie\Zed\Mollie\Business\SingleClick\MollieCustomerProviderInterface;
 use Mollie\Zed\Mollie\MollieConfig;
 use Mollie\Zed\Mollie\Persistence\MollieEntityManagerInterface;
 use Mollie\Zed\Mollie\Persistence\MollieRepositoryInterface;
@@ -78,18 +79,26 @@ class MollieCustomerProviderTest extends Unit
      * @param \Mollie\Client\Mollie\MollieClientInterface $mollieClient
      * @param \Mollie\Zed\Mollie\Persistence\MollieEntityManagerInterface $entityManager
      *
-     * @return \Mollie\Zed\Mollie\Business\SingleClick\MollieCustomerProvider
+     * @return \Mollie\Zed\Mollie\Business\SingleClick\MollieCustomerProviderInterface
      */
     protected function createProvider(
         MollieClientInterface $mollieClient,
         MollieEntityManagerInterface $entityManager,
-    ): MollieCustomerProvider {
+    ): MollieCustomerProviderInterface {
         $repositoryMock = $this->createMock(MollieRepositoryInterface::class);
 
         $configMock = $this->createMock(MollieConfig::class);
         $configMock->method('getSingleClickConsentVersion')->willReturn('1');
 
-        return new MollieCustomerProvider($mollieClient, $repositoryMock, $entityManager, $configMock);
+        $mollieBusinessFactoryMock = $this->getMockBuilder(MollieBusinessFactory::class)
+            ->onlyMethods(['getMollieClient', 'getRepository', 'getEntityManager'])
+            ->getMock();
+        $mollieBusinessFactoryMock->method('getMollieClient')->willReturn($mollieClient);
+        $mollieBusinessFactoryMock->method('getRepository')->willReturn($repositoryMock);
+        $mollieBusinessFactoryMock->method('getEntityManager')->willReturn($entityManager);
+        $mollieBusinessFactoryMock->setConfig($configMock);
+
+        return $mollieBusinessFactoryMock->createMollieCustomerProvider();
     }
 
     /**

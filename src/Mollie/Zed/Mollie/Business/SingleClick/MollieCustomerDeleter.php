@@ -8,19 +8,10 @@ use Generated\Shared\Transfer\CustomerTransfer;
 use Generated\Shared\Transfer\MollieApiRequestTransfer;
 use Mollie\Client\Mollie\MollieClientInterface;
 use Spryker\Shared\Log\LoggerTrait;
-use Symfony\Component\HttpFoundation\Response;
 
 class MollieCustomerDeleter implements MollieCustomerDeleterInterface
 {
     use LoggerTrait;
-
-    /**
-     * @var list<int>
-     */
-    protected const CUSTOMER_GONE_STATUS_CODES = [
-        Response::HTTP_NOT_FOUND,
-        Response::HTTP_GONE,
-    ];
 
     /**
      * @param \Mollie\Client\Mollie\MollieClientInterface $mollieClient
@@ -48,8 +39,7 @@ class MollieCustomerDeleter implements MollieCustomerDeleterInterface
             ->setMollieCustomerId($mollieCustomerTransfer->getMollieCustomerId());
         $mollieCustomerApiResponseTransfer = $this->mollieClient->deleteCustomer($mollieApiRequestTransfer);
 
-        $isCustomerGone = in_array($mollieCustomerApiResponseTransfer->getCode(), static::CUSTOMER_GONE_STATUS_CODES, true);
-        if (!$mollieCustomerApiResponseTransfer->getIsSuccessful() && !$isCustomerGone) {
+        if (!$mollieCustomerApiResponseTransfer->getIsSuccessful()) {
             $this->getLogger()->error('Mollie single-click: Mollie customer could not be deleted.', [
                 'idCustomer' => $customerTransfer->getIdCustomer(),
                 'mollieCustomerId' => $mollieCustomerTransfer->getMollieCustomerId(),
