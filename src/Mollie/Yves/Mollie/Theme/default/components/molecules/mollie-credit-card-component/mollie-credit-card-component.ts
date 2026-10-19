@@ -182,7 +182,7 @@ export default class MollieCreditCardComponent extends Component {
     }
 
     protected get savedCardFieldClass(): string {
-        return '.js-mollie-saved-card';
+        return `.${this.jsName}__saved-cards`;
     }
 
     protected get newCardWrapperClass(): string {
