@@ -12,7 +12,7 @@
     {% set saveCardConsentField = creditCardForm.isSaveCardConsentGiven ?? null %}
     {% if isMollieCreditCardComponentEnabled %}
         {% if savedCardField %}
-            <div class="spacing-bottom spacing-bottom--big">
+            <div class="spacing-bottom spacing-bottom--big js-mollie-saved-card">
                 {{ form_row(savedCardField) }}
             </div>
         {% endif %}

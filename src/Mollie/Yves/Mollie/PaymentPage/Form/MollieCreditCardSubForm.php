@@ -151,9 +151,6 @@ class MollieCreditCardSubForm extends AbstractMollieSubForm
             'multiple' => false,
             'required' => false,
             'placeholder' => 'mollie.checkout.payment.credit.card.new.card',
-            'attr' => [
-                'class' => 'js-mollie-saved-card',
-            ],
         ]);
     }
 
