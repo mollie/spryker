@@ -200,7 +200,6 @@ class MollieEntityManager extends AbstractEntityManager implements MollieEntityM
             ->setIsCancelable($molliePaymentTransfer->getIsCancelable())
             ->setDescription($molliePaymentTransfer->getDescription())
             ->setSequenceType($molliePaymentTransfer->getSequenceType())
-            ->setCustomerId($molliePaymentTransfer->getCustomerId())
             ->setMandateId($molliePaymentTransfer->getMandateId())
             ->setMetadata($metadata)
             ->setExpiresAt($molliePaymentTransfer->getExpiresAt())

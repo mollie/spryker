@@ -7,6 +7,7 @@ namespace Mollie\Zed\Mollie\Business;
 
 use Generated\Shared\Transfer\CheckoutResponseTransfer;
 use Generated\Shared\Transfer\CustomerTransfer;
+use Generated\Shared\Transfer\MollieCustomerTransfer;
 use Generated\Shared\Transfer\MollieExpirationInformationTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutConfigCollectionTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutConfigCriteriaTransfer;
@@ -25,12 +26,12 @@ use Generated\Shared\Transfer\MolliePaymentMethodConfigTransfer;
 use Generated\Shared\Transfer\MolliePaymentTransfer;
 use Generated\Shared\Transfer\MollieRefundApiResponseTransfer;
 use Generated\Shared\Transfer\MollieRefundResponseTransfer;
-use Generated\Shared\Transfer\MollieWebhookResponseTransfer;
 use Generated\Shared\Transfer\MollieSavedCardRemoveRequestTransfer;
 use Generated\Shared\Transfer\MollieSavedCardRemoveResponseTransfer;
 use Generated\Shared\Transfer\MollieSingleClickConfigTransfer;
 use Generated\Shared\Transfer\MollieSingleClickPaymentDataRequestTransfer;
 use Generated\Shared\Transfer\MollieSingleClickPaymentDataTransfer;
+use Generated\Shared\Transfer\MollieWebhookResponseTransfer;
 use Generated\Shared\Transfer\OrderCollectionRequestTransfer;
 use Generated\Shared\Transfer\OrderCollectionResponseTransfer;
 use Generated\Shared\Transfer\OrderTransfer;
@@ -559,12 +560,28 @@ class MollieFacade extends AbstractFacade implements MollieFacadeInterface
      *
      * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
      *
-     * @return void
+     * @return \Generated\Shared\Transfer\MollieCustomerTransfer|null
      */
-    public function createMollieCustomer(QuoteTransfer $quoteTransfer): void
+    public function createMollieCustomer(QuoteTransfer $quoteTransfer): ?MollieCustomerTransfer
     {
-        $this->getFactory()
+        return $this->getFactory()
             ->createMollieCustomerProvider()
             ->createMollieCustomer($quoteTransfer);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\CustomerTransfer $customerTransfer
+     *
+     * @return void
+     */
+    public function deleteMollieCustomer(CustomerTransfer $customerTransfer): void
+    {
+        $this->getFactory()
+            ->createMollieCustomerDeleter()
+            ->deleteMollieCustomer($customerTransfer);
     }
 }

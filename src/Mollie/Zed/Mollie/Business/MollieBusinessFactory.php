@@ -65,6 +65,8 @@ use Mollie\Zed\Mollie\Business\Processor\PaymentLink\PaymentLinkProcessor;
 use Mollie\Zed\Mollie\Business\Processor\PaymentLink\PaymentLinkProcessorInterface;
 use Mollie\Zed\Mollie\Business\Processor\Refund\RefundProcessor;
 use Mollie\Zed\Mollie\Business\Processor\Refund\RefundProcessorInterface;
+use Mollie\Zed\Mollie\Business\SingleClick\MollieCustomerDeleter;
+use Mollie\Zed\Mollie\Business\SingleClick\MollieCustomerDeleterInterface;
 use Mollie\Zed\Mollie\Business\SingleClick\MollieCustomerExpander;
 use Mollie\Zed\Mollie\Business\SingleClick\MollieCustomerExpanderInterface;
 use Mollie\Zed\Mollie\Business\SingleClick\MollieCustomerProvider;
@@ -569,6 +571,17 @@ class MollieBusinessFactory extends AbstractBusinessFactory
             $this->getRepository(),
             $this->getEntityManager(),
             $this->getConfig(),
+        );
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Business\SingleClick\MollieCustomerDeleterInterface
+     */
+    public function createMollieCustomerDeleter(): MollieCustomerDeleterInterface
+    {
+        return new MollieCustomerDeleter(
+            $this->getMollieClient(),
+            $this->createMollieCustomerProvider(),
         );
     }
 

@@ -32,11 +32,11 @@ use Generated\Shared\Transfer\MolliePaymentMethodsApiResponseTransfer;
 use Generated\Shared\Transfer\MolliePaymentTransfer;
 use Generated\Shared\Transfer\MollieRefundApiResponseTransfer;
 use Generated\Shared\Transfer\MollieRefundResponseTransfer;
-use Generated\Shared\Transfer\MollieWebhookResponseTransfer;
 use Generated\Shared\Transfer\MollieSavedCardRemoveRequestTransfer;
 use Generated\Shared\Transfer\MollieSavedCardRemoveResponseTransfer;
 use Generated\Shared\Transfer\MollieSingleClickPaymentDataRequestTransfer;
 use Generated\Shared\Transfer\MollieSingleClickPaymentDataTransfer;
+use Generated\Shared\Transfer\MollieWebhookResponseTransfer;
 use Generated\Shared\Transfer\OrderCollectionRequestTransfer;
 use Generated\Shared\Transfer\OrderCollectionResponseTransfer;
 use Spryker\Client\Kernel\AbstractClient;
@@ -534,6 +534,25 @@ class MollieClient extends AbstractClient implements MollieClientInterface
             ->execute($mollieApiRequestTransfer);
 
         return $mollieMandateApiResponseTransfer;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\MollieApiRequestTransfer $mollieApiRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieCustomerApiResponseTransfer
+     */
+    public function deleteCustomer(MollieApiRequestTransfer $mollieApiRequestTransfer): MollieCustomerApiResponseTransfer
+    {
+        /** @var \Generated\Shared\Transfer\MollieCustomerApiResponseTransfer $mollieCustomerApiResponseTransfer */
+        $mollieCustomerApiResponseTransfer = $this->getFactory()
+            ->createDeleteCustomerApi()
+            ->execute($mollieApiRequestTransfer);
+
+        return $mollieCustomerApiResponseTransfer;
     }
 
     /**

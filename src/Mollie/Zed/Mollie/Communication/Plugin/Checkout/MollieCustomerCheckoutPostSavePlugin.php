@@ -18,10 +18,6 @@ class MollieCustomerCheckoutPostSavePlugin extends AbstractPlugin implements Che
 {
     /**
      * {@inheritDoc}
-     * - Runs only for a credit card payment with a new card where the shopper gave consent to save it.
-     * - Skips when the quote's customer already has a Mollie customer.
-     * - Creates or reuses the Mollie customer and sets it on `QuoteTransfer.customer.mollieCustomer`.
-     * - Must be registered before `MollieCheckoutPostSavePlugin`, which sends the customer ID with the payment.
      *
      * @api
      *
@@ -38,18 +34,16 @@ class MollieCustomerCheckoutPostSavePlugin extends AbstractPlugin implements Che
         }
 
         $mollieCreditCardPaymentTransfer = $paymentTransfer->getMollieCreditCardPayment();
-        if (!$mollieCreditCardPaymentTransfer->getIsSaveCardConsentGiven()) {
+        if (!$mollieCreditCardPaymentTransfer->getIsSaveCardConsentGiven() || $mollieCreditCardPaymentTransfer->getMandateId()) {
             return;
         }
 
-        if ($mollieCreditCardPaymentTransfer->getMandateId()) {
+        $customerTransfer = $this->getFacade()->expandCustomerWithMollieCustomer($quoteTransfer->getCustomer());
+        if ($customerTransfer->getMollieCustomer()) {
             return;
         }
 
-        if ($quoteTransfer->getCustomer()->getMollieCustomer()) {
-            return;
-        }
-
-        $this->getFacade()->createMollieCustomer($quoteTransfer);
+        $mollieCustomerTransfer = $this->getFacade()->createMollieCustomer($quoteTransfer);
+        $customerTransfer->setMollieCustomer($mollieCustomerTransfer);
     }
 }

@@ -12,19 +12,10 @@ use Generated\Shared\Transfer\MollieSingleClickPaymentDataRequestTransfer;
 use Generated\Shared\Transfer\MollieSingleClickPaymentDataTransfer;
 use Mollie\Client\Mollie\MollieClientInterface;
 use Spryker\Shared\Log\LoggerTrait;
-use Symfony\Component\HttpFoundation\Response;
 
 class SavedCardReader implements SavedCardReaderInterface
 {
     use LoggerTrait;
-
-    /**
-     * @var list<int>
-     */
-    protected const CUSTOMER_GONE_STATUS_CODES = [
-        Response::HTTP_NOT_FOUND,
-        Response::HTTP_GONE,
-    ];
 
     /**
      * @param \Mollie\Client\Mollie\MollieClientInterface $mollieClient
@@ -90,17 +81,6 @@ class SavedCardReader implements SavedCardReaderInterface
 
         if ($mollieMandateApiResponseTransfer->getIsSuccessful()) {
             return $mollieMandateApiResponseTransfer->getMandateCollectionOrFail()->getMandates();
-        }
-
-        if (in_array($mollieMandateApiResponseTransfer->getCode(), static::CUSTOMER_GONE_STATUS_CODES, true)) {
-            $this->mollieCustomerProvider->deleteMollieCustomer($mollieCustomerTransfer);
-            $this->getLogger()->warning('Mollie single-click: stored Mollie customer is no longer valid and was removed.', [
-                'idCustomer' => $mollieCustomerTransfer->getFkCustomer(),
-                'mollieCustomerId' => $mollieCustomerTransfer->getMollieCustomerId(),
-                'code' => $mollieMandateApiResponseTransfer->getCode(),
-            ]);
-
-            return new ArrayObject();
         }
 
         $this->getLogger()->error('Mollie single-click: saved cards could not be fetched.', [

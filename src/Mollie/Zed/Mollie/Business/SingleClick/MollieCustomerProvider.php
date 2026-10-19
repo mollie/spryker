@@ -54,22 +54,6 @@ class MollieCustomerProvider implements MollieCustomerProviderInterface
     }
 
     /**
-     * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
-     *
-     * @return void
-     */
-    public function createMollieCustomer(QuoteTransfer $quoteTransfer): void
-    {
-        $customerTransfer = $quoteTransfer->getCustomer();
-        $mollieCustomerTransfer = $this->findMollieCustomer($customerTransfer);
-        if (!$mollieCustomerTransfer) {
-            $mollieCustomerTransfer = $this->requestMollieCustomer($quoteTransfer);
-        }
-
-        $customerTransfer->setMollieCustomer($mollieCustomerTransfer);
-    }
-
-    /**
      * @param \Generated\Shared\Transfer\MollieCustomerTransfer $mollieCustomerTransfer
      *
      * @return void
@@ -84,7 +68,7 @@ class MollieCustomerProvider implements MollieCustomerProviderInterface
      *
      * @return \Generated\Shared\Transfer\MollieCustomerTransfer|null
      */
-    protected function requestMollieCustomer(QuoteTransfer $quoteTransfer): ?MollieCustomerTransfer
+    public function createMollieCustomer(QuoteTransfer $quoteTransfer): ?MollieCustomerTransfer
     {
         $mollieApiRequestTransfer = (new MollieApiRequestTransfer())->setQuote($quoteTransfer);
         $mollieCustomerApiResponseTransfer = $this->mollieClient->createCustomer($mollieApiRequestTransfer);

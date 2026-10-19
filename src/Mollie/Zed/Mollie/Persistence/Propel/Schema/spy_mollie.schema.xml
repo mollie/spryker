@@ -15,7 +15,6 @@
         <column name="expires_at" type="TIMESTAMP"/>
         <column name="capture_before" type="TIMESTAMP"/>
         <column name="release_authorization_request" type="TIMESTAMP" required="false" />
-        <column name="customer_id" type="VARCHAR" size="64" required="false"/>
         <column name="mandate_id" type="VARCHAR" size="64" required="false"/>
 
         <foreign-key name="spy_payment_mollie-fk_sales_order" foreignTable="spy_sales_order" phpName="SpySalesOrder">

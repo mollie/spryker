@@ -41,10 +41,6 @@ interface PaymentApiHandlerInterface
     public function createLines(QuoteTransfer $quoteTransfer): DataCollection;
 
     /**
-     * Specification:
-     * - Returns the Mollie customer ID of the quote's customer for a credit card payment with a saved card or with consent to save the card.
-     * - Returns null for any other payment.
-     *
      * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
      *
      * @return string|null
@@ -52,10 +48,6 @@ interface PaymentApiHandlerInterface
     public function findMollieCustomerId(QuoteTransfer $quoteTransfer): ?string;
 
     /**
-     * Specification:
-     * - Returns the selected saved card (mandate) ID for a credit card payment.
-     * - Returns null for any other payment method.
-     *
      * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
      *
      * @return string|null

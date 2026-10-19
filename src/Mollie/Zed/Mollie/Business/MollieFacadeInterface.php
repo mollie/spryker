@@ -7,6 +7,7 @@ namespace Mollie\Zed\Mollie\Business;
 
 use Generated\Shared\Transfer\CheckoutResponseTransfer;
 use Generated\Shared\Transfer\CustomerTransfer;
+use Generated\Shared\Transfer\MollieCustomerTransfer;
 use Generated\Shared\Transfer\MollieExpirationInformationTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutConfigCollectionTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutConfigCriteriaTransfer;
@@ -372,7 +373,7 @@ interface MollieFacadeInterface
      * Specification:
      * - Returns whether single-click payments are enabled.
      * - When enabled, returns the saved cards (valid credit card mandates) of the given customer.
-     * - Removes a stored Mollie customer that Mollie no longer knows (404/410) and returns no saved cards.
+     * - Returns no saved cards when Mollie can't list them.
      *
      * @api
      *
@@ -420,7 +421,7 @@ interface MollieFacadeInterface
     /**
      * Specification:
      * - Sets the customer's stored Mollie customer on `CustomerTransfer.mollieCustomer`.
-     * - Sets null when the customer has no stored Mollie customer yet.
+     * - Sets null when the customer has no stored Mollie customer.
      *
      * @api
      *
@@ -432,16 +433,30 @@ interface MollieFacadeInterface
 
     /**
      * Specification:
-     * - Must only be called for a credit card payment where the shopper gave consent to save the card.
-     * - Uses the customer's stored Mollie customer when one exists.
-     * - Otherwise creates the customer in Mollie and stores it with the consent timestamp and consent version.
-     * - Sets the Mollie customer on `QuoteTransfer.customer.mollieCustomer`, so the payment request can send its ID.
+     * - Creates a customer at Mollie for `QuoteTransfer.customer`.
+     * - Stores it with the consent timestamp and consent version.
+     * - Returns the stored Mollie customer, or null when Mollie can't create it.
      *
      * @api
      *
      * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
      *
+     * @return \Generated\Shared\Transfer\MollieCustomerTransfer|null
+     */
+    public function createMollieCustomer(QuoteTransfer $quoteTransfer): ?MollieCustomerTransfer;
+
+    /**
+     * Specification:
+     * - Does nothing when the customer has no stored Mollie customer.
+     * - Deletes the customer at Mollie, which also cancels all of its mandates (saved cards).
+     * - Removes the stored Mollie customer when Mollie deleted it or no longer knows it (404/410).
+     * - Keeps the stored Mollie customer and logs an error when Mollie rejects the deletion for any other reason.
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\CustomerTransfer $customerTransfer
+     *
      * @return void
      */
-    public function createMollieCustomer(QuoteTransfer $quoteTransfer): void;
+    public function deleteMollieCustomer(CustomerTransfer $customerTransfer): void;
 }

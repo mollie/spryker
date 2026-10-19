@@ -113,7 +113,6 @@
         <property name="webhookUrl" type="string"/>
         <property name="metadata" type="array" singular="metadata"/>
         <property name="profileId" type="string"/>
-        <property name="customerId" type="string"/>
         <property name="mandateId" type="string"/>
         <property name="status" type="string"/>
         <property name="isCancelable" type="bool"/>

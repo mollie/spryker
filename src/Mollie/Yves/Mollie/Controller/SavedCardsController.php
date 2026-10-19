@@ -95,11 +95,13 @@ class SavedCardsController extends AbstractMollieController
             ->getMollieApiClient()
             ->removeSavedCard($mollieSavedCardRemoveRequestTransfer);
 
-        if ($mollieSavedCardRemoveResponseTransfer->getIsSuccessful()) {
-            $this->addSuccessMessage(static::GLOSSARY_KEY_REMOVE_SUCCESS);
-        } else {
+        if (!$mollieSavedCardRemoveResponseTransfer->getIsSuccessful()) {
             $this->addErrorMessage(static::GLOSSARY_KEY_REMOVE_ERROR);
+
+            return $this->redirectResponseInternal(MollieRouteProviderPlugin::ROUTE_MOLLIE_CUSTOMER_SAVED_CARDS);
         }
+
+        $this->addSuccessMessage(static::GLOSSARY_KEY_REMOVE_SUCCESS);
 
         return $this->redirectResponseInternal(MollieRouteProviderPlugin::ROUTE_MOLLIE_CUSTOMER_SAVED_CARDS);
     }

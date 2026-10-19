@@ -10,6 +10,7 @@ use Mollie\Client\Mollie\Api\ApiCallInterface;
 use Mollie\Client\Mollie\Api\Capture\CreatePaymentCaptureApi;
 use Mollie\Client\Mollie\Api\Capture\GetPaymentCaptureApi;
 use Mollie\Client\Mollie\Api\Customer\CreateCustomerApi;
+use Mollie\Client\Mollie\Api\Customer\DeleteCustomerApi;
 use Mollie\Client\Mollie\Api\Customer\GetCustomerMandatesApi;
 use Mollie\Client\Mollie\Api\Customer\RevokeCustomerMandateApi;
 use Mollie\Client\Mollie\Api\Payment\CreatePaymentApi;
@@ -400,6 +401,19 @@ class MollieFactory extends AbstractFactory
     public function createGetCustomerMandatesApi(): ApiCallInterface
     {
         return new GetCustomerMandatesApi(
+            $this->createMollieApiClient(),
+            $this->getConfig(),
+            $this->getUtilEncodingService(),
+            $this->createMollieLogger(),
+        );
+    }
+
+    /**
+     * @return \Mollie\Client\Mollie\Api\ApiCallInterface
+     */
+    public function createDeleteCustomerApi(): ApiCallInterface
+    {
+        return new DeleteCustomerApi(
             $this->createMollieApiClient(),
             $this->getConfig(),
             $this->getUtilEncodingService(),

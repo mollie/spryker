@@ -32,11 +32,11 @@ use Generated\Shared\Transfer\MolliePaymentMethodsApiResponseTransfer;
 use Generated\Shared\Transfer\MolliePaymentTransfer;
 use Generated\Shared\Transfer\MollieRefundApiResponseTransfer;
 use Generated\Shared\Transfer\MollieRefundResponseTransfer;
-use Generated\Shared\Transfer\MollieWebhookResponseTransfer;
 use Generated\Shared\Transfer\MollieSavedCardRemoveRequestTransfer;
 use Generated\Shared\Transfer\MollieSavedCardRemoveResponseTransfer;
 use Generated\Shared\Transfer\MollieSingleClickPaymentDataRequestTransfer;
 use Generated\Shared\Transfer\MollieSingleClickPaymentDataTransfer;
+use Generated\Shared\Transfer\MollieWebhookResponseTransfer;
 use Generated\Shared\Transfer\OrderCollectionRequestTransfer;
 use Generated\Shared\Transfer\OrderCollectionResponseTransfer;
 
@@ -409,7 +409,7 @@ interface MollieClientInterface
      * - Requires `MollieApiRequestTransfer.mollieCustomerId`.
      * - Lists the customer's mandates usable while the customer is present (`customer-present` scope).
      * - Keeps only valid credit card mandates.
-     * - Returns the HTTP `code`, so callers can detect a removed customer (404/410).
+     * - Returns the HTTP `code` on failure.
      *
      * @api
      *
@@ -448,6 +448,20 @@ interface MollieClientInterface
      * @return \Generated\Shared\Transfer\MollieMandateApiResponseTransfer
      */
     public function revokeCustomerMandate(MollieApiRequestTransfer $mollieApiRequestTransfer): MollieMandateApiResponseTransfer;
+
+    /**
+     * Specification:
+     * - Requires `MollieApiRequestTransfer.mollieCustomerId`.
+     * - Deletes the customer at Mollie; Mollie also cancels all of the customer's mandates (saved cards).
+     * - Returns the HTTP `code` on failure.
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\MollieApiRequestTransfer $mollieApiRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieCustomerApiResponseTransfer
+     */
+    public function deleteCustomer(MollieApiRequestTransfer $mollieApiRequestTransfer): MollieCustomerApiResponseTransfer;
 
     /**
      * Specification:

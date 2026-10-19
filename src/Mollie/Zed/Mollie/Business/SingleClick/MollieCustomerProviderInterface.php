@@ -21,17 +21,11 @@ interface MollieCustomerProviderInterface
     public function findMollieCustomer(CustomerTransfer $customerTransfer): ?MollieCustomerTransfer;
 
     /**
-     * Specification:
-     * - Must only be called after the shopper gave consent to save the card.
-     * - Uses the stored Mollie customer of the quote's customer when one exists.
-     * - Otherwise creates the customer in Mollie and stores it with the consent timestamp and consent version.
-     * - Sets the Mollie customer on `QuoteTransfer.customer.mollieCustomer`; sets null when Mollie can't create it.
-     *
      * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
      *
-     * @return void
+     * @return \Generated\Shared\Transfer\MollieCustomerTransfer|null
      */
-    public function createMollieCustomer(QuoteTransfer $quoteTransfer): void;
+    public function createMollieCustomer(QuoteTransfer $quoteTransfer): ?MollieCustomerTransfer;
 
     /**
      * @param \Generated\Shared\Transfer\MollieCustomerTransfer $mollieCustomerTransfer

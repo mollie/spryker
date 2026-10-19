@@ -16,7 +16,6 @@ class MollieCustomerCustomerTransferExpanderPlugin extends AbstractPlugin implem
 {
     /**
      * {@inheritDoc}
-     * - Sets the customer's stored Mollie customer on `CustomerTransfer.mollieCustomer`.
      *
      * @api
      *

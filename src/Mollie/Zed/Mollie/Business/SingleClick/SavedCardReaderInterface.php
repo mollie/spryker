@@ -41,7 +41,7 @@ interface SavedCardReaderInterface
     /**
      * Specification:
      * - Fetches the valid credit card mandates of the Mollie customer.
-     * - When Mollie no longer knows the customer (404/410), deletes the stored customer and returns no cards.
+     * - Returns no cards when Mollie can't list them.
      *
      * @param \Generated\Shared\Transfer\MollieCustomerTransfer $mollieCustomerTransfer
      *
