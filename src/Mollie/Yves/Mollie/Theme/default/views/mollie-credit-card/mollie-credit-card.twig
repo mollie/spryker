@@ -11,17 +11,13 @@
     {% set savedCardField = creditCardForm.mandateId ?? null %}
     {% set saveCardConsentField = creditCardForm.isSaveCardConsentGiven ?? null %}
     {% if isMollieCreditCardComponentEnabled %}
-        {% if savedCardField %}
-            <div class="spacing-bottom spacing-bottom--big js-mollie-credit-card-component__saved-cards">
-                {{ form_row(savedCardField) }}
-            </div>
-        {% endif %}
         {% include molecule('mollie-credit-card-component', 'Mollie') with {
             data: {
                 form: data.form,
                 profileId: vars.profileId,
                 testMode: vars.testMode,
                 jsSrc: vars.jsSrc,
+                savedCardField: savedCardField,
                 saveCardConsentField: saveCardConsentField,
             }
         } only %}

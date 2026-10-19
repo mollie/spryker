@@ -51,10 +51,6 @@ class MollieEntityManager extends AbstractEntityManager implements MollieEntityM
             ->setStatus($updateOrderCollectionRequestTransfer->getStatus())
             ->setCaptureBefore($updateOrderCollectionRequestTransfer->getCaptureBefore());
 
-        if ($updateOrderCollectionRequestTransfer->getMandateId()) {
-            $spyPaymentMolleEntity->setMandateId($updateOrderCollectionRequestTransfer->getMandateId());
-        }
-
         $spyPaymentMolleEntity->save();
     }
 
@@ -200,7 +196,6 @@ class MollieEntityManager extends AbstractEntityManager implements MollieEntityM
             ->setIsCancelable($molliePaymentTransfer->getIsCancelable())
             ->setDescription($molliePaymentTransfer->getDescription())
             ->setSequenceType($molliePaymentTransfer->getSequenceType())
-            ->setMandateId($molliePaymentTransfer->getMandateId())
             ->setMetadata($metadata)
             ->setExpiresAt($molliePaymentTransfer->getExpiresAt())
             ->setCreatedAt($molliePaymentTransfer->getCreatedAt());

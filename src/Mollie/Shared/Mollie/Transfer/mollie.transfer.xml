@@ -113,7 +113,6 @@
         <property name="webhookUrl" type="string"/>
         <property name="metadata" type="array" singular="metadata"/>
         <property name="profileId" type="string"/>
-        <property name="mandateId" type="string"/>
         <property name="status" type="string"/>
         <property name="isCancelable" type="bool"/>
         <property name="createdAt" type="string"/>
@@ -223,7 +222,6 @@
         <property name="id" type="string" />
         <property name="status" type="string" />
         <property name="captureBefore" type="string" />
-        <property name="mandateId" type="string" />
     </transfer>
 
     <transfer name="MollieExpressCheckoutPaymentUpdateRequest">

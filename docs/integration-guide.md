@@ -2294,7 +2294,7 @@ console router:cache:warm-up:backend-gateway
 npm run yves
 ```
 
-`propel:install` creates the tables `spy_mollie_customer` (one Mollie customer per shopper) and `spy_mollie_single_click_config` (the Back Office setting), and adds `mandate_id` to `spy_payment_mollie` (the saved card that paid the order).
+`propel:install` creates the tables `spy_mollie_customer` (one Mollie customer per shopper) and `spy_mollie_single_click_config` (the Back Office setting).
 
 The saved-cards routes (`/customer/saved-cards` and `/customer/saved-cards/remove`) are added by `MollieRouteProviderPlugin` ([Section 4.1](#41-router-dependency-provider)), so no extra route wiring is needed.
 
@@ -2316,10 +2316,14 @@ If Mollie rejects a payment (for example a saved card that expired, or a Mollie 
 
 #### Testing Single-Click Payments
 
+> **Test mode vs. live mode**
+>
+> In Mollie test mode, a payment with a saved card still opens Mollie's card form, and paying there saves the card again as a new mandate, so the shopper sees the same card several times. In live mode the same request uses the saved card and only shows Mollie's authentication page (3-D Secure) on `pay.mollie.nl`. That domain must be in `KernelConstants::DOMAIN_WHITELIST` (see the Spryker redirect whitelist in [Section 2](#2-setup--configuration)), otherwise the redirect fails with "is not an allowed domain".
+
 1. Switch the feature on in **Administration > Mollie Single-Click Payments**
 2. Log in as a customer, pay with a new card using a Mollie [test card](#test-credit-cards), and tick "save my card"
 3. After the order, check that `spy_mollie_customer` has a row for the customer with `consent_given_at` and `consent_version`
-4. Place a second order: the saved card is listed on the payment step. Pick it and pay. The order's `spy_payment_mollie` row has the `mandate_id` after the webhook
+4. Place a second order: the saved card is listed on the payment step. Pick it and pay; Mollie may show its authentication page (3-D Secure) but must not ask for the card details again
 5. Open **Saved cards** in the customer account, remove the card, and check that it no longer shows on the payment step
 
 ## 9. Wallet Payments
