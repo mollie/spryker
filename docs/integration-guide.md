@@ -2316,12 +2316,12 @@ If Mollie rejects a payment (for example a saved card that expired, or a Mollie 
 
 #### Testing Single-Click Payments
 
-> **Test mode vs. live mode**
+> **Single-click only works in live mode**
 >
-> In Mollie test mode, a payment with a saved card still opens Mollie's card form, and paying there saves the card again as a new mandate, so the shopper sees the same card several times. In live mode the same request uses the saved card and only shows Mollie's authentication page (3-D Secure) on `pay.mollie.nl`. That domain must be in `KernelConstants::DOMAIN_WHITELIST` (see the Spryker redirect whitelist in [Section 2](#2-setup--configuration)), otherwise the redirect fails with "is not an allowed domain".
+> Mollie confirmed that payments with saved cards only work with a live API key. In test mode, a payment with a saved card still opens Mollie's card form, and paying there saves the card again as a new mandate, so the shopper sees the same card several times. To test single-click, use a live API key and a low-priced product. In live mode the saved card is used and the shopper only sees Mollie's authentication page (3-D Secure) on `pay.mollie.nl`. That domain must be in `KernelConstants::DOMAIN_WHITELIST` (see the Spryker redirect whitelist in [Section 2](#2-setup--configuration)), otherwise the redirect fails with "is not an allowed domain".
 
 1. Switch the feature on in **Administration > Mollie Single-Click Payments**
-2. Log in as a customer, pay with a new card using a Mollie [test card](#test-credit-cards), and tick "save my card"
+2. Log in as a customer, pay with a new real card (live API key), and tick "save my card"
 3. After the order, check that `spy_mollie_customer` has a row for the customer with `consent_given_at` and `consent_version`
 4. Place a second order: the saved card is listed on the payment step. Pick it and pay; Mollie may show its authentication page (3-D Secure) but must not ask for the card details again
 5. Open **Saved cards** in the customer account, remove the card, and check that it no longer shows on the payment step
