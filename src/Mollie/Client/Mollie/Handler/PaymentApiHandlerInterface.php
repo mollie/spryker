@@ -22,7 +22,7 @@ interface PaymentApiHandlerInterface
     /**
      * @param \Generated\Shared\Transfer\MollieApiRequestTransfer $mollieApiRequestTransfer
      *
-     * @return array<string, string>
+     * @return array<string, mixed>
      */
     public function createAdditionalParameters(MollieApiRequestTransfer $mollieApiRequestTransfer): array;
 
@@ -39,4 +39,18 @@ interface PaymentApiHandlerInterface
      * @return \Mollie\Api\Http\Data\DataCollection<array<mixed>>
      */
     public function createLines(QuoteTransfer $quoteTransfer): DataCollection;
+
+    /**
+     * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
+     *
+     * @return string|null
+     */
+    public function findMollieCustomerId(QuoteTransfer $quoteTransfer): ?string;
+
+    /**
+     * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
+     *
+     * @return string|null
+     */
+    public function findMandateId(QuoteTransfer $quoteTransfer): ?string;
 }

@@ -43,7 +43,7 @@ class PaymentApiHandler implements PaymentApiHandlerInterface
     /**
      * @param \Generated\Shared\Transfer\MollieApiRequestTransfer $mollieApiRequestTransfer
      *
-     * @return array<string, string>
+     * @return array<string, mixed>
      */
     public function createAdditionalParameters(MollieApiRequestTransfer $mollieApiRequestTransfer): array
     {
@@ -51,7 +51,7 @@ class PaymentApiHandler implements PaymentApiHandlerInterface
         $paymentTransfer = $mollieApiRequestTransfer->getQuote()->getPayment();
         switch ($paymentTransfer->getPaymentMethod()) {
             case SharedConfig::MOLLIE_PAYMENT_CREDIT_CARD:
-                $additionalData[MollieConfig::REQUEST_PARAMETER_CREATE_PAYMENT_CARD_TOKEN] = $paymentTransfer->getMollieCreditCardPayment()->getCardToken();
+                $additionalData = $this->createCreditCardParameters($mollieApiRequestTransfer->getQuote());
 
                 break;
             case SharedConfig::MOLLIE_PAYMENT_PAYPAL:
@@ -87,6 +87,66 @@ class PaymentApiHandler implements PaymentApiHandlerInterface
         }
 
         return $additionalData;
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
+     *
+     * @return array<string, mixed>
+     */
+    protected function createCreditCardParameters(QuoteTransfer $quoteTransfer): array
+    {
+        $mollieCreditCardPaymentTransfer = $quoteTransfer->getPayment()->getMollieCreditCardPayment();
+        if ($mollieCreditCardPaymentTransfer->getMandateId()) {
+            return [];
+        }
+
+        $additionalData = [MollieConfig::REQUEST_PARAMETER_CREATE_PAYMENT_CARD_TOKEN => $mollieCreditCardPaymentTransfer->getCardToken()];
+        if ($mollieCreditCardPaymentTransfer->getIsSaveCardConsentGiven()) {
+            $additionalData[MollieConfig::REQUEST_PARAMETER_CREATE_PAYMENT_STORE_CREDENTIALS] = true;
+        }
+
+        return $additionalData;
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
+     *
+     * @return string|null
+     */
+    public function findMollieCustomerId(QuoteTransfer $quoteTransfer): ?string
+    {
+        $paymentTransfer = $quoteTransfer->getPayment();
+        if ($paymentTransfer->getPaymentMethod() !== SharedConfig::MOLLIE_PAYMENT_CREDIT_CARD) {
+            return null;
+        }
+
+        $mollieCreditCardPaymentTransfer = $paymentTransfer->getMollieCreditCardPayment();
+        if (!$mollieCreditCardPaymentTransfer->getMandateId() && !$mollieCreditCardPaymentTransfer->getIsSaveCardConsentGiven()) {
+            return null;
+        }
+
+        $mollieCustomerTransfer = $quoteTransfer->getCustomer()->getMollieCustomer();
+        if (!$mollieCustomerTransfer) {
+            return null;
+        }
+
+        return $mollieCustomerTransfer->getMollieCustomerId();
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
+     *
+     * @return string|null
+     */
+    public function findMandateId(QuoteTransfer $quoteTransfer): ?string
+    {
+        $paymentTransfer = $quoteTransfer->getPayment();
+        if ($paymentTransfer->getPaymentMethod() !== SharedConfig::MOLLIE_PAYMENT_CREDIT_CARD) {
+            return null;
+        }
+
+        return $paymentTransfer->getMollieCreditCardPayment()->getMandateId();
     }
 
     /**

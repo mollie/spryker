@@ -55,6 +55,9 @@ This guide provides comprehensive instructions for integrating Mollie payment se
   - [Command Plugins](#command-plugins-1)
   - [4.7. Shop Application Dependency Provider (Yves)](#47-shop-application-dependency-provider-yves)
   - [Global Widgets](#global-widgets)
+  - [4.8. Customer Dependency Provider (Zed)](#48-customer-dependency-provider-zed)
+  - [Customer Transfer Expander Plugins](#customer-transfer-expander-plugins)
+  - [Customer Anonymizer Plugins](#customer-anonymizer-plugins)
 - [5. Glossary Keys and Translations](#5-glossary-keys-and-translations)
   - [Complete Glossary CSV](#complete-glossary-csv)
 - [6. Payment Methods Configuration](#6-payment-methods-configuration)
@@ -70,6 +73,13 @@ This guide provides comprehensive instructions for integrating Mollie payment se
   - [What You Can See in the Back Office Panel](#what-you-can-see-in-the-back-office-panel)
   - [Troubleshooting Back Office Panel](#troubleshooting-back-office-panel)
 - [8. Credit Card Components](#8-credit-card-components)
+  - [8.1 Single-Click Payments (Saved Cards)](#81-single-click-payments-saved-cards)
+  - [Single-Click Requirements](#single-click-requirements)
+  - [Single-Click Configuration](#single-click-configuration)
+  - [Single-Click Consent Text](#single-click-consent-text)
+  - [Single-Click Integration Steps](#single-click-integration-steps)
+  - [How Single-Click Payments Work](#how-single-click-payments-work)
+  - [Testing Single-Click Payments](#testing-single-click-payments)
   - [Enabling Components](#enabling-components)
   - [JavaScript Library Configuration](#javascript-library-configuration)
   - [Benefits](#benefits)
@@ -963,7 +973,10 @@ The plugin registers these storefront routes:
 **Method:** `getCheckoutPostHooks`
 
 **Plugins:**
+- `vendor/mollie/spryker-payment/src/Mollie\Zed\Mollie\Communication\Plugin\Checkout\MollieCustomerCheckoutPostSavePlugin` (only needed for [Single-Click Payments](#81-single-click-payments-saved-cards))
 - `vendor/mollie/spryker-payment/src/Mollie\Zed\Mollie\Communication\Plugin\Checkout\MollieCheckoutPostSavePlugin`
+
+`MollieCustomerCheckoutPostSavePlugin` creates the shopper's Mollie customer when they choose to save their card. It must be registered **before** `MollieCheckoutPostSavePlugin`, because the payment request sends that customer's ID.
 
 ```php
 <?php
@@ -971,6 +984,7 @@ The plugin registers these storefront routes:
 namespace Pyz\Zed\Checkout;
 
 use Mollie\Zed\Mollie\Communication\Plugin\Checkout\MollieCheckoutPostSavePlugin;
+use Mollie\Zed\Mollie\Communication\Plugin\Checkout\MollieCustomerCheckoutPostSavePlugin;
 use Spryker\Zed\Checkout\CheckoutDependencyProvider as SprykerCheckoutDependencyProvider;
 use Spryker\Zed\Kernel\Container;
 
@@ -987,6 +1001,7 @@ class CheckoutDependencyProvider extends SprykerCheckoutDependencyProvider
     {
         return [
             // ... other post hooks
+            new MollieCustomerCheckoutPostSavePlugin(),
             new MollieCheckoutPostSavePlugin(),
         ];
     }
@@ -1484,13 +1499,15 @@ class MailDependencyProvider extends SprykerMailDependencyProvider
 
 #### Global Widgets
 
-**Purpose:** Registers the widget that renders the [Express Checkout](#10-express-checkout) buttons. Only needed for Express Checkout.
+**Purpose:** Registers the widgets that render the [Express Checkout](#10-express-checkout) buttons and the "Saved cards" link in the customer account menu. Each widget is only needed for its feature.
 
 **File:** `src/Pyz/Yves/ShopApplication/ShopApplicationDependencyProvider.php`
 
 **Method:** `getGlobalWidgets`
 
-**Widget:** `vendor/mollie/spryker-payment/src/Mollie\Yves\Mollie\Widget\MollieExpressCheckoutWidget`
+**Widgets:**
+- `vendor/mollie/spryker-payment/src/Mollie\Yves\Mollie\Widget\MollieExpressCheckoutWidget` (Express Checkout)
+- `vendor/mollie/spryker-payment/src/Mollie\Yves\Mollie\Widget\MollieSavedCardsMenuItemWidget` ([Single-Click Payments](#81-single-click-payments-saved-cards))
 
 ```php
 <?php
@@ -1498,6 +1515,7 @@ class MailDependencyProvider extends SprykerMailDependencyProvider
 namespace Pyz\Yves\ShopApplication;
 
 use Mollie\Yves\Mollie\Widget\MollieExpressCheckoutWidget;
+use Mollie\Yves\Mollie\Widget\MollieSavedCardsMenuItemWidget;
 use SprykerShop\Yves\ShopApplication\ShopApplicationDependencyProvider as SprykerShopApplicationDependencyProvider;
 
 class ShopApplicationDependencyProvider extends SprykerShopApplicationDependencyProvider
@@ -1512,10 +1530,93 @@ class ShopApplicationDependencyProvider extends SprykerShopApplicationDependency
         return [
             // ... other widgets
             MollieExpressCheckoutWidget::class,
+            MollieSavedCardsMenuItemWidget::class,
         ];
     }
 }
 ```
+
+`MollieSavedCardsMenuItemWidget` shows the "Saved cards" link only to customers who have a Mollie customer (they saved a card at least once), whether single-click is switched on or off, so they can always remove their cards. It reads this from the logged-in customer in the session and makes no Zed call. The widget also has to be placed in the customer account menu. In the B2B demo shop that menu is `src/Pyz/Yves/CustomerPage/Theme/default/components/molecules/navigation-sidebar/navigation-sidebar.twig`:
+
+```twig
+{% widget 'MollieSavedCardsMenuItemWidget' args [data.activePage] only %}{% endwidget %}
+```
+
+### 4.8. Customer Dependency Provider (Zed)
+
+#### Customer Transfer Expander Plugins
+
+**Purpose:** Adds the shopper's stored Mollie customer to the logged-in customer, so a saved-card payment can send its Mollie customer ID. Only needed for [Single-Click Payments](#81-single-click-payments-saved-cards).
+
+**File:** `src/Pyz/Zed/Customer/CustomerDependencyProvider.php`
+
+**Method:** `getCustomerTransferExpanderPlugins`
+
+**Plugin:** `vendor/mollie/spryker-payment/src/Mollie\Zed\Mollie\Communication\Plugin\Customer\MollieCustomerCustomerTransferExpanderPlugin`
+
+```php
+<?php
+
+namespace Pyz\Zed\Customer;
+
+use Mollie\Zed\Mollie\Communication\Plugin\Customer\MollieCustomerCustomerTransferExpanderPlugin;
+use Spryker\Zed\Customer\CustomerDependencyProvider as SprykerCustomerDependencyProvider;
+
+class CustomerDependencyProvider extends SprykerCustomerDependencyProvider
+{
+    // ... rest of the implementation
+
+    /**
+     * @return array<\Spryker\Zed\Customer\Dependency\Plugin\CustomerTransferExpanderPluginInterface>
+     */
+    protected function getCustomerTransferExpanderPlugins(): array
+    {
+        return [
+            // ... other expander plugins
+            new MollieCustomerCustomerTransferExpanderPlugin(),
+        ];
+    }
+}
+```
+
+Spryker runs these plugins at login and whenever the customer is reloaded, for example after a successful checkout.
+
+#### Customer Anonymizer Plugins
+
+**Purpose:** When a customer deletes their account (storefront profile or Back Office), deletes their Mollie customer at Mollie, which also cancels all of their saved cards, and removes the stored Mollie customer. Only needed for [Single-Click Payments](#81-single-click-payments-saved-cards).
+
+**File:** `src/Pyz/Zed/Customer/CustomerDependencyProvider.php`
+
+**Method:** `getCustomerAnonymizerPlugins`
+
+**Plugin:** `vendor/mollie/spryker-payment/src/Mollie\Zed\Mollie\Communication\Plugin\Customer\MollieCustomerAnonymizerPlugin`
+
+```php
+<?php
+
+namespace Pyz\Zed\Customer;
+
+use Mollie\Zed\Mollie\Communication\Plugin\Customer\MollieCustomerAnonymizerPlugin;
+use Spryker\Zed\Customer\CustomerDependencyProvider as SprykerCustomerDependencyProvider;
+
+class CustomerDependencyProvider extends SprykerCustomerDependencyProvider
+{
+    // ... rest of the implementation
+
+    /**
+     * @return array<\Spryker\Zed\Customer\Dependency\Plugin\CustomerAnonymizerPluginInterface>
+     */
+    protected function getCustomerAnonymizerPlugins(): array
+    {
+        return [
+            // ... other anonymizer plugins
+            new MollieCustomerAnonymizerPlugin(),
+        ];
+    }
+}
+```
+
+If Mollie rejects the deletion, the stored Mollie customer is kept and an error is logged, so the deletion can be repeated.
 
 ## 5. Glossary Keys and Translations
 
@@ -1788,6 +1889,30 @@ mollie.checkout.payment.apple.pay.direct.unavailable,Apple Pay ist auf diesem Ge
 mollie.checkout.payment.apple.pay.direct.unavailable,Apple Pay is not available on this device or browser. Please choose another payment method.,en_US
 mollie.checkout.payment.apple.pay.direct.missing.token,Die Apple Pay-Zahlung wurde nicht abgeschlossen. Bitte versuchen Sie es erneut.,de_DE
 mollie.checkout.payment.apple.pay.direct.missing.token,The Apple Pay payment was not completed. Please try again.,en_US
+mollie.checkout.payment.credit.card.saved.cards.title,Gespeicherte Karten,de_DE
+mollie.checkout.payment.credit.card.saved.cards.title,Saved cards,en_US
+mollie.checkout.payment.credit.card.new.card,Neue Karte verwenden,de_DE
+mollie.checkout.payment.credit.card.new.card,Use a new card,en_US
+mollie.checkout.payment.credit.card.save.card.consent,Karte für schnelleres Bezahlen speichern.,de_DE
+mollie.checkout.payment.credit.card.save.card.consent,Save your card for faster checkout.,en_US
+mollie.checkout.payment.credit.card.save.card.consent.description,"Indem Sie dieses Kästchen ankreuzen, ermächtigen Sie [Handelsname], Ihre Zahlungskartendaten sicher zu speichern, um zukünftige Bezahlvorgänge zu beschleunigen. Ihre Daten werden von Mollie B.V. in unserem Auftrag gespeichert. Ihre gespeicherte Karte wird nur dann belastet, wenn Sie einen Kauf an der Kasse aktiv und erfolgreich abschließen – wir werden Ihre Karte niemals ohne Ihre direkte Beteiligung belasten. Sie können Ihre gespeicherte Karte jederzeit über Ihre Kontoeinstellungen entfernen oder uns unter [Support-Kontakt] kontaktieren. Weitere Informationen finden Sie in unserer [Datenschutzerklärung].",de_DE
+mollie.checkout.payment.credit.card.save.card.consent.description,"By ticking this box, you authorise [Doing Business As Name] to securely store your payment card details to speed up future checkouts. Your details will be held by Mollie B.V. on our behalf. Your saved card will only be charged when you actively successfully complete a purchase at checkout - we will never charge your card without your direct involvement. You can remove your saved card at any time via your account settings or by contacting us at [support contact]. For further information, please see our [Privacy Policy].",en_US
+mollie.customer.saved_cards.menu,Gespeicherte Karten,de_DE
+mollie.customer.saved_cards.menu,Saved cards,en_US
+mollie.customer.saved_cards.title,Gespeicherte Karten,de_DE
+mollie.customer.saved_cards.title,Saved cards,en_US
+mollie.customer.saved_cards.empty,Sie haben keine gespeicherten Karten.,de_DE
+mollie.customer.saved_cards.empty,You have no saved cards.,en_US
+mollie.customer.saved_cards.expires,Gültig bis,de_DE
+mollie.customer.saved_cards.expires,Expires,en_US
+mollie.customer.saved_cards.remove,Entfernen,de_DE
+mollie.customer.saved_cards.remove,Remove,en_US
+mollie.customer.saved_cards.remove.confirm,Möchten Sie diese Karte wirklich entfernen?,de_DE
+mollie.customer.saved_cards.remove.confirm,Do you really want to remove this card?,en_US
+mollie.customer.saved_cards.remove.success,Die Karte wurde entfernt.,de_DE
+mollie.customer.saved_cards.remove.success,The card has been removed.,en_US
+mollie.customer.saved_cards.remove.error,Die Karte konnte nicht entfernt werden. Bitte versuchen Sie es erneut.,de_DE
+mollie.customer.saved_cards.remove.error,The card could not be removed. Please try again.,en_US
 ```
 
 The `mollieExpressPayment` keys are only needed for [Express Checkout](#10-express-checkout), the `mollieApplePayDirect` keys only for [Apple Pay Direct](#92-apple-pay-direct).
@@ -1909,6 +2034,16 @@ Add the following configuration block:
     <action>index</action>
     <visible>1</visible>
 </mollie-express-checkout>
+
+<!-- If using single-click payments (saved cards) -->
+<mollie-single-click>
+    <label>Mollie Single-Click Payments</label>
+    <title>Mollie Single-Click Payments</title>
+    <bundle>mollie</bundle>
+    <controller>single-click</controller>
+    <action>index</action>
+    <visible>1</visible>
+</mollie-single-click>
 ```
 
 **Important:** Insert these blocks between the `<payment-method>` and `<shipment-method>` nodes in the navigation file.
@@ -2015,6 +2150,8 @@ After completing the configuration:
 
 If you added the `mollie-express-checkout` entry, **Administration > Mollie Express Methods** shows one checkbox per express method (Apple Pay, Google Pay, PayPal). A saved setting there overrides `MOLLIE_EXPRESS_CHECKOUT_METHODS_ENABLED` from the config. See [Section 10.3](#103-configuration).
 
+If you added the `mollie-single-click` entry, **Administration > Mollie Single-Click Payments** switches saved cards on or off for the whole shop. A saved setting there overrides `MOLLIE_SINGLE_CLICK_PAYMENTS_ENABLED` from the config. See [Section 8.1](#81-single-click-payments-saved-cards).
+
 ### What You Can See in the Back Office Panel
 
 <img src="../.github/images/payment_methods.png" alt="Mollie Payment Methods Backoffice Panel" width="600" />
@@ -2094,6 +2231,100 @@ MollieConstants::MOLLIE_CREDIT_CARD_COMPONENTS_JS_SRC => 'https://js.mollie.com/
 ### Component Example
 
 <img src="../.github/images/credit_card_component.png" alt="Credit Card Component" width="600" />
+
+### 8.1 Single-Click Payments (Saved Cards)
+
+Logged-in shoppers can save their card with Mollie and pay with it on later orders without entering it again. The feature follows Mollie's guide [Save a card for faster checkout](https://docs.mollie.com/docs/saving-a-card-for-returning-customers).
+
+Mollie models a saved card with two objects. A **customer** (`cst_…`) is created once per shopper, and a **mandate** (`mdt_…`) is the saved card itself, plus the shopper's permission to charge it.
+
+#### Single-Click Requirements
+
+- [Credit Card Components](#8-credit-card-components) must be enabled (`MOLLIE_CREDIT_CARD_COMPONENTS_ENABLED => true`). Without them the card is entered on Mollie's hosted page, and the saved-card options are not shown.
+- Only logged-in customers can save or use cards. Guests always enter a new card.
+
+#### Single-Click Configuration
+
+```php
+$config[MollieConstants::MOLLIE] = [
+    // ... other Mollie configuration
+    MollieConstants::MOLLIE_SINGLE_CLICK_PAYMENTS_ENABLED => false,
+];
+```
+
+Whether single-click payments are on is resolved in this order:
+
+1. The setting saved in the Back Office under **Administration > Mollie Single-Click Payments** (see [Section 7](#7-backoffice-configuration))
+2. The value in `MOLLIE_SINGLE_CLICK_PAYMENTS_ENABLED`
+3. Off, if neither is set
+
+When the feature is off, the checkout shows neither the saved cards nor the "save my card" checkbox. Cards that shoppers saved earlier stay at Mollie, and the **Saved cards** page (`/customer/saved-cards`) and its menu link stay available, so shoppers can remove them.
+
+#### Single-Click Consent Text
+
+Mollie requires a clear consent text below the "save my card" checkbox. The module ships Mollie's recommended wording in two glossary keys ([Section 5](#5-glossary-keys-and-translations)):
+
+| Key | Content |
+|-----|---------|
+| `mollie.checkout.payment.credit.card.save.card.consent` | The checkbox label |
+| `mollie.checkout.payment.credit.card.save.card.consent.description` | The text below it, with the placeholders `[Doing Business As Name]`, `[support contact]` and `[Privacy Policy]` |
+
+Replace the placeholders with your shop's details. The description is rendered as HTML, so the privacy policy (and your terms of service) can be linked, for example `<a href="/privacy">Privacy Policy</a>`.
+
+Each consent is stored with a timestamp and a version (`spy_mollie_customer.consent_given_at` and `consent_version`). The version comes from `MollieConfig::getSingleClickConsentVersion()` (Zed). When you change the consent text, override that method in your project's `MollieConfig` and return a new version.
+
+#### Single-Click Integration Steps
+
+1. Make sure Credit Card Components are enabled ([Section 8](#8-credit-card-components))
+2. Add the configuration from [Single-Click Configuration](#single-click-configuration)
+3. Register `MollieCustomerCheckoutPostSavePlugin` before `MollieCheckoutPostSavePlugin` ([Section 4.2](#post-hooks))
+4. Register `MollieCustomerCustomerTransferExpanderPlugin` and `MollieCustomerAnonymizerPlugin` ([Section 4.8](#48-customer-dependency-provider-zed))
+5. Register `MollieSavedCardsMenuItemWidget` and place it in the customer account menu ([Section 4.7](#47-shop-application-dependency-provider-yves))
+6. Add the glossary keys and replace the consent placeholders ([Section 5](#5-glossary-keys-and-translations), [Single-Click Consent Text](#single-click-consent-text))
+7. Add the `mollie-single-click` navigation entry ([Section 7](#7-backoffice-configuration))
+8. Run:
+
+```bash
+console transfer:generate
+console propel:install
+console data:import:glossary
+console navigation:build-cache
+console router:cache:warm-up
+console router:cache:warm-up:backend-gateway
+npm run yves
+```
+
+`propel:install` creates the tables `spy_mollie_customer` (one Mollie customer per shopper) and `spy_mollie_single_click_config` (the Back Office setting).
+
+The saved-cards routes (`/customer/saved-cards` and `/customer/saved-cards/remove`) are added by `MollieRouteProviderPlugin` ([Section 4.1](#41-router-dependency-provider)), so no extra route wiring is needed.
+
+#### How Single-Click Payments Work
+
+1. **Login.** `MollieCustomerCustomerTransferExpanderPlugin` adds the shopper's stored Mollie customer (if any) to the logged-in customer. It is refreshed after every successful checkout.
+2. **Payment step.** For a logged-in shopper, the credit card form lists the saved cards (Mollie mandates that can be used with the customer present) and an unchecked "save my card" checkbox. Picking a saved card hides the card fields and the checkbox.
+3. **Order placement, saving a new card.** When the shopper ticks the checkbox, `MollieCustomerCheckoutPostSavePlugin` looks up the shopper's Mollie customer and creates one at Mollie if none exists, storing it with the consent timestamp and version. The payment is then created with `customerId`, `cardToken`, `storeCredentials: true` and `sequenceType: oneoff`, and Mollie saves the card once the payment succeeds.
+4. **Order placement, paying with a saved card.** The payment is created with `customerId`, `mandateId` and `sequenceType: oneoff`, without a card token. If Mollie asks for 3-D Secure, the shopper is redirected as usual.
+5. **Order placement, new card without consent.** A normal card payment, without a Mollie customer.
+6. **Saved cards page.** `/customer/saved-cards` lists the shopper's cards. **Remove** checks that the card belongs to the shopper and revokes the mandate at Mollie, so it can't be charged again.
+7. **Account deletion.** When the shopper's account is deleted, `MollieCustomerAnonymizerPlugin` deletes their Mollie customer at Mollie (which cancels all of their saved cards) and removes the stored row.
+
+If Mollie rejects a payment (for example a saved card that expired, or a Mollie customer that can't be created), the shopper gets the normal payment-failed message and can choose again.
+
+> **Test and live mode**
+>
+> Mollie keeps test and live customers apart: a customer created with a test API key doesn't exist in live mode. `spy_mollie_customer` stores one Mollie customer per shopper, without the mode. When you switch the API key between test and live (for example at go-live), empty `spy_mollie_customer`, otherwise save-card and saved-card payments fail for the affected shoppers.
+
+#### Testing Single-Click Payments
+
+> **Test mode vs. live mode**
+>
+> In Mollie test mode, a payment with a saved card still opens Mollie's card form, and paying there saves the card again as a new mandate, so the shopper sees the same card several times. In live mode the same request uses the saved card and only shows Mollie's authentication page (3-D Secure) on `pay.mollie.nl`. That domain must be in `KernelConstants::DOMAIN_WHITELIST` (see the Spryker redirect whitelist in [Section 2](#2-setup--configuration)), otherwise the redirect fails with "is not an allowed domain".
+
+1. Switch the feature on in **Administration > Mollie Single-Click Payments**
+2. Log in as a customer, pay with a new card using a Mollie [test card](#test-credit-cards), and tick "save my card"
+3. After the order, check that `spy_mollie_customer` has a row for the customer with `consent_given_at` and `consent_version`
+4. Place a second order: the saved card is listed on the payment step. Pick it and pay; Mollie may show its authentication page (3-D Secure) but must not ask for the card details again
+5. Open **Saved cards** in the customer account, remove the card, and check that it no longer shows on the payment step
 
 ## 9. Wallet Payments
 

@@ -140,3 +140,27 @@ checkout.payment.provider.mollieRiverty.descriptionText,Schließen Sie Ihren Ein
 checkout.payment.provider.mollieRiverty.descriptionText,Complete your purchase securely using Riverty.,en_US
 checkout.payment.provider.mollieAlma.descriptionText,Schließen Sie Ihren Einkauf sicher mit Alma ab.,de_DE
 checkout.payment.provider.mollieAlma.descriptionText,Complete your purchase securely using Alma.,en_US
+mollie.checkout.payment.credit.card.saved.cards.title,Gespeicherte Karten,de_DE
+mollie.checkout.payment.credit.card.saved.cards.title,Saved cards,en_US
+mollie.checkout.payment.credit.card.new.card,Neue Karte verwenden,de_DE
+mollie.checkout.payment.credit.card.new.card,Use a new card,en_US
+mollie.checkout.payment.credit.card.save.card.consent,Karte für schnelleres Bezahlen speichern.,de_DE
+mollie.checkout.payment.credit.card.save.card.consent,Save your card for faster checkout.,en_US
+mollie.checkout.payment.credit.card.save.card.consent.description,"Indem Sie dieses Kästchen ankreuzen, ermächtigen Sie [Handelsname], Ihre Zahlungskartendaten sicher zu speichern, um zukünftige Bezahlvorgänge zu beschleunigen. Ihre Daten werden von Mollie B.V. in unserem Auftrag gespeichert. Ihre gespeicherte Karte wird nur dann belastet, wenn Sie einen Kauf an der Kasse aktiv und erfolgreich abschließen – wir werden Ihre Karte niemals ohne Ihre direkte Beteiligung belasten. Sie können Ihre gespeicherte Karte jederzeit über Ihre Kontoeinstellungen entfernen oder uns unter [Support-Kontakt] kontaktieren. Weitere Informationen finden Sie in unserer [Datenschutzerklärung].",de_DE
+mollie.checkout.payment.credit.card.save.card.consent.description,"By ticking this box, you authorise [Doing Business As Name] to securely store your payment card details to speed up future checkouts. Your details will be held by Mollie B.V. on our behalf. Your saved card will only be charged when you actively successfully complete a purchase at checkout - we will never charge your card without your direct involvement. You can remove your saved card at any time via your account settings or by contacting us at [support contact]. For further information, please see our [Privacy Policy].",en_US
+mollie.customer.saved_cards.menu,Gespeicherte Karten,de_DE
+mollie.customer.saved_cards.menu,Saved cards,en_US
+mollie.customer.saved_cards.title,Gespeicherte Karten,de_DE
+mollie.customer.saved_cards.title,Saved cards,en_US
+mollie.customer.saved_cards.empty,Sie haben keine gespeicherten Karten.,de_DE
+mollie.customer.saved_cards.empty,You have no saved cards.,en_US
+mollie.customer.saved_cards.expires,Gültig bis,de_DE
+mollie.customer.saved_cards.expires,Expires,en_US
+mollie.customer.saved_cards.remove,Entfernen,de_DE
+mollie.customer.saved_cards.remove,Remove,en_US
+mollie.customer.saved_cards.remove.confirm,Möchten Sie diese Karte wirklich entfernen?,de_DE
+mollie.customer.saved_cards.remove.confirm,Do you really want to remove this card?,en_US
+mollie.customer.saved_cards.remove.success,Die Karte wurde entfernt.,de_DE
+mollie.customer.saved_cards.remove.success,The card has been removed.,en_US
+mollie.customer.saved_cards.remove.error,Die Karte konnte nicht entfernt werden. Bitte versuchen Sie es erneut.,de_DE
+mollie.customer.saved_cards.remove.error,The card could not be removed. Please try again.,en_US

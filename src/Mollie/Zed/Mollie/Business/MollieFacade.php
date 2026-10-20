@@ -6,6 +6,8 @@ declare(strict_types=1);
 namespace Mollie\Zed\Mollie\Business;
 
 use Generated\Shared\Transfer\CheckoutResponseTransfer;
+use Generated\Shared\Transfer\CustomerTransfer;
+use Generated\Shared\Transfer\MollieCustomerTransfer;
 use Generated\Shared\Transfer\MollieExpirationInformationTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutConfigCollectionTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutConfigCriteriaTransfer;
@@ -24,6 +26,11 @@ use Generated\Shared\Transfer\MolliePaymentMethodConfigTransfer;
 use Generated\Shared\Transfer\MolliePaymentTransfer;
 use Generated\Shared\Transfer\MollieRefundApiResponseTransfer;
 use Generated\Shared\Transfer\MollieRefundResponseTransfer;
+use Generated\Shared\Transfer\MollieSavedCardRemoveRequestTransfer;
+use Generated\Shared\Transfer\MollieSavedCardRemoveResponseTransfer;
+use Generated\Shared\Transfer\MollieSingleClickConfigTransfer;
+use Generated\Shared\Transfer\MollieSingleClickPaymentDataRequestTransfer;
+use Generated\Shared\Transfer\MollieSingleClickPaymentDataTransfer;
 use Generated\Shared\Transfer\MollieWebhookResponseTransfer;
 use Generated\Shared\Transfer\OrderCollectionRequestTransfer;
 use Generated\Shared\Transfer\OrderCollectionResponseTransfer;
@@ -447,5 +454,134 @@ class MollieFacade extends AbstractFacade implements MollieFacadeInterface
         return $this->getFactory()
             ->createExpressCheckoutPaymentWebhookProcessor()
             ->process($molliePaymentTransfer);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @api
+     *
+     * @return bool
+     */
+    public function isSingleClickPaymentEnabled(): bool
+    {
+        return $this->getFactory()
+            ->createSingleClickConfigReader()
+            ->isSingleClickPaymentEnabled();
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\MollieSingleClickConfigTransfer $mollieSingleClickConfigTransfer
+     *
+     * @return void
+     */
+    public function saveSingleClickConfig(MollieSingleClickConfigTransfer $mollieSingleClickConfigTransfer): void
+    {
+        $this->getFactory()
+            ->createSingleClickConfigWriter()
+            ->saveSingleClickConfig($mollieSingleClickConfigTransfer);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\MollieSingleClickPaymentDataRequestTransfer $mollieSingleClickPaymentDataRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieSingleClickPaymentDataTransfer
+     */
+    public function getSingleClickPaymentData(
+        MollieSingleClickPaymentDataRequestTransfer $mollieSingleClickPaymentDataRequestTransfer,
+    ): MollieSingleClickPaymentDataTransfer {
+        return $this->getFactory()
+            ->createSavedCardReader()
+            ->getSingleClickPaymentData($mollieSingleClickPaymentDataRequestTransfer);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\MollieSingleClickPaymentDataRequestTransfer $mollieSingleClickPaymentDataRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieSingleClickPaymentDataTransfer
+     */
+    public function getCustomerSavedCards(
+        MollieSingleClickPaymentDataRequestTransfer $mollieSingleClickPaymentDataRequestTransfer,
+    ): MollieSingleClickPaymentDataTransfer {
+        return $this->getFactory()
+            ->createSavedCardReader()
+            ->getCustomerSavedCards($mollieSingleClickPaymentDataRequestTransfer);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\MollieSavedCardRemoveRequestTransfer $mollieSavedCardRemoveRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieSavedCardRemoveResponseTransfer
+     */
+    public function removeSavedCard(
+        MollieSavedCardRemoveRequestTransfer $mollieSavedCardRemoveRequestTransfer,
+    ): MollieSavedCardRemoveResponseTransfer {
+        return $this->getFactory()
+            ->createSavedCardRemover()
+            ->removeSavedCard($mollieSavedCardRemoveRequestTransfer);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\CustomerTransfer $customerTransfer
+     *
+     * @return \Generated\Shared\Transfer\CustomerTransfer
+     */
+    public function expandCustomerWithMollieCustomer(CustomerTransfer $customerTransfer): CustomerTransfer
+    {
+        return $this->getFactory()
+            ->createMollieCustomerExpander()
+            ->expandCustomer($customerTransfer);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieCustomerTransfer|null
+     */
+    public function createMollieCustomer(QuoteTransfer $quoteTransfer): ?MollieCustomerTransfer
+    {
+        return $this->getFactory()
+            ->createMollieCustomerProvider()
+            ->createMollieCustomer($quoteTransfer);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\CustomerTransfer $customerTransfer
+     *
+     * @return void
+     */
+    public function deleteMollieCustomer(CustomerTransfer $customerTransfer): void
+    {
+        $this->getFactory()
+            ->createMollieCustomerDeleter()
+            ->deleteMollieCustomer($customerTransfer);
     }
 }

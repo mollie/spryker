@@ -366,6 +366,11 @@ class MollieConfig extends AbstractSharedConfig
     /**
      * @var string
      */
+    public const SINGLE_CLICK_CONSENT_VERSION = '2';
+
+    /**
+     * @var string
+     */
     public const MOLLIE_PLUGIN_PACKAGE = 'mollie/spryker-payment';
 
     /**
@@ -390,6 +395,14 @@ class MollieConfig extends AbstractSharedConfig
     public function getDefaultExpressCheckoutMethodConfig(): array
     {
         return $this->get(MollieConstants::MOLLIE)[MollieConstants::MOLLIE_EXPRESS_CHECKOUT_METHODS_ENABLED] ?? [];
+    }
+
+    /**
+     * @return bool
+     */
+    public function isSingleClickPaymentEnabledByDefault(): bool
+    {
+        return (bool)($this->get(MollieConstants::MOLLIE)[MollieConstants::MOLLIE_SINGLE_CLICK_PAYMENTS_ENABLED] ?? false);
     }
 
     /**

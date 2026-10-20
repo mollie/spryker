@@ -6,6 +6,8 @@ declare(strict_types=1);
 namespace Mollie\Zed\Mollie\Business;
 
 use Generated\Shared\Transfer\CheckoutResponseTransfer;
+use Generated\Shared\Transfer\CustomerTransfer;
+use Generated\Shared\Transfer\MollieCustomerTransfer;
 use Generated\Shared\Transfer\MollieExpirationInformationTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutConfigCollectionTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutConfigCriteriaTransfer;
@@ -24,6 +26,11 @@ use Generated\Shared\Transfer\MolliePaymentMethodConfigTransfer;
 use Generated\Shared\Transfer\MolliePaymentTransfer;
 use Generated\Shared\Transfer\MollieRefundApiResponseTransfer;
 use Generated\Shared\Transfer\MollieRefundResponseTransfer;
+use Generated\Shared\Transfer\MollieSavedCardRemoveRequestTransfer;
+use Generated\Shared\Transfer\MollieSavedCardRemoveResponseTransfer;
+use Generated\Shared\Transfer\MollieSingleClickConfigTransfer;
+use Generated\Shared\Transfer\MollieSingleClickPaymentDataRequestTransfer;
+use Generated\Shared\Transfer\MollieSingleClickPaymentDataTransfer;
 use Generated\Shared\Transfer\MollieWebhookResponseTransfer;
 use Generated\Shared\Transfer\OrderCollectionRequestTransfer;
 use Generated\Shared\Transfer\OrderCollectionResponseTransfer;
@@ -338,4 +345,118 @@ interface MollieFacadeInterface
      * @return \Generated\Shared\Transfer\MollieWebhookResponseTransfer
      */
     public function processExpressCheckoutPaymentWebhook(MolliePaymentTransfer $molliePaymentTransfer): MollieWebhookResponseTransfer;
+
+    /**
+     * Specification:
+     * - Returns the single-click setting saved in the Back Office.
+     * - Falls back to `MollieConstants::MOLLIE_SINGLE_CLICK_PAYMENTS_ENABLED` when nothing was saved.
+     *
+     * @api
+     *
+     * @return bool
+     */
+    public function isSingleClickPaymentEnabled(): bool;
+
+    /**
+     * Specification:
+     * - Saves the single-click setting from the Back Office; it overrides the config value.
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\MollieSingleClickConfigTransfer $mollieSingleClickConfigTransfer
+     *
+     * @return void
+     */
+    public function saveSingleClickConfig(MollieSingleClickConfigTransfer $mollieSingleClickConfigTransfer): void;
+
+    /**
+     * Specification:
+     * - Returns whether single-click payments are enabled.
+     * - When enabled, returns the saved cards (valid credit card mandates) of the given customer.
+     * - Returns no saved cards when Mollie can't list them.
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\MollieSingleClickPaymentDataRequestTransfer $mollieSingleClickPaymentDataRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieSingleClickPaymentDataTransfer
+     */
+    public function getSingleClickPaymentData(
+        MollieSingleClickPaymentDataRequestTransfer $mollieSingleClickPaymentDataRequestTransfer,
+    ): MollieSingleClickPaymentDataTransfer;
+
+    /**
+     * Specification:
+     * - Returns whether single-click payments are enabled.
+     * - Returns the saved cards (valid credit card mandates) of the given customer, also when single-click payments
+     *   are disabled, so the customer can still remove them.
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\MollieSingleClickPaymentDataRequestTransfer $mollieSingleClickPaymentDataRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieSingleClickPaymentDataTransfer
+     */
+    public function getCustomerSavedCards(
+        MollieSingleClickPaymentDataRequestTransfer $mollieSingleClickPaymentDataRequestTransfer,
+    ): MollieSingleClickPaymentDataTransfer;
+
+    /**
+     * Specification:
+     * - Requires `MollieSavedCardRemoveRequestTransfer.idCustomer` and `MollieSavedCardRemoveRequestTransfer.mandateId`.
+     * - Checks that the mandate is one of the customer's current saved cards at Mollie.
+     * - Revokes the mandate at Mollie, so it can no longer be charged and disappears from the saved cards.
+     * - Returns `isSuccessful=false` when the card does not belong to the customer or Mollie rejects the revoke.
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\MollieSavedCardRemoveRequestTransfer $mollieSavedCardRemoveRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieSavedCardRemoveResponseTransfer
+     */
+    public function removeSavedCard(
+        MollieSavedCardRemoveRequestTransfer $mollieSavedCardRemoveRequestTransfer,
+    ): MollieSavedCardRemoveResponseTransfer;
+
+    /**
+     * Specification:
+     * - Sets the customer's stored Mollie customer on `CustomerTransfer.mollieCustomer`.
+     * - Sets null when the customer has no stored Mollie customer.
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\CustomerTransfer $customerTransfer
+     *
+     * @return \Generated\Shared\Transfer\CustomerTransfer
+     */
+    public function expandCustomerWithMollieCustomer(CustomerTransfer $customerTransfer): CustomerTransfer;
+
+    /**
+     * Specification:
+     * - Creates a customer at Mollie for `QuoteTransfer.customer`.
+     * - Stores it with the consent timestamp and consent version.
+     * - Returns the stored Mollie customer, or null when Mollie can't create it.
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieCustomerTransfer|null
+     */
+    public function createMollieCustomer(QuoteTransfer $quoteTransfer): ?MollieCustomerTransfer;
+
+    /**
+     * Specification:
+     * - Does nothing when the customer has no stored Mollie customer.
+     * - Deletes the customer at Mollie, which also cancels all of its mandates (saved cards).
+     * - Removes the stored Mollie customer when Mollie deleted it.
+     * - Keeps the stored Mollie customer and logs an error when Mollie rejects the deletion.
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\CustomerTransfer $customerTransfer
+     *
+     * @return void
+     */
+    public function deleteMollieCustomer(CustomerTransfer $customerTransfer): void;
 }

@@ -50,6 +50,31 @@ class MollieConfig extends AbstractBundleConfig
     /**
      * @var string
      */
+    public const RESPONSE_PARAMETER_MANDATES = 'mandates';
+
+    /**
+     * @var string
+     */
+    public const REQUEST_PARAMETER_CREATE_PAYMENT_STORE_CREDENTIALS = 'storeCredentials';
+
+    /**
+     * @var string
+     */
+    public const MANDATE_SCOPE_CUSTOMER_PRESENT = 'customer-present';
+
+    /**
+     * @var string
+     */
+    public const MANDATE_STATUS_VALID = 'valid';
+
+    /**
+     * @var int
+     */
+    public const MANDATES_PAGE_LIMIT = 50;
+
+    /**
+     * @var string
+     */
     public const REQUEST_PARAMETER_CREATE_PAYMENT_BANK_TRANSFER_DUE_DATE = 'dueDate';
 
     /**

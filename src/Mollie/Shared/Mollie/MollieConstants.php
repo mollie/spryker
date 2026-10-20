@@ -91,6 +91,13 @@ interface MollieConstants
     public const MOLLIE_EXPRESS_CHECKOUT_JS_SRC = 'MOLLIE:MOLLIE_EXPRESS_CHECKOUT_JS_SRC';
 
     /**
+     * @api
+     *
+     * @var string
+     */
+    public const MOLLIE_SINGLE_CLICK_PAYMENTS_ENABLED = 'MOLLIE:MOLLIE_SINGLE_CLICK_PAYMENTS_ENABLED';
+
+    /**
      * @var string
      */
     public const MOLLIE_APPLE_PAY_SDK_JS_SRC = 'MOLLIE:MOLLIE_APPLE_PAY_SDK_JS_SRC';
@@ -185,4 +192,6 @@ interface MollieConstants
     public const string QUERY_MOLLIE_PAYMENT_METHOD_ID = 'mollie_payment_method_id';
 
     public const string QUERY_MOLLIE_PAYMENT_METHOD_CONFIG_ID = 'id-mollie-payment-method-config';
+
+    public const string MOLLIE_CUSTOMER_METADATA_ID_CUSTOMER = 'idCustomer';
 }

@@ -191,4 +191,20 @@ class MollieConfig extends AbstractBundleConfig
     {
         return $this->getSharedConfig()->getDefaultExpressCheckoutMethodConfig();
     }
+
+    /**
+     * @return bool
+     */
+    public function isSingleClickPaymentEnabledByDefault(): bool
+    {
+        return $this->getSharedConfig()->isSingleClickPaymentEnabledByDefault();
+    }
+
+    /**
+     * @return string
+     */
+    public function getSingleClickConsentVersion(): string
+    {
+        return SharedConfig::SINGLE_CLICK_CONSENT_VERSION;
+    }
 }

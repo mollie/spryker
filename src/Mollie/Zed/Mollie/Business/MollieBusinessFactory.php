@@ -65,6 +65,20 @@ use Mollie\Zed\Mollie\Business\Processor\PaymentLink\PaymentLinkProcessor;
 use Mollie\Zed\Mollie\Business\Processor\PaymentLink\PaymentLinkProcessorInterface;
 use Mollie\Zed\Mollie\Business\Processor\Refund\RefundProcessor;
 use Mollie\Zed\Mollie\Business\Processor\Refund\RefundProcessorInterface;
+use Mollie\Zed\Mollie\Business\SingleClick\MollieCustomerDeleter;
+use Mollie\Zed\Mollie\Business\SingleClick\MollieCustomerDeleterInterface;
+use Mollie\Zed\Mollie\Business\SingleClick\MollieCustomerExpander;
+use Mollie\Zed\Mollie\Business\SingleClick\MollieCustomerExpanderInterface;
+use Mollie\Zed\Mollie\Business\SingleClick\MollieCustomerProvider;
+use Mollie\Zed\Mollie\Business\SingleClick\MollieCustomerProviderInterface;
+use Mollie\Zed\Mollie\Business\SingleClick\SavedCardReader;
+use Mollie\Zed\Mollie\Business\SingleClick\SavedCardReaderInterface;
+use Mollie\Zed\Mollie\Business\SingleClick\SavedCardRemover;
+use Mollie\Zed\Mollie\Business\SingleClick\SavedCardRemoverInterface;
+use Mollie\Zed\Mollie\Business\SingleClick\SingleClickConfigReader;
+use Mollie\Zed\Mollie\Business\SingleClick\SingleClickConfigReaderInterface;
+use Mollie\Zed\Mollie\Business\SingleClick\SingleClickConfigWriter;
+use Mollie\Zed\Mollie\Business\SingleClick\SingleClickConfigWriterInterface;
 use Mollie\Zed\Mollie\Business\Writer\MolliePaymentWriter;
 use Mollie\Zed\Mollie\Business\Writer\MolliePaymentWriterInterface;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToCalculationFacadeInterface;
@@ -523,6 +537,85 @@ class MollieBusinessFactory extends AbstractBusinessFactory
             $this->createExpressCheckoutMolliePaymentHandler(),
             $this->createExpressCheckoutPaymentRefundRequester(),
             $this->createExpressCheckoutPaymentRefundStatusUpdater(),
+        );
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Business\SingleClick\SingleClickConfigReaderInterface
+     */
+    public function createSingleClickConfigReader(): SingleClickConfigReaderInterface
+    {
+        return new SingleClickConfigReader(
+            $this->getConfig(),
+            $this->getRepository(),
+        );
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Business\SingleClick\SingleClickConfigWriterInterface
+     */
+    public function createSingleClickConfigWriter(): SingleClickConfigWriterInterface
+    {
+        return new SingleClickConfigWriter(
+            $this->getEntityManager(),
+        );
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Business\SingleClick\MollieCustomerProviderInterface
+     */
+    public function createMollieCustomerProvider(): MollieCustomerProviderInterface
+    {
+        return new MollieCustomerProvider(
+            $this->getMollieClient(),
+            $this->getRepository(),
+            $this->getEntityManager(),
+            $this->getConfig(),
+        );
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Business\SingleClick\MollieCustomerDeleterInterface
+     */
+    public function createMollieCustomerDeleter(): MollieCustomerDeleterInterface
+    {
+        return new MollieCustomerDeleter(
+            $this->getMollieClient(),
+            $this->createMollieCustomerProvider(),
+        );
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Business\SingleClick\MollieCustomerExpanderInterface
+     */
+    public function createMollieCustomerExpander(): MollieCustomerExpanderInterface
+    {
+        return new MollieCustomerExpander(
+            $this->createMollieCustomerProvider(),
+        );
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Business\SingleClick\SavedCardReaderInterface
+     */
+    public function createSavedCardReader(): SavedCardReaderInterface
+    {
+        return new SavedCardReader(
+            $this->getMollieClient(),
+            $this->createSingleClickConfigReader(),
+            $this->createMollieCustomerProvider(),
+        );
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Business\SingleClick\SavedCardRemoverInterface
+     */
+    public function createSavedCardRemover(): SavedCardRemoverInterface
+    {
+        return new SavedCardRemover(
+            $this->getMollieClient(),
+            $this->createMollieCustomerProvider(),
+            $this->createSavedCardReader(),
         );
     }
 }

@@ -21,6 +21,7 @@ use Mollie\Client\Mollie\Logger\MollieLoggerInterface;
 use Mollie\Client\Mollie\MollieConfig;
 use Mollie\Service\Mollie\MollieServiceInterface;
 use Mollie\Shared\Mollie\MollieConfig as SharedConfig;
+use Mollie\Shared\Mollie\MollieConstants;
 use Spryker\Shared\Kernel\Transfer\AbstractTransfer;
 use Spryker\Shared\Log\LoggerTrait;
 
@@ -76,6 +77,8 @@ class CreatePaymentApi extends AbstractApiCall
         $method = $this->getMethod($paymentMethod);
         $metadata = $this->apiHandler->createPaymentMetadata($checkoutResponseTransfer);
         $additionalParameters = $this->apiHandler->createAdditionalParameters($mollieApiRequestTransfer);
+        $mollieCustomerId = $this->apiHandler->findMollieCustomerId($quoteTransfer);
+        $mandateId = $this->apiHandler->findMandateId($quoteTransfer);
         $billingAddress = $this->apiHandler->createBillingAddress($quoteTransfer);
         $lines = $this->apiHandler->createLines($quoteTransfer);
 
@@ -89,6 +92,9 @@ class CreatePaymentApi extends AbstractApiCall
             method: $method,
             metadata: $metadata,
             captureMode: $captureMode,
+            sequenceType: $mollieCustomerId ? MollieConstants::MOLLIE_SEQUENCE_TYPE_ONE_OFF : null,
+            mandateId: $mandateId,
+            customerId: $mollieCustomerId,
             additional: $additionalParameters,
         );
 

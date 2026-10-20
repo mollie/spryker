@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace Mollie\Zed\Mollie\Persistence;
 
+use Generated\Shared\Transfer\MollieCustomerTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutPaymentRefundTransfer;
 use Generated\Shared\Transfer\MollieExpressCheckoutPaymentUpdateRequestTransfer;
 use Generated\Shared\Transfer\MollieExpressPaymentTransfer;
@@ -377,5 +378,52 @@ class MollieEntityManager extends AbstractEntityManager implements MollieEntityM
 
         $spyMollieExpressCheckoutConfigEntity->setIsActive($isActive);
         $spyMollieExpressCheckoutConfigEntity->save();
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MollieCustomerTransfer $mollieCustomerTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieCustomerTransfer
+     */
+    public function saveMollieCustomer(MollieCustomerTransfer $mollieCustomerTransfer): MollieCustomerTransfer
+    {
+        $spyMollieCustomerEntity = $this->getFactory()
+            ->createSpyMollieCustomerQuery()
+            ->filterByFkCustomer($mollieCustomerTransfer->getFkCustomerOrFail())
+            ->findOneOrCreate();
+
+        $mollieCustomerMapper = $this->getFactory()->createMollieCustomerMapper();
+        $spyMollieCustomerEntity = $mollieCustomerMapper->mapMollieCustomerTransferToEntity($mollieCustomerTransfer, $spyMollieCustomerEntity);
+        $spyMollieCustomerEntity->save();
+
+        return $mollieCustomerMapper->mapMollieCustomerEntityToTransfer($spyMollieCustomerEntity, $mollieCustomerTransfer);
+    }
+
+    /**
+     * @param int $idMollieCustomer
+     *
+     * @return void
+     */
+    public function deleteMollieCustomer(int $idMollieCustomer): void
+    {
+        $this->getFactory()
+            ->createSpyMollieCustomerQuery()
+            ->filterByIdMollieCustomer($idMollieCustomer)
+            ->delete();
+    }
+
+    /**
+     * @param bool $isActive
+     *
+     * @return void
+     */
+    public function saveSingleClickConfig(bool $isActive): void
+    {
+        $spyMollieSingleClickConfigEntity = $this->getFactory()
+            ->createSpyMollieSingleClickConfigQuery()
+            ->findOneOrCreate();
+
+        $spyMollieSingleClickConfigEntity->setIsActive($isActive);
+        $spyMollieSingleClickConfigEntity->save();
     }
 }
