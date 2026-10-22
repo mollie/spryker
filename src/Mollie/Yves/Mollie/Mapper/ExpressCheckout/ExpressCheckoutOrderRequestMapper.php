@@ -76,7 +76,8 @@ class ExpressCheckoutOrderRequestMapper implements ExpressCheckoutOrderRequestMa
             ->setRegion($mollieAddressTransfer->getRegion())
             ->setIso2Code($mollieAddressTransfer->getCountry())
             ->setEmail($mollieAddressTransfer->getEmail())
-            ->setPhone($mollieAddressTransfer->getPhone());
+            ->setPhone($mollieAddressTransfer->getPhone())
+            ->setIsFromExternalService(true);
     }
 
     /**

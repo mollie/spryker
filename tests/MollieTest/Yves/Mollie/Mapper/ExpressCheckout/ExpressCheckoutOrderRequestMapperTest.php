@@ -52,7 +52,9 @@ class ExpressCheckoutOrderRequestMapperTest extends Unit
         $this->assertSame('Varazdin', $billingAddressTransfer->getCity());
         $this->assertSame('HR', $billingAddressTransfer->getIso2Code());
         $this->assertSame('jane.doe@example.com', $billingAddressTransfer->getEmail());
+        $this->assertTrue($billingAddressTransfer->getIsFromExternalService());
         $this->assertSame('Shipping Street 2', $mollieExpressCheckoutOrderRequestTransfer->getShippingAddress()->getAddress1());
+        $this->assertTrue($mollieExpressCheckoutOrderRequestTransfer->getShippingAddress()->getIsFromExternalService());
         $this->assertSame(static::SHIPMENT_METHOD_KEY, $mollieExpressCheckoutOrderRequestTransfer->getShipmentMethodKey());
         $this->assertSame(5498, $mollieExpressCheckoutOrderRequestTransfer->getExpectedGrandTotal());
     }
