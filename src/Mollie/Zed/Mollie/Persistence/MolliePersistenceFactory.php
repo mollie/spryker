@@ -5,9 +5,14 @@ declare(strict_types = 1);
 namespace Mollie\Zed\Mollie\Persistence;
 
 use Mollie\Service\Mollie\MollieServiceInterface;
-use Mollie\Zed\Mollie\Dependency\Facade\MollieToMoneyFacadeInterface;
 use Mollie\Zed\Mollie\Dependency\Service\MollieToUtilEncodingServiceInterface;
 use Mollie\Zed\Mollie\MollieDependencyProvider;
+use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MollieCustomerMapper;
+use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MollieCustomerMapperInterface;
+use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MollieExpressCheckoutConfigMapper;
+use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MollieExpressCheckoutConfigMapperInterface;
+use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MollieExpressCheckoutPaymentRefundMapper;
+use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MollieExpressCheckoutPaymentRefundMapperInterface;
 use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MollieOrderMapper;
 use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MollieOrderMapperInterface;
 use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MolliePaymentCaptureMapper;
@@ -18,10 +23,13 @@ use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MolliePaymentMethodConfigMapper;
 use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MolliePaymentMethodConfigMapperInterface;
 use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MollieRefundMapper;
 use Mollie\Zed\Mollie\Persistence\Propel\Mapper\MollieRefundMapperInterface;
+use Orm\Zed\Mollie\Persistence\SpyMollieCustomerQuery;
+use Orm\Zed\Mollie\Persistence\SpyMollieExpressCheckoutConfigQuery;
+use Orm\Zed\Mollie\Persistence\SpyMollieExpressCheckoutPaymentRefundQuery;
 use Orm\Zed\Mollie\Persistence\SpyMollieOrderItemPaymentCaptureQuery;
 use Orm\Zed\Mollie\Persistence\SpyMolliePaymentLinkQuery;
 use Orm\Zed\Mollie\Persistence\SpyMolliePaymentMethodConfigQuery;
-use Orm\Zed\Mollie\Persistence\SpyMolliePaymentMethodConfigTranslationQuery;
+use Orm\Zed\Mollie\Persistence\SpyMollieSingleClickConfigQuery;
 use Orm\Zed\Mollie\Persistence\SpyPaymentMollieQuery;
 use Orm\Zed\Mollie\Persistence\SpyRefundMollieQuery;
 use Spryker\Zed\Kernel\Persistence\AbstractPersistenceFactory;
@@ -53,7 +61,6 @@ class MolliePersistenceFactory extends AbstractPersistenceFactory
     public function createMolliePaymentLinkMapper(): MolliePaymentLinkMapperInterface
     {
         return new MolliePaymentLinkMapper(
-            $this->getMoneyFacade(),
             $this->getUtilEncodingService(),
         );
     }
@@ -78,6 +85,22 @@ class MolliePersistenceFactory extends AbstractPersistenceFactory
             $this->getMollieService(),
             $this->getConfig(),
         );
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Persistence\Propel\Mapper\MollieExpressCheckoutConfigMapperInterface
+     */
+    public function createMollieExpressCheckoutConfigMapper(): MollieExpressCheckoutConfigMapperInterface
+    {
+        return new MollieExpressCheckoutConfigMapper();
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Persistence\Propel\Mapper\MollieCustomerMapperInterface
+     */
+    public function createMollieCustomerMapper(): MollieCustomerMapperInterface
+    {
+        return new MollieCustomerMapper();
     }
 
     /**
@@ -121,11 +144,43 @@ class MolliePersistenceFactory extends AbstractPersistenceFactory
     }
 
     /**
-     * @return \Orm\Zed\Mollie\Persistence\SpyMolliePaymentMethodConfigTranslationQuery
+     * @return \Orm\Zed\Mollie\Persistence\SpyMollieExpressCheckoutConfigQuery
      */
-    public function createSpyMolliePaymentMethodConfiTranslationgQuery(): SpyMolliePaymentMethodConfigTranslationQuery
+    public function createSpyMollieExpressCheckoutConfigQuery(): SpyMollieExpressCheckoutConfigQuery
     {
-        return SpyMolliePaymentMethodConfigTranslationQuery::create();
+        return SpyMollieExpressCheckoutConfigQuery::create();
+    }
+
+    /**
+     * @return \Orm\Zed\Mollie\Persistence\SpyMollieExpressCheckoutPaymentRefundQuery
+     */
+    public function createSpyMollieExpressCheckoutPaymentRefundQuery(): SpyMollieExpressCheckoutPaymentRefundQuery
+    {
+        return SpyMollieExpressCheckoutPaymentRefundQuery::create();
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Persistence\Propel\Mapper\MollieExpressCheckoutPaymentRefundMapperInterface
+     */
+    public function createMollieExpressCheckoutPaymentRefundMapper(): MollieExpressCheckoutPaymentRefundMapperInterface
+    {
+        return new MollieExpressCheckoutPaymentRefundMapper();
+    }
+
+    /**
+     * @return \Orm\Zed\Mollie\Persistence\SpyMollieCustomerQuery
+     */
+    public function createSpyMollieCustomerQuery(): SpyMollieCustomerQuery
+    {
+        return SpyMollieCustomerQuery::create();
+    }
+
+    /**
+     * @return \Orm\Zed\Mollie\Persistence\SpyMollieSingleClickConfigQuery
+     */
+    public function createSpyMollieSingleClickConfigQuery(): SpyMollieSingleClickConfigQuery
+    {
+        return SpyMollieSingleClickConfigQuery::create();
     }
 
     /**
@@ -142,13 +197,5 @@ class MolliePersistenceFactory extends AbstractPersistenceFactory
     public function getMollieService(): MollieServiceInterface
     {
         return $this->getProvidedDependency(MollieDependencyProvider::SERVICE_MOLLIE);
-    }
-
-    /**
-     * @return \Mollie\Zed\Mollie\Dependency\Facade\MollieToMoneyFacadeInterface
-     */
-    public function getMoneyFacade(): MollieToMoneyFacadeInterface
-    {
-        return $this->getProvidedDependency(MollieDependencyProvider::FACADE_MONEY);
     }
 }

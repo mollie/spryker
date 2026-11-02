@@ -67,9 +67,10 @@ class MolliePaymentHandler implements MolliePaymentHandlerInterface
             return $checkoutResponseTransfer;
         }
 
-        $this->savePaymentIdToStorage($molliePaymentApiResponseTransfer->getMolliePayment()->getId(), $checkoutResponseTransfer->getSaveOrderOrFail()->getOrderReference());
+        $orderReference = $checkoutResponseTransfer->getSaveOrderOrFail()->getOrderReference();
+        $this->savePaymentIdToStorage($molliePaymentApiResponseTransfer->getMolliePayment()->getId(), $orderReference);
         $this->molliePaymentWriter->addMolliePaymentData($checkoutResponseTransfer->getSaveOrder()->getIdSalesOrder(), $molliePaymentApiResponseTransfer->getMolliePayment());
-        $redirectUrl = $this->getSuccessfulPaymentRedirectUrl($molliePaymentApiResponseTransfer);
+        $redirectUrl = $this->getSuccessfulPaymentRedirectUrl($molliePaymentApiResponseTransfer, $orderReference);
 
         return $checkoutResponseTransfer
             ->setIsSuccess(true)
@@ -79,14 +80,23 @@ class MolliePaymentHandler implements MolliePaymentHandlerInterface
 
     /**
      * @param \Generated\Shared\Transfer\MolliePaymentApiResponseTransfer $molliePaymentApiResponseTransfer
+     * @param string $orderReference
      *
-     * @return string|null
+     * @return string
      */
-    protected function getSuccessfulPaymentRedirectUrl(MolliePaymentApiResponseTransfer $molliePaymentApiResponseTransfer): ?string
-    {
-        return $molliePaymentApiResponseTransfer
-            ->getMolliePayment()
-            ->getLinks()[MollieConstants::RESPONSE_PARAMETER_CREATE_PAYMENT_LINKS_CHECKOUT][MollieConstants::RESPONSE_PARAMETER_CREATE_PAYMENT_LINKS_HREF] ?? null;
+    protected function getSuccessfulPaymentRedirectUrl(
+        MolliePaymentApiResponseTransfer $molliePaymentApiResponseTransfer,
+        string $orderReference,
+    ): string {
+        $molliePaymentTransfer = $molliePaymentApiResponseTransfer->getMolliePayment();
+        $mollieLinksTransfer = $molliePaymentTransfer->getLinks();
+        $checkoutUrl = $mollieLinksTransfer[MollieConstants::RESPONSE_PARAMETER_CREATE_PAYMENT_LINKS_CHECKOUT][MollieConstants::RESPONSE_PARAMETER_CREATE_PAYMENT_LINKS_HREF] ?? null;
+
+        if ($checkoutUrl) {
+            return $checkoutUrl;
+        }
+
+        return $this->getMolliePaymentRedirectUrl($orderReference);
     }
 
     /**
@@ -95,6 +105,16 @@ class MolliePaymentHandler implements MolliePaymentHandlerInterface
      * @return string
      */
     protected function getFailedPaymentRedirectUrl(string $orderReference): string
+    {
+        return $this->getMolliePaymentRedirectUrl($orderReference);
+    }
+
+    /**
+     * @param string $orderReference
+     *
+     * @return string
+     */
+    protected function getMolliePaymentRedirectUrl(string $orderReference): string
     {
         return $this->config->getMollieRedirectUrl() . '?orderReference=' . $orderReference;
     }

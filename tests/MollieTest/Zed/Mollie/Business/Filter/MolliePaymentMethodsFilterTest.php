@@ -13,8 +13,10 @@ use Generated\Shared\Transfer\MolliePaymentMethodTransfer;
 use Generated\Shared\Transfer\PaymentMethodsTransfer;
 use Generated\Shared\Transfer\PaymentMethodTransfer;
 use Generated\Shared\Transfer\PaymentProviderTransfer;
+use Generated\Shared\Transfer\PaymentTransfer;
 use Generated\Shared\Transfer\QuoteTransfer;
 use Generated\Shared\Transfer\TotalsTransfer;
+use Mollie\Shared\Mollie\MollieConfig;
 use MollieTest\Zed\Mollie\Business\AbstractBusinessTest;
 
 class MolliePaymentMethodsFilterTest extends AbstractBusinessTest
@@ -261,6 +263,52 @@ class MolliePaymentMethodsFilterTest extends AbstractBusinessTest
         $result = $this->mollieFacade->filterActiveMolliePaymentMethods($paymentMethodsTransfer, $quoteTransfer);
 
         $this->assertCount(1, $result->getMethods());
+    }
+
+    /**
+     * @return void
+     */
+    public function testApplyFilterKeepsExpressPaymentMethodForExpressCheckoutQuote(): void
+    {
+        $paymentMethodsTransfer = new PaymentMethodsTransfer();
+        $expressMethod = $this->createPaymentMethod(MollieConfig::MOLLIE_PAYMENT_EXPRESS, MollieConfig::MOLLIE_PROVIDER_EXPRESS, 'Mollie Express Payment');
+        $paymentMethodsTransfer->setMethods(new ArrayObject([$expressMethod]));
+
+        $quoteTransfer = $this->createQuoteTransfer(1, 'DE')
+            ->setPayment((new PaymentTransfer())->setPaymentMethod(MollieConfig::MOLLIE_PAYMENT_EXPRESS));
+
+        $this->mollieClient
+            ->expects($this->once())
+            ->method('getEnabledPaymentMethods')
+            ->willReturn($this->createMollieApiResponse([]));
+
+        $result = $this->mollieFacade->filterActiveMolliePaymentMethods($paymentMethodsTransfer, $quoteTransfer);
+
+        $this->assertCount(1, $result->getMethods());
+        $this->assertSame(MollieConfig::MOLLIE_PAYMENT_EXPRESS, $result->getMethods()[0]->getPaymentMethodKey());
+    }
+
+    /**
+     * @return void
+     */
+    public function testApplyFilterRemovesExpressPaymentMethodForRegularCheckoutQuote(): void
+    {
+        $paymentMethodsTransfer = new PaymentMethodsTransfer();
+        $expressMethod = $this->createPaymentMethod(MollieConfig::MOLLIE_PAYMENT_EXPRESS, MollieConfig::MOLLIE_PROVIDER_EXPRESS, 'Mollie Express Payment');
+        $creditCardMethod = $this->createPaymentMethod('mollieCreditCardPayment', 'MollieCreditCardPayment', 'Mollie Credit Card Payment');
+        $paymentMethodsTransfer->setMethods(new ArrayObject([$expressMethod, $creditCardMethod]));
+
+        $quoteTransfer = $this->createQuoteTransfer(10000, 'DE');
+
+        $this->mollieClient
+            ->expects($this->once())
+            ->method('getEnabledPaymentMethods')
+            ->willReturn($this->createMollieApiResponse([$this->createMollieMethod('creditcard')]));
+
+        $result = $this->mollieFacade->filterActiveMolliePaymentMethods($paymentMethodsTransfer, $quoteTransfer);
+
+        $this->assertCount(1, $result->getMethods());
+        $this->assertSame('mollieCreditCardPayment', $result->getMethods()[0]->getPaymentMethodKey());
     }
 
     /**

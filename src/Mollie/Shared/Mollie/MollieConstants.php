@@ -1,6 +1,7 @@
 <?php
 
-declare(strict_types = 1);
+
+declare(strict_types=1);
 
 namespace Mollie\Shared\Mollie;
 
@@ -82,6 +83,38 @@ interface MollieConstants
     /**
      * @var string
      */
+    public const MOLLIE_EXPRESS_CHECKOUT_METHODS_ENABLED = 'MOLLIE:EXPRESS_CHECKOUT_METHODS_ENABLED';
+
+    /**
+     * @var string
+     */
+    public const MOLLIE_EXPRESS_CHECKOUT_JS_SRC = 'MOLLIE:MOLLIE_EXPRESS_CHECKOUT_JS_SRC';
+
+    /**
+     * @api
+     *
+     * @var string
+     */
+    public const MOLLIE_SINGLE_CLICK_PAYMENTS_ENABLED = 'MOLLIE:MOLLIE_SINGLE_CLICK_PAYMENTS_ENABLED';
+
+    /**
+     * @var string
+     */
+    public const MOLLIE_APPLE_PAY_SDK_JS_SRC = 'MOLLIE:MOLLIE_APPLE_PAY_SDK_JS_SRC';
+
+    /**
+     * @var string
+     */
+    public const MOLLIE_APPLE_PAY_VALIDATION_URL_ALLOWED_HOSTS = 'MOLLIE:MOLLIE_APPLE_PAY_VALIDATION_URL_ALLOWED_HOSTS';
+
+    /**
+     * @var string
+     */
+    public const MOLLIE_APPLE_PAY_MERCHANT_COUNTRY_CODE = 'MOLLIE:MOLLIE_APPLE_PAY_MERCHANT_COUNTRY_CODE';
+
+    /**
+     * @var string
+     */
     public const MOLLIE_GET_METHODS_API_DEFAULT_AMOUNT_VALUE = 'MOLLIE_GET_METHODS_API_DEFAULT_AMOUNT_VALUE';
 
     // Payment statuses from Mollie
@@ -93,53 +126,12 @@ interface MollieConstants
     /**
      * @var string
      */
-    public const STATUS_CANCELED = 'canceled';
-
-    /**
-     * @var string
-     */
-    public const STATUS_PENDING = 'pending';
-
-    /**
-     * @var string
-     */
-    public const STATUS_AUTHORIZED = 'authorized';
-
-    /**
-     * @var string
-     */
     public const STATUS_EXPIRED = 'expired';
 
     /**
      * @var string
      */
-    public const STATUS_FAILED = 'failed';
-
-    /**
-     * @var string
-     */
     public const STATUS_PAID = 'paid';
-
-    // OMS Events
-    /**
-     * @var string
-     */
-    public const OMS_EVENT_PAYMENT_PAID = 'payment_paid';
-
-    /**
-     * @var string
-     */
-    public const OMS_EVENT_PAYMENT_FAILED = 'payment_failed';
-
-    /**
-     * @var string
-     */
-    public const OMS_EVENT_PAYMENT_CANCELED = 'payment_canceled';
-
-    /**
-     * @var string
-     */
-    public const OMS_EVENT_PAYMENT_AUTHORIZED = 'payment_authorized';
 
     /**
      * @var string
@@ -193,6 +185,8 @@ interface MollieConstants
 
     public const string PRODUCT_TYPE_DISCOUNT = 'discount';
 
+    public const string PRODUCT_TYPE_SURCHARGE = 'surcharge';
+
     public const string MOLLIE_BNPL_PAYMENT_METHODS = 'MOLLIE:MOLLIE_BNPL_PAYMENT_METHODS';
 
     public const string QUERY_CURRENCY = 'currency';
@@ -200,4 +194,6 @@ interface MollieConstants
     public const string QUERY_MOLLIE_PAYMENT_METHOD_ID = 'mollie_payment_method_id';
 
     public const string QUERY_MOLLIE_PAYMENT_METHOD_CONFIG_ID = 'id-mollie-payment-method-config';
+
+    public const string MOLLIE_CUSTOMER_METADATA_ID_CUSTOMER = 'idCustomer';
 }

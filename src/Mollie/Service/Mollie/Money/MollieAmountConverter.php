@@ -5,15 +5,19 @@ declare(strict_types = 1);
 namespace Mollie\Service\Mollie\Money;
 
 use Generated\Shared\Transfer\MollieAmountTransfer;
+use Spryker\Shared\Money\Converter\DecimalToIntegerConverterInterface;
 use Spryker\Shared\Money\Converter\IntegerToDecimalConverterInterface;
 
 class MollieAmountConverter implements MollieAmountConverterInterface
 {
     /**
      * @param \Spryker\Shared\Money\Converter\IntegerToDecimalConverterInterface $integerToDecimalConverter
+     * @param \Spryker\Shared\Money\Converter\DecimalToIntegerConverterInterface $decimalToIntegerConverter
      */
-    public function __construct(protected IntegerToDecimalConverterInterface $integerToDecimalConverter)
-    {
+    public function __construct(
+        protected IntegerToDecimalConverterInterface $integerToDecimalConverter,
+        protected DecimalToIntegerConverterInterface $decimalToIntegerConverter,
+    ) {
     }
 
     /**
@@ -34,5 +38,17 @@ class MollieAmountConverter implements MollieAmountConverterInterface
         }
 
         return $mollieAmountTransfer;
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MollieAmountTransfer $mollieAmountTransfer
+     *
+     * @return int
+     */
+    public function convertMollieAmountToInteger(MollieAmountTransfer $mollieAmountTransfer): int
+    {
+        $decimalAmount = (float)$mollieAmountTransfer->getValue();
+
+        return $this->decimalToIntegerConverter->convert($decimalAmount);
     }
 }

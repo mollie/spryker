@@ -12,10 +12,14 @@ use Mollie\Zed\Mollie\Communication\Cache\MollieCacheInvalidator;
 use Mollie\Zed\Mollie\Communication\Cache\MollieCacheInvalidatorInterface;
 use Mollie\Zed\Mollie\Communication\DataProvider\MolliePaymentMethodsDataProvider;
 use Mollie\Zed\Mollie\Communication\Form\CreatePaymentLinkForm;
+use Mollie\Zed\Mollie\Communication\Form\DataProvider\ExpressCheckoutConfigFormDataProvider;
 use Mollie\Zed\Mollie\Communication\Form\DataProvider\PaymentLinkFormDataProvider;
 use Mollie\Zed\Mollie\Communication\Form\DataProvider\PaymentMethodsFilterFormDataProvider;
+use Mollie\Zed\Mollie\Communication\Form\DataProvider\SingleClickConfigFormDataProvider;
+use Mollie\Zed\Mollie\Communication\Form\ExpressCheckoutConfigForm;
 use Mollie\Zed\Mollie\Communication\Form\PaymentMethodConfigForm;
 use Mollie\Zed\Mollie\Communication\Form\PaymentMethodsFilterForm;
+use Mollie\Zed\Mollie\Communication\Form\SingleClickConfigForm;
 use Mollie\Zed\Mollie\Communication\Mapper\MollieCommunicationMapper;
 use Mollie\Zed\Mollie\Communication\Mapper\MollieCommunicationMapperInterface;
 use Mollie\Zed\Mollie\Communication\Mapper\Order\OrderItemMapper;
@@ -28,6 +32,7 @@ use Mollie\Zed\Mollie\Communication\Table\TableDataProvider\MolliePaymentLinkDat
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToCurrencyFacadeInterface;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToLocaleFacadeInterface;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToMailFacadeInterface;
+use Mollie\Zed\Mollie\Dependency\Facade\MollieToMoneyFacadeInterface;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToSalesFacadeInterface;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToStoreFacadeInterface;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToTranslatorFacadeInterface;
@@ -131,7 +136,6 @@ class MollieCommunicationFactory extends AbstractCommunicationFactory
     public function createMollieCommunicationMapper(): MollieCommunicationMapperInterface
     {
         return new MollieCommunicationMapper(
-            $this->getMollieService(),
             $this->getConfig(),
         );
     }
@@ -144,6 +148,7 @@ class MollieCommunicationFactory extends AbstractCommunicationFactory
         return new MolliePaymentLinkMapper(
             $this->getMollieService(),
             $this->getConfig(),
+            $this->getMoneyFacade(),
         );
     }
 
@@ -184,6 +189,47 @@ class MollieCommunicationFactory extends AbstractCommunicationFactory
     {
         return new PaymentMethodsFilterFormDataProvider(
             $this->getStoreFacade(),
+        );
+    }
+
+    /**
+     * @param array<string, bool> $data
+     * @param array<string, mixed> $options
+     *
+     * @return \Symfony\Component\Form\FormInterface
+     */
+    public function createExpressCheckoutConfigForm(array $data = [], array $options = []): FormInterface
+    {
+        return $this->getFormFactory()->create(ExpressCheckoutConfigForm::class, $data, $options);
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Communication\Form\DataProvider\ExpressCheckoutConfigFormDataProvider
+     */
+    public function createExpressCheckoutConfigFormDataProvider(): ExpressCheckoutConfigFormDataProvider
+    {
+        return new ExpressCheckoutConfigFormDataProvider(
+            $this->getFacade(),
+        );
+    }
+
+    /**
+     * @param array<string, bool> $data
+     *
+     * @return \Symfony\Component\Form\FormInterface
+     */
+    public function createSingleClickConfigForm(array $data = []): FormInterface
+    {
+        return $this->getFormFactory()->create(SingleClickConfigForm::class, $data);
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Communication\Form\DataProvider\SingleClickConfigFormDataProvider
+     */
+    public function createSingleClickConfigFormDataProvider(): SingleClickConfigFormDataProvider
+    {
+        return new SingleClickConfigFormDataProvider(
+            $this->getFacade(),
         );
     }
 
@@ -249,6 +295,14 @@ class MollieCommunicationFactory extends AbstractCommunicationFactory
     public function getStoreFacade(): MollieToStoreFacadeInterface
     {
         return $this->getProvidedDependency(MollieDependencyProvider::FACADE_STORE);
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Dependency\Facade\MollieToMoneyFacadeInterface
+     */
+    public function getMoneyFacade(): MollieToMoneyFacadeInterface
+    {
+        return $this->getProvidedDependency(MollieDependencyProvider::FACADE_MONEY);
     }
 
     /**

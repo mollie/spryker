@@ -77,6 +77,11 @@ class MollieConfig extends AbstractSharedConfig
     /**
      * @var string
      */
+    public const MOLLIE_PROVIDER_APPLE_PAY_DIRECT = 'MollieApplePayDirectPayment';
+
+    /**
+     * @var string
+     */
     public const MOLLIE_PROVIDER_PRZELEWY24 = 'MolliePrzelewy24Payment';
 
     /**
@@ -123,6 +128,11 @@ class MollieConfig extends AbstractSharedConfig
      * @var string
      */
     public const MOLLIE_PROVIDER_ALMA = 'MollieAlmaPayment';
+
+    /**
+     * @var string
+     */
+    public const MOLLIE_PROVIDER_EXPRESS = 'MollieExpressPayment';
 
     /**
      * @var string
@@ -192,6 +202,11 @@ class MollieConfig extends AbstractSharedConfig
     /**
      * @var string
      */
+    public const MOLLIE_PAYMENT_APPLE_PAY_DIRECT = 'mollieApplePayDirectPayment';
+
+    /**
+     * @var string
+     */
     public const MOLLIE_PAYMENT_PRZELEWY24 = 'molliePrzelewy24Payment';
 
     /**
@@ -228,6 +243,11 @@ class MollieConfig extends AbstractSharedConfig
      * @var string
      */
     public const MOLLIE_PAYMENT_ALMA = 'mollieAlmaPayment';
+
+    /**
+     * @var string
+     */
+    public const MOLLIE_PAYMENT_EXPRESS = 'mollieExpressPayment';
 
     /**
      * @var string
@@ -314,15 +334,39 @@ class MollieConfig extends AbstractSharedConfig
      */
     public const MOLLIE_PAYMENT_STATUS_FAILED = ['failed', 'expired', 'canceled'];
 
-     /**
-      * @var string
-      */
-    protected const CACHE_KEY_IDENTIFIER_FOR_ALL_PAYMENT_METHODS = 'all_payment_methods';
+    /**
+     * @var string
+     */
+    public const EXPRESS_METHOD_APPLE_PAY = 'applepay';
 
-     /**
-      * @var string
-      */
-    protected const CACHE_KEY_IDENTIFIER_FOR_ENABLED_PAYMENT_METHODS = 'enabled_payment_methods';
+    /**
+     * @var string
+     */
+    public const EXPRESS_METHOD_GOOGLE_PAY = 'googlepay';
+
+    /**
+     * @var string
+     */
+    public const EXPRESS_METHOD_PAYPAL = 'paypal';
+
+    /**
+     * @var list<string>
+     */
+    public const EXPRESS_METHODS = [
+        self::EXPRESS_METHOD_APPLE_PAY,
+        self::EXPRESS_METHOD_GOOGLE_PAY,
+        self::EXPRESS_METHOD_PAYPAL,
+    ];
+
+    /**
+     * @var string
+     */
+    public const EXPRESS_CHECKOUT_METADATA_KEY_UUID = 'expressCheckoutUuid';
+
+    /**
+     * @var string
+     */
+    public const SINGLE_CLICK_CONSENT_VERSION = '2';
 
     /**
      * @var string
@@ -335,6 +379,30 @@ class MollieConfig extends AbstractSharedConfig
     public function getMollieApiKey(): string|null
     {
         return $this->get(MollieConstants::MOLLIE)[MollieConstants::MOLLIE_API_KEY];
+    }
+
+    /**
+     * @return list<string>
+     */
+    public function getExpressMethods(): array
+    {
+        return static::EXPRESS_METHODS;
+    }
+
+    /**
+     * @return array<string, bool>
+     */
+    public function getDefaultExpressCheckoutMethodConfig(): array
+    {
+        return $this->get(MollieConstants::MOLLIE)[MollieConstants::MOLLIE_EXPRESS_CHECKOUT_METHODS_ENABLED] ?? [];
+    }
+
+    /**
+     * @return bool
+     */
+    public function isSingleClickPaymentEnabledByDefault(): bool
+    {
+        return (bool)($this->get(MollieConstants::MOLLIE)[MollieConstants::MOLLIE_SINGLE_CLICK_PAYMENTS_ENABLED] ?? false);
     }
 
     /**
@@ -359,22 +427,6 @@ class MollieConfig extends AbstractSharedConfig
     public function getMollieLoggingMode(): string
     {
         return $this->get(MollieConstants::MOLLIE)[MollieConstants::MOLLIE_DEBUG_MODE];
-    }
-
-    /**
-     * @return string
-     */
-    public function getCacheKeyIdentifierForAllPaymentMethods(): string
-    {
-        return static::CACHE_KEY_IDENTIFIER_FOR_ALL_PAYMENT_METHODS;
-    }
-
-    /**
-     * @return string
-     */
-    public function getCacheKeyIdentifierForEnabledPaymentMethods(): string
-    {
-        return static::CACHE_KEY_IDENTIFIER_FOR_ENABLED_PAYMENT_METHODS;
     }
 
     /**

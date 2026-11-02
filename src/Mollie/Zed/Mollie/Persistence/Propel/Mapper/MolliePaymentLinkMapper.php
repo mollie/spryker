@@ -5,18 +5,15 @@ declare(strict_types = 1);
 namespace Mollie\Zed\Mollie\Persistence\Propel\Mapper;
 
 use Generated\Shared\Transfer\MolliePaymentLinkTransfer;
-use Mollie\Zed\Mollie\Dependency\Facade\MollieToMoneyFacadeInterface;
 use Mollie\Zed\Mollie\Dependency\Service\MollieToUtilEncodingServiceInterface;
 use Orm\Zed\Mollie\Persistence\SpyMolliePaymentLink;
 
 class MolliePaymentLinkMapper implements MolliePaymentLinkMapperInterface
 {
     /**
-     * @param \Mollie\Zed\Mollie\Dependency\Facade\MollieToMoneyFacadeInterface $moneyFacade
      * @param \Mollie\Zed\Mollie\Dependency\Service\MollieToUtilEncodingServiceInterface $utilEncodingService
      */
     public function __construct(
-        protected MollieToMoneyFacadeInterface $moneyFacade,
         protected MollieToUtilEncodingServiceInterface $utilEncodingService,
     ) {
     }
@@ -31,17 +28,15 @@ class MolliePaymentLinkMapper implements MolliePaymentLinkMapperInterface
         MolliePaymentLinkTransfer $molliePaymentLinkTransfer,
         SpyMolliePaymentLink $spyMolliePaymentLinkEntity,
     ): SpyMolliePaymentLink {
-        $value = (float)$molliePaymentLinkTransfer->getAmount()->getValue();
-        $amount = $this->moneyFacade->convertDecimalToInteger($value);
-
         $spyMolliePaymentLinkEntity
             ->setId($molliePaymentLinkTransfer->getId())
             ->setFkSalesOrder($molliePaymentLinkTransfer->getFkSalesOrder())
             ->setDescription($molliePaymentLinkTransfer->getDescription())
             ->setType($molliePaymentLinkTransfer->getType())
             ->setSequenceType($molliePaymentLinkTransfer->getSequenceType())
-            ->setCurrency($molliePaymentLinkTransfer->getAmount()->getCurrency())
-            ->setAmount($amount)
+            ->setCurrency($molliePaymentLinkTransfer->getCurrency())
+            ->setAmount($molliePaymentLinkTransfer->getAmount())
+            ->setMinimumAmount($molliePaymentLinkTransfer->getMinimumAmount())
             ->setStatus($molliePaymentLinkTransfer->getStatus())
             ->setExpiryDate($molliePaymentLinkTransfer->getExpiresAt())
             ->setRedirectUrl($molliePaymentLinkTransfer->getRedirectUrl())

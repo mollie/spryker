@@ -29,7 +29,7 @@ class MollieCheckoutPostSavePluginTest extends Unit
         $plugin->setConfig(new MollieConfig());
 
         $plugin->executeHook(
-            (new QuoteTransfer())->setPayment((new PaymentTransfer())->setPaymentProvider('MollieCreditCardPayment')),
+            (new QuoteTransfer())->setPayment((new PaymentTransfer())->setPaymentProvider('MollieCreditCardPayment')->setPaymentMethod('mollieCreditCardPayment')),
             new CheckoutResponseTransfer(),
         );
     }

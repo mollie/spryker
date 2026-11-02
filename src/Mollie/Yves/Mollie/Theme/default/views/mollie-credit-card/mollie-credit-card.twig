@@ -8,6 +8,8 @@
     {% set creditCardForm = data.form.children.mollieCreditCardPayment %}
     {% set vars = creditCardForm.vars %}
     {% set isMollieCreditCardComponentEnabled = vars.isMollieCreditCardComponentEnabled %}
+    {% set savedCardField = creditCardForm.mandateId ?? null %}
+    {% set saveCardConsentField = creditCardForm.isSaveCardConsentGiven ?? null %}
     {% if isMollieCreditCardComponentEnabled %}
         {% include molecule('mollie-credit-card-component', 'Mollie') with {
             data: {
@@ -15,6 +17,8 @@
                 profileId: vars.profileId,
                 testMode: vars.testMode,
                 jsSrc: vars.jsSrc,
+                savedCardField: savedCardField,
+                saveCardConsentField: saveCardConsentField,
             }
         } only %}
         {% else %}

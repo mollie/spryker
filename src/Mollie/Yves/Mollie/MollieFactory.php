@@ -6,11 +6,16 @@ namespace Mollie\Yves\Mollie;
 
 use Mollie\Client\Mollie\MollieClientInterface;
 use Mollie\Service\Mollie\MollieServiceInterface;
+use Mollie\Yves\Mollie\Dependency\Client\MollieToCustomerClientInterface;
 use Mollie\Yves\Mollie\Dependency\Client\MollieToLocaleClientInterface;
 use Mollie\Yves\Mollie\Dependency\Client\MollieToQuoteClientInterface;
 use Mollie\Yves\Mollie\Dependency\Client\MollieToStorageClientInterface;
 use Mollie\Yves\Mollie\Dependency\Service\MollieToUtilEncodingServiceInterface;
+use Mollie\Yves\Mollie\Form\SavedCard\SavedCardRemoveForm;
+use Mollie\Yves\Mollie\Handler\ExpressCheckout\ExpressCheckoutOrderHandler;
+use Mollie\Yves\Mollie\Handler\ExpressCheckout\ExpressCheckoutOrderHandlerInterface;
 use Mollie\Yves\Mollie\Handler\Payment\MolliePaymentAlmaHandler;
+use Mollie\Yves\Mollie\Handler\Payment\MolliePaymentApplePayDirectHandler;
 use Mollie\Yves\Mollie\Handler\Payment\MolliePaymentApplePayHandler;
 use Mollie\Yves\Mollie\Handler\Payment\MolliePaymentBancomatPayHandler;
 use Mollie\Yves\Mollie\Handler\Payment\MolliePaymentBancontactHandler;
@@ -40,10 +45,13 @@ use Mollie\Yves\Mollie\Handler\Payment\MolliePaymentSwishHandler;
 use Mollie\Yves\Mollie\Handler\Payment\MolliePaymentTrustlyHandler;
 use Mollie\Yves\Mollie\Handler\Payment\MolliePaymentTwintHandler;
 use Mollie\Yves\Mollie\Handler\Payment\MolliePaymentVippsHandler;
+use Mollie\Yves\Mollie\Mapper\ExpressCheckout\ExpressCheckoutOrderRequestMapper;
+use Mollie\Yves\Mollie\Mapper\ExpressCheckout\ExpressCheckoutOrderRequestMapperInterface;
 use Mollie\Yves\Mollie\Mapper\MollieMapper;
 use Mollie\Yves\Mollie\Mapper\MollieMapperInterface;
 use Mollie\Yves\Mollie\PaymentPage\Cache\MollieCachedOptionsExpander;
 use Mollie\Yves\Mollie\PaymentPage\Form\DataProvider\MollieAlmaSubFormDataProvider;
+use Mollie\Yves\Mollie\PaymentPage\Form\DataProvider\MollieApplePayDirectSubFormDataProvider;
 use Mollie\Yves\Mollie\PaymentPage\Form\DataProvider\MollieApplePaySubFormDataProvider;
 use Mollie\Yves\Mollie\PaymentPage\Form\DataProvider\MollieBancomatPaySubFormDataProvider;
 use Mollie\Yves\Mollie\PaymentPage\Form\DataProvider\MollieBancontactSubFormDataProvider;
@@ -73,6 +81,7 @@ use Mollie\Yves\Mollie\PaymentPage\Form\DataProvider\MollieTrustlySubFormDataPro
 use Mollie\Yves\Mollie\PaymentPage\Form\DataProvider\MollieTwintSubFormDataProvider;
 use Mollie\Yves\Mollie\PaymentPage\Form\DataProvider\MollieVippsSubFormDataProvider;
 use Mollie\Yves\Mollie\PaymentPage\Form\MollieAlmaSubForm;
+use Mollie\Yves\Mollie\PaymentPage\Form\MollieApplePayDirectSubForm;
 use Mollie\Yves\Mollie\PaymentPage\Form\MollieApplePaySubForm;
 use Mollie\Yves\Mollie\PaymentPage\Form\MollieBancomatPaySubForm;
 use Mollie\Yves\Mollie\PaymentPage\Form\MollieBancontactSubForm;
@@ -101,14 +110,21 @@ use Mollie\Yves\Mollie\PaymentPage\Form\MollieSwishSubForm;
 use Mollie\Yves\Mollie\PaymentPage\Form\MollieTrustlySubForm;
 use Mollie\Yves\Mollie\PaymentPage\Form\MollieTwintSubForm;
 use Mollie\Yves\Mollie\PaymentPage\Form\MollieVippsSubForm;
+use Mollie\Yves\Mollie\Validator\ApplePayValidationUrlValidator;
+use Mollie\Yves\Mollie\Validator\ApplePayValidationUrlValidatorInterface;
 use Mollie\Yves\Mollie\Validator\WebhookSignatureValidator;
 use Mollie\Yves\Mollie\Validator\WebhookSignatureValidatorInterface;
+use Spryker\Shared\Application\ApplicationConstants;
 use Spryker\Yves\Kernel\AbstractFactory;
 use Spryker\Yves\StepEngine\Dependency\Form\StepEngineFormDataProviderInterface;
 use Spryker\Yves\StepEngine\Dependency\Form\SubFormInterface;
+use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\Form\FormInterface;
 
 /**
  * @method \Mollie\Yves\Mollie\MollieConfig getConfig()
+ *
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
 class MollieFactory extends AbstractFactory
 {
@@ -352,6 +368,14 @@ class MollieFactory extends AbstractFactory
     /**
      * @return \Spryker\Yves\StepEngine\Dependency\Form\SubFormInterface
      */
+    public function createMollieApplePayDirectSubForm(): SubFormInterface
+    {
+        return new MollieApplePayDirectSubForm();
+    }
+
+    /**
+     * @return \Spryker\Yves\StepEngine\Dependency\Form\SubFormInterface
+     */
     public function createMollieBillieSubForm(): SubFormInterface
     {
         return new MollieBillieSubForm();
@@ -436,6 +460,8 @@ class MollieFactory extends AbstractFactory
     {
         return new MollieCreditCardSubFormDataProvider(
             $this->createMollieCachedOptionsExpander(),
+            $this->getMollieApiClient(),
+            $this->getConfig(),
         );
     }
 
@@ -556,6 +582,17 @@ class MollieFactory extends AbstractFactory
     {
         return new MollieApplePaySubFormDataProvider(
             $this->createMollieCachedOptionsExpander(),
+        );
+    }
+
+    /**
+     * @return \Spryker\Yves\StepEngine\Dependency\Form\StepEngineFormDataProviderInterface
+     */
+    public function createMollieApplePayDirectSubFormDataProvider(): StepEngineFormDataProviderInterface
+    {
+        return new MollieApplePayDirectSubFormDataProvider(
+            $this->createMollieCachedOptionsExpander(),
+            $this->getMollieService(),
         );
     }
 
@@ -763,6 +800,14 @@ class MollieFactory extends AbstractFactory
         return new MolliePaymentApplePayHandler();
     }
 
+    /**
+     * @return \Mollie\Yves\Mollie\Handler\Payment\MolliePaymentHandlerInterface
+     */
+    public function createMollieApplePayDirectPaymentHandler(): MolliePaymentHandlerInterface
+    {
+        return new MolliePaymentApplePayDirectHandler();
+    }
+
      /**
       * @return \Mollie\Yves\Mollie\Handler\Payment\MolliePaymentHandlerInterface
       */
@@ -902,6 +947,16 @@ class MollieFactory extends AbstractFactory
     }
 
     /**
+     * @return \Mollie\Yves\Mollie\Validator\ApplePayValidationUrlValidatorInterface
+     */
+    public function createApplePayValidationUrlValidator(): ApplePayValidationUrlValidatorInterface
+    {
+        return new ApplePayValidationUrlValidator(
+            $this->getConfig(),
+        );
+    }
+
+    /**
      * @return \Mollie\Yves\Mollie\Dependency\Client\MollieToStorageClientInterface
      */
     public function getStorageClient(): MollieToStorageClientInterface
@@ -963,5 +1018,55 @@ class MollieFactory extends AbstractFactory
     public function getMollieService(): MollieServiceInterface
     {
         return $this->getProvidedDependency(MollieDependencyProvider::SERVICE_MOLLIE);
+    }
+
+    /**
+     * @return \Mollie\Yves\Mollie\Mapper\ExpressCheckout\ExpressCheckoutOrderRequestMapperInterface
+     */
+    public function createExpressCheckoutOrderRequestMapper(): ExpressCheckoutOrderRequestMapperInterface
+    {
+        return new ExpressCheckoutOrderRequestMapper(
+            $this->getMollieService(),
+        );
+    }
+
+    /**
+     * @return \Mollie\Yves\Mollie\Handler\ExpressCheckout\ExpressCheckoutOrderHandlerInterface
+     */
+    public function createExpressCheckoutOrderHandler(): ExpressCheckoutOrderHandlerInterface
+    {
+        return new ExpressCheckoutOrderHandler(
+            $this->createExpressCheckoutOrderRequestMapper(),
+            $this->getMollieApiClient(),
+            $this->getQuoteClient(),
+        );
+    }
+
+    /**
+     * @return \Mollie\Yves\Mollie\Dependency\Client\MollieToCustomerClientInterface
+     */
+    public function getCustomerClient(): MollieToCustomerClientInterface
+    {
+        return $this->getProvidedDependency(MollieDependencyProvider::CLIENT_CUSTOMER);
+    }
+
+    /**
+     * @return \Symfony\Component\Form\FormFactoryInterface
+     */
+    public function getFormFactory(): FormFactoryInterface
+    {
+        return $this->getProvidedDependency(ApplicationConstants::FORM_FACTORY);
+    }
+
+    /**
+     * @param string|null $mandateId
+     *
+     * @return \Symfony\Component\Form\FormInterface
+     */
+    public function createSavedCardRemoveForm(?string $mandateId = null): FormInterface
+    {
+        return $this->getFormFactory()->create(SavedCardRemoveForm::class, [
+            SavedCardRemoveForm::FIELD_MANDATE_ID => $mandateId,
+        ]);
     }
 }

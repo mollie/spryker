@@ -42,6 +42,20 @@ class MollieService extends AbstractService implements MollieServiceInterface
     }
 
     /**
+     * Converts Mollie amount format into Spryker integer amount
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\MollieAmountTransfer $mollieAmountTransfer
+     *
+     * @return int
+     */
+    public function convertMollieAmountToInteger(MollieAmountTransfer $mollieAmountTransfer): int
+    {
+        return $this->getFactory()->createMollieAmountConverter()->convertMollieAmountToInteger($mollieAmountTransfer);
+    }
+
+    /**
      * @param string $webhookUrl
      * @param string $testEnvironmentWebhookUrl
      * @param bool $testMode

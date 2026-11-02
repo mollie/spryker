@@ -1,0 +1,28 @@
+{% extends '@Gui/Layout/layout.twig' %}
+
+{% set widget_title = 'Mollie Express Methods' %}
+
+{% block head_title %}
+    {{ widget_title | trans }}
+{% endblock %}
+{% block section_title %}
+    {{ widget_title | trans }}
+{% endblock %}
+
+{% block content %}
+    {% embed '@Gui/Partials/widget.twig' %}
+        {% block widget_content %}
+            <p class="text-muted spacing-bottom">
+                {{ 'Enable or disable Mollie express payment methods. Methods left unset fall back to the environment configuration.' | trans }}
+            </p>
+
+            {{ form_start(form) }}
+            {{ form_errors(form) }}
+            {% for child in form.children %}
+                {{ form_row(child) }}
+            {% endfor %}
+            <button type="submit" class="btn btn-primary safe-submit">{{ 'Save' | trans }}</button>
+            {{ form_end(form) }}
+        {% endblock %}
+    {% endembed %}
+{% endblock %}

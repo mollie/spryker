@@ -4,6 +4,10 @@ declare(strict_types = 1);
 
 namespace Mollie\Zed\Mollie\Persistence;
 
+use Generated\Shared\Transfer\MollieCustomerTransfer;
+use Generated\Shared\Transfer\MollieExpressCheckoutPaymentRefundTransfer;
+use Generated\Shared\Transfer\MollieExpressCheckoutPaymentUpdateRequestTransfer;
+use Generated\Shared\Transfer\MollieExpressPaymentTransfer;
 use Generated\Shared\Transfer\MollieItemPaymentCaptureTransfer;
 use Generated\Shared\Transfer\MolliePaymentCaptureTransfer;
 use Generated\Shared\Transfer\MolliePaymentLinkTransfer;
@@ -13,6 +17,7 @@ use Generated\Shared\Transfer\MollieRefundCollectionTransfer;
 use Generated\Shared\Transfer\MollieRefundSaveTransfer;
 use Generated\Shared\Transfer\OrderCollectionRequestTransfer;
 use Mollie\Shared\Mollie\MollieConstants;
+use Orm\Zed\Mollie\Persistence\SpyMollieExpressCheckoutPaymentRefund;
 use Orm\Zed\Mollie\Persistence\SpyMollieOrderItemPaymentCapture;
 use Orm\Zed\Mollie\Persistence\SpyMolliePaymentLink;
 use Orm\Zed\Mollie\Persistence\SpyPaymentMollie;
@@ -47,6 +52,112 @@ class MollieEntityManager extends AbstractEntityManager implements MollieEntityM
             ->setCaptureBefore($updateOrderCollectionRequestTransfer->getCaptureBefore());
 
         $spyPaymentMolleEntity->save();
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MollieExpressPaymentTransfer $mollieExpressPaymentTransfer
+     * @param \Generated\Shared\Transfer\MolliePaymentTransfer $molliePaymentTransfer
+     *
+     * @return void
+     */
+    public function createExpressCheckoutMolliePayment(
+        MollieExpressPaymentTransfer $mollieExpressPaymentTransfer,
+        MolliePaymentTransfer $molliePaymentTransfer,
+    ): void {
+        $metadata = $this->getFactory()->getUtilEncodingService()->encodeJson($molliePaymentTransfer->getMetadata());
+        $spyPaymentMollieEntity = new SpyPaymentMollie();
+        $spyPaymentMollieEntity
+            ->setFkSalesOrder($mollieExpressPaymentTransfer->getIdSalesOrder())
+            ->setExpressCheckoutUuid($mollieExpressPaymentTransfer->getExpressCheckoutUuid())
+            ->setStatus($molliePaymentTransfer->getStatus())
+            ->setDescription($molliePaymentTransfer->getDescription())
+            ->setSequenceType($molliePaymentTransfer->getSequenceType())
+            ->setMetadata($metadata);
+
+        $spyPaymentMollieEntity->save();
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MollieExpressCheckoutPaymentUpdateRequestTransfer $mollieExpressCheckoutPaymentUpdateRequestTransfer
+     *
+     * @return bool
+     */
+    public function updateExpressCheckoutMolliePayment(
+        MollieExpressCheckoutPaymentUpdateRequestTransfer $mollieExpressCheckoutPaymentUpdateRequestTransfer,
+    ): bool {
+        $expressCheckoutUuid = $mollieExpressCheckoutPaymentUpdateRequestTransfer->getExpressCheckoutUuidOrFail();
+
+        $spyPaymentMollieEntity = $this->getFactory()
+            ->createSpyPaymentMollieQuery()
+            ->findOneByExpressCheckoutUuid($expressCheckoutUuid);
+
+        if (!$spyPaymentMollieEntity) {
+            return false;
+        }
+
+        $transactionId = $mollieExpressCheckoutPaymentUpdateRequestTransfer->getTransactionIdOrFail();
+        $status = $mollieExpressCheckoutPaymentUpdateRequestTransfer->getStatusOrFail();
+
+        $spyPaymentMollieEntity
+            ->setTransactionId($transactionId)
+            ->setStatus($status);
+
+        $spyPaymentMollieEntity->save();
+
+        return true;
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MollieExpressCheckoutPaymentRefundTransfer $mollieExpressCheckoutPaymentRefundTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieExpressCheckoutPaymentRefundTransfer
+     */
+    public function createExpressCheckoutPaymentRefund(
+        MollieExpressCheckoutPaymentRefundTransfer $mollieExpressCheckoutPaymentRefundTransfer,
+    ): MollieExpressCheckoutPaymentRefundTransfer {
+        $mollieExpressCheckoutPaymentRefundMapper = $this->getFactory()->createMollieExpressCheckoutPaymentRefundMapper();
+
+        $spyMollieExpressCheckoutPaymentRefundEntity = $mollieExpressCheckoutPaymentRefundMapper->mapTransferToEntity(
+            $mollieExpressCheckoutPaymentRefundTransfer,
+            new SpyMollieExpressCheckoutPaymentRefund(),
+        );
+        $spyMollieExpressCheckoutPaymentRefundEntity->save();
+
+        return $mollieExpressCheckoutPaymentRefundMapper->mapEntityToTransfer(
+            $spyMollieExpressCheckoutPaymentRefundEntity,
+            $mollieExpressCheckoutPaymentRefundTransfer,
+        );
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MollieExpressCheckoutPaymentRefundTransfer $mollieExpressCheckoutPaymentRefundTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieExpressCheckoutPaymentRefundTransfer
+     */
+    public function updateExpressCheckoutPaymentRefund(
+        MollieExpressCheckoutPaymentRefundTransfer $mollieExpressCheckoutPaymentRefundTransfer,
+    ): MollieExpressCheckoutPaymentRefundTransfer {
+        $spyMollieExpressCheckoutPaymentRefundEntity = $this->getFactory()
+            ->createSpyMollieExpressCheckoutPaymentRefundQuery()
+            ->filterByIdMollieExpressCheckoutPaymentRefund($mollieExpressCheckoutPaymentRefundTransfer->getIdMollieExpressCheckoutPaymentRefundOrFail())
+            ->findOne();
+
+        if (!$spyMollieExpressCheckoutPaymentRefundEntity) {
+            return $mollieExpressCheckoutPaymentRefundTransfer;
+        }
+
+        $mollieExpressCheckoutPaymentRefundMapper = $this->getFactory()->createMollieExpressCheckoutPaymentRefundMapper();
+
+        $spyMollieExpressCheckoutPaymentRefundEntity = $mollieExpressCheckoutPaymentRefundMapper->mapTransferToEntity(
+            $mollieExpressCheckoutPaymentRefundTransfer,
+            $spyMollieExpressCheckoutPaymentRefundEntity,
+        );
+        $spyMollieExpressCheckoutPaymentRefundEntity->save();
+
+        return $mollieExpressCheckoutPaymentRefundMapper->mapEntityToTransfer(
+            $spyMollieExpressCheckoutPaymentRefundEntity,
+            $mollieExpressCheckoutPaymentRefundTransfer,
+        );
     }
 
     /**
@@ -250,5 +361,69 @@ class MollieEntityManager extends AbstractEntityManager implements MollieEntityM
         $molliePaymentMethodConfig->save();
 
         return $paymentMethodConfigTransfer;
+    }
+
+    /**
+     * @param string $expressMethod
+     * @param bool $isActive
+     *
+     * @return void
+     */
+    public function saveExpressCheckoutConfig(string $expressMethod, bool $isActive): void
+    {
+        $spyMollieExpressCheckoutConfigEntity = $this->getFactory()
+            ->createSpyMollieExpressCheckoutConfigQuery()
+            ->filterByExpressMethod($expressMethod)
+            ->findOneOrCreate();
+
+        $spyMollieExpressCheckoutConfigEntity->setIsActive($isActive);
+        $spyMollieExpressCheckoutConfigEntity->save();
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MollieCustomerTransfer $mollieCustomerTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieCustomerTransfer
+     */
+    public function saveMollieCustomer(MollieCustomerTransfer $mollieCustomerTransfer): MollieCustomerTransfer
+    {
+        $spyMollieCustomerEntity = $this->getFactory()
+            ->createSpyMollieCustomerQuery()
+            ->filterByFkCustomer($mollieCustomerTransfer->getFkCustomerOrFail())
+            ->findOneOrCreate();
+
+        $mollieCustomerMapper = $this->getFactory()->createMollieCustomerMapper();
+        $spyMollieCustomerEntity = $mollieCustomerMapper->mapMollieCustomerTransferToEntity($mollieCustomerTransfer, $spyMollieCustomerEntity);
+        $spyMollieCustomerEntity->save();
+
+        return $mollieCustomerMapper->mapMollieCustomerEntityToTransfer($spyMollieCustomerEntity, $mollieCustomerTransfer);
+    }
+
+    /**
+     * @param int $idMollieCustomer
+     *
+     * @return void
+     */
+    public function deleteMollieCustomer(int $idMollieCustomer): void
+    {
+        $this->getFactory()
+            ->createSpyMollieCustomerQuery()
+            ->filterByIdMollieCustomer($idMollieCustomer)
+            ->delete();
+    }
+
+    /**
+     * @param bool $isActive
+     *
+     * @return void
+     */
+    public function saveSingleClickConfig(bool $isActive): void
+    {
+        $spyMollieSingleClickConfigEntity = $this->getFactory()
+            ->createSpyMollieSingleClickConfigQuery()
+            ->findOneOrCreate();
+
+        $spyMollieSingleClickConfigEntity->setIsActive($isActive);
+        $spyMollieSingleClickConfigEntity->save();
     }
 }

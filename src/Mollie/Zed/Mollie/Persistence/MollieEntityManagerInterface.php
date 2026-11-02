@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Mollie\Zed\Mollie\Persistence;
 
+use Generated\Shared\Transfer\MollieCustomerTransfer;
+use Generated\Shared\Transfer\MollieExpressCheckoutPaymentRefundTransfer;
+use Generated\Shared\Transfer\MollieExpressCheckoutPaymentUpdateRequestTransfer;
+use Generated\Shared\Transfer\MollieExpressPaymentTransfer;
 use Generated\Shared\Transfer\MollieItemPaymentCaptureTransfer;
 use Generated\Shared\Transfer\MolliePaymentCaptureTransfer;
 use Generated\Shared\Transfer\MolliePaymentLinkTransfer;
@@ -29,6 +33,44 @@ interface MollieEntityManagerInterface
      * @return void
      */
     public function addMolliePaymentData(int $idSalesOrder, MolliePaymentTransfer $molliePaymentTransfer): void;
+
+    /**
+     * @param \Generated\Shared\Transfer\MollieExpressPaymentTransfer $mollieExpressPaymentTransfer
+     * @param \Generated\Shared\Transfer\MolliePaymentTransfer $molliePaymentTransfer
+     *
+     * @return void
+     */
+    public function createExpressCheckoutMolliePayment(
+        MollieExpressPaymentTransfer $mollieExpressPaymentTransfer,
+        MolliePaymentTransfer $molliePaymentTransfer,
+    ): void;
+
+    /**
+     * @param \Generated\Shared\Transfer\MollieExpressCheckoutPaymentUpdateRequestTransfer $mollieExpressCheckoutPaymentUpdateRequestTransfer
+     *
+     * @return bool
+     */
+    public function updateExpressCheckoutMolliePayment(
+        MollieExpressCheckoutPaymentUpdateRequestTransfer $mollieExpressCheckoutPaymentUpdateRequestTransfer,
+    ): bool;
+
+    /**
+     * @param \Generated\Shared\Transfer\MollieExpressCheckoutPaymentRefundTransfer $mollieExpressCheckoutPaymentRefundTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieExpressCheckoutPaymentRefundTransfer
+     */
+    public function createExpressCheckoutPaymentRefund(
+        MollieExpressCheckoutPaymentRefundTransfer $mollieExpressCheckoutPaymentRefundTransfer,
+    ): MollieExpressCheckoutPaymentRefundTransfer;
+
+    /**
+     * @param \Generated\Shared\Transfer\MollieExpressCheckoutPaymentRefundTransfer $mollieExpressCheckoutPaymentRefundTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieExpressCheckoutPaymentRefundTransfer
+     */
+    public function updateExpressCheckoutPaymentRefund(
+        MollieExpressCheckoutPaymentRefundTransfer $mollieExpressCheckoutPaymentRefundTransfer,
+    ): MollieExpressCheckoutPaymentRefundTransfer;
 
     /**
      * @param \Generated\Shared\Transfer\MollieRefundCollectionTransfer $mollieRefundCollectionTransfer
@@ -92,4 +134,33 @@ interface MollieEntityManagerInterface
      * @return \Generated\Shared\Transfer\MolliePaymentMethodConfigTransfer
      */
     public function writeMolliePaymentMethodConfig(MolliePaymentMethodConfigTransfer $paymentMethodConfigTransfer): MolliePaymentMethodConfigTransfer;
+
+    /**
+     * @param string $expressMethod
+     * @param bool $isActive
+     *
+     * @return void
+     */
+    public function saveExpressCheckoutConfig(string $expressMethod, bool $isActive): void;
+
+    /**
+     * @param \Generated\Shared\Transfer\MollieCustomerTransfer $mollieCustomerTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieCustomerTransfer
+     */
+    public function saveMollieCustomer(MollieCustomerTransfer $mollieCustomerTransfer): MollieCustomerTransfer;
+
+    /**
+     * @param int $idMollieCustomer
+     *
+     * @return void
+     */
+    public function deleteMollieCustomer(int $idMollieCustomer): void;
+
+    /**
+     * @param bool $isActive
+     *
+     * @return void
+     */
+    public function saveSingleClickConfig(bool $isActive): void;
 }

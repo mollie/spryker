@@ -24,6 +24,22 @@
                 <action>index</action>
                 <visible>1</visible>
             </mollie-payment-links>
+            <mollie-express-checkout>
+                <label>Mollie Express Methods</label>
+                <title>Mollie Express Methods</title>
+                <bundle>mollie</bundle>
+                <controller>express-checkout</controller>
+                <action>index</action>
+                <visible>1</visible>
+            </mollie-express-checkout>
+            <mollie-single-click>
+                <label>Mollie Single-Click Payments</label>
+                <title>Mollie Single-Click Payments</title>
+                <bundle>mollie</bundle>
+                <controller>single-click</controller>
+                <action>index</action>
+                <visible>1</visible>
+            </mollie-single-click>
         </pages>
     </administration>
 </config>

@@ -9,6 +9,7 @@ This guide provides comprehensive instructions for integrating Mollie payment se
 - [1. Prerequisites](#1-prerequisites)
 - [2. Setup & Configuration](#2-setup--configuration)
   - [Complete Configuration Structure](#complete-configuration-structure)
+  - [TypeScript Component Recognition](#typescript-component-recognition)
   - [API Key Configuration](#api-key-configuration)
   - [Profile ID Configuration](#profile-id-configuration)
   - [Environment Settings](#environment-settings)
@@ -23,7 +24,6 @@ This guide provides comprehensive instructions for integrating Mollie payment se
   - [HTTPS vs HTTP for Test Environments](#https-vs-http-for-test-environments)
 - [3. Setting Up Mollie Payment Methods](#3-setting-up-mollie-payment-methods)
   - [3.1. Add Mollie Payment Methods to CSV](#31-add-mollie-payment-methods-to-csv)
-  - [Example (all available Mollie methods)](#example-all-available-mollie-methods)
   - [3.2 Assign Payment Methods to Stores](#32-assign-payment-methods-to-stores)
   - [3.3 Import Payment Methods](#33-import-payment-methods)
   - [3.4 Configure OMS → Mollie Payment Mapping](#34-configure-oms--mollie-payment-mapping)
@@ -31,11 +31,17 @@ This guide provides comprehensive instructions for integrating Mollie payment se
   - [3.6 Final Steps](#36-final-steps)
   - [3.7 Displaying Payment Method Logos in Checkout](#37-displaying-payment-method-logos-in-checkout)
   - [3.8 Payment Method Overrides (Names, Logos, Minimum and Maximum amounts)](#38-payment-method-overrides-names-logos-minimum-and-maximum-amounts)
+  - [Override Payment Method Name](#override-payment-method-name)
+  - [Via Backoffice](#via-backoffice)
+  - [Via glossary.csv](#via-glossarycsv)
+  - [Override Payment Method Logo](#override-payment-method-logo)
+  - [Override Payment Method Min/Max Amounts](#override-payment-method-minmax-amounts)
 - [4. Dependency Provider Configuration](#4-dependency-provider-configuration)
   - [4.1. Router Dependency Provider](#41-router-dependency-provider)
   - [Route Provider Plugin](#route-provider-plugin)
   - [4.2. Checkout Dependency Provider (Zed)](#42-checkout-dependency-provider-zed)
   - [Post Hooks](#post-hooks)
+  - [Order Savers](#order-savers)
   - [4.3. Checkout Page Dependency Provider (Yves)](#43-checkout-page-dependency-provider-yves)
   - [Payment Method Handlers](#payment-method-handlers)
   - [Subform Plugin Collection](#subform-plugin-collection)
@@ -47,6 +53,11 @@ This guide provides comprehensive instructions for integrating Mollie payment se
   - [Condition Plugins](#condition-plugins)
   - [4.6. Mail Dependency Provider](#46-mail-dependency-provider)
   - [Command Plugins](#command-plugins-1)
+  - [4.7. Shop Application Dependency Provider (Yves)](#47-shop-application-dependency-provider-yves)
+  - [Global Widgets](#global-widgets)
+  - [4.8. Customer Dependency Provider (Zed)](#48-customer-dependency-provider-zed)
+  - [Customer Transfer Expander Plugins](#customer-transfer-expander-plugins)
+  - [Customer Anonymizer Plugins](#customer-anonymizer-plugins)
 - [5. Glossary Keys and Translations](#5-glossary-keys-and-translations)
   - [Complete Glossary CSV](#complete-glossary-csv)
 - [6. Payment Methods Configuration](#6-payment-methods-configuration)
@@ -62,6 +73,13 @@ This guide provides comprehensive instructions for integrating Mollie payment se
   - [What You Can See in the Back Office Panel](#what-you-can-see-in-the-back-office-panel)
   - [Troubleshooting Back Office Panel](#troubleshooting-back-office-panel)
 - [8. Credit Card Components](#8-credit-card-components)
+  - [8.1 Single-Click Payments (Saved Cards)](#81-single-click-payments-saved-cards)
+  - [Single-Click Requirements](#single-click-requirements)
+  - [Single-Click Configuration](#single-click-configuration)
+  - [Single-Click Consent Text](#single-click-consent-text)
+  - [Single-Click Integration Steps](#single-click-integration-steps)
+  - [How Single-Click Payments Work](#how-single-click-payments-work)
+  - [Testing Single-Click Payments](#testing-single-click-payments)
   - [Enabling Components](#enabling-components)
   - [JavaScript Library Configuration](#javascript-library-configuration)
   - [Benefits](#benefits)
@@ -70,11 +88,25 @@ This guide provides comprehensive instructions for integrating Mollie payment se
 - [9. Wallet Payments](#9-wallet-payments)
   - [Wallet Configuration](#wallet-configuration)
   - [Apple Pay Integration](#apple-pay-integration)
+  - [9.1 Apple Pay (Hosted)](#91-apple-pay-hosted)
   - [Setup Steps](#setup-steps)
-- [10. Payment Links](#10-payment-links)
+  - [9.2 Apple Pay Direct](#92-apple-pay-direct)
+  - [Requirements](#requirements)
+  - [Configuration](#configuration)
+  - [Integration Steps](#integration-steps)
+  - [How It Works](#how-it-works)
+- [10. Express Checkout](#10-express-checkout)
+  - [10.1 Overview](#101-overview)
+  - [10.2 Requirements](#102-requirements)
+  - [10.3 Configuration](#103-configuration)
+  - [10.4 Integration Steps](#104-integration-steps)
+  - [10.5 Placing the Express Checkout Buttons](#105-placing-the-express-checkout-buttons)
+  - [10.6 How It Works](#106-how-it-works)
+  - [10.7 Failed Orders and Automatic Refunds](#107-failed-orders-and-automatic-refunds)
+  - [10.8 Testing Express Checkout](#108-testing-express-checkout)
+- [11. Payment Links](#11-payment-links)
   - [Overview](#overview-1)
   - [API & Configuration Setup](#api--configuration-setup)
-  - [Enabling Payment Links](#enabling-payment-links)
   - [Configuration Options](#configuration-options)
   - [Generating a Payment Link](#generating-a-payment-link)
   - [Backoffice: Creating & Managing Payment Links](#backoffice-creating--managing-payment-links)
@@ -84,7 +116,7 @@ This guide provides comprehensive instructions for integrating Mollie payment se
   - [Link-Specific Status Mapping](#link-specific-status-mapping)
   - [Handling Expiry & Cancellation Events](#handling-expiry--cancellation-events)
   - [Testing Payment Links](#testing-payment-links)
-- [11. Testing & Debugging](#11-testing--debugging)
+- [12. Testing & Debugging](#12-testing--debugging)
   - [Test Mode Setup](#test-mode-setup)
   - [Test Credit Cards](#test-credit-cards)
   - [Debug Logging](#debug-logging)
@@ -92,38 +124,38 @@ This guide provides comprehensive instructions for integrating Mollie payment se
   - [Log Levels and Content](#log-levels-and-content)
   - [Sensitive Data Masking](#sensitive-data-masking)
   - [Common Test Issues](#common-test-issues)
-- [12. Production Deployment](#12-production-deployment)
+- [13. Production Deployment](#13-production-deployment)
   - [Pre-Production Checklist](#pre-production-checklist)
   - [Production Configuration](#production-configuration)
-- [13. Troubleshooting](#13-troubleshooting)
+- [14. Troubleshooting](#14-troubleshooting)
   - [Payment methods not displaying at checkout](#payment-methods-not-displaying-at-checkout)
   - [Webhooks not being received](#webhooks-not-being-received)
   - [Credit card components not loading](#credit-card-components-not-loading)
   - [Apple Pay not appearing](#apple-pay-not-appearing)
-- [14. Webhook Handling](#14-webhook-handling)
+  - [Apple Pay Direct not working](#apple-pay-direct-not-working)
+  - [Payment link not generating](#payment-link-not-generating)
+  - [Express checkout buttons not appearing](#express-checkout-buttons-not-appearing)
+  - [Express checkout session can't be created](#express-checkout-session-cant-be-created)
+  - [Order failed after express payment](#order-failed-after-express-payment)
+- [15. Webhook Handling](#15-webhook-handling)
   - [How Webhooks Work](#how-webhooks-work)
   - [Webhook Configuration](#webhook-configuration)
   - [Webhook Payload Structure](#webhook-payload-structure)
   - [Payment Status Mapping](#payment-status-mapping)
   - [Webhook Retry Behavior](#webhook-retry-behavior)
-- [15. Next-Gen Webhooks](#15-next-gen-webhooks)
+- [16. Next-Gen Webhooks](#16-next-gen-webhooks)
   - [What Are Next-Gen Webhooks?](#what-are-next-gen-webhooks)
   - [Key Improvements Over Legacy Webhooks](#key-improvements-over-legacy-webhooks)
-  - [Setup & Configuration](#setup--configuration-1)
-  - [Prerequisites](#prerequisites-1)
+  - [Setup & Configuration](#setup--configuration)
+  - [Prerequisites](#prerequisites)
   - [Register a Webhook](#register-a-webhook)
-  - [Choose a Delivery Mode](#choose-a-delivery-mode)
-  - [Payload Structure](#payload-structure)
   - [Payment Link Event Types](#payment-link-event-types)
-  - [Test Your Webhook](#test-your-webhook)
-  - [Manage Webhooks](#manage-webhooks)
   - [Security & Validation](#security--validation)
   - [Signature Verification](#signature-verification)
   - [Validation Checklist](#validation-checklist)
-  - [Idempotency](#idempotency)
   - [Respond Fast, Process Async](#respond-fast-process-async)
   - [Security Best Practices](#security-best-practices)
-- [16. Webhook Error Troubleshooting](#16-webhook-error-troubleshooting)
+- [17. Webhook Error Troubleshooting](#17-webhook-error-troubleshooting)
   - [Common Webhook Issues](#common-webhook-issues)
   - [Issue 1: Webhooks Not Being Received](#issue-1-webhooks-not-being-received)
   - [Issue 2: Webhooks Received But Not Processed](#issue-2-webhooks-received-but-not-processed)
@@ -165,6 +197,14 @@ $config[MollieConstants::MOLLIE] = [
     MollieConstants::MOLLIE_WEBHOOK_URL => sprintf('https://%s%s', $sprykerFrontendHost, '/mollie/webhook'),
     MollieConstants::MOLLIE_CREDIT_CARD_COMPONENTS_ENABLED => true,
     MollieConstants::MOLLIE_CREDIT_CARD_COMPONENTS_JS_SRC => 'https://js.mollie.com/v1/mollie.js',
+    MollieConstants::MOLLIE_APPLE_PAY_SDK_JS_SRC => 'https://applepay.cdn-apple.com/jsapi/1.latest/apple-pay-sdk.js',
+    MollieConstants::MOLLIE_APPLE_PAY_VALIDATION_URL_ALLOWED_HOSTS => [
+        'apple-pay-gateway.apple.com',
+        'cn-apple-pay-gateway.apple.com',
+        'apple-pay-gateway-cert.apple.com',
+        'cn-apple-pay-gateway-cert.apple.com',
+    ],
+    MollieConstants::MOLLIE_APPLE_PAY_MERCHANT_COUNTRY_CODE => 'DE',
     MollieConstants::MOLLIE_TEST_ENVIRONMENT_WEBHOOK_URL => sprintf(
         'http://%s:%s@%s%s',
         getenv('SPRYKER_YVES_AUTH_USERNAME') ?? null,
@@ -212,8 +252,18 @@ $config[MollieConstants::MOLLIE] = [
 	MollieConstants::MOLLIE_NEXT_GEN_WEBHOOK_SIGNING_SECRET => getenv('MOLLIE_NEXT_GEN_WEBHOOK_SIGNING_SECRET') ?: '',  
 	MollieConstants::MOLLIE_BNPL_PAYMENT_METHODS => ['billie', 'in3', 'klarna', 'riverty', 'voucher', 'alma'],
 	MollieConstants::MOLLIE_GET_METHODS_API_DEFAULT_AMOUNT_VALUE => '100.00',
+    MollieConstants::MOLLIE_EXPRESS_CHECKOUT_JS_SRC => 'https://js.mollie.com/v2/mollie.js?compatible',
+    MollieConstants::MOLLIE_EXPRESS_CHECKOUT_METHODS_ENABLED => [
+        MollieConfig::EXPRESS_METHOD_APPLE_PAY => true,
+        MollieConfig::EXPRESS_METHOD_GOOGLE_PAY => true,
+        MollieConfig::EXPRESS_METHOD_PAYPAL => true,
+    ],
 ];
 ```
+
+The `MOLLIE_APPLE_PAY_*` keys are only needed for Apple Pay Direct. See [Section 9.2: Apple Pay Direct](#92-apple-pay-direct).
+
+The `MOLLIE_EXPRESS_CHECKOUT_*` keys are only needed for Express Checkout. See [Section 10: Express Checkout](#10-express-checkout).
 
 To enable Spryker kernel recognition for the Mollie module (Facades, Clients, Services, etc.), it is necessary to register Mollie as a core namespace in config_default.php:
 
@@ -228,6 +278,21 @@ $config[KernelConstants::CORE_NAMESPACES] = [
 ```
 
 Without this, Spryker's dependency locator will be unable to resolve Mollie module automatically.
+
+> **Spryker redirect whitelist**
+>
+> If Spryker's strict domain redirect is enabled (`KernelConstants::STRICT_DOMAIN_REDIRECT`), add these Mollie domains to `KernelConstants::DOMAIN_WHITELIST` in `config_default.php`:
+>
+> ```php
+> $config[KernelConstants::DOMAIN_WHITELIST] = array_merge($trustedHosts, [
+>     // …
+>     'pay.mollie.nl',         // 3D Secure authentication redirects
+>     'mollie.com',
+>     'www.mollie.com',        // Mollie hosted checkout pages
+> ]);
+> ```
+>
+> If these domains aren't whitelisted, Spryker's `RedirectUrlValidator` throws `ForbiddenExternalRedirectException` and the checkout fails.
 
 ### TypeScript Component Recognition
 
@@ -520,11 +585,17 @@ mollieSwishPayment,Swish,MollieSwishPayment,Mollie Swish Payment,1
 mollieSatispayPayment,Satispay,MollieSatispayPayment,Mollie Satispay Payment,1  
 mollieTwintPayment,TWINT,MollieTwintPayment,Mollie TWINT Payment,1  
 mollieVippsPayment,Vipps,MollieVippsPayment,Mollie Vipps Payment,1
+mollieExpressPayment,Express Checkout,MollieExpressPayment,Mollie Express Payment,1
+mollieApplePayDirectPayment,Apple Pay,MollieApplePayDirectPayment,Mollie Apple Pay Direct Payment,1
 ```
 
 > **Important**
 >
 > Do NOT modify the payment method keys. They must match exactly.
+
+> **Note:** Use either `mollieApplePayPayment` or `mollieApplePayDirectPayment`, not both. See [Apple Pay Integration](#apple-pay-integration).
+
+> **Note:** `mollieExpressPayment` is only needed for [Express Checkout](#10-express-checkout). It is never shown in the regular checkout; `ActiveMolliePaymentMethodFilterPlugin` only keeps it for express checkout quotes.
 
 ### 3.2 Assign Payment Methods to Stores
 
@@ -551,7 +622,10 @@ mollieBancontactPayment,DE
 mollieKbcPayment,DE
 molliePayByBankPayment,DE
 mollieApplePayPayment,DE
+mollieExpressPayment,DE
 ```
+
+If you use [Apple Pay Direct](#92-apple-pay-direct), add `mollieApplePayDirectPayment,DE` instead of `mollieApplePayPayment,DE`.
 
 ### 3.3 Import Payment Methods
 
@@ -606,6 +680,7 @@ $config[MollieConstants::MOLLIE] = [
         'mollieSatispayPayment' => 'satispay',
         'mollieTwintPayment' => 'twint',
         'mollieVippsPayment' => 'vipps',
+        'mollieApplePayDirectPayment' => 'applepay',
     ],
 ];
 ```
@@ -620,8 +695,11 @@ Add Mollie's state machines to the active processes configuration:
 $config[OmsConstants::ACTIVE_PROCESSES] = [
     'MolliePaymentStateMachine01',
     'MolliePaymentStateMachineManualCapture01',
+    'MolliePaymentStateMachineExpress01',
 ];
 ```
+
+`MolliePaymentStateMachineExpress01` is only needed for [Express Checkout](#10-express-checkout).
 
 Add Mollie's state machine process location so Spryker can locate and load the state machine XML definitions:
 
@@ -667,8 +745,14 @@ $config[SalesConstants::PAYMENT_METHOD_STATEMACHINE_MAPPING] = [
 	MollieConfig::MOLLIE_PAYMENT_MB_WAY => 'MolliePaymentStateMachine01',  
 	MollieConfig::MOLLIE_PAYMENT_TWINT => 'MolliePaymentStateMachine01',  
 	MollieConfig::MOLLIE_PAYMENT_SATISPAY => 'MolliePaymentStateMachine01',
+    MollieConfig::MOLLIE_PAYMENT_EXPRESS => 'MolliePaymentStateMachineExpress01',
+    MollieConfig::MOLLIE_PAYMENT_APPLE_PAY_DIRECT => 'MolliePaymentStateMachine01',
 ];
 ```
+
+`MollieConfig::MOLLIE_PAYMENT_EXPRESS` (`mollieExpressPayment`) is used by [Express Checkout](#10-express-checkout) orders and must be mapped to `MolliePaymentStateMachineExpress01`. That state machine is `MolliePaymentStateMachine01` plus one transition from `payment pending` to `refunded`, used when an express order was saved but its payment is refunded (see [Section 10.7](#107-failed-orders-and-automatic-refunds)). It doesn't need an entry in `MOLLIE_OMS_TO_PAYMENT_METHOD_MAPPING`.
+
+`MollieConfig::MOLLIE_PAYMENT_APPLE_PAY_DIRECT` (`mollieApplePayDirectPayment`) is used by [Apple Pay Direct](#92-apple-pay-direct) and does need the `'mollieApplePayDirectPayment' => 'applepay'` mapping.
 
 By default, all payment methods use automatic capturing.
 
@@ -732,6 +816,7 @@ Add Mollie forms to `customForms`:
 		'MollieSatispayPayment/satispay': ['mollie-satispay', 'Mollie'],  
 		'MollieTwintPayment/twint': ['mollie-twint', 'Mollie'],  
 		'MollieVippsPayment/vipps': ['mollie-vipps', 'Mollie'],
+        'MollieApplePayDirectPayment/applePayDirect': ['mollie-apple-pay-direct', 'Mollie'],
     },
 } %}
 ```
@@ -742,9 +827,12 @@ After everything:
 
 ```bash
 console transfer:generate
+console propel:install
 console data:import:payment-method
 console data:import:payment-method-store
 ```
+
+`console propel:install` creates the module's database tables, including `spy_mollie_express_checkout_config` and `spy_mollie_express_checkout_payment_refund` used by [Express Checkout](#10-express-checkout).
 
 Clear cache if needed.
 
@@ -862,6 +950,18 @@ class RouterDependencyProvider extends SprykerRouterDependencyProvider
 }
 ```
 
+The plugin registers these storefront routes:
+
+| Route | Method | Purpose |
+|-------|--------|---------|
+| `/checkout/payment-redirect` | GET | Return URL after the Mollie hosted payment page |
+| `/mollie/webhook` | POST | Legacy webhook (see [Section 15](#15-webhook-handling)) |
+| `/mollie/next-gen/webhook` | POST | Next-gen webhook (see [Section 16](#16-next-gen-webhooks)) |
+| `/mollie/apple-pay/create-payment-session` | POST | Apple Pay merchant validation |
+| `/mollie/express-checkout/resolve-enabled-methods` | POST | Express Checkout: returns which express methods are enabled |
+| `/mollie/express-checkout/create-session` | POST | Express Checkout: creates the Mollie session for the cart |
+| `/mollie/express-checkout/redirect` | GET | Express Checkout: return URL after the wallet payment; places the order |
+
 ### 4.2. Checkout Dependency Provider (Zed)
 
 #### Post Hooks
@@ -872,7 +972,11 @@ class RouterDependencyProvider extends SprykerRouterDependencyProvider
 
 **Method:** `getCheckoutPostHooks`
 
-**Plugin:** `vendor/mollie/spryker-payment/src/Mollie\Zed\Mollie\Communication\Plugin\Checkout\MollieCheckoutPostSavePlugin`
+**Plugins:**
+- `vendor/mollie/spryker-payment/src/Mollie\Zed\Mollie\Communication\Plugin\Checkout\MollieCustomerCheckoutPostSavePlugin` (only needed for [Single-Click Payments](#81-single-click-payments-saved-cards))
+- `vendor/mollie/spryker-payment/src/Mollie\Zed\Mollie\Communication\Plugin\Checkout\MollieCheckoutPostSavePlugin`
+
+`MollieCustomerCheckoutPostSavePlugin` creates the shopper's Mollie customer when they choose to save their card. It must be registered **before** `MollieCheckoutPostSavePlugin`, because the payment request sends that customer's ID.
 
 ```php
 <?php
@@ -880,6 +984,7 @@ class RouterDependencyProvider extends SprykerRouterDependencyProvider
 namespace Pyz\Zed\Checkout;
 
 use Mollie\Zed\Mollie\Communication\Plugin\Checkout\MollieCheckoutPostSavePlugin;
+use Mollie\Zed\Mollie\Communication\Plugin\Checkout\MollieCustomerCheckoutPostSavePlugin;
 use Spryker\Zed\Checkout\CheckoutDependencyProvider as SprykerCheckoutDependencyProvider;
 use Spryker\Zed\Kernel\Container;
 
@@ -896,7 +1001,49 @@ class CheckoutDependencyProvider extends SprykerCheckoutDependencyProvider
     {
         return [
             // ... other post hooks
+            new MollieCustomerCheckoutPostSavePlugin(),
             new MollieCheckoutPostSavePlugin(),
+        ];
+    }
+}
+```
+
+#### Order Savers
+
+**Purpose:** `MollieExpressCheckoutDoSaveOrderPlugin` stores the Mollie payment of an [Express Checkout](#10-express-checkout) order. It runs inside the order's save transaction, so the order and its Mollie payment are always saved together. It only runs for `mollieExpressPayment` orders. Only needed for Express Checkout.
+
+**File:** `src/Pyz/Zed/Checkout/CheckoutDependencyProvider.php`
+
+**Method:** `getCheckoutOrderSavers`
+
+**Plugins:**
+- `vendor/mollie/spryker-payment/src/Mollie\Zed\Mollie\Communication\Plugin\Checkout\MollieExpressCheckoutDoSaveOrderPlugin`
+
+Add it as the last order saver.
+
+```php
+<?php
+
+namespace Pyz\Zed\Checkout;
+
+use Mollie\Zed\Mollie\Communication\Plugin\Checkout\MollieExpressCheckoutDoSaveOrderPlugin;
+use Spryker\Zed\Checkout\CheckoutDependencyProvider as SprykerCheckoutDependencyProvider;
+use Spryker\Zed\Kernel\Container;
+
+class CheckoutDependencyProvider extends SprykerCheckoutDependencyProvider
+{
+    // ... rest of the implementation
+
+    /**
+     * @param \Spryker\Zed\Kernel\Container $container
+     *
+     * @return list<\Spryker\Zed\Checkout\Dependency\Plugin\CheckoutSaveOrderInterface|\Spryker\Zed\CheckoutExtension\Dependency\Plugin\CheckoutDoSaveOrderInterface>
+     */
+    protected function getCheckoutOrderSavers(Container $container): array
+    {
+        return [
+            // ... other order savers
+            new MollieExpressCheckoutDoSaveOrderPlugin(),
         ];
     }
 }
@@ -921,6 +1068,7 @@ namespace Pyz\Yves\CheckoutPage;
 
 use Mollie\Shared\Mollie\MollieConfig;
 use Mollie\Yves\Mollie\Plugin\PaymentHandler\MollieAlmaPaymentHandlerPlugin;  
+use Mollie\Yves\Mollie\Plugin\PaymentHandler\MollieApplePayDirectPaymentHandlerPlugin;
 use Mollie\Yves\Mollie\Plugin\PaymentHandler\MollieApplePayPaymentHandlerPlugin;  
 use Mollie\Yves\Mollie\Plugin\PaymentHandler\MollieBancomatPayPaymentHandlerPlugin;  
 use Mollie\Yves\Mollie\Plugin\PaymentHandler\MollieBancontactPaymentHandlerPlugin;  
@@ -990,6 +1138,7 @@ class CheckoutPageDependencyProvider extends SprykerShopCheckoutPageDependencyPr
 			$paymentMethodHandler->add(new MollieTwintPaymentHandlerPlugin(), MollieConfig::MOLLIE_PAYMENT_TWINT);  
 			$paymentMethodHandler->add(new MollieSwishPaymentHandlerPlugin(), MollieConfig::MOLLIE_PAYMENT_SWISH);  
 			$paymentMethodHandler->add(new MollieMbWayPaymentHandlerPlugin(), MollieConfig::MOLLIE_PAYMENT_MB_WAY);
+            $paymentMethodHandler->add(new MollieApplePayDirectPaymentHandlerPlugin(), MollieConfig::MOLLIE_PAYMENT_APPLE_PAY_DIRECT);
 			
             return $paymentMethodHandler;
         });
@@ -998,6 +1147,8 @@ class CheckoutPageDependencyProvider extends SprykerShopCheckoutPageDependencyPr
     }
 }
 ```
+
+Register either `MollieApplePayPaymentHandlerPlugin` or `MollieApplePayDirectPaymentHandlerPlugin`, depending on the [Apple Pay method](#apple-pay-integration) you use. The same applies to the sub-form plugins below.
 
 #### Subform Plugin Collection
 
@@ -1012,6 +1163,7 @@ namespace Pyz\Yves\CheckoutPage;
 
 use Mollie\Shared\Mollie\MollieConfig;
 use Mollie\Yves\Mollie\PaymentPage\Plugin\SubFormPlugin\MollieAlmaSubFormPlugin;  
+use Mollie\Yves\Mollie\PaymentPage\Plugin\SubFormPlugin\MollieApplePayDirectSubFormPlugin;
 use Mollie\Yves\Mollie\PaymentPage\Plugin\SubFormPlugin\MollieApplePaySubFormPlugin;  
 use Mollie\Yves\Mollie\PaymentPage\Plugin\SubFormPlugin\MollieBancomatPaySubFormPlugin;  
 use Mollie\Yves\Mollie\PaymentPage\Plugin\SubFormPlugin\MollieBancontactSubFormPlugin;  
@@ -1088,6 +1240,7 @@ class CheckoutPageDependencyProvider extends SprykerShopCheckoutPageDependencyPr
 			$paymentSubFormPluginCollection->add(new MollieSatispaySubFormPlugin());  
 			$paymentSubFormPluginCollection->add(new MollieTwintSubFormPlugin());  
 			$paymentSubFormPluginCollection->add(new MollieVippsSubFormPlugin());
+            $paymentSubFormPluginCollection->add(new MollieApplePayDirectSubFormPlugin());
 
             return $paymentSubFormPluginCollection;
         });
@@ -1243,6 +1396,7 @@ use Mollie\Zed\Mollie\Communication\Plugin\Oms\Condition\MollieIsPaymentStatusCa
 use Mollie\Zed\Mollie\Communication\Plugin\Oms\Condition\MollieIsPaymentStatusExpiredConditionPlugin;
 use Mollie\Zed\Mollie\Communication\Plugin\Oms\Condition\MollieIsPaymentStatusFailedConditionPlugin;
 use Mollie\Zed\Mollie\Communication\Plugin\Oms\Condition\MollieIsPaymentStatusPaidConditionPlugin;
+use Mollie\Zed\Mollie\Communication\Plugin\Oms\Condition\MollieIsPaymentStatusRefundedConditionPlugin;
 use Mollie\Zed\Mollie\Communication\Plugin\Oms\Condition\MollieIsRefundStatusFailedConditionPlugin;
 use Mollie\Zed\Mollie\Communication\Plugin\Oms\Condition\MollieIsRefundStatusRefundedConditionPlugin;
 use Mollie\Zed\Mollie\Communication\Plugin\Oms\Condition\Authorization\IsAuthorizationCanceledConditionPlugin;
@@ -1287,6 +1441,9 @@ class OmsDependencyProvider extends SprykerOmsDependencyProvider
             $conditionCollection->add(new IsAuthorizationFailedConditionPlugin(), 'Mollie/IsAuthorizationFailed');
             $conditionCollection->add(new IsCapturedConditionPlugin(), 'Mollie/IsCaptured');
             $conditionCollection->add(new IsCaptureFailedConditionPlugin(), 'Mollie/IsCaptureFailed');
+
+            // If using express checkout:
+            $conditionCollection->add(new MollieIsPaymentStatusRefundedConditionPlugin(), 'Mollie/IsPaymentStatusRefunded');
 
 			// If using payment links:
 			$conditionCollection->add(new MollieIsPaymentLinkCreationSuccessfulConditionPlugin(), 'Mollie/IsPaymentLinkCreationSuccessful');  
@@ -1337,6 +1494,129 @@ class MailDependencyProvider extends SprykerMailDependencyProvider
     }
 }
 ```
+
+### 4.7. Shop Application Dependency Provider (Yves)
+
+#### Global Widgets
+
+**Purpose:** Registers the widgets that render the [Express Checkout](#10-express-checkout) buttons and the "Saved cards" link in the customer account menu. Each widget is only needed for its feature.
+
+**File:** `src/Pyz/Yves/ShopApplication/ShopApplicationDependencyProvider.php`
+
+**Method:** `getGlobalWidgets`
+
+**Widgets:**
+- `vendor/mollie/spryker-payment/src/Mollie\Yves\Mollie\Widget\MollieExpressCheckoutWidget` (Express Checkout)
+- `vendor/mollie/spryker-payment/src/Mollie\Yves\Mollie\Widget\MollieSavedCardsMenuItemWidget` ([Single-Click Payments](#81-single-click-payments-saved-cards))
+
+```php
+<?php
+
+namespace Pyz\Yves\ShopApplication;
+
+use Mollie\Yves\Mollie\Widget\MollieExpressCheckoutWidget;
+use Mollie\Yves\Mollie\Widget\MollieSavedCardsMenuItemWidget;
+use SprykerShop\Yves\ShopApplication\ShopApplicationDependencyProvider as SprykerShopApplicationDependencyProvider;
+
+class ShopApplicationDependencyProvider extends SprykerShopApplicationDependencyProvider
+{
+    // ... rest of the implementation
+
+    /**
+     * @return array<string>
+     */
+    protected function getGlobalWidgets(): array
+    {
+        return [
+            // ... other widgets
+            MollieExpressCheckoutWidget::class,
+            MollieSavedCardsMenuItemWidget::class,
+        ];
+    }
+}
+```
+
+`MollieSavedCardsMenuItemWidget` shows the "Saved cards" link only to customers who have a Mollie customer (they saved a card at least once), whether single-click is switched on or off, so they can always remove their cards. It reads this from the logged-in customer in the session and makes no Zed call. The widget also has to be placed in the customer account menu. In the B2B demo shop that menu is `src/Pyz/Yves/CustomerPage/Theme/default/components/molecules/navigation-sidebar/navigation-sidebar.twig`:
+
+```twig
+{% widget 'MollieSavedCardsMenuItemWidget' args [data.activePage] only %}{% endwidget %}
+```
+
+### 4.8. Customer Dependency Provider (Zed)
+
+#### Customer Transfer Expander Plugins
+
+**Purpose:** Adds the shopper's stored Mollie customer to the logged-in customer, so a saved-card payment can send its Mollie customer ID. Only needed for [Single-Click Payments](#81-single-click-payments-saved-cards).
+
+**File:** `src/Pyz/Zed/Customer/CustomerDependencyProvider.php`
+
+**Method:** `getCustomerTransferExpanderPlugins`
+
+**Plugin:** `vendor/mollie/spryker-payment/src/Mollie\Zed\Mollie\Communication\Plugin\Customer\MollieCustomerCustomerTransferExpanderPlugin`
+
+```php
+<?php
+
+namespace Pyz\Zed\Customer;
+
+use Mollie\Zed\Mollie\Communication\Plugin\Customer\MollieCustomerCustomerTransferExpanderPlugin;
+use Spryker\Zed\Customer\CustomerDependencyProvider as SprykerCustomerDependencyProvider;
+
+class CustomerDependencyProvider extends SprykerCustomerDependencyProvider
+{
+    // ... rest of the implementation
+
+    /**
+     * @return array<\Spryker\Zed\Customer\Dependency\Plugin\CustomerTransferExpanderPluginInterface>
+     */
+    protected function getCustomerTransferExpanderPlugins(): array
+    {
+        return [
+            // ... other expander plugins
+            new MollieCustomerCustomerTransferExpanderPlugin(),
+        ];
+    }
+}
+```
+
+Spryker runs these plugins at login and whenever the customer is reloaded, for example after a successful checkout.
+
+#### Customer Anonymizer Plugins
+
+**Purpose:** When a customer deletes their account (storefront profile or Back Office), deletes their Mollie customer at Mollie, which also cancels all of their saved cards, and removes the stored Mollie customer. Only needed for [Single-Click Payments](#81-single-click-payments-saved-cards).
+
+**File:** `src/Pyz/Zed/Customer/CustomerDependencyProvider.php`
+
+**Method:** `getCustomerAnonymizerPlugins`
+
+**Plugin:** `vendor/mollie/spryker-payment/src/Mollie\Zed\Mollie\Communication\Plugin\Customer\MollieCustomerAnonymizerPlugin`
+
+```php
+<?php
+
+namespace Pyz\Zed\Customer;
+
+use Mollie\Zed\Mollie\Communication\Plugin\Customer\MollieCustomerAnonymizerPlugin;
+use Spryker\Zed\Customer\CustomerDependencyProvider as SprykerCustomerDependencyProvider;
+
+class CustomerDependencyProvider extends SprykerCustomerDependencyProvider
+{
+    // ... rest of the implementation
+
+    /**
+     * @return array<\Spryker\Zed\Customer\Dependency\Plugin\CustomerAnonymizerPluginInterface>
+     */
+    protected function getCustomerAnonymizerPlugins(): array
+    {
+        return [
+            // ... other anonymizer plugins
+            new MollieCustomerAnonymizerPlugin(),
+        ];
+    }
+}
+```
+
+If Mollie rejects the deletion, the stored Mollie customer is kept and an error is logged, so the deletion can be repeated.
 
 ## 5. Glossary Keys and Translations
 
@@ -1593,7 +1873,51 @@ mollie.mail.payment_confirmation.thank_you,Thank you for your order!,en_US
 mollie.mail.payment_confirmation.thank_you,Vielen Dank für Ihre Bestellung!,de_DE
 mollie.mail.footer.automatic_message,"This is an automatic message, please do not reply.",en_US
 mollie.mail.footer.automatic_message,"Dies ist eine automatische Nachricht, bitte antworten Sie nicht.",de_DE
+mollieExpressPayment,Express Checkout,de_DE
+mollieExpressPayment,Express Checkout,en_US
+checkout.payment.provider.MollieExpressPayment,Mollie Express Checkout,de_DE
+checkout.payment.provider.MollieExpressPayment,Mollie Express Checkout,en_US
+mollieApplePayDirectPayment,Apple Pay,de_DE
+mollieApplePayDirectPayment,Apple Pay,en_US
+checkout.payment.provider.MollieApplePayDirectPayment,Mollie Apple Pay,de_DE
+checkout.payment.provider.MollieApplePayDirectPayment,Mollie Apple Pay,en_US
+checkout.payment.provider.mollieApplePayDirect.descriptionText,"Sie bestätigen die Zahlung mit Apple Pay, wenn Sie zum nächsten Schritt wechseln.",de_DE
+checkout.payment.provider.mollieApplePayDirect.descriptionText,You will confirm the payment with Apple Pay when you continue to the next step.,en_US
+checkout.payment.provider.mollieApplePayDirect.totalLabel,Gesamtbetrag,de_DE
+checkout.payment.provider.mollieApplePayDirect.totalLabel,Total,en_US
+mollie.checkout.payment.apple.pay.direct.unavailable,Apple Pay ist auf diesem Gerät oder in diesem Browser nicht verfügbar. Bitte wählen Sie eine andere Zahlungsart.,de_DE
+mollie.checkout.payment.apple.pay.direct.unavailable,Apple Pay is not available on this device or browser. Please choose another payment method.,en_US
+mollie.checkout.payment.apple.pay.direct.missing.token,Die Apple Pay-Zahlung wurde nicht abgeschlossen. Bitte versuchen Sie es erneut.,de_DE
+mollie.checkout.payment.apple.pay.direct.missing.token,The Apple Pay payment was not completed. Please try again.,en_US
+mollie.checkout.payment.credit.card.saved.cards.title,Gespeicherte Karten,de_DE
+mollie.checkout.payment.credit.card.saved.cards.title,Saved cards,en_US
+mollie.checkout.payment.credit.card.new.card,Neue Karte verwenden,de_DE
+mollie.checkout.payment.credit.card.new.card,Use a new card,en_US
+mollie.checkout.payment.credit.card.save.card.consent,Karte für schnelleres Bezahlen speichern.,de_DE
+mollie.checkout.payment.credit.card.save.card.consent,Save your card for faster checkout.,en_US
+mollie.checkout.payment.credit.card.save.card.consent.description,"Indem Sie dieses Kästchen ankreuzen, ermächtigen Sie [Handelsname], Ihre Zahlungskartendaten sicher zu speichern, um zukünftige Bezahlvorgänge zu beschleunigen. Ihre Daten werden von Mollie B.V. in unserem Auftrag gespeichert. Ihre gespeicherte Karte wird nur dann belastet, wenn Sie einen Kauf an der Kasse aktiv und erfolgreich abschließen – wir werden Ihre Karte niemals ohne Ihre direkte Beteiligung belasten. Sie können Ihre gespeicherte Karte jederzeit über Ihre Kontoeinstellungen entfernen oder uns unter [Support-Kontakt] kontaktieren. Weitere Informationen finden Sie in unserer [Datenschutzerklärung].",de_DE
+mollie.checkout.payment.credit.card.save.card.consent.description,"By ticking this box, you authorise [Doing Business As Name] to securely store your payment card details to speed up future checkouts. Your details will be held by Mollie B.V. on our behalf. Your saved card will only be charged when you actively successfully complete a purchase at checkout - we will never charge your card without your direct involvement. You can remove your saved card at any time via your account settings or by contacting us at [support contact]. For further information, please see our [Privacy Policy].",en_US
+mollie.customer.saved_cards.menu,Gespeicherte Karten,de_DE
+mollie.customer.saved_cards.menu,Saved cards,en_US
+mollie.customer.saved_cards.title,Gespeicherte Karten,de_DE
+mollie.customer.saved_cards.title,Saved cards,en_US
+mollie.customer.saved_cards.empty,Sie haben keine gespeicherten Karten.,de_DE
+mollie.customer.saved_cards.empty,You have no saved cards.,en_US
+mollie.customer.saved_cards.expires,Gültig bis,de_DE
+mollie.customer.saved_cards.expires,Expires,en_US
+mollie.customer.saved_cards.remove,Entfernen,de_DE
+mollie.customer.saved_cards.remove,Remove,en_US
+mollie.customer.saved_cards.remove.confirm,Möchten Sie diese Karte wirklich entfernen?,de_DE
+mollie.customer.saved_cards.remove.confirm,Do you really want to remove this card?,en_US
+mollie.customer.saved_cards.remove.success,Die Karte wurde entfernt.,de_DE
+mollie.customer.saved_cards.remove.success,The card has been removed.,en_US
+mollie.customer.saved_cards.remove.error,Die Karte konnte nicht entfernt werden. Bitte versuchen Sie es erneut.,de_DE
+mollie.customer.saved_cards.remove.error,The card could not be removed. Please try again.,en_US
 ```
+
+The `mollieExpressPayment` keys are only needed for [Express Checkout](#10-express-checkout), the `mollieApplePayDirect` keys only for [Apple Pay Direct](#92-apple-pay-direct).
+
+`checkout.payment.provider.mollieApplePayDirect.totalLabel` is the label shown next to the amount in the Apple Pay sheet. Apple recommends your business name, so set it to your shop's name.
 
 ## 6. Payment Methods Configuration
 
@@ -1700,6 +2024,26 @@ Add the following configuration block:
  <action>index</action>  
  <visible>1</visible>  
 </mollie-payment-links>
+
+<!-- If using express checkout -->
+<mollie-express-checkout>
+    <label>Mollie Express Methods</label>
+    <title>Mollie Express Methods</title>
+    <bundle>mollie</bundle>
+    <controller>express-checkout</controller>
+    <action>index</action>
+    <visible>1</visible>
+</mollie-express-checkout>
+
+<!-- If using single-click payments (saved cards) -->
+<mollie-single-click>
+    <label>Mollie Single-Click Payments</label>
+    <title>Mollie Single-Click Payments</title>
+    <bundle>mollie</bundle>
+    <controller>single-click</controller>
+    <action>index</action>
+    <visible>1</visible>
+</mollie-single-click>
 ```
 
 **Important:** Insert these blocks between the `<payment-method>` and `<shipment-method>` nodes in the navigation file.
@@ -1733,6 +2077,15 @@ Add the following configuration block:
 		<action>index</action>  
 		<visible>1</visible>  
 	</mollie-payment-links>
+
+    <mollie-express-checkout>
+        <label>Mollie Express Methods</label>
+        <title>Mollie Express Methods</title>
+        <bundle>mollie</bundle>
+        <controller>express-checkout</controller>
+        <action>index</action>
+        <visible>1</visible>
+    </mollie-express-checkout>
 
     <shipment-method>
         <label>Shipment Methods</label>
@@ -1794,6 +2147,10 @@ After completing the configuration:
 - Payment method status (active/inactive)
 - Minimum/maximum transaction amount
 - Payment method icons
+
+If you added the `mollie-express-checkout` entry, **Administration > Mollie Express Methods** shows one checkbox per express method (Apple Pay, Google Pay, PayPal). A saved setting there overrides `MOLLIE_EXPRESS_CHECKOUT_METHODS_ENABLED` from the config. See [Section 10.3](#103-configuration).
+
+If you added the `mollie-single-click` entry, **Administration > Mollie Single-Click Payments** switches saved cards on or off for the whole shop. A saved setting there overrides `MOLLIE_SINGLE_CLICK_PAYMENTS_ENABLED` from the config. See [Section 8.1](#81-single-click-payments-saved-cards).
 
 ### What You Can See in the Back Office Panel
 
@@ -1870,9 +2227,104 @@ MollieConstants::MOLLIE_CREDIT_CARD_COMPONENTS_JS_SRC => 'https://js.mollie.com/
 - Components must be initialized with your Mollie Profile ID
 - The integration handles tokenization automatically
 
+
 ### Component Example
 
 <img src="../.github/images/credit_card_component.png" alt="Credit Card Component" width="600" />
+
+### 8.1 Single-Click Payments (Saved Cards)
+
+Logged-in shoppers can save their card with Mollie and pay with it on later orders without entering it again. The feature follows Mollie's guide [Save a card for faster checkout](https://docs.mollie.com/docs/saving-a-card-for-returning-customers).
+
+Mollie models a saved card with two objects. A **customer** (`cst_…`) is created once per shopper, and a **mandate** (`mdt_…`) is the saved card itself, plus the shopper's permission to charge it.
+
+#### Single-Click Requirements
+
+- [Credit Card Components](#8-credit-card-components) must be enabled (`MOLLIE_CREDIT_CARD_COMPONENTS_ENABLED => true`). Without them the card is entered on Mollie's hosted page, and the saved-card options are not shown.
+- Only logged-in customers can save or use cards. Guests always enter a new card.
+
+#### Single-Click Configuration
+
+```php
+$config[MollieConstants::MOLLIE] = [
+    // ... other Mollie configuration
+    MollieConstants::MOLLIE_SINGLE_CLICK_PAYMENTS_ENABLED => false,
+];
+```
+
+Whether single-click payments are on is resolved in this order:
+
+1. The setting saved in the Back Office under **Administration > Mollie Single-Click Payments** (see [Section 7](#7-backoffice-configuration))
+2. The value in `MOLLIE_SINGLE_CLICK_PAYMENTS_ENABLED`
+3. Off, if neither is set
+
+When the feature is off, the checkout shows neither the saved cards nor the "save my card" checkbox. Cards that shoppers saved earlier stay at Mollie, and the **Saved cards** page (`/customer/saved-cards`) and its menu link stay available, so shoppers can remove them.
+
+#### Single-Click Consent Text
+
+Mollie requires a clear consent text below the "save my card" checkbox. The module ships Mollie's recommended wording in two glossary keys ([Section 5](#5-glossary-keys-and-translations)):
+
+| Key | Content |
+|-----|---------|
+| `mollie.checkout.payment.credit.card.save.card.consent` | The checkbox label |
+| `mollie.checkout.payment.credit.card.save.card.consent.description` | The text below it, with the placeholders `[Doing Business As Name]`, `[support contact]` and `[Privacy Policy]` |
+
+Replace the placeholders with your shop's details. The description is rendered as HTML, so the privacy policy (and your terms of service) can be linked, for example `<a href="/privacy">Privacy Policy</a>`.
+
+Each consent is stored with a timestamp and a version (`spy_mollie_customer.consent_given_at` and `consent_version`). The version comes from `MollieConfig::getSingleClickConsentVersion()` (Zed). When you change the consent text, override that method in your project's `MollieConfig` and return a new version.
+
+#### Single-Click Integration Steps
+
+1. Make sure Credit Card Components are enabled ([Section 8](#8-credit-card-components))
+2. Add the configuration from [Single-Click Configuration](#single-click-configuration)
+3. Register `MollieCustomerCheckoutPostSavePlugin` before `MollieCheckoutPostSavePlugin` ([Section 4.2](#post-hooks))
+4. Register `MollieCustomerCustomerTransferExpanderPlugin` and `MollieCustomerAnonymizerPlugin` ([Section 4.8](#48-customer-dependency-provider-zed))
+5. Register `MollieSavedCardsMenuItemWidget` and place it in the customer account menu ([Section 4.7](#47-shop-application-dependency-provider-yves))
+6. Add the glossary keys and replace the consent placeholders ([Section 5](#5-glossary-keys-and-translations), [Single-Click Consent Text](#single-click-consent-text))
+7. Add the `mollie-single-click` navigation entry ([Section 7](#7-backoffice-configuration))
+8. Run:
+
+```bash
+console transfer:generate
+console propel:install
+console data:import:glossary
+console navigation:build-cache
+console router:cache:warm-up
+console router:cache:warm-up:backend-gateway
+npm run yves
+```
+
+`propel:install` creates the tables `spy_mollie_customer` (one Mollie customer per shopper) and `spy_mollie_single_click_config` (the Back Office setting).
+
+The saved-cards routes (`/customer/saved-cards` and `/customer/saved-cards/remove`) are added by `MollieRouteProviderPlugin` ([Section 4.1](#41-router-dependency-provider)), so no extra route wiring is needed.
+
+#### How Single-Click Payments Work
+
+1. **Login.** `MollieCustomerCustomerTransferExpanderPlugin` adds the shopper's stored Mollie customer (if any) to the logged-in customer. It is refreshed after every successful checkout.
+2. **Payment step.** For a logged-in shopper, the credit card form lists the saved cards (Mollie mandates that can be used with the customer present) and an unchecked "save my card" checkbox. Picking a saved card hides the card fields and the checkbox.
+3. **Order placement, saving a new card.** When the shopper ticks the checkbox, `MollieCustomerCheckoutPostSavePlugin` looks up the shopper's Mollie customer and creates one at Mollie if none exists, storing it with the consent timestamp and version. The payment is then created with `customerId`, `cardToken`, `storeCredentials: true` and `sequenceType: oneoff`, and Mollie saves the card once the payment succeeds.
+4. **Order placement, paying with a saved card.** The payment is created with `customerId`, `mandateId` and `sequenceType: oneoff`, without a card token. If Mollie asks for 3-D Secure, the shopper is redirected as usual.
+5. **Order placement, new card without consent.** A normal card payment, without a Mollie customer.
+6. **Saved cards page.** `/customer/saved-cards` lists the shopper's cards. **Remove** checks that the card belongs to the shopper and revokes the mandate at Mollie, so it can't be charged again.
+7. **Account deletion.** When the shopper's account is deleted, `MollieCustomerAnonymizerPlugin` deletes their Mollie customer at Mollie (which cancels all of their saved cards) and removes the stored row.
+
+If Mollie rejects a payment (for example a saved card that expired, or a Mollie customer that can't be created), the shopper gets the normal payment-failed message and can choose again.
+
+> **Test and live mode**
+>
+> Mollie keeps test and live customers apart: a customer created with a test API key doesn't exist in live mode. `spy_mollie_customer` stores one Mollie customer per shopper, without the mode. When you switch the API key between test and live (for example at go-live), empty `spy_mollie_customer`, otherwise save-card and saved-card payments fail for the affected shoppers.
+
+#### Testing Single-Click Payments
+
+> **Single-click only works in live mode**
+>
+> Mollie confirmed that payments with saved cards only work with a live API key. In test mode, a payment with a saved card still opens Mollie's card form, and paying there saves the card again as a new mandate, so the shopper sees the same card several times. To test single-click, use a live API key and a low-priced product. In live mode the saved card is used and the shopper only sees Mollie's authentication page (3-D Secure) on `pay.mollie.nl`. That domain must be in `KernelConstants::DOMAIN_WHITELIST` (see the Spryker redirect whitelist in [Section 2](#2-setup--configuration)), otherwise the redirect fails with "is not an allowed domain".
+
+1. Switch the feature on in **Administration > Mollie Single-Click Payments**
+2. Log in as a customer, pay with a new real card (live API key), and tick "save my card"
+3. After the order, check that `spy_mollie_customer` has a row for the customer with `consent_given_at` and `consent_version`
+4. Place a second order: the saved card is listed on the payment step. Pick it and pay; Mollie may show its authentication page (3-D Secure) but must not ask for the card details again
+5. Open **Saved cards** in the customer account, remove the card, and check that it no longer shows on the payment step
 
 ## 9. Wallet Payments
 
@@ -1886,7 +2338,21 @@ MollieConstants::MOLLIE_INCLUDE_WALLETS => ['applepay']
 
 ### Apple Pay Integration
 
-Apple Pay allows customers to pay using Face ID, Touch ID, or passcode on supported Apple devices.
+Apple Pay allows customers to pay using Face ID, Touch ID, or passcode on supported Apple devices. The module offers two Apple Pay methods in the checkout:
+
+| | Apple Pay (`mollieApplePayPayment`) | Apple Pay Direct (`mollieApplePayDirectPayment`) |
+|---|---|---|
+| Where the shopper pays | Mollie's hosted payment page | Apple Pay sheet on the shop's payment step |
+| Leaves the shop | Yes, redirected to Mollie | No |
+| Merchant validation | Done by Mollie | Done by the shop through Mollie |
+| Mollie payment method | `applepay` | `creditcard` with an Apple Pay token |
+| Setup | [9.1](#91-apple-pay-hosted) | [9.2](#92-apple-pay-direct) |
+
+> **Important**
+>
+> Enable only **one** of the two methods. Both are mapped to Mollie's `applepay` method, and showing two Apple Pay options in the checkout confuses shoppers.
+
+### 9.1 Apple Pay (Hosted)
 
 #### Setup Steps
 
@@ -1901,7 +2367,254 @@ Apple Pay allows customers to pay using Face ID, Touch ID, or passcode on suppor
 >
 > Apple Pay will only display as a payment option when accessed from compatible devices and browsers. The integration automatically handles device and browser detection.
 
-## 10. Payment Links
+### 9.2 Apple Pay Direct
+
+With Apple Pay Direct the shopper selects Apple Pay on the checkout payment step and confirms the payment in the Apple Pay sheet when continuing to the summary step, without being redirected to Mollie. The shop loads Apple's Apple Pay JS SDK, asks Mollie to validate the merchant session, and sends the Apple Pay payment token to Mollie when the order is placed. Mollie creates the payment as a `creditcard` payment with that token.
+
+#### Requirements
+
+- Apple Pay enabled for your profile in the Mollie Dashboard
+- Your shop domain verified for Apple Pay: download the domain verification file from the Mollie Dashboard and serve it at `https://<your-domain>/.well-known/apple-developer-merchantid-domain-association` (in Spryker: `public/Yves/.well-known/apple-developer-merchantid-domain-association`). The domain sent to Mollie is the host of the storefront request, so it must be the verified domain
+- HTTPS on the storefront
+- A device that supports Apple Pay
+- The `mollie` frontend path registered in `frontend/settings.js` (see [TypeScript Component Recognition](#typescript-component-recognition))
+
+#### Configuration
+
+```php
+$config[MollieConstants::MOLLIE] = [
+    // ... other Mollie configuration
+    MollieConstants::MOLLIE_APPLE_PAY_SDK_JS_SRC => 'https://applepay.cdn-apple.com/jsapi/1.latest/apple-pay-sdk.js',
+    MollieConstants::MOLLIE_APPLE_PAY_VALIDATION_URL_ALLOWED_HOSTS => [
+        'apple-pay-gateway.apple.com',
+        'cn-apple-pay-gateway.apple.com',
+        'apple-pay-gateway-cert.apple.com',
+        'cn-apple-pay-gateway-cert.apple.com',
+    ],
+    MollieConstants::MOLLIE_APPLE_PAY_MERCHANT_COUNTRY_CODE => 'DE',
+    MollieConstants::MOLLIE_INCLUDE_WALLETS => ['applepay'],
+    MollieConstants::MOLLIE_OMS_TO_PAYMENT_METHOD_MAPPING => [
+        // ... other payment methods
+        'mollieApplePayDirectPayment' => 'applepay',
+    ],
+];
+```
+
+| Key | Description |
+|-----|-------------|
+| `MOLLIE_APPLE_PAY_SDK_JS_SRC` | URL of Apple's Apple Pay JS SDK |
+| `MOLLIE_APPLE_PAY_VALIDATION_URL_ALLOWED_HOSTS` | Apple Pay gateway hosts accepted as merchant validation URL. Any other URL is rejected with `400` ("Invalid Apple Pay validation URL.") |
+| `MOLLIE_APPLE_PAY_MERCHANT_COUNTRY_CODE` | Two-letter country code of your business, sent in the Apple Pay payment request |
+| `MOLLIE_INCLUDE_WALLETS` | Must contain `applepay`, otherwise Mollie doesn't return Apple Pay as an active method |
+| `MOLLIE_OMS_TO_PAYMENT_METHOD_MAPPING` | `mollieApplePayDirectPayment` must be mapped to `applepay`. Without it, `ActiveMolliePaymentMethodFilterPlugin` hides the method in the checkout |
+
+> **Note:** Apple Pay Direct payments are always captured automatically, as long as `applepay` isn't in `MOLLIE_PAYMENT_METHOD_MANUAL_CAPTURE`.
+
+#### Integration Steps
+
+1. Add the configuration above
+2. Add `mollieApplePayDirectPayment` to `payment_method.csv` and each store's `payment_method_store.csv` ([Section 3.1](#31-add-mollie-payment-methods-to-csv), [Section 3.2](#32-assign-payment-methods-to-stores)) and import them ([Section 3.3](#33-import-payment-methods)). Leave out `mollieApplePayPayment`, see the note in [Apple Pay Integration](#apple-pay-integration)
+3. Map `MollieConfig::MOLLIE_PAYMENT_APPLE_PAY_DIRECT` to `MolliePaymentStateMachine01` ([Section 3.4](#34-configure-oms--mollie-payment-mapping))
+4. Add `'MollieApplePayDirectPayment/applePayDirect': ['mollie-apple-pay-direct', 'Mollie']` to the payment step's `customForms` ([Section 3.5](#35-add-payment-forms-to-twig))
+5. Register `MollieApplePayDirectPaymentHandlerPlugin` and `MollieApplePayDirectSubFormPlugin` ([Section 4.3](#43-checkout-page-dependency-provider-yves))
+6. Add the glossary keys ([Section 5](#5-glossary-keys-and-translations))
+7. Run:
+
+```bash
+console transfer:generate
+console data:import:payment-method
+console data:import:payment-method-store
+console data:import:glossary
+npm run yves
+```
+
+The merchant validation route `/mollie/apple-pay/create-payment-session` is added by `MollieRouteProviderPlugin` ([Section 4.1](#41-router-dependency-provider)).
+
+#### How It Works
+
+1. On the payment step, the component loads Apple's SDK. If the device or browser can't make Apple Pay payments, the Apple Pay Direct option is disabled.
+2. The shopper selects Apple Pay Direct and submits the payment form. The component stops the submit and opens the Apple Pay sheet with the cart's grand total and currency.
+3. Apple asks for merchant validation. The component posts Apple's validation URL to `/mollie/apple-pay/create-payment-session`; the shop checks the URL against `MOLLIE_APPLE_PAY_VALIDATION_URL_ALLOWED_HOSTS` and requests the Apple Pay payment session from Mollie for the storefront domain.
+4. The shopper confirms with Face ID, Touch ID or passcode. The Apple Pay payment token is written to a hidden field and the payment form is submitted.
+5. The shopper places the order on the summary step. `MollieCheckoutPostSavePlugin` creates the Mollie payment with method `creditcard` and the Apple Pay token. The token is masked in the debug logs.
+6. Status updates arrive through the normal webhook ([Section 15](#15-webhook-handling)) and the order follows `MolliePaymentStateMachine01`.
+
+Supported card networks: Amex, Maestro, Mastercard, Visa, V Pay, Cartes Bancaires.
+
+If the shopper closes the Apple Pay sheet, the submit button is enabled again and no order is placed. If merchant validation fails, the sheet is closed and the shopper sees the `mollie.checkout.payment.apple.pay.direct.unavailable` message.
+
+## 10. Express Checkout
+
+### 10.1 Overview
+
+Express Checkout lets a shopper pay directly from the **cart page** with a wallet, without going through the Spryker checkout steps. The shopper's address and the shipping method are taken from the wallet sheet, Mollie charges the payment, and the module creates the Spryker order afterwards.
+
+All express orders are saved with the payment method `mollieExpressPayment` (provider `MollieExpressPayment`).
+
+### 10.2 Requirements
+
+- Express Checkout and the wallet (e.g. Apple Pay) enabled for your profile in the Mollie Dashboard
+- For Apple Pay: your shop domain verified with Apple. Download the domain verification file from the Mollie Dashboard and serve it at `https://<your-domain>/.well-known/apple-developer-merchantid-domain-association` (in Spryker: `public/Yves/.well-known/apple-developer-merchantid-domain-association`)
+- HTTPS on the storefront (wallets don't work over HTTP)
+- The `mollie` frontend path registered in `frontend/settings.js` (see [TypeScript Component Recognition](#typescript-component-recognition)), because the buttons are rendered by the `mollie-express-checkout-component` TypeScript component
+- A working webhook URL (see [Section 15](#15-webhook-handling)); the webhook links the payment to the order and handles refunds of failed orders
+
+### 10.3 Configuration
+
+```php
+$config[MollieConstants::MOLLIE] = [
+    // ... other Mollie configuration
+    MollieConstants::MOLLIE_EXPRESS_CHECKOUT_JS_SRC => 'https://js.mollie.com/v2/mollie.js?compatible',
+    MollieConstants::MOLLIE_EXPRESS_CHECKOUT_METHODS_ENABLED => [
+        MollieConfig::EXPRESS_METHOD_APPLE_PAY => true,
+        MollieConfig::EXPRESS_METHOD_GOOGLE_PAY => true,
+        MollieConfig::EXPRESS_METHOD_PAYPAL => true,
+    ],
+];
+```
+
+| Key | Description |
+|-----|-------------|
+| `MOLLIE_EXPRESS_CHECKOUT_JS_SRC` | Mollie.js URL used by the express buttons |
+| `MOLLIE_EXPRESS_CHECKOUT_METHODS_ENABLED` | Default on/off per express method |
+
+Whether an express method is shown is resolved in this order:
+
+1. The setting saved in the Back Office under **Administration > Mollie Express Methods** (see [Section 7](#7-backoffice-configuration))
+2. The value in `MOLLIE_EXPRESS_CHECKOUT_METHODS_ENABLED`
+3. Disabled, if the method is in neither
+
+> **Important**
+>
+> A method that is enabled here must also be active for your profile in the Mollie Dashboard, otherwise the button can't be used.
+
+### 10.4 Integration Steps
+
+1. Add the configuration from [Section 10.3](#103-configuration)
+2. Add `mollieExpressPayment` to `payment_method.csv` and each store's `payment_method_store.csv` ([Section 3.1](#31-add-mollie-payment-methods-to-csv), [Section 3.2](#32-assign-payment-methods-to-stores)) and import them ([Section 3.3](#33-import-payment-methods))
+3. Add `MolliePaymentStateMachineExpress01` to `ACTIVE_PROCESSES` and map `MollieConfig::MOLLIE_PAYMENT_EXPRESS` to it ([Section 3.4](#34-configure-oms--mollie-payment-mapping))
+4. Register `MollieExpressCheckoutDoSaveOrderPlugin` as the last order saver ([Section 4.2](#order-savers))
+5. Register the `Mollie/IsPaymentStatusRefunded` condition plugin ([Section 4.5](#condition-plugins))
+6. Register `MollieExpressCheckoutWidget` ([Section 4.7](#47-shop-application-dependency-provider-yves)) and place it on the cart page ([Section 10.5](#105-placing-the-express-checkout-buttons))
+7. Add the glossary keys ([Section 5](#5-glossary-keys-and-translations))
+8. Add the `mollie-express-checkout` navigation entry ([Section 7](#7-backoffice-configuration))
+9. Run:
+
+```bash
+console transfer:generate
+console propel:install
+console data:import:payment-method
+console data:import:payment-method-store
+console data:import:glossary
+console navigation:build-cache
+console oms:process-cache:warm-up
+console router:cache:warm-up
+console router:cache:warm-up:backend-gateway
+npm run yves
+```
+
+> **Router cache**
+>
+> Express Checkout adds new Zed gateway actions. Without `router:cache:warm-up:backend-gateway` the gateway answers `404` for them and creating the express session fails with `500`.
+
+The express routes are added by `MollieRouteProviderPlugin` ([Section 4.1](#41-router-dependency-provider)), and the express webhook handler (`MollieExpressCheckoutPaymentWebhookHandlerPlugin`) is registered by the module itself, so no extra wiring is needed for them.
+
+### 10.5 Placing the Express Checkout Buttons
+
+Render the widget where the buttons should appear, usually next to the "Proceed to checkout" button in the cart summary:
+
+**File:** `src/Pyz/Yves/CartPage/Theme/default/components/molecules/cart-summary/cart-summary.twig`
+
+```twig
+{% widget 'MollieExpressCheckoutWidget' args [] only %}
+    {% block body %}
+        <div class="spacing-top">
+            {{ parent() }}
+        </div>
+    {% endblock %}
+{% endwidget %}
+```
+
+The widget asks `/mollie/express-checkout/resolve-enabled-methods` which methods are enabled and only renders those buttons. Wallet buttons are also only shown on devices and browsers that support the wallet.
+
+### 10.6 How It Works
+
+1. The shopper clicks an express button on the cart page.
+2. The component calls `/mollie/express-checkout/create-session`. The module:
+   - generates an express checkout UUID,
+   - builds the shipping options from the Spryker shipment methods available for the cart (only methods with a price in the store currency are offered),
+   - creates a Mollie session with the cart amount, shipping options and the redirect URL `/mollie/express-checkout/redirect`,
+   - stores the Mollie session ID and the UUID in the shopper's Yves session.
+3. The wallet sheet opens. The shopper chooses an address and a shipping option and confirms.
+4. Mollie charges the payment. The payment's metadata contains the UUID (`expressCheckoutUuid`).
+5. Mollie redirects the shopper to `/mollie/express-checkout/redirect`. The module:
+   - reads the Mollie session ID and the UUID from the shopper's Yves session; if they are missing, an error is logged and the shopper goes back to the cart with "Your express checkout could not be found. Please contact us if you have been charged.",
+   - reads the Mollie session; it must have status `completed`, otherwise the shopper goes back to the cart with "Your express payment was not completed. You have not been charged.",
+   - adds the billing and shipping address, the shipment method chosen in the wallet and the `mollieExpressPayment` payment to the cart, recalculates it, and checks that the grand total equals the amount the shopper paid,
+   - marks both wallet addresses as coming from an external service (`isFromExternalService`), so when a logged-in customer's address book already has the same address, Spryker's `CustomerOrderSavePlugin` reuses it instead of adding a copy on every express order,
+   - places the order; `MollieExpressCheckoutDoSaveOrderPlugin` saves the order's `spy_payment_mollie` row with the UUID, status `open`, and the order reference as description and metadata, in the same transaction as the order,
+   - redirects the shopper to the checkout success page.
+6. Mollie calls the webhook for the payment. `MollieExpressCheckoutPaymentWebhookHandlerPlugin` finds the order's `spy_payment_mollie` row by the UUID and saves the payment ID and status on it. From then on the order follows `MolliePaymentStateMachineExpress01` like any other Mollie payment.
+
+If placing the order fails in step 5, the shopper has already paid, so the payment is refunded automatically, see [Section 10.7](#107-failed-orders-and-automatic-refunds).
+
+> **Webhook before order**
+>
+> Mollie usually calls the webhook in the same second as the redirect, before the order exists. The handler then responds with `404` ("Express checkout payment not found"), and Mollie retries the webhook a minute later, when the order exists. A `404` for the first webhook call of an express payment in the Mollie Dashboard is expected.
+
+A placed express order can later be refunded from the Back Office like any other Mollie order.
+
+### 10.7 Failed Orders and Automatic Refunds
+
+With Express Checkout the shopper pays first and the order is placed afterwards. If placing the order fails, the shopper has already paid, and the module refunds the payment automatically.
+
+Placing the order counts as failed when anything throws while preparing the cart or placing the order, or when the checkout reports an error. Typical causes are a cart that changed after the wallet sheet was opened (the grand total no longer equals the paid amount), a product that went out of stock, or a wallet that returned no address.
+
+There are two cases:
+
+| | No order saved | Order saved, then failed |
+|---|---|---|
+| Example | The cart changed, a product went out of stock | A checkout post-save plugin reported an error |
+| Shopper sees | Cart, "Your order could not be created. Your payment will be refunded automatically." | Same |
+| Order | None | Stays in `payment pending` while the refund is in progress, then moves to `refunded` and is closed after 5 days (or to `failed` if the refund fails) |
+| `spy_payment_mollie` | No row | `status` follows the refund's status at Mollie |
+
+The refund itself works the same in both cases:
+
+1. The redirect logs a `CRITICAL` message ("Express checkout order could not be created after payment.") with the UUID, the Mollie session ID and the errors, saves a row in `spy_mollie_express_checkout_payment_refund` with the UUID and the Mollie session ID, and sends the shopper back to the cart.
+2. When Mollie calls the webhook for the payment, the module finds the row by the UUID and saves the payment ID, payment status, amount and currency. If the payment is `paid`, it creates a refund for the full amount and saves the refund ID and status. The UUID is sent as the idempotency key, so the payment is never refunded twice. If an order was saved, the refund status is also written onto its `spy_payment_mollie` row.
+3. If creating the refund fails, the webhook responds with `500`, a `CRITICAL` message ("Express checkout payment refund could not be created") is logged, and Mollie retries the webhook.
+4. Mollie calls the webhook again when the refund's status changes. The new status is saved on the row, and on the order's `spy_payment_mollie` row if an order exists. Once it is `refunded`, the order moves to `refunded`.
+
+`payment_status` holds the Mollie payment status and `refund_status` the Mollie refund status (`queued`, `pending`, `processing`, `refunded`, `failed`, `canceled`). If `refund_status` is `failed`, refund the payment manually in the Mollie Dashboard.
+
+> **Refund timing**
+>
+> Mollie keeps a new refund pending for about 2 hours, during which it can still be canceled in the Mollie Dashboard. Only after that is it issued and the status changes to `refunded`. The money reaches the shopper's account a few days later, depending on the card issuer.
+>
+> If the Mollie balance is too low, Mollie accepts the refund and queues it until the balance is topped up. Mollie sends no webhook for `queued`, `pending` or `canceled`, so the row keeps showing `pending` until the refund is processed.
+
+To check failed express orders:
+
+```sql
+SELECT express_checkout_uuid, mollie_session_id, transaction_id, payment_status, amount, currency, refund_id, refund_status, created_at
+FROM spy_mollie_express_checkout_payment_refund
+ORDER BY created_at DESC;
+```
+
+### 10.8 Testing Express Checkout
+
+> **Important**
+>
+> Express Checkout doesn't work in Mollie test mode: Mollie.js shows "Express Checkout does not work in test mode." and the wallet sheet doesn't open. Test with a live API key and a low-priced product, on a public HTTPS domain that is verified for Apple Pay.
+
+1. F.e: for Apple Pay, open the shop in a browser that supports Apple Pay, with a card in Apple Wallet
+2. Add a product to the cart and click the express button
+3. Complete the payment in the wallet sheet; you should land on the checkout success page
+4. Check that the order has payment method `mollieExpressPayment`, runs on `MolliePaymentStateMachineExpress01`, and that its `spy_payment_mollie` row has a `transaction_id` and status `paid` after the webhook
+5. To test the refund flow, change the cart in another tab after the wallet sheet has opened, then pay. Check that you land on the cart with the refund message, that no order was created, and that a row appears in `spy_mollie_express_checkout_payment_refund` with a `refund_id` after the webhook
+
+## 11. Payment Links
 
 Payment Links allow merchants to generate shareable URLs that customers can use to complete a payment without going through the standard checkout flow. This is useful for invoicing, customer support scenarios, and manual order processing.
 
@@ -1934,11 +2647,11 @@ The following parameters can be set when generating a payment link:
 
 > **Webhook URL for Payment Links**
 >
-> Payment links use the next-gen webhook endpoint (`mollie/next-gen/webhook`). See [Section 13: Next-Gen Webhooks](#13-next-gen-webhooks) for full webhook configuration details.
+> Payment links use the next-gen webhook endpoint (`mollie/next-gen/webhook`). See [Section 16: Next-Gen Webhooks](#16-next-gen-webhooks) for full webhook configuration details.
 
 ### Backoffice: Creating & Managing Payment Links
 
-> **Note:** Payment link management is visible in the Back Office panel. See [Section 5: Backoffice Configuration](#5-backoffice-configuration) for panel setup instructions.
+> **Note:** Payment link management is visible in the Back Office panel. See [Section 7: Backoffice Configuration](#7-backoffice-configuration) for panel setup instructions.
 
 #### Creating a Link
 
@@ -1967,7 +2680,7 @@ The Payment Links overview table shows:
 
 ### Webhook Events for Payment Links
 
-Payment links use Mollie's Next-Gen Webhooks rather than the legacy webhook mechanism. See [Section 13: Next-Gen Webhooks](#13-next-gen-webhooks) for full details on setup, payload structure, and event types.
+Payment links use Mollie's Next-Gen Webhooks rather than the legacy webhook mechanism. See [Section 16: Next-Gen Webhooks](#16-next-gen-webhooks) for full details on setup, payload structure, and event types.
 
 #### Link-Specific Status Mapping
 
@@ -1993,9 +2706,9 @@ If a payment link expires or is canceled, ensure your OMS handles these states g
 > **Common Test Issues**
 >
 > - If the payment page does not load, verify your API key is a valid test key (`test_`)
-> - If webhook status does not update, check your test webhook URL configuration (see [Section 9: Testing & Debugging](#9-testing--debugging))
+> - If webhook status does not update, check your test webhook URL configuration (see [Test Environment Webhook URL](#3-test-environment-webhook-url))
 
-## 11. Testing & Debugging
+## 12. Testing & Debugging
 
 ### Test Mode Setup
 
@@ -2067,7 +2780,7 @@ When `MOLLIE_DEBUG_MODE` is set to `'Extensive'`, sensitive data is automaticall
 | API errors | Invalid API key or Profile ID | Verify credentials in Mollie Dashboard |
 | Payment link not loading | Invalid or expired test API key | Verify test API key starts with `test_` |
 
-## 12. Production Deployment
+## 13. Production Deployment
 
 ### Pre-Production Checklist
 
@@ -2095,7 +2808,7 @@ $config[MollieConstants::MOLLIE] = [
 > - Always use HTTPS for all production URLs
 > - Implement proper error handling and logging
 
-## 13. Troubleshooting
+## 14. Troubleshooting
 
 ### Payment methods not displaying at checkout
 
@@ -2159,6 +2872,23 @@ $config[MollieConstants::MOLLIE] = [
 3. Test on compatible Apple device with Safari or Chrome
 4. Check that Apple Pay is enabled in device settings
 
+### Apple Pay Direct not working
+
+**Possible Causes:**
+
+- `mollieApplePayDirectPayment` not mapped to `applepay` in `MOLLIE_OMS_TO_PAYMENT_METHOD_MAPPING`, or `applepay` missing from `MOLLIE_INCLUDE_WALLETS` (the method is hidden in the checkout)
+- Device or browser doesn't support Apple Pay (the option is disabled)
+- Storefront domain not verified for Apple Pay (merchant validation fails with `422`)
+- Apple's validation URL host not in `MOLLIE_APPLE_PAY_VALIDATION_URL_ALLOWED_HOSTS` (`400` "Invalid Apple Pay validation URL.")
+- Apple's SDK blocked by the Content Security Policy
+
+**Solutions:**
+
+1. Check the configuration in [Section 9.2](#92-apple-pay-direct)
+2. Check the response of `/mollie/apple-pay/create-payment-session` in the browser's network tab and the debug logs
+3. Verify the domain verification file is reachable at `https://<your-domain>/.well-known/apple-developer-merchantid-domain-association`
+4. Update the CSP to allow `applepay.cdn-apple.com`
+
 ### Payment link not generating
 
 **Possible Causes:**
@@ -2173,7 +2903,49 @@ $config[MollieConstants::MOLLIE] = [
 2. Ensure `amount.value` is a string with two decimal places (e.g., `"25.00"`)
 3. Ensure `expiresAt` follows ISO 8601 format if provided
 
-## 14. Webhook Handling
+### Express checkout buttons not appearing
+
+**Possible Causes:**
+
+- Express method disabled in **Administration > Mollie Express Methods** or in `MOLLIE_EXPRESS_CHECKOUT_METHODS_ENABLED`
+- Express method not active for your profile in the Mollie Dashboard
+- `MollieExpressCheckoutWidget` not registered or not placed in the cart template
+- `MOLLIE_EXPRESS_CHECKOUT_JS_SRC` missing or the frontend not rebuilt
+- Apple Pay domain not verified, or the device/browser doesn't support the wallet
+
+**Solutions:**
+
+1. Check the settings described in [Section 10.3](#103-configuration)
+2. Verify the widget registration and placement ([Section 10.4](#104-integration-steps), [Section 10.5](#105-placing-the-express-checkout-buttons))
+3. Check the browser console and the response of `/mollie/express-checkout/resolve-enabled-methods`
+4. Rebuild the frontend (`npm run yves`)
+
+### Express checkout session can't be created
+
+**Possible Causes:**
+
+- No shipment method is available for the cart, or none has a price in the store currency
+- Invalid API key or Profile ID
+- The Zed gateway router cache was not rebuilt after installing Express Checkout (the gateway answers `404` and `/mollie/express-checkout/create-session` returns `500`)
+
+**Solutions:**
+
+1. Check the shipment methods and their prices for the store in the Back Office
+2. Check the debug logs for the Mollie API response
+3. Run `console router:cache:warm-up:backend-gateway`
+
+### Order failed after express payment
+
+The shopper sees "Your order could not be created. Your payment will be refunded automatically."
+
+1. Check the `CRITICAL` log entry "Express checkout order could not be created after payment." for the reason; it contains the UUID, the Mollie session ID and the errors
+2. Check the row in `spy_mollie_express_checkout_payment_refund` and its `refund_id` and `refund_status` (see [Section 10.7](#107-failed-orders-and-automatic-refunds))
+3. If `refund_status` is `failed`, refund the payment manually in the Mollie Dashboard
+4. If `refund_status` stays `pending`, check the Mollie balance; refunds are queued until it is topped up
+
+If the shopper instead sees "Your express checkout could not be found. Please contact us if you have been charged.", the shopper's Yves session was lost after the payment. No order and no automatic refund exist in that case. Find the payment in the Mollie Dashboard and refund it there.
+
+## 15. Webhook Handling
 
 Webhooks are asynchronous notifications sent by Mollie to your server when payment status changes occur. Proper webhook handling is critical for accurate order processing and payment status updates.
 
@@ -2240,7 +3012,7 @@ Mollie payment statuses map to OMS states as follows:
 | `canceled` | Payment cancelled by customer | Mark as cancelled | `payment_cancelled` |
 | `expired` | Payment expired (timeout) | Mark as expired | `payment_expired` |
 
-> **Payment Links:** Payment links use Next-Gen Webhooks with an expanded event model. See [Section 13: Next-Gen Webhooks for Payment Links](#13-next-gen-webhooks-for-payment-links) for link-specific status handling.
+> **Payment Links:** Payment links use Next-Gen Webhooks with an expanded event model. See [Section 11: Payment Links](#link-specific-status-mapping) for link-specific status handling.
 
 ### Webhook Retry Behavior
 
@@ -2263,7 +3035,7 @@ If your server doesn't respond with HTTP 200, Mollie will retry the webhook:
 >
 > Always respond with HTTP 200 immediately, even if processing hasn't completed. Process the webhook asynchronously if needed to avoid timeouts.
 
-## 15. Next-Gen Webhooks
+## 16. Next-Gen Webhooks
 
 ### What Are Next-Gen Webhooks?
 
@@ -2360,7 +3132,7 @@ The recommended pattern:
 - **Do not expose internal errors** — return a generic `500` on unexpected failures rather than a detailed error message.
 - **Rotate secrets periodically** — update your webhook secret.
 
-## 16. Webhook Error Troubleshooting
+## 17. Webhook Error Troubleshooting
 
 ### Common Webhook Issues
 

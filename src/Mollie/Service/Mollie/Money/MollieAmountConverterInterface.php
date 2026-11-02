@@ -15,4 +15,11 @@ interface MollieAmountConverterInterface
      * @return \Generated\Shared\Transfer\MollieAmountTransfer
      */
     public function convertIntegerToMollieAmount(int $amount, ?string $currency = null): MollieAmountTransfer;
+
+    /**
+     * @param \Generated\Shared\Transfer\MollieAmountTransfer $mollieAmountTransfer
+     *
+     * @return int
+     */
+    public function convertMollieAmountToInteger(MollieAmountTransfer $mollieAmountTransfer): int;
 }

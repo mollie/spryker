@@ -60,6 +60,18 @@ class PaymentLinkFormDataProvider
      */
     protected function getAvailablePaymentMethods(): array
     {
-        return $this->config->getMollieOmsToPaymentMethodMapping();
+        $paymentMethodMapping = $this->config->getMollieOmsToPaymentMethodMapping();
+        $bnplPaymentMethods = $this->config->getBNPLPaymentMethods();
+
+        $availablePaymentMethods = [];
+        foreach ($paymentMethodMapping as $paymentMethodKey => $molliePaymentMethod) {
+            if (in_array($molliePaymentMethod, $bnplPaymentMethods, true)) {
+                continue;
+            }
+
+            $availablePaymentMethods[$paymentMethodKey] = $molliePaymentMethod;
+        }
+
+        return $availablePaymentMethods;
     }
 }

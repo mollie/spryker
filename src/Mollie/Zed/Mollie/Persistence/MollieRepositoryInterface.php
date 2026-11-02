@@ -1,9 +1,13 @@
 <?php
 
+
 declare(strict_types=1);
 
 namespace Mollie\Zed\Mollie\Persistence;
 
+use Generated\Shared\Transfer\MollieCustomerTransfer;
+use Generated\Shared\Transfer\MollieExpressCheckoutConfigCriteriaTransfer;
+use Generated\Shared\Transfer\MollieExpressCheckoutPaymentRefundTransfer;
 use Generated\Shared\Transfer\MollieItemPaymentCaptureTransfer;
 use Generated\Shared\Transfer\MolliePaymentLinkTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodConfigCollectionTransfer;
@@ -57,4 +61,32 @@ interface MollieRepositoryInterface
     public function getPaymentMethodConfigByCriteria(
         MolliePaymentMethodConfigCriteriaTransfer $criteriaTransfer,
     ): ?MolliePaymentMethodConfigTransfer;
+
+    /**
+     * @param \Generated\Shared\Transfer\MollieExpressCheckoutConfigCriteriaTransfer $criteriaTransfer
+     *
+     * @return array<string, bool>
+     */
+    public function getPersistentExpressCheckoutMethodConfig(
+        MollieExpressCheckoutConfigCriteriaTransfer $criteriaTransfer,
+    ): array;
+
+    /**
+     * @param string $expressCheckoutUuid
+     *
+     * @return \Generated\Shared\Transfer\MollieExpressCheckoutPaymentRefundTransfer|null
+     */
+    public function findExpressCheckoutPaymentRefundByExpressCheckoutUuid(string $expressCheckoutUuid): ?MollieExpressCheckoutPaymentRefundTransfer;
+
+    /**
+     * @param int $idCustomer
+     *
+     * @return \Generated\Shared\Transfer\MollieCustomerTransfer|null
+     */
+    public function findMollieCustomer(int $idCustomer): ?MollieCustomerTransfer;
+
+    /**
+     * @return bool|null
+     */
+    public function findSingleClickConfig(): ?bool;
 }

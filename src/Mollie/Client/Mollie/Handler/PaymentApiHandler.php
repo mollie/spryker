@@ -1,5 +1,6 @@
 <?php
 
+
 declare(strict_types=1);
 
 namespace Mollie\Client\Mollie\Handler;
@@ -42,7 +43,7 @@ class PaymentApiHandler implements PaymentApiHandlerInterface
     /**
      * @param \Generated\Shared\Transfer\MollieApiRequestTransfer $mollieApiRequestTransfer
      *
-     * @return array<string, string>
+     * @return array<string, mixed>
      */
     public function createAdditionalParameters(MollieApiRequestTransfer $mollieApiRequestTransfer): array
     {
@@ -50,7 +51,7 @@ class PaymentApiHandler implements PaymentApiHandlerInterface
         $paymentTransfer = $mollieApiRequestTransfer->getQuote()->getPayment();
         switch ($paymentTransfer->getPaymentMethod()) {
             case SharedConfig::MOLLIE_PAYMENT_CREDIT_CARD:
-                $additionalData[MollieConfig::REQUEST_PARAMETER_CREATE_PAYMENT_CARD_TOKEN] = $paymentTransfer->getMollieCreditCardPayment()->getCardToken();
+                $additionalData = $this->createCreditCardParameters($mollieApiRequestTransfer->getQuote());
 
                 break;
             case SharedConfig::MOLLIE_PAYMENT_PAYPAL:
@@ -71,6 +72,12 @@ class PaymentApiHandler implements PaymentApiHandlerInterface
                 $additionalData[MollieConfig::REQUEST_PARAMETER_CREATE_PAYMENT_APPLE_PAY_PAYMENT_TOKEN] = $paymentTransfer->getMollieApplePayPayment()->getApplePayPaymentToken() ?? '';
 
                 break;
+            case SharedConfig::MOLLIE_PAYMENT_APPLE_PAY_DIRECT:
+                $mollieApplePayDirectPaymentTransfer = $paymentTransfer->getMollieApplePayDirectPaymentOrFail();
+                $applePayPaymentToken = $mollieApplePayDirectPaymentTransfer->getApplePayPaymentTokenOrFail();
+                $additionalData[MollieConfig::REQUEST_PARAMETER_CREATE_PAYMENT_APPLE_PAY_PAYMENT_TOKEN] = $applePayPaymentToken;
+
+                break;
             case SharedConfig::MOLLIE_PAYMENT_IDEAL_IN3:
                 $additionalData[MollieConfig::REQUEST_PARAMETER_CREATE_PAYMENT_IDEAL_IN3_CONSUMER_DATE_OF_BIRTH] = $mollieApiRequestTransfer->getQuote()->getCustomer()?->getDateOfBirth();
 
@@ -80,6 +87,66 @@ class PaymentApiHandler implements PaymentApiHandlerInterface
         }
 
         return $additionalData;
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
+     *
+     * @return array<string, mixed>
+     */
+    protected function createCreditCardParameters(QuoteTransfer $quoteTransfer): array
+    {
+        $mollieCreditCardPaymentTransfer = $quoteTransfer->getPayment()->getMollieCreditCardPayment();
+        if ($mollieCreditCardPaymentTransfer->getMandateId()) {
+            return [];
+        }
+
+        $additionalData = [MollieConfig::REQUEST_PARAMETER_CREATE_PAYMENT_CARD_TOKEN => $mollieCreditCardPaymentTransfer->getCardToken()];
+        if ($mollieCreditCardPaymentTransfer->getIsSaveCardConsentGiven()) {
+            $additionalData[MollieConfig::REQUEST_PARAMETER_CREATE_PAYMENT_STORE_CREDENTIALS] = true;
+        }
+
+        return $additionalData;
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
+     *
+     * @return string|null
+     */
+    public function findMollieCustomerId(QuoteTransfer $quoteTransfer): ?string
+    {
+        $paymentTransfer = $quoteTransfer->getPayment();
+        if ($paymentTransfer->getPaymentMethod() !== SharedConfig::MOLLIE_PAYMENT_CREDIT_CARD) {
+            return null;
+        }
+
+        $mollieCreditCardPaymentTransfer = $paymentTransfer->getMollieCreditCardPayment();
+        if (!$mollieCreditCardPaymentTransfer->getMandateId() && !$mollieCreditCardPaymentTransfer->getIsSaveCardConsentGiven()) {
+            return null;
+        }
+
+        $mollieCustomerTransfer = $quoteTransfer->getCustomer()->getMollieCustomer();
+        if (!$mollieCustomerTransfer) {
+            return null;
+        }
+
+        return $mollieCustomerTransfer->getMollieCustomerId();
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
+     *
+     * @return string|null
+     */
+    public function findMandateId(QuoteTransfer $quoteTransfer): ?string
+    {
+        $paymentTransfer = $quoteTransfer->getPayment();
+        if ($paymentTransfer->getPaymentMethod() !== SharedConfig::MOLLIE_PAYMENT_CREDIT_CARD) {
+            return null;
+        }
+
+        return $paymentTransfer->getMollieCreditCardPayment()->getMandateId();
     }
 
     /**
@@ -96,7 +163,7 @@ class PaymentApiHandler implements PaymentApiHandlerInterface
             givenName: $customerAddress->getFirstName(),
             familyName: $customerAddress->getLastName(),
             organizationName: $customerAddress->getCompany(),
-            streetAndNumber: $customerAddress->getAddress1(),
+            streetAndNumber: trim($customerAddress->getAddress1() . ' ' . $customerAddress->getAddress2()),
             postalCode: $customerAddress->getZipCode(),
             email: $customerAddress->getEmail() ?? $quoteTransfer->getCustomer()?->getEmail(),
             phone: $customerAddress->getPhone(),
@@ -109,11 +176,10 @@ class PaymentApiHandler implements PaymentApiHandlerInterface
 
     /**
      * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
-     * @param string $method
      *
-     * @return \Mollie\Api\Http\Data\DataCollection<array<mixed>>|null
+     * @return \Mollie\Api\Http\Data\DataCollection<array<mixed>>
      */
-    public function createLines(QuoteTransfer $quoteTransfer, string $method): ?DataCollection
+    public function createLines(QuoteTransfer $quoteTransfer): DataCollection
     {
         $items = $quoteTransfer->getItems();
         $currencyCode = $quoteTransfer->getCurrency()->getCode();
@@ -125,7 +191,7 @@ class PaymentApiHandler implements PaymentApiHandlerInterface
 
             $unitPrice = $this->mollieService->convertIntegerToMollieAmount($item->getUnitPrice(), $currencyCode);
             $totalAmount = $this->mollieService->convertIntegerToMollieAmount($item->getSumPriceToPayAggregation(), $currencyCode);
-            $discountAmount = $this->mollieService->convertIntegerToMollieAmount($item->getUnitDiscountAmountAggregation(), $currencyCode);
+            $discountAmount = $this->mollieService->convertIntegerToMollieAmount($item->getSumDiscountAmountAggregation(), $currencyCode);
             $vatRate = number_format($item->getTaxRate(), 2);
             $vatAmount = $this->mollieService->convertIntegerToMollieAmount($item->getSumTaxAmountFullAggregation(), $currencyCode);
 

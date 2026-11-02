@@ -4,7 +4,8 @@
     <table name="spy_payment_mollie" phpName="SpyPaymentMollie">
         <column name="id_payment_mollie" required="true" type="INTEGER" autoIncrement="true" primaryKey="true"/>
         <column name="fk_sales_order" required="true" type="INTEGER"/>
-        <column name="transaction_id" required="true" type="VARCHAR" size="255"/>
+        <column name="transaction_id" required="false" type="VARCHAR" size="255"/>
+        <column name="express_checkout_uuid" required="false" type="VARCHAR" size="36"/>
         <column name="status" required="true" type="VARCHAR" size="64"/>
         <column name="is_cancelable" type="BOOLEAN" />
 
@@ -22,6 +23,10 @@
         <index name="index-spy_payment_mollie-transaction_id">
             <index-column name="transaction_id"/>
         </index>
+
+        <unique name="spy_payment_mollie-unique-express_checkout_uuid">
+            <unique-column name="express_checkout_uuid"/>
+        </unique>
 
         <behavior name="timestampable"/>
         <id-method-parameter value="spy_payment_mollie_pk_seq"/>
@@ -88,7 +93,8 @@
         <column name="type" type="VARCHAR"/>
         <column name="sequence_type" type="VARCHAR" size="15"/>
         <column name="currency" required="true" type="VARCHAR" size="3"/>
-        <column name="amount" required="true" type="INTEGER"/>
+        <column name="amount" type="INTEGER"/>
+        <column name="minimum_amount" type="INTEGER"/>
         <column name="status" type="VARCHAR" size="64"/>
         <column name="expiry_date" type="DATETIME"/>
         <column name="redirect_url" type="VARCHAR" size="500"/>
@@ -121,6 +127,73 @@
             <unique-column name="mollie_id"/>
             <unique-column name="currency_code"/>
         </unique>
+    </table>
+
+    <table name="spy_mollie_express_checkout_config">
+        <column name="id_mollie_express_checkout_config" type="INTEGER" primaryKey="true" autoIncrement="true"/>
+        <column name="express_method" type="VARCHAR" size="64" required="true"/>
+        <column name="is_active" type="BOOLEAN" required="true" default="false"/>
+
+        <unique name="spy_mollie_express_checkout_config-unique-express_method">
+            <unique-column name="express_method"/>
+        </unique>
+
+        <id-method-parameter value="spy_mollie_express_checkout_config_pk_seq"/>
+
+        <behavior name="timestampable"/>
+    </table>
+
+    <table name="spy_mollie_customer" idMethod="native" allowPkInsert="true" phpName="SpyMollieCustomer">
+        <column name="id_mollie_customer" required="true" type="INTEGER" autoIncrement="true" primaryKey="true"/>
+        <column name="mollie_customer_id" required="true" type="VARCHAR" size="64"/>
+        <column name="fk_customer" required="true" type="INTEGER"/>
+        <column name="consent_given_at" type="TIMESTAMP" required="false"/>
+        <column name="consent_version" type="VARCHAR" size="32" required="false"/>
+
+        <foreign-key name="spy_mollie_customer-fk_customer" foreignTable="spy_customer" phpName="SpyCustomer" onDelete="CASCADE">
+            <reference foreign="id_customer" local="fk_customer"/>
+        </foreign-key>
+
+        <unique name="spy_mollie_customer-unique-fk_customer">
+            <unique-column name="fk_customer"/>
+        </unique>
+
+        <index name="index-spy_mollie_customer-mollie_customer_id">
+            <index-column name="mollie_customer_id"/>
+        </index>
+
+        <id-method-parameter value="spy_mollie_customer_pk_seq"/>
+
+        <behavior name="timestampable"/>
+    </table>
+
+    <table name="spy_mollie_single_click_config">
+        <column name="id_mollie_single_click_config" type="INTEGER" primaryKey="true" autoIncrement="true"/>
+        <column name="is_active" type="BOOLEAN" required="true" default="false"/>
+
+        <id-method-parameter value="spy_mollie_single_click_config_pk_seq"/>
+
+        <behavior name="timestampable"/>
+    </table>
+
+    <table name="spy_mollie_express_checkout_payment_refund" phpName="SpyMollieExpressCheckoutPaymentRefund">
+        <column name="id_mollie_express_checkout_payment_refund" type="INTEGER" primaryKey="true" autoIncrement="true"/>
+        <column name="express_checkout_uuid" type="VARCHAR" size="36" required="true"/>
+        <column name="mollie_session_id" type="VARCHAR" size="255" required="true"/>
+        <column name="transaction_id" type="VARCHAR" size="255" required="false"/>
+        <column name="payment_status" type="VARCHAR" size="64" required="false"/>
+        <column name="amount" type="INTEGER" required="false"/>
+        <column name="currency" type="VARCHAR" size="3" required="false"/>
+        <column name="refund_id" type="VARCHAR" size="255" required="false"/>
+        <column name="refund_status" type="VARCHAR" size="64" required="false"/>
+
+        <unique name="spy_mollie_express_checkout_payment_refund-unique-express_checkout_uuid">
+            <unique-column name="express_checkout_uuid"/>
+        </unique>
+
+        <id-method-parameter value="spy_mollie_express_checkout_payment_refund_pk_seq"/>
+
+        <behavior name="timestampable"/>
     </table>
 
 </database>

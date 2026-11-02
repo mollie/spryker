@@ -1,15 +1,28 @@
 <?php
 
-declare(strict_types = 1);
+
+declare(strict_types=1);
 
 namespace Mollie\Client\Mollie\Zed;
 
+use Generated\Shared\Transfer\MollieExpressCheckoutConfigCollectionTransfer;
+use Generated\Shared\Transfer\MollieExpressCheckoutConfigCriteriaTransfer;
+use Generated\Shared\Transfer\MollieExpressCheckoutOrderRequestTransfer;
+use Generated\Shared\Transfer\MollieExpressCheckoutOrderResponseTransfer;
+use Generated\Shared\Transfer\MollieExpressCheckoutPaymentRefundTransfer;
+use Generated\Shared\Transfer\MollieExpressCheckoutShippingOptionsRequestTransfer;
+use Generated\Shared\Transfer\MollieExpressCheckoutShippingOptionsResponseTransfer;
 use Generated\Shared\Transfer\MolliePaymentCaptureResponseTransfer;
 use Generated\Shared\Transfer\MolliePaymentLinkTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodConfigCollectionTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodConfigCriteriaTransfer;
 use Generated\Shared\Transfer\MolliePaymentTransfer;
 use Generated\Shared\Transfer\MollieRefundResponseTransfer;
+use Generated\Shared\Transfer\MollieSavedCardRemoveRequestTransfer;
+use Generated\Shared\Transfer\MollieSavedCardRemoveResponseTransfer;
+use Generated\Shared\Transfer\MollieSingleClickPaymentDataRequestTransfer;
+use Generated\Shared\Transfer\MollieSingleClickPaymentDataTransfer;
+use Generated\Shared\Transfer\MollieWebhookResponseTransfer;
 use Generated\Shared\Transfer\OrderCollectionRequestTransfer;
 use Generated\Shared\Transfer\OrderCollectionResponseTransfer;
 use Spryker\Client\ZedRequest\ZedRequestClientInterface;
@@ -88,5 +101,124 @@ class MollieStub implements MollieStubInterface
             ->call('/mollie/gateway/get-payment-method-config-collection', $molliePaymentMethodConfigCriteriaTransfer);
 
         return $molliePaymentMethodConfigCollectionTransfer;
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MollieSingleClickPaymentDataRequestTransfer $mollieSingleClickPaymentDataRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieSingleClickPaymentDataTransfer
+     */
+    public function getSingleClickPaymentData(
+        MollieSingleClickPaymentDataRequestTransfer $mollieSingleClickPaymentDataRequestTransfer,
+    ): MollieSingleClickPaymentDataTransfer {
+        /** @var \Generated\Shared\Transfer\MollieSingleClickPaymentDataTransfer $mollieSingleClickPaymentDataTransfer */
+        $mollieSingleClickPaymentDataTransfer = $this->zedStub
+            ->call('/mollie/gateway/get-single-click-payment-data', $mollieSingleClickPaymentDataRequestTransfer);
+
+        return $mollieSingleClickPaymentDataTransfer;
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MollieExpressCheckoutConfigCriteriaTransfer $mollieExpressCheckoutConfigCriteriaTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieExpressCheckoutConfigCollectionTransfer
+     */
+    public function getExpressCheckoutConfigCollection(
+        MollieExpressCheckoutConfigCriteriaTransfer $mollieExpressCheckoutConfigCriteriaTransfer,
+    ): MollieExpressCheckoutConfigCollectionTransfer {
+        /** @var \Generated\Shared\Transfer\MollieExpressCheckoutConfigCollectionTransfer $mollieExpressCheckoutConfigCollectionTransfer */
+        $mollieExpressCheckoutConfigCollectionTransfer = $this->zedStub
+            ->call('/mollie/gateway/get-express-checkout-config-collection', $mollieExpressCheckoutConfigCriteriaTransfer);
+
+        return $mollieExpressCheckoutConfigCollectionTransfer;
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MollieExpressCheckoutOrderRequestTransfer $mollieExpressCheckoutOrderRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieExpressCheckoutOrderResponseTransfer
+     */
+    public function placeExpressCheckoutOrder(
+        MollieExpressCheckoutOrderRequestTransfer $mollieExpressCheckoutOrderRequestTransfer,
+    ): MollieExpressCheckoutOrderResponseTransfer {
+        /** @var \Generated\Shared\Transfer\MollieExpressCheckoutOrderResponseTransfer $mollieExpressCheckoutOrderResponseTransfer */
+        $mollieExpressCheckoutOrderResponseTransfer = $this->zedStub
+            ->call('/mollie/gateway/place-express-checkout-order', $mollieExpressCheckoutOrderRequestTransfer);
+
+        return $mollieExpressCheckoutOrderResponseTransfer;
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MollieExpressCheckoutShippingOptionsRequestTransfer $mollieExpressCheckoutShippingOptionsRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieExpressCheckoutShippingOptionsResponseTransfer
+     */
+    public function getExpressCheckoutShippingOptions(
+        MollieExpressCheckoutShippingOptionsRequestTransfer $mollieExpressCheckoutShippingOptionsRequestTransfer,
+    ): MollieExpressCheckoutShippingOptionsResponseTransfer {
+        /** @var \Generated\Shared\Transfer\MollieExpressCheckoutShippingOptionsResponseTransfer $mollieExpressCheckoutShippingOptionsResponseTransfer */
+        $mollieExpressCheckoutShippingOptionsResponseTransfer = $this->zedStub
+            ->call('/mollie/gateway/get-express-checkout-shipping-options', $mollieExpressCheckoutShippingOptionsRequestTransfer);
+
+        return $mollieExpressCheckoutShippingOptionsResponseTransfer;
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MollieExpressCheckoutPaymentRefundTransfer $mollieExpressCheckoutPaymentRefundTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieExpressCheckoutPaymentRefundTransfer
+     */
+    public function createExpressCheckoutPaymentRefund(
+        MollieExpressCheckoutPaymentRefundTransfer $mollieExpressCheckoutPaymentRefundTransfer,
+    ): MollieExpressCheckoutPaymentRefundTransfer {
+        /** @var \Generated\Shared\Transfer\MollieExpressCheckoutPaymentRefundTransfer $mollieExpressCheckoutPaymentRefundTransfer */
+        $mollieExpressCheckoutPaymentRefundTransfer = $this->zedStub
+            ->call('/mollie/gateway/create-express-checkout-payment-refund', $mollieExpressCheckoutPaymentRefundTransfer);
+
+        return $mollieExpressCheckoutPaymentRefundTransfer;
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MolliePaymentTransfer $molliePaymentTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieWebhookResponseTransfer
+     */
+    public function processExpressCheckoutPaymentWebhook(MolliePaymentTransfer $molliePaymentTransfer): MollieWebhookResponseTransfer
+    {
+        /** @var \Generated\Shared\Transfer\MollieWebhookResponseTransfer $mollieWebhookResponseTransfer */
+        $mollieWebhookResponseTransfer = $this->zedStub
+            ->call('/mollie/gateway/process-express-checkout-payment-webhook', $molliePaymentTransfer);
+
+        return $mollieWebhookResponseTransfer;
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MollieSingleClickPaymentDataRequestTransfer $mollieSingleClickPaymentDataRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieSingleClickPaymentDataTransfer
+     */
+    public function getCustomerSavedCards(
+        MollieSingleClickPaymentDataRequestTransfer $mollieSingleClickPaymentDataRequestTransfer,
+    ): MollieSingleClickPaymentDataTransfer {
+        /** @var \Generated\Shared\Transfer\MollieSingleClickPaymentDataTransfer $mollieSingleClickPaymentDataTransfer */
+        $mollieSingleClickPaymentDataTransfer = $this->zedStub
+            ->call('/mollie/gateway/get-customer-saved-cards', $mollieSingleClickPaymentDataRequestTransfer);
+
+        return $mollieSingleClickPaymentDataTransfer;
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MollieSavedCardRemoveRequestTransfer $mollieSavedCardRemoveRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\MollieSavedCardRemoveResponseTransfer
+     */
+    public function removeSavedCard(
+        MollieSavedCardRemoveRequestTransfer $mollieSavedCardRemoveRequestTransfer,
+    ): MollieSavedCardRemoveResponseTransfer {
+        /** @var \Generated\Shared\Transfer\MollieSavedCardRemoveResponseTransfer $mollieSavedCardRemoveResponseTransfer */
+        $mollieSavedCardRemoveResponseTransfer = $this->zedStub
+            ->call('/mollie/gateway/remove-saved-card', $mollieSavedCardRemoveRequestTransfer);
+
+        return $mollieSavedCardRemoveResponseTransfer;
     }
 }

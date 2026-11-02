@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<statemachine
+        xmlns="http://static.spryker.com"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://static.spryker.com http://static.spryker.com/oms-01.xsd">
+
+    <process name="MollieExpressRefund">
+        <transitions>
+            <transition condition="Mollie/IsPaymentStatusRefunded">
+                <source>payment pending</source>
+                <target>refunded</target>
+                <event>check payment</event>
+            </transition>
+        </transitions>
+    </process>
+
+</statemachine>

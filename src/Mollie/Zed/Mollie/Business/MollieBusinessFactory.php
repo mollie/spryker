@@ -8,10 +8,34 @@ use Mollie\Client\Mollie\MollieClientInterface;
 use Mollie\Service\Mollie\MollieServiceInterface;
 use Mollie\Zed\Mollie\Business\Calculator\OrderItem\OrderItemGrossAmountCalculator;
 use Mollie\Zed\Mollie\Business\Calculator\OrderItem\OrderItemGrossAmountCalculatorInterface;
+use Mollie\Zed\Mollie\Business\ExpressCheckout\ExpressCheckoutConfigReader;
+use Mollie\Zed\Mollie\Business\ExpressCheckout\ExpressCheckoutConfigReaderInterface;
+use Mollie\Zed\Mollie\Business\ExpressCheckout\ExpressCheckoutConfigWriter;
+use Mollie\Zed\Mollie\Business\ExpressCheckout\ExpressCheckoutConfigWriterInterface;
+use Mollie\Zed\Mollie\Business\ExpressCheckout\Order\Expander\AddressExpander;
+use Mollie\Zed\Mollie\Business\ExpressCheckout\Order\Expander\ExpressCheckoutQuoteExpanderInterface;
+use Mollie\Zed\Mollie\Business\ExpressCheckout\Order\Expander\PaymentExpander;
+use Mollie\Zed\Mollie\Business\ExpressCheckout\Order\Expander\ShipmentMethodExpander;
+use Mollie\Zed\Mollie\Business\ExpressCheckout\Order\ExpressCheckoutOrderPlacer;
+use Mollie\Zed\Mollie\Business\ExpressCheckout\Order\ExpressCheckoutOrderPlacerInterface;
+use Mollie\Zed\Mollie\Business\ExpressCheckout\Order\ExpressCheckoutQuotePreparer;
+use Mollie\Zed\Mollie\Business\ExpressCheckout\Order\ExpressCheckoutQuotePreparerInterface;
+use Mollie\Zed\Mollie\Business\ExpressCheckout\Refund\ExpressCheckoutPaymentRefunder;
+use Mollie\Zed\Mollie\Business\ExpressCheckout\Refund\ExpressCheckoutPaymentRefunderInterface;
+use Mollie\Zed\Mollie\Business\ExpressCheckout\Refund\ExpressCheckoutPaymentRefundRequester;
+use Mollie\Zed\Mollie\Business\ExpressCheckout\Refund\ExpressCheckoutPaymentRefundRequesterInterface;
+use Mollie\Zed\Mollie\Business\ExpressCheckout\Refund\ExpressCheckoutPaymentRefundStatusUpdater;
+use Mollie\Zed\Mollie\Business\ExpressCheckout\Refund\ExpressCheckoutPaymentRefundStatusUpdaterInterface;
+use Mollie\Zed\Mollie\Business\ExpressCheckout\Shipping\ExpressCheckoutShippingOptionsProvider;
+use Mollie\Zed\Mollie\Business\ExpressCheckout\Shipping\ExpressCheckoutShippingOptionsProviderInterface;
+use Mollie\Zed\Mollie\Business\ExpressCheckout\Webhook\ExpressCheckoutPaymentWebhookProcessor;
+use Mollie\Zed\Mollie\Business\ExpressCheckout\Webhook\ExpressCheckoutPaymentWebhookProcessorInterface;
 use Mollie\Zed\Mollie\Business\Filter\MolliePaymentMethodsFilter;
 use Mollie\Zed\Mollie\Business\Filter\MolliePaymentMethodsFilterInterface;
 use Mollie\Zed\Mollie\Business\Filter\MollieRefundFilter;
 use Mollie\Zed\Mollie\Business\Filter\MollieRefundFilterInterface;
+use Mollie\Zed\Mollie\Business\Handler\ExpressCheckoutMolliePaymentHandler;
+use Mollie\Zed\Mollie\Business\Handler\ExpressCheckoutMolliePaymentHandlerInterface;
 use Mollie\Zed\Mollie\Business\Handler\MollieExpirationWarningHandler;
 use Mollie\Zed\Mollie\Business\Handler\MollieExpirationWarningHandlerInterface;
 use Mollie\Zed\Mollie\Business\Handler\MollieMailHandler;
@@ -24,6 +48,8 @@ use Mollie\Zed\Mollie\Business\Mapper\Capture\CaptureMapper;
 use Mollie\Zed\Mollie\Business\Mapper\Capture\CaptureMapperInterface;
 use Mollie\Zed\Mollie\Business\Mapper\Order\OrderMapper;
 use Mollie\Zed\Mollie\Business\Mapper\Order\OrderMapperInterface;
+use Mollie\Zed\Mollie\Business\Mapper\PaymentLink\PaymentLinkOrderMapper;
+use Mollie\Zed\Mollie\Business\Mapper\PaymentLink\PaymentLinkOrderMapperInterface;
 use Mollie\Zed\Mollie\Business\Mapper\Refund\MollieRefundMapper;
 use Mollie\Zed\Mollie\Business\Mapper\Refund\MollieRefundMapperInterface;
 use Mollie\Zed\Mollie\Business\Order\OrderUpdater;
@@ -39,11 +65,28 @@ use Mollie\Zed\Mollie\Business\Processor\PaymentLink\PaymentLinkProcessor;
 use Mollie\Zed\Mollie\Business\Processor\PaymentLink\PaymentLinkProcessorInterface;
 use Mollie\Zed\Mollie\Business\Processor\Refund\RefundProcessor;
 use Mollie\Zed\Mollie\Business\Processor\Refund\RefundProcessorInterface;
+use Mollie\Zed\Mollie\Business\SingleClick\MollieCustomerDeleter;
+use Mollie\Zed\Mollie\Business\SingleClick\MollieCustomerDeleterInterface;
+use Mollie\Zed\Mollie\Business\SingleClick\MollieCustomerExpander;
+use Mollie\Zed\Mollie\Business\SingleClick\MollieCustomerExpanderInterface;
+use Mollie\Zed\Mollie\Business\SingleClick\MollieCustomerProvider;
+use Mollie\Zed\Mollie\Business\SingleClick\MollieCustomerProviderInterface;
+use Mollie\Zed\Mollie\Business\SingleClick\SavedCardReader;
+use Mollie\Zed\Mollie\Business\SingleClick\SavedCardReaderInterface;
+use Mollie\Zed\Mollie\Business\SingleClick\SavedCardRemover;
+use Mollie\Zed\Mollie\Business\SingleClick\SavedCardRemoverInterface;
+use Mollie\Zed\Mollie\Business\SingleClick\SingleClickConfigReader;
+use Mollie\Zed\Mollie\Business\SingleClick\SingleClickConfigReaderInterface;
+use Mollie\Zed\Mollie\Business\SingleClick\SingleClickConfigWriter;
+use Mollie\Zed\Mollie\Business\SingleClick\SingleClickConfigWriterInterface;
 use Mollie\Zed\Mollie\Business\Writer\MolliePaymentWriter;
 use Mollie\Zed\Mollie\Business\Writer\MolliePaymentWriterInterface;
+use Mollie\Zed\Mollie\Dependency\Facade\MollieToCalculationFacadeInterface;
+use Mollie\Zed\Mollie\Dependency\Facade\MollieToCheckoutFacadeInterface;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToLocaleFacadeInterface;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToMailFacadeInterface;
 use Mollie\Zed\Mollie\Dependency\Facade\MollieToOmsInterface;
+use Mollie\Zed\Mollie\Dependency\Facade\MollieToShipmentFacadeInterface;
 use Mollie\Zed\Mollie\Dependency\MollieToStorageClientInterface;
 use Mollie\Zed\Mollie\Dependency\Service\MollieToUtilEncodingServiceInterface;
 use Mollie\Zed\Mollie\MollieDependencyProvider;
@@ -315,6 +358,264 @@ class MollieBusinessFactory extends AbstractBusinessFactory
         return new PaymentLinkProcessor(
             $this->getMollieService(),
             $this->getConfig(),
+            $this->createPaymentLinkOrderMapper(),
+        );
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Business\Mapper\PaymentLink\PaymentLinkOrderMapperInterface
+     */
+    public function createPaymentLinkOrderMapper(): PaymentLinkOrderMapperInterface
+    {
+        return new PaymentLinkOrderMapper(
+            $this->getMollieService(),
+        );
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Business\ExpressCheckout\ExpressCheckoutConfigReaderInterface
+     */
+    public function createExpressCheckoutConfigReader(): ExpressCheckoutConfigReaderInterface
+    {
+        return new ExpressCheckoutConfigReader(
+            $this->getConfig(),
+            $this->getRepository(),
+        );
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Business\ExpressCheckout\ExpressCheckoutConfigWriterInterface
+     */
+    public function createExpressCheckoutConfigWriter(): ExpressCheckoutConfigWriterInterface
+    {
+        return new ExpressCheckoutConfigWriter(
+            $this->getEntityManager(),
+            $this->getConfig(),
+        );
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Business\Handler\ExpressCheckoutMolliePaymentHandlerInterface
+     */
+    public function createExpressCheckoutMolliePaymentHandler(): ExpressCheckoutMolliePaymentHandlerInterface
+    {
+        return new ExpressCheckoutMolliePaymentHandler(
+            $this->getEntityManager(),
+        );
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Business\ExpressCheckout\Order\ExpressCheckoutOrderPlacerInterface
+     */
+    public function createExpressCheckoutOrderPlacer(): ExpressCheckoutOrderPlacerInterface
+    {
+        return new ExpressCheckoutOrderPlacer(
+            $this->createExpressCheckoutQuotePreparer(),
+            $this->getCheckoutFacade(),
+        );
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Business\ExpressCheckout\Order\ExpressCheckoutQuotePreparerInterface
+     */
+    public function createExpressCheckoutQuotePreparer(): ExpressCheckoutQuotePreparerInterface
+    {
+        return new ExpressCheckoutQuotePreparer($this->getExpressCheckoutOrderQuoteExpanders(), $this->getCalculationFacade());
+    }
+
+    /**
+     * @return array<\Mollie\Zed\Mollie\Business\ExpressCheckout\Order\Expander\ExpressCheckoutQuoteExpanderInterface>
+     */
+    public function getExpressCheckoutOrderQuoteExpanders(): array
+    {
+        return [
+            $this->createExpressCheckoutAddressExpander(),
+            $this->createExpressCheckoutShipmentMethodExpander(),
+            $this->createExpressCheckoutPaymentExpander(),
+        ];
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Business\ExpressCheckout\Order\Expander\ExpressCheckoutQuoteExpanderInterface
+     */
+    public function createExpressCheckoutAddressExpander(): ExpressCheckoutQuoteExpanderInterface
+    {
+        return new AddressExpander();
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Business\ExpressCheckout\Order\Expander\ExpressCheckoutQuoteExpanderInterface
+     */
+    public function createExpressCheckoutShipmentMethodExpander(): ExpressCheckoutQuoteExpanderInterface
+    {
+        return new ShipmentMethodExpander($this->getShipmentFacade());
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Business\ExpressCheckout\Order\Expander\ExpressCheckoutQuoteExpanderInterface
+     */
+    public function createExpressCheckoutPaymentExpander(): ExpressCheckoutQuoteExpanderInterface
+    {
+        return new PaymentExpander();
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Dependency\Facade\MollieToCheckoutFacadeInterface
+     */
+    public function getCheckoutFacade(): MollieToCheckoutFacadeInterface
+    {
+        return $this->getProvidedDependency(MollieDependencyProvider::FACADE_CHECKOUT);
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Dependency\Facade\MollieToCalculationFacadeInterface
+     */
+    public function getCalculationFacade(): MollieToCalculationFacadeInterface
+    {
+        return $this->getProvidedDependency(MollieDependencyProvider::FACADE_CALCULATION);
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Dependency\Facade\MollieToShipmentFacadeInterface
+     */
+    public function getShipmentFacade(): MollieToShipmentFacadeInterface
+    {
+        return $this->getProvidedDependency(MollieDependencyProvider::FACADE_SHIPMENT);
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Business\ExpressCheckout\Shipping\ExpressCheckoutShippingOptionsProviderInterface
+     */
+    public function createExpressCheckoutShippingOptionsProvider(): ExpressCheckoutShippingOptionsProviderInterface
+    {
+        return new ExpressCheckoutShippingOptionsProvider(
+            $this->getShipmentFacade(),
+            $this->getMollieService(),
+        );
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Business\ExpressCheckout\Refund\ExpressCheckoutPaymentRefunderInterface
+     */
+    public function createExpressCheckoutPaymentRefunder(): ExpressCheckoutPaymentRefunderInterface
+    {
+        return new ExpressCheckoutPaymentRefunder(
+            $this->getMollieClient(),
+        );
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Business\ExpressCheckout\Refund\ExpressCheckoutPaymentRefundRequesterInterface
+     */
+    public function createExpressCheckoutPaymentRefundRequester(): ExpressCheckoutPaymentRefundRequesterInterface
+    {
+        return new ExpressCheckoutPaymentRefundRequester(
+            $this->getEntityManager(),
+            $this->createExpressCheckoutPaymentRefunder(),
+            $this->getMollieService(),
+        );
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Business\ExpressCheckout\Refund\ExpressCheckoutPaymentRefundStatusUpdaterInterface
+     */
+    public function createExpressCheckoutPaymentRefundStatusUpdater(): ExpressCheckoutPaymentRefundStatusUpdaterInterface
+    {
+        return new ExpressCheckoutPaymentRefundStatusUpdater(
+            $this->getEntityManager(),
+            $this->createMollieRefundMapper(),
+        );
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Business\ExpressCheckout\Webhook\ExpressCheckoutPaymentWebhookProcessorInterface
+     */
+    public function createExpressCheckoutPaymentWebhookProcessor(): ExpressCheckoutPaymentWebhookProcessorInterface
+    {
+        return new ExpressCheckoutPaymentWebhookProcessor(
+            $this->getRepository(),
+            $this->createExpressCheckoutMolliePaymentHandler(),
+            $this->createExpressCheckoutPaymentRefundRequester(),
+            $this->createExpressCheckoutPaymentRefundStatusUpdater(),
+        );
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Business\SingleClick\SingleClickConfigReaderInterface
+     */
+    public function createSingleClickConfigReader(): SingleClickConfigReaderInterface
+    {
+        return new SingleClickConfigReader(
+            $this->getConfig(),
+            $this->getRepository(),
+        );
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Business\SingleClick\SingleClickConfigWriterInterface
+     */
+    public function createSingleClickConfigWriter(): SingleClickConfigWriterInterface
+    {
+        return new SingleClickConfigWriter(
+            $this->getEntityManager(),
+        );
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Business\SingleClick\MollieCustomerProviderInterface
+     */
+    public function createMollieCustomerProvider(): MollieCustomerProviderInterface
+    {
+        return new MollieCustomerProvider(
+            $this->getMollieClient(),
+            $this->getRepository(),
+            $this->getEntityManager(),
+            $this->getConfig(),
+        );
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Business\SingleClick\MollieCustomerDeleterInterface
+     */
+    public function createMollieCustomerDeleter(): MollieCustomerDeleterInterface
+    {
+        return new MollieCustomerDeleter(
+            $this->getMollieClient(),
+            $this->createMollieCustomerProvider(),
+        );
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Business\SingleClick\MollieCustomerExpanderInterface
+     */
+    public function createMollieCustomerExpander(): MollieCustomerExpanderInterface
+    {
+        return new MollieCustomerExpander(
+            $this->createMollieCustomerProvider(),
+        );
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Business\SingleClick\SavedCardReaderInterface
+     */
+    public function createSavedCardReader(): SavedCardReaderInterface
+    {
+        return new SavedCardReader(
+            $this->getMollieClient(),
+            $this->createSingleClickConfigReader(),
+            $this->createMollieCustomerProvider(),
+        );
+    }
+
+    /**
+     * @return \Mollie\Zed\Mollie\Business\SingleClick\SavedCardRemoverInterface
+     */
+    public function createSavedCardRemover(): SavedCardRemoverInterface
+    {
+        return new SavedCardRemover(
+            $this->getMollieClient(),
+            $this->createMollieCustomerProvider(),
+            $this->createSavedCardReader(),
         );
     }
 }

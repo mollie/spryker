@@ -1,0 +1,28 @@
+{% extends '@Gui/Layout/layout.twig' %}
+
+{% set widget_title = 'Mollie Single-Click Payments' %}
+
+{% block head_title %}
+    {{ widget_title | trans }}
+{% endblock %}
+{% block section_title %}
+    {{ widget_title | trans }}
+{% endblock %}
+
+{% block content %}
+    {% embed '@Gui/Partials/widget.twig' %}
+        {% block widget_content %}
+            <p class="text-muted spacing-bottom">
+                {{ 'Let logged-in customers save their card with Mollie and pay with it in later checkouts. The card is saved only when the customer gives consent at checkout. Until this page is saved, the environment configuration is used.' | trans }}
+            </p>
+
+            {{ form_start(form) }}
+            {{ form_errors(form) }}
+            {% for child in form.children %}
+                {{ form_row(child) }}
+            {% endfor %}
+            <button type="submit" class="btn btn-primary safe-submit">{{ 'Save' | trans }}</button>
+            {{ form_end(form) }}
+        {% endblock %}
+    {% endembed %}
+{% endblock %}

@@ -1,9 +1,13 @@
 <?php
 
+
 declare(strict_types=1);
 
 namespace Mollie\Zed\Mollie\Persistence;
 
+use Generated\Shared\Transfer\MollieCustomerTransfer;
+use Generated\Shared\Transfer\MollieExpressCheckoutConfigCriteriaTransfer;
+use Generated\Shared\Transfer\MollieExpressCheckoutPaymentRefundTransfer;
 use Generated\Shared\Transfer\MollieItemPaymentCaptureTransfer;
 use Generated\Shared\Transfer\MolliePaymentLinkTransfer;
 use Generated\Shared\Transfer\MolliePaymentMethodConfigCollectionTransfer;
@@ -140,5 +144,85 @@ class MollieRepository extends AbstractRepository implements MollieRepositoryInt
         return $this->getFactory()
             ->createMolliePaymentMethodConfigMapper()
             ->mapMolliePaymentMethodConfigEntityToTransfer($spyMolliePaymentMethodConfigEntity);
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MollieExpressCheckoutConfigCriteriaTransfer $criteriaTransfer
+     *
+     * @return array<string, bool>
+     */
+    public function getPersistentExpressCheckoutMethodConfig(
+        MollieExpressCheckoutConfigCriteriaTransfer $criteriaTransfer,
+    ): array {
+        $query = $this->getFactory()
+            ->createSpyMollieExpressCheckoutConfigQuery();
+
+        if ($criteriaTransfer->getExpressMethod()) {
+            $query->filterByExpressMethod($criteriaTransfer->getExpressMethod());
+        }
+
+        $entities = $query->find();
+
+        return $this->getFactory()
+            ->createMollieExpressCheckoutConfigMapper()
+            ->mapEntitiesToMethodConfig($entities);
+    }
+
+    /**
+     * @param string $expressCheckoutUuid
+     *
+     * @return \Generated\Shared\Transfer\MollieExpressCheckoutPaymentRefundTransfer|null
+     */
+    public function findExpressCheckoutPaymentRefundByExpressCheckoutUuid(string $expressCheckoutUuid): ?MollieExpressCheckoutPaymentRefundTransfer
+    {
+        $spyMollieExpressCheckoutPaymentRefundEntity = $this->getFactory()
+            ->createSpyMollieExpressCheckoutPaymentRefundQuery()
+            ->filterByExpressCheckoutUuid($expressCheckoutUuid)
+            ->findOne();
+
+        if (!$spyMollieExpressCheckoutPaymentRefundEntity) {
+            return null;
+        }
+
+        return $this->getFactory()
+            ->createMollieExpressCheckoutPaymentRefundMapper()
+            ->mapEntityToTransfer($spyMollieExpressCheckoutPaymentRefundEntity, new MollieExpressCheckoutPaymentRefundTransfer());
+    }
+
+    /**
+     * @param int $idCustomer
+     *
+     * @return \Generated\Shared\Transfer\MollieCustomerTransfer|null
+     */
+    public function findMollieCustomer(int $idCustomer): ?MollieCustomerTransfer
+    {
+        $spyMollieCustomerEntity = $this->getFactory()
+            ->createSpyMollieCustomerQuery()
+            ->filterByFkCustomer($idCustomer)
+            ->findOne();
+
+        if (!$spyMollieCustomerEntity) {
+            return null;
+        }
+
+        return $this->getFactory()
+            ->createMollieCustomerMapper()
+            ->mapMollieCustomerEntityToTransfer($spyMollieCustomerEntity, new MollieCustomerTransfer());
+    }
+
+    /**
+     * @return bool|null
+     */
+    public function findSingleClickConfig(): ?bool
+    {
+        $spyMollieSingleClickConfigEntity = $this->getFactory()
+            ->createSpyMollieSingleClickConfigQuery()
+            ->findOne();
+
+        if (!$spyMollieSingleClickConfigEntity) {
+            return null;
+        }
+
+        return (bool)$spyMollieSingleClickConfigEntity->getIsActive();
     }
 }

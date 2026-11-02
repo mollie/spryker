@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace Mollie\Zed\Mollie;
 
+use Mollie\Shared\Mollie\MollieConfig as SharedConfig;
 use Mollie\Shared\Mollie\MollieConstants;
 use Spryker\Zed\Kernel\AbstractBundleConfig;
 
@@ -15,37 +16,7 @@ class MollieConfig extends AbstractBundleConfig
     /**
      * @var string
      */
-    public const PAID = 'paid';
-
-    /**
-     * @var string
-     */
     public const AUTHORIZED = 'authorized';
-
-    /**
-     * @var string
-     */
-    public const EXPIRED = 'expired';
-
-    /**
-     * @var string
-     */
-    public const FAILED = 'failed';
-
-    /**
-     * @var string
-     */
-    public const CANCELED = 'canceled';
-
-    /**
-     * @var string
-     */
-    public const PROCESSING = 'processing';
-
-    /**
-     * @var string
-     */
-    public const REFUNDED = 'refunded';
 
     /**
      * @var string
@@ -83,6 +54,14 @@ class MollieConfig extends AbstractBundleConfig
     public function getMollieOmsToPaymentMethodMapping(): array
     {
         return $this->get(MollieConstants::MOLLIE)[MollieConstants::MOLLIE_OMS_TO_PAYMENT_METHOD_MAPPING] ?? [];
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    public function getBNPLPaymentMethods(): array
+    {
+        return $this->get(MollieConstants::MOLLIE)[MollieConstants::MOLLIE_BNPL_PAYMENT_METHODS] ?? [];
     }
 
     /**
@@ -180,10 +159,52 @@ class MollieConfig extends AbstractBundleConfig
     }
 
     /**
+     * @param string $paymentMethod
+     *
+     * @return bool
+     */
+    public function isMollieExpressPaymentMethod(string $paymentMethod): bool
+    {
+        return $paymentMethod === SharedConfig::MOLLIE_PAYMENT_EXPRESS;
+    }
+
+    /**
      * @return string
      */
     public function getMolliePluginPackage(): string
     {
         return $this->getSharedConfig()->getMolliePluginPackage();
+    }
+
+    /**
+     * @return list<string>
+     */
+    public function getExpressMethods(): array
+    {
+        return $this->getSharedConfig()->getExpressMethods();
+    }
+
+    /**
+     * @return array<string, bool>
+     */
+    public function getDefaultExpressCheckoutMethodConfig(): array
+    {
+        return $this->getSharedConfig()->getDefaultExpressCheckoutMethodConfig();
+    }
+
+    /**
+     * @return bool
+     */
+    public function isSingleClickPaymentEnabledByDefault(): bool
+    {
+        return $this->getSharedConfig()->isSingleClickPaymentEnabledByDefault();
+    }
+
+    /**
+     * @return string
+     */
+    public function getSingleClickConsentVersion(): string
+    {
+        return SharedConfig::SINGLE_CLICK_CONSENT_VERSION;
     }
 }

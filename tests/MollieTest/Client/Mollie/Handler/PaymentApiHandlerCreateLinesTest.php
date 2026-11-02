@@ -1,5 +1,6 @@
 <?php
 
+
 declare(strict_types=1);
 
 namespace MollieTest\Client\Mollie\Handler;
@@ -53,17 +54,47 @@ class PaymentApiHandlerCreateLinesTest extends Unit
                     ->setUnitPrice(34995)
                     ->setSumPriceToPayAggregation(69990)
                     ->setUnitDiscountAmountAggregation(0)
+                    ->setSumDiscountAmountAggregation(0)
                     ->setUnitTaxAmount(5587)
                     ->setSumTaxAmountFullAggregation(11175)
                     ->setQuantity(2)
                     ->setTaxRate(19.0),
             ]));
 
-        $lines = $paymentApiHandler->createLines($quoteTransfer, 'paypal')->toArray();
+        $lines = $paymentApiHandler->createLines($quoteTransfer)->toArray();
 
         $this->assertCount(1, $lines);
         $this->assertSame('699.90', $lines[0]['totalAmount']['value']);
         $this->assertSame('111.75', $lines[0]['vatAmount']['value']);
+    }
+
+    /**
+     * @return void
+     */
+    public function testMultiQuantityLineUsesAggregatedDiscountAmount(): void
+    {
+        $paymentApiHandler = $this->createHandler();
+        $quoteTransfer = (new QuoteTransfer())
+            ->setCurrency((new CurrencyTransfer())->setCode(self::CURRENCY_EUR))
+            ->setItems(new ArrayObject([
+                (new ItemTransfer())
+                    ->setSku('202500000066')
+                    ->setName('Twin Stroller')
+                    ->setUnitPrice(10000)
+                    ->setSumPriceToPayAggregation(49000)
+                    ->setUnitDiscountAmountAggregation(200)
+                    ->setSumDiscountAmountAggregation(1000)
+                    ->setUnitTaxAmount(0)
+                    ->setSumTaxAmountFullAggregation(0)
+                    ->setQuantity(5)
+                    ->setTaxRate(0.0),
+            ]));
+
+        $lines = $paymentApiHandler->createLines($quoteTransfer)->toArray();
+
+        $this->assertCount(1, $lines);
+        $this->assertSame('490.00', $lines[0]['totalAmount']['value']);
+        $this->assertSame('10.00', $lines[0]['discountAmount']['value']);
     }
 
     /**
@@ -89,6 +120,7 @@ class PaymentApiHandlerCreateLinesTest extends Unit
                     ->setUnitPrice(11990)
                     ->setSumPriceToPayAggregation(10791)
                     ->setUnitDiscountAmountAggregation(1199)
+                    ->setSumDiscountAmountAggregation(1199)
                     ->setSumTaxAmountFullAggregation(1723)
                     ->setQuantity(1)
                     ->setTaxRate(19.0),
@@ -98,13 +130,14 @@ class PaymentApiHandlerCreateLinesTest extends Unit
                     ->setUnitPrice(1499)
                     ->setSumPriceToPayAggregation(1349)
                     ->setUnitDiscountAmountAggregation(150)
+                    ->setSumDiscountAmountAggregation(150)
                     ->setSumTaxAmountFullAggregation(215)
                     ->setQuantity(1)
                     ->setTaxRate(19.0),
             ]))
             ->setPayment((new PaymentTransfer())->setAmount($grandTotal));
 
-        $lines = $paymentApiHandler->createLines($quoteTransfer, 'creditcard')->toArray();
+        $lines = $paymentApiHandler->createLines($quoteTransfer)->toArray();
 
         $this->assertCount(3, $lines);
         $this->assertSame('discount', $lines[2]['type']);
@@ -138,13 +171,14 @@ class PaymentApiHandlerCreateLinesTest extends Unit
                     ->setUnitPrice(11990)
                     ->setSumPriceToPayAggregation($itemTotal)
                     ->setUnitDiscountAmountAggregation(1199)
+                    ->setSumDiscountAmountAggregation(1199)
                     ->setSumTaxAmountFullAggregation(1723)
                     ->setQuantity(1)
                     ->setTaxRate(19.0),
             ]))
             ->setPayment((new PaymentTransfer())->setAmount($itemTotal));
 
-        $lines = $paymentApiHandler->createLines($quoteTransfer, 'creditcard')->toArray();
+        $lines = $paymentApiHandler->createLines($quoteTransfer)->toArray();
 
         $this->assertCount(1, $lines);
         $this->assertSame('physical', $lines[0]['type']);
