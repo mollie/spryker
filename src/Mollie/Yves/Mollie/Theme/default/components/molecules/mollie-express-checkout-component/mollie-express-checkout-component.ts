@@ -57,6 +57,13 @@ export default class MollieExpressCheckoutComponent extends Component {
 
     protected init(): void {
         this.scriptLoader = <ScriptLoader>this.querySelector(this.scriptLoaderTag);
+
+        if (window.Mollie2) {
+            this.onScriptLoad();
+
+            return;
+        }
+
         this.mapEvents();
     }
 
