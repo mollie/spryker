@@ -223,14 +223,13 @@ class PaymentApiHandler implements PaymentApiHandlerInterface
      */
     public function calculateExpressCheckoutAmount(QuoteTransfer $quoteTransfer): int
     {
-        $grandTotal = $quoteTransfer->getTotals()->getGrandTotal();
+        $expressCheckoutAmount = 0;
 
-        $shippingExpense = $this->getShippingExpense($quoteTransfer);
-        if ($shippingExpense === null) {
-            return $grandTotal;
+        foreach ($quoteTransfer->getItems() as $item) {
+            $expressCheckoutAmount += $item->getSumPriceToPayAggregation();
         }
 
-        return $grandTotal - $shippingExpense->getSumPriceToPayAggregation();
+        return $expressCheckoutAmount;
     }
 
     /**

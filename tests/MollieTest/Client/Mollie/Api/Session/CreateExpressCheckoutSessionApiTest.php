@@ -79,7 +79,7 @@ class CreateExpressCheckoutSessionApiTest extends AbstractClientTest
     /**
      * @return void
      */
-    public function testCreateSessionSendsGrandTotalWhenNoShippingIsSavedOnTheCart(): void
+    public function testCreateSessionSendsItemsTotalWhenNoShippingIsSavedOnTheCart(): void
     {
         $mockMollieClient = $this->createMockApiClient([
             CreateSessionRequest::class => new MockResponse(static::SESSION_RESPONSE, 201),
