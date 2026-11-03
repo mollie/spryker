@@ -43,6 +43,20 @@ interface PaymentApiHandlerInterface
     /**
      * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
      *
+     * @return \Mollie\Api\Http\Data\DataCollection<array<mixed>>
+     */
+    public function createExpressCheckoutLines(QuoteTransfer $quoteTransfer): DataCollection;
+
+    /**
+     * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
+     *
+     * @return int
+     */
+    public function calculateExpressCheckoutAmount(QuoteTransfer $quoteTransfer): int;
+
+    /**
+     * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
+     *
      * @return string|null
      */
     public function findMollieCustomerId(QuoteTransfer $quoteTransfer): ?string;
