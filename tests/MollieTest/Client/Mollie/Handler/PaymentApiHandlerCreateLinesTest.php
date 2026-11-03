@@ -8,13 +8,16 @@ namespace MollieTest\Client\Mollie\Handler;
 use ArrayObject;
 use Codeception\Test\Unit;
 use Generated\Shared\Transfer\CurrencyTransfer;
+use Generated\Shared\Transfer\ExpenseTransfer;
 use Generated\Shared\Transfer\ItemTransfer;
 use Generated\Shared\Transfer\MollieAmountTransfer;
 use Generated\Shared\Transfer\PaymentTransfer;
 use Generated\Shared\Transfer\QuoteTransfer;
+use Generated\Shared\Transfer\TotalsTransfer;
 use Mollie\Client\Mollie\Handler\PaymentApiHandler;
 use Mollie\Client\Mollie\MollieConfig;
 use Mollie\Service\Mollie\MollieServiceInterface;
+use Spryker\Shared\Shipment\ShipmentConfig;
 
 /**
  * @group MollieTest
@@ -182,6 +185,77 @@ class PaymentApiHandlerCreateLinesTest extends Unit
 
         $this->assertCount(1, $lines);
         $this->assertSame('physical', $lines[0]['type']);
+    }
+
+    /**
+     * @return void
+     */
+    public function testCreateLinesKeepsShippingFeeLineForNormalPayments(): void
+    {
+        $paymentApiHandler = $this->createHandler();
+
+        $lines = $paymentApiHandler->createLines($this->createQuoteTransferWithSavedShipping())->toArray();
+
+        $this->assertCount(2, $lines);
+        $this->assertSame('physical', $lines[0]['type']);
+        $this->assertSame('shipping_fee', $lines[1]['type']);
+        $this->assertSame('5.90', $lines[1]['totalAmount']['value']);
+    }
+
+    /**
+     * @return void
+     */
+    public function testCreateExpressCheckoutLinesReturnsOnlyProductLines(): void
+    {
+        $paymentApiHandler = $this->createHandler();
+
+        $lines = $paymentApiHandler->createExpressCheckoutLines($this->createQuoteTransferWithSavedShipping())->toArray();
+
+        $this->assertCount(1, $lines);
+        $this->assertSame('physical', $lines[0]['type']);
+    }
+
+    /**
+     * @return void
+     */
+    public function testCalculateExpressCheckoutAmountExcludesSavedShipping(): void
+    {
+        $paymentApiHandler = $this->createHandler();
+
+        $amount = $paymentApiHandler->calculateExpressCheckoutAmount($this->createQuoteTransferWithSavedShipping());
+
+        $this->assertSame(2900, $amount);
+    }
+
+    /**
+     * @return \Generated\Shared\Transfer\QuoteTransfer
+     */
+    protected function createQuoteTransferWithSavedShipping(): QuoteTransfer
+    {
+        $itemTransfer = new ItemTransfer();
+        $itemTransfer
+            ->setSku('420692')
+            ->setName('Adhesive stripes')
+            ->setUnitPrice(580)
+            ->setSumPriceToPayAggregation(2900)
+            ->setSumDiscountAmountAggregation(0)
+            ->setSumTaxAmountFullAggregation(463)
+            ->setQuantity(5)
+            ->setTaxRate(19.0);
+
+        $expenseTransfer = new ExpenseTransfer();
+        $expenseTransfer
+            ->setType(ShipmentConfig::SHIPMENT_EXPENSE_TYPE)
+            ->setSumPriceToPayAggregation(590);
+
+        $quoteTransfer = new QuoteTransfer();
+        $quoteTransfer
+            ->setCurrency((new CurrencyTransfer())->setCode(self::CURRENCY_EUR))
+            ->setItems(new ArrayObject([$itemTransfer]))
+            ->addExpense($expenseTransfer)
+            ->setTotals((new TotalsTransfer())->setGrandTotal(3490));
+
+        return $quoteTransfer;
     }
 
     /**

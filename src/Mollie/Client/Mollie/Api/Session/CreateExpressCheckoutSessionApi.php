@@ -75,8 +75,10 @@ class CreateExpressCheckoutSessionApi extends AbstractApiCall
         $quoteTransfer = $mollieApiRequestTransfer->getQuoteOrFail();
         $currencyCode = $quoteTransfer->getCurrency()->getCode();
 
+        $expressCheckoutAmount = $this->apiHandler->calculateExpressCheckoutAmount($quoteTransfer);
+
         $value = $this->mollieService
-            ->convertIntegerToMollieAmount($quoteTransfer->getTotals()->getGrandTotal(), $currencyCode)
+            ->convertIntegerToMollieAmount($expressCheckoutAmount, $currencyCode)
             ->getValue();
 
         $amount = new Money(
@@ -84,7 +86,7 @@ class CreateExpressCheckoutSessionApi extends AbstractApiCall
             value: $value,
         );
 
-        $lines = $this->apiHandler->createLines($quoteTransfer);
+        $lines = $this->apiHandler->createExpressCheckoutLines($quoteTransfer);
 
         $metadata = [
             SharedConfig::EXPRESS_CHECKOUT_METADATA_KEY_UUID => $mollieApiRequestTransfer->getExpressCheckoutUuidOrFail(),

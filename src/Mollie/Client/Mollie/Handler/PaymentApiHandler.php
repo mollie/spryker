@@ -181,12 +181,69 @@ class PaymentApiHandler implements PaymentApiHandlerInterface
      */
     public function createLines(QuoteTransfer $quoteTransfer): DataCollection
     {
-        $items = $quoteTransfer->getItems();
+        $currencyCode = $quoteTransfer->getCurrency()->getCode();
+
+        $lines = $this->createItemLines($quoteTransfer);
+
+        $linesTotalCents = 0;
+        foreach ($quoteTransfer->getItems() as $item) {
+            $linesTotalCents += $item->getSumPriceToPayAggregation();
+        }
+
+        $shippingFee = $this->getShippingFee($quoteTransfer);
+        if ($shippingFee !== null) {
+            $lines[] = $shippingFee;
+            $linesTotalCents += $this->getShippingExpense($quoteTransfer)?->getSumPriceToPayAggregation() ?? 0;
+        }
+
+        $discountLine = $this->createDiscountLine($quoteTransfer, $linesTotalCents, $currencyCode);
+        if ($discountLine !== null) {
+            $lines[] = $discountLine;
+        }
+
+        return new DataCollection($lines);
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
+     *
+     * @return \Mollie\Api\Http\Data\DataCollection<array<mixed>>
+     */
+    public function createExpressCheckoutLines(QuoteTransfer $quoteTransfer): DataCollection
+    {
+        $itemLines = $this->createItemLines($quoteTransfer);
+
+        return new DataCollection($itemLines);
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
+     *
+     * @return int
+     */
+    public function calculateExpressCheckoutAmount(QuoteTransfer $quoteTransfer): int
+    {
+        $grandTotal = $quoteTransfer->getTotals()->getGrandTotal();
+
+        $shippingExpense = $this->getShippingExpense($quoteTransfer);
+        if ($shippingExpense === null) {
+            return $grandTotal;
+        }
+
+        return $grandTotal - $shippingExpense->getSumPriceToPayAggregation();
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
+     *
+     * @return array<array<mixed>>
+     */
+    protected function createItemLines(QuoteTransfer $quoteTransfer): array
+    {
         $currencyCode = $quoteTransfer->getCurrency()->getCode();
 
         $lines = [];
-        $linesTotalCents = 0;
-        foreach ($items as $item) {
+        foreach ($quoteTransfer->getItems() as $item) {
             $linesTransfer = new MollieLinesTransfer();
 
             $unitPrice = $this->mollieService->convertIntegerToMollieAmount($item->getUnitPrice(), $currencyCode);
@@ -207,21 +264,9 @@ class PaymentApiHandler implements PaymentApiHandlerInterface
                 ->setSku($item->getSku());
 
             $lines[] = $linesTransfer->toArray(true, true);
-            $linesTotalCents += $item->getSumPriceToPayAggregation();
         }
 
-        $shippingFee = $this->getShippingFee($quoteTransfer);
-        if ($shippingFee !== null) {
-            $lines[] = $shippingFee;
-            $linesTotalCents += $this->getShippingExpense($quoteTransfer)?->getSumPriceToPayAggregation() ?? 0;
-        }
-
-        $discountLine = $this->createDiscountLine($quoteTransfer, $linesTotalCents, $currencyCode);
-        if ($discountLine !== null) {
-            $lines[] = $discountLine;
-        }
-
-        return new DataCollection($lines);
+        return $lines;
     }
 
     /**
