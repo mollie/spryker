@@ -2551,6 +2551,7 @@ The widget asks `/mollie/express-checkout/resolve-enabled-methods` which methods
    - reads the Mollie session ID and the UUID from the shopper's Yves session; if they are missing, an error is logged and the shopper goes back to the cart with "Your express checkout could not be found. Please contact us if you have been charged.",
    - reads the Mollie session; it must have status `completed`, otherwise the shopper goes back to the cart with "Your express payment was not completed. You have not been charged.",
    - adds the billing and shipping address, the shipment method chosen in the wallet and the `mollieExpressPayment` payment to the cart, recalculates it, and checks that the grand total equals the amount the shopper paid,
+   - fills every billing address field that is missing with the same field from the shipping address; PayPal currently returns only the email in the billing address, and Mollie advised using the shipping address as billing until this is solved with PayPal,
    - marks both wallet addresses as coming from an external service (`isFromExternalService`), so when a logged-in customer's address book already has the same address, Spryker's `CustomerOrderSavePlugin` reuses it instead of adding a copy on every express order,
    - places the order; `MollieExpressCheckoutDoSaveOrderPlugin` saves the order's `spy_payment_mollie` row with the UUID, status `open`, and the order reference as description and metadata, in the same transaction as the order,
    - redirects the shopper to the checkout success page.

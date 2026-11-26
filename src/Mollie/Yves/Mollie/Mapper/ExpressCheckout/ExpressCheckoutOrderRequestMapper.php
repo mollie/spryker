@@ -38,7 +38,11 @@ class ExpressCheckoutOrderRequestMapper implements ExpressCheckoutOrderRequestMa
         }
 
         if ($mollieBillingAddressTransfer !== null) {
-            $billingAddressTransfer = $this->mapMollieAddressTransferToAddressTransfer($mollieBillingAddressTransfer, new AddressTransfer());
+            $billingAddressTransfer = $this->mapMollieBillingAddressTransferToAddressTransfer(
+                $mollieBillingAddressTransfer,
+                $mollieShippingAddressTransfer,
+                new AddressTransfer(),
+            );
             $mollieExpressCheckoutOrderRequestTransfer->setBillingAddress($billingAddressTransfer);
         }
 
@@ -53,6 +57,32 @@ class ExpressCheckoutOrderRequestMapper implements ExpressCheckoutOrderRequestMa
         return $mollieExpressCheckoutOrderRequestTransfer
             ->setShipmentMethodKey($shippingFeeReference)
             ->setExpectedGrandTotal($paidAmount);
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MollieAddressTransfer $mollieBillingAddressTransfer
+     * @param \Generated\Shared\Transfer\MollieAddressTransfer $mollieShippingAddressTransfer
+     * @param \Generated\Shared\Transfer\AddressTransfer $addressTransfer
+     *
+     * @return \Generated\Shared\Transfer\AddressTransfer
+     */
+    protected function mapMollieBillingAddressTransferToAddressTransfer(
+        MollieAddressTransfer $mollieBillingAddressTransfer,
+        MollieAddressTransfer $mollieShippingAddressTransfer,
+        AddressTransfer $addressTransfer,
+    ): AddressTransfer {
+        $billingAddressData = $mollieBillingAddressTransfer->toArray(false, true);
+        $shippingAddressData = $mollieShippingAddressTransfer->toArray(false, true);
+
+        foreach ($billingAddressData as $fieldName => $fieldValue) {
+            if ($fieldValue === null) {
+                $billingAddressData[$fieldName] = $shippingAddressData[$fieldName];
+            }
+        }
+
+        $filledMollieBillingAddressTransfer = (new MollieAddressTransfer())->fromArray($billingAddressData);
+
+        return $this->mapMollieAddressTransferToAddressTransfer($filledMollieBillingAddressTransfer, $addressTransfer);
     }
 
     /**

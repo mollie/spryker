@@ -79,6 +79,34 @@ class ExpressCheckoutOrderRequestMapperTest extends Unit
     /**
      * @return void
      */
+    public function testFillsMissingBillingAddressFieldsFromShippingAddressWhenBillingAddressHasOnlyEmail(): void
+    {
+        $mollieShippingAddressTransfer = $this->createMollieAddressTransfer('Shipping Street 2')
+            ->setEmail(null);
+        $mollieExpressCheckoutSessionTransfer = $this->createMollieExpressCheckoutSessionTransfer()
+            ->setBillingAddress((new MollieAddressTransfer())->setEmail('jane.doe@example.com'))
+            ->setShippingAddress($mollieShippingAddressTransfer);
+
+        $mollieExpressCheckoutOrderRequestTransfer = $this->createExpressCheckoutOrderRequestMapper()
+            ->mapMollieExpressCheckoutSessionTransferToMollieExpressCheckoutOrderRequestTransfer(
+                $mollieExpressCheckoutSessionTransfer,
+                new MollieExpressCheckoutOrderRequestTransfer(),
+            );
+
+        $billingAddressTransfer = $mollieExpressCheckoutOrderRequestTransfer->getBillingAddress();
+        $this->assertSame('Jane', $billingAddressTransfer->getFirstName());
+        $this->assertSame('Doe', $billingAddressTransfer->getLastName());
+        $this->assertSame('Shipping Street 2', $billingAddressTransfer->getAddress1());
+        $this->assertSame('42000', $billingAddressTransfer->getZipCode());
+        $this->assertSame('Varazdin', $billingAddressTransfer->getCity());
+        $this->assertSame('HR', $billingAddressTransfer->getIso2Code());
+        $this->assertSame('jane.doe@example.com', $billingAddressTransfer->getEmail());
+        $this->assertNull($mollieExpressCheckoutOrderRequestTransfer->getShippingAddress()->getEmail());
+    }
+
+    /**
+     * @return void
+     */
     public function testMapsNoAddressesWhenSessionHasNone(): void
     {
         $mollieExpressCheckoutOrderRequestTransfer = $this->createExpressCheckoutOrderRequestMapper()
